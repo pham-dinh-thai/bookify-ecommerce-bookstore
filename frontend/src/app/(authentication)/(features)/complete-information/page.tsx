@@ -14,7 +14,6 @@ export default function CompleteInformation() {
     gender: 'refuse to answer',
   });
 
-  // Test commit
   const [showPass, setShowPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
 
