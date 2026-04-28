@@ -7,7 +7,7 @@ export type RegisterApiRequest = {
 };
 
 export async function registerApi(request: RegisterApiRequest): Promise<void> {
-  const response = await fetch('/api/auth/register', {
+  const response = await fetch('/api/auth/register/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -15,7 +15,8 @@ export async function registerApi(request: RegisterApiRequest): Promise<void> {
     body: JSON.stringify(request),
   });
 
-  const data = await response.json();
+  const text = await response.text();
+  const data = text ? JSON.parse(text) : {};
 
   if (!response.ok) {
     const message = Array.isArray(data.message)

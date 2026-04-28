@@ -8,10 +8,11 @@ import { useRouter } from 'next/navigation';
 import RegisterHeader from './partials/register-header';
 import LinkToLogin from './partials/link-to-login';
 import RegisterButton from './partials/register-button';
+import { registerApi } from '../../api/register.api';
+import ErrorMessage from '@/components/error-message';
 
 export default function RegisterContainer() {
   const router = useRouter();
-  const [error, setError] = useState('');
 
   const { form, setForm, handleChange } = useForm({
     firstName: '',
@@ -26,14 +27,40 @@ export default function RegisterContainer() {
   const [showPass, setShowPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      setIsSubmitting(true);
+      setErrorMessage(null);
+
+      await registerApi({
+        firstName: form.firstName,
+        lastName: form.lastName,
+        email: form.email,
+        password: form.password,
+        passwordConfirmation: form.confirmPassword,
+      });
+
+      router.push('/complete-information');
+      router.refresh();
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : 'Registration failed, try again.',
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center w-full max-w-md">
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          router.push('/complete-information');
-          router.refresh();
-        }}
+        onSubmit={handleSubmit}
         className="bg-white rounded-2xl p-7 w-full"
         style={{ boxShadow: '0px 4px 24px rgba(43,53,47,0.08)' }}
       >
@@ -146,8 +173,11 @@ export default function RegisterContainer() {
           </button>
         </div>
 
-        {/* Submit */}
-        <RegisterButton>Register</RegisterButton>
+        <ErrorMessage message={errorMessage} />
+
+        <RegisterButton>
+          {isSubmitting ? 'Registering...' : 'Register'}
+        </RegisterButton>
 
         {/* Link to Login */}
         <LinkToLogin href="/login" />

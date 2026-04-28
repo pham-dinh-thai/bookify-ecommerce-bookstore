@@ -9,6 +9,7 @@ export class AuthUsersMapper {
     userTypeOrm.firstName = authUser.getFirstName();
     userTypeOrm.lastName = authUser.getLastName();
     userTypeOrm.email = authUser.getEmail();
+    userTypeOrm.gender = authUser.getGender();
     userTypeOrm.password = authUser.getPassword();
     userTypeOrm.roleId = authUser.getRoleId();
     userTypeOrm.isActive = authUser.getIsActive();
