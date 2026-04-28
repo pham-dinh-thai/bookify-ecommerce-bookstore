@@ -16,6 +16,8 @@ import { REFRESH_TOKEN_HASHER } from './domain/authenticable-user-aggregate/serv
 import { CryptoRefreshTokenHasherService } from './infrastructure/services/crypto-refresh-token-hasher.service';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from '../../shared/strategies/jwt.strategy';
+import { AUTHENTICABLE_USER_COMMAND_REPOSITORY } from './domain/authenticable-user-aggregate/repositories/authenticable-user-command.repository.interface';
+import { TypeOrmAuthenticableUserCommandRepository } from './infrastructure/repositories/typeorm-authenticable-user-command.repository';
 
 @Module({
   imports: [
@@ -52,8 +54,16 @@ import { JwtStrategy } from '../../shared/strategies/jwt.strategy';
       provide: REFRESH_TOKEN_HASHER,
       useClass: CryptoRefreshTokenHasherService,
     },
+    {
+      provide: AUTHENTICABLE_USER_COMMAND_REPOSITORY,
+      useClass: TypeOrmAuthenticableUserCommandRepository,
+    },
   ],
-  exports: [AUTHENTICABLE_USER_QUERY_REPOSITORY, JwtModule],
+  exports: [
+    AUTHENTICABLE_USER_QUERY_REPOSITORY,
+    JwtModule,
+    AUTHENTICABLE_USER_COMMAND_REPOSITORY,
+  ],
   controllers: [AuthController],
 })
 export class AuthenticationModule {}
