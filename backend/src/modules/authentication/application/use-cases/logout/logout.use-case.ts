@@ -19,7 +19,7 @@ export class LogoutUseCase {
     await this.cache.del(`refresh_token:${userId}`);
 
     const now = Math.floor(Date.now() / 1000);
-    const ttl = Math.max(exp - now, 1);
+    const ttl = Math.max(exp - now, 1) * 1000;
 
     await this.cache.set(`blacklist_access_token:${jti}`, true, ttl);
   }

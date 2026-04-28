@@ -79,7 +79,7 @@ export class LoginUseCase {
     await this.cache.set(
       `refresh_token:${authUser.id}`,
       hashedRefreshToken,
-      7 * 24 * 60 * 60, // 7 days
+      7 * 24 * 60 * 60 * 1000, // 7 days
     );
 
     return { accessToken, refreshToken };
