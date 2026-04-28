@@ -38,7 +38,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('/logout')
   public async logout(
-    @Req() request: { user: { id: string; jti?: string; exp: number } },
+    @Req() request: { user: { id: string; jti: string; exp: number } },
   ): Promise<void> {
     try {
       await this.logoutUseCase.execute(

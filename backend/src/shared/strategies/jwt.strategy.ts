@@ -8,7 +8,7 @@ import {
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(
+  public constructor(
     @Inject(CACHE_REPOSITORY)
     private readonly cache: ICacheRepository,
   ) {
@@ -22,20 +22,29 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: {
+  public async validate(payload: {
     sub: string;
     roleId: string;
-    jti: string;
+    jti?: string;
     exp: number;
-  }) {
-    const isAccessTokenBlackListed = await this.cache.get<boolean>(
+  }): Promise<{ id: string; roleId: string; jti: string; exp: number }> {
+    if (!payload.jti) {
+      throw new UnauthorizedException('Access token does not contain jti');
+    }
+
+    const isAccessTokenBlacklisted = await this.cache.get<boolean>(
       `blacklist_access_token:${payload.jti}`,
     );
 
-    if (isAccessTokenBlackListed) {
+    if (isAccessTokenBlacklisted) {
       throw new UnauthorizedException('Access token has been revoked');
     }
 
-    return { id: payload.sub, roleId: payload.roleId };
+    return {
+      id: payload.sub,
+      roleId: payload.roleId,
+      jti: payload.jti,
+      exp: payload.exp,
+    };
   }
 }

@@ -13,14 +13,10 @@ export class LogoutUseCase {
 
   public async execute(
     userId: string,
-    jti?: string,
-    exp?: number,
+    jti: string,
+    exp: number,
   ): Promise<void> {
     await this.cache.del(`refresh_token:${userId}`);
-
-    if (!jti || !exp) {
-      return;
-    }
 
     const now = Math.floor(Date.now() / 1000);
     const ttl = Math.max(exp - now, 1);
