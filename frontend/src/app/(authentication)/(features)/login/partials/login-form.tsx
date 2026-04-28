@@ -1,55 +1,18 @@
 'use client';
 
-import { loginApi } from '@/app/(authentication)/api/auth.api';
-import { saveTokens } from '@/app/(authentication)/lib/token-storage';
-import useForm from '@/hooks/useForm';
+import ErrorMessage from '@/components/error-message';
 import { Mail, EyeOff, Eye, Lock, LoaderCircle } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useLoginForm } from '../hooks/useLoginForm';
 
 type LoginFormProps = {};
 
 export default function LoginForm({}: LoginFormProps) {
-  const router = useRouter();
-
-  const { form, setForm } = useForm({
-    email: '',
-    password: '',
-    remember: false,
-  });
-
   const [showPass, setShowPass] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!form.email || !form.password) {
-      setErrorMessage('Email and password are required.');
-      return;
-    }
-
-    try {
-      setIsSubmitting(true);
-      setErrorMessage(null);
-
-      const { accessToken, refreshToken } = await loginApi({
-        email: form.email,
-        password: form.password,
-      });
-
-      saveTokens(accessToken, refreshToken, form.remember);
-      router.push('/');
-      router.refresh();
-    } catch (error) {
-      const fallbackMessage = 'Đăng nhập thất bại, vui lòng thử lại.';
-      setErrorMessage(error instanceof Error ? error.message : fallbackMessage);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const { form, setForm, isSubmitting, errorMessage, handleSubmit } =
+    useLoginForm();
 
   return (
     <form onSubmit={handleSubmit}>
@@ -63,7 +26,7 @@ export default function LoginForm({}: LoginFormProps) {
           className="absolute left-3 top-1/2 -translate-y-1/2 text-[#aab4ad]"
         />
         <input
-          type="email"
+          type="text"
           placeholder="email@example.com"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -96,6 +59,8 @@ export default function LoginForm({}: LoginFormProps) {
         </button>
       </div>
 
+      <ErrorMessage message={errorMessage} />
+
       <div className="flex items-center justify-between mb-5">
         <label className="flex items-center gap-2 text-[12px] text-[#58615b] cursor-pointer">
           <input
@@ -115,9 +80,6 @@ export default function LoginForm({}: LoginFormProps) {
         </Link>
       </div>
 
-      {errorMessage ? (
-        <p className="mb-3 text-xs text-red-600">{errorMessage}</p>
-      ) : null}
       <button
         type="submit"
         disabled={isSubmitting}

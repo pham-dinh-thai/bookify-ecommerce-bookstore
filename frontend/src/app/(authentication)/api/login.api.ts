@@ -19,9 +19,14 @@ export async function loginApi(
     body: JSON.stringify(payload),
   });
 
+  const data = await response.json();
+
   if (!response.ok) {
-    throw new Error('Email or password wrong.');
+    const message = Array.isArray(data.message)
+      ? data.message[0]
+      : data.message;
+    throw new Error(message || 'Login failed');
   }
 
-  return (await response.json()) as LoginApiResponse;
+  return data as LoginApiResponse;
 }

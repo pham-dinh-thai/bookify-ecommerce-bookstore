@@ -21,6 +21,7 @@ import {
   type IRefreshTokenHasherService,
   REFRESH_TOKEN_HASHER,
 } from '../../../domain/authenticable-user-aggregate/services/refresh-token-hasher.service';
+import { LoginFailedException } from '../../../domain/authenticable-user-aggregate/exceptions/login-failed.exception';
 
 @Injectable()
 export class LoginUseCase {
@@ -56,16 +57,19 @@ export class LoginUseCase {
     );
 
     if (!isVerify || !authUser) {
-      return null;
+      throw new LoginFailedException();
     }
 
     if (!authUser.isActive) {
-      return null;
+      throw new LoginFailedException();
     }
+
+    const accessTokenId = this.uuid.generate();
 
     const accessToken = this.signTokenService.sign(
       authUser.id,
       authUser.roleId,
+      accessTokenId,
     );
 
     const refreshToken = this.uuid.generate();
@@ -75,7 +79,7 @@ export class LoginUseCase {
     await this.cache.set(
       `refresh_token:${authUser.id}`,
       hashedRefreshToken,
-      7 * 24 * 60 * 60, // 7 days
+      7 * 24 * 60 * 60 * 1000, // 7 days
     );
 
     return { accessToken, refreshToken };
