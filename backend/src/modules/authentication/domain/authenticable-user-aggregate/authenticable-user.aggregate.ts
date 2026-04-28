@@ -10,7 +10,7 @@ export class AuthenticableUser extends AggregateRoot {
     private firstName: string,
     private lastName: string,
     private email: Email,
-    private gender: 'other', // Customers can choose gender later
+    private gender: string = 'other', // Customers can choose gender later
     private password: Password,
     private isActive: boolean = false, // When customer register an account, the account is inactive by default, and they need to verify
     private roleId: string = 'user', // When customer register an account, it will be user

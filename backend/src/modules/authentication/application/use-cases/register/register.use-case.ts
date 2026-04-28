@@ -13,8 +13,16 @@ import {
   AUTHENTICABLE_USER_QUERY_REPOSITORY,
   type IAuthenticableUserQueryRepository,
 } from '../../../domain/authenticable-user-aggregate/repositories/authenticable-user-query.repository.interface';
-import { Email } from '../../../../../shared/domain/value-objects/email/email.value-object';
 import { EmailHasBeenUseException } from '../../../domain/authenticable-user-aggregate/exceptions/email-has-been-use.exception';
+import {
+  type IUnitOfWork,
+  UNIT_OF_WORK,
+} from '../../../../../shared/unit-of-work/application/unit-of-work';
+import {
+  AUDIT_LOG_COMMAND_REPOSITORY,
+  type IAuditLogCommandRepository,
+} from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
+import { first } from 'rxjs';
 
 @Injectable()
 export class RegisterUseCase {
@@ -27,6 +35,12 @@ export class RegisterUseCase {
 
     @Inject(UUID_GENERATOR)
     private readonly uuid: IUuidGenerator,
+
+    @Inject(UNIT_OF_WORK)
+    private readonly unitOfWork: IUnitOfWork,
+
+    @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
+    private readonly auditLogRepository: IAuditLogCommandRepository,
   ) {}
 
   public async execute(request: IRegisterRequest): Promise<void> {
@@ -47,6 +61,21 @@ export class RegisterUseCase {
       request.passwordConfirmation,
     );
 
-    await this.repository.register(authUser);
+    await this.unitOfWork.execute(async () => {
+      await this.repository.register(authUser);
+
+      await this.auditLogRepository.write(
+        'REGISTER_USER',
+        id,
+        'authentication',
+        'users',
+        {
+          id: authUser.getId(),
+          firstName: authUser.getFirstName(),
+          lastName: authUser.getLastName(),
+          email: authUser.getEmail(),
+        },
+      );
+    });
   }
 }
