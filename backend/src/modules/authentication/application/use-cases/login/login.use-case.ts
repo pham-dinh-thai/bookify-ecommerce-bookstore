@@ -64,9 +64,12 @@ export class LoginUseCase {
       throw new LoginFailedException();
     }
 
+    const accessTokenId = this.uuid.generate();
+
     const accessToken = this.signTokenService.sign(
       authUser.id,
       authUser.roleId,
+      accessTokenId,
     );
 
     const refreshToken = this.uuid.generate();

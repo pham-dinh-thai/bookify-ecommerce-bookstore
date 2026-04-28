@@ -6,10 +6,11 @@ import { Injectable } from '@nestjs/common';
 export class JwtSignTokenService implements ISignTokenService {
   public constructor(private readonly jwtService: JwtService) {}
 
-  public sign(sub: string, roleId: string): string {
+  public sign(sub: string, roleId: string, jti: string): string {
     return this.jwtService.sign({
       sub: sub,
       roleId: roleId,
+      jti: jti,
     });
   }
 }

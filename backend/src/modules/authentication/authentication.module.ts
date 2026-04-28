@@ -20,6 +20,7 @@ import { AUTHENTICABLE_USER_COMMAND_REPOSITORY } from './domain/authenticable-us
 import { TypeOrmAuthenticableUserCommandRepository } from './infrastructure/repositories/typeorm-authenticable-user-command.repository';
 import { RegisterUseCase } from './application/use-cases/register/register.use-case';
 import { AuditLogModule } from '../audit-log/audit-log.module';
+import { LogoutUseCase } from './application/use-cases/logout/logout.use-case';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { AuditLogModule } from '../audit-log/audit-log.module';
     JwtStrategy,
     LoginUseCase,
     RegisterUseCase,
+    LogoutUseCase,
     {
       provide: AUTHENTICABLE_USER_QUERY_REPOSITORY,
       useClass: TypeOrmAuthenticableUserQueryRepository,
