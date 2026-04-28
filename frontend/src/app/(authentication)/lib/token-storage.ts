@@ -15,3 +15,17 @@ export function saveTokens(
   activeStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
   activeStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
 }
+
+export function getAccessToken(): string | null {
+  return (
+    localStorage.getItem(ACCESS_TOKEN_KEY) ||
+    sessionStorage.getItem(ACCESS_TOKEN_KEY)
+  );
+}
+
+export function clearTokens(): void {
+  localStorage.removeItem(ACCESS_TOKEN_KEY);
+  localStorage.removeItem(REFRESH_TOKEN_KEY);
+  sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+  sessionStorage.removeItem(REFRESH_TOKEN_KEY);
+}

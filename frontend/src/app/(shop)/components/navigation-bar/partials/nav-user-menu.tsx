@@ -1,15 +1,50 @@
 'use client';
 
+import {
+  clearTokens,
+  getAccessToken,
+} from '@/app/(authentication)/lib/token-storage';
 import { useDropdown } from '@/app/(shop)/hooks/useDropdown';
 import { useAuth } from '@/hooks/useAuth';
 import { ShoppingCart, User } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 type NavUserMenuProps = {};
 
 export default function NavUserMenu({}: NavUserMenuProps) {
   const dropdown = useDropdown();
   const { isAuth, roleId } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async (): Promise<void> => {
+    try {
+      const accessToken = getAccessToken();
+
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: accessToken
+          ? {
+              Authorization: `Bearer ${accessToken}`,
+            }
+          : {},
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        const data = text ? JSON.parse(text) : {};
+        const message = Array.isArray(data.message)
+          ? data.message[0]
+          : data.message;
+        throw new Error(message || 'Logout failed');
+      }
+    } finally {
+      clearTokens();
+      dropdown.close();
+      router.push('/login');
+      router.refresh();
+    }
+  };
 
   return (
     <div className="flex items-center gap-3.5 shrink-0">
@@ -45,7 +80,7 @@ export default function NavUserMenu({}: NavUserMenuProps) {
                   </Link>
                 )}
                 <button
-                  onClick={() => console.log('logout')}
+                  onClick={handleLogout}
                   className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
                   Logout
