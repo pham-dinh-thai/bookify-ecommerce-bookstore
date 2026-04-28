@@ -21,12 +21,12 @@ export async function loginApi(
 
   const data = await response.json();
 
-  console.log('status:', response.status, 'data:', data);
-
   if (!response.ok) {
-    throw new Error(data.message || 'Login failed');
+    const message = Array.isArray(data.message)
+      ? data.message[0]
+      : data.message;
+    throw new Error(message || 'Login failed');
   }
 
-  console.log('Login API response:', data);
   return data as LoginApiResponse;
 }
