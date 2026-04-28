@@ -1,4 +1,4 @@
-import privacyImg from '@/assets/images/privacy.jpg';
+import privacyImg from '../../assets/images/privacy.jpg';
 import Image from 'next/image';
 
 type PrivacyArchivalImageProps = {

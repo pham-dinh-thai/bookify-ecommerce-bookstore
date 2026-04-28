@@ -1,9 +1,9 @@
-import PrivacyArchivalImage from './partials/privacy-archival-image';
-import PrivacyArchivalRights from './partials/privacy-archival-rights';
-import PrivacyDataCollection from './partials/privacy-data-collection';
-import PrivacyIntroduction from './partials/privacy-introduction';
-import PrivacyPolicyHeader from './partials/privacy-policy-header';
-import PrivacySecurityStorage from './partials/privacy-security-storage';
+import PrivacyArchivalImage from './ui/privacy-archival-image';
+import PrivacyArchivalRights from './ui/privacy-archival-rights';
+import PrivacyDataCollection from './ui/privacy-data-collection';
+import PrivacyIntroduction from './ui/privacy-introduction';
+import PrivacyPolicyHeader from './ui/privacy-policy-header';
+import PrivacySecurityStorage from './ui/privacy-security-storage';
 
 type PrivacyPolicyProps = {};
 

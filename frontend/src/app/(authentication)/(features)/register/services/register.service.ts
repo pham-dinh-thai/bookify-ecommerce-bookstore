@@ -1,4 +1,4 @@
-export type RegisterApiRequest = {
+export type RegisterRequest = {
   firstName: string;
   lastName: string;
   email: string;
@@ -6,7 +6,7 @@ export type RegisterApiRequest = {
   passwordConfirmation: string;
 };
 
-export async function registerApi(request: RegisterApiRequest): Promise<void> {
+export async function registerService(request: RegisterRequest): Promise<void> {
   const response = await fetch('/api/auth/register/', {
     method: 'POST',
     headers: {

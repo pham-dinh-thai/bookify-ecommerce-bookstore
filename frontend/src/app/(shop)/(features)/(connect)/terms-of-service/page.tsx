@@ -1,5 +1,5 @@
-import TermsOfServiceContent from './partials/terms-of-service-content';
-import TermsOfServiceHeader from './partials/terms-of-service-header';
+import TermsOfServiceContent from './ui/terms-of-service-content';
+import TermsOfServiceHeader from './ui/terms-of-service-header';
 import { termsOfServiceSections } from './terms-of-service.data';
 
 export default function TermsOfService() {

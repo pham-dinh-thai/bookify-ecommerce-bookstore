@@ -1,11 +1,8 @@
 'use client';
 
-import {
-  clearTokens,
-  getAccessToken,
-} from '@/app/(authentication)/lib/token-storage';
-import { useDropdown } from '@/app/(shop)/hooks/useDropdown';
-import { useAuth } from '@/hooks/useAuth';
+import { useDropdown } from '@/app/(shop)/hooks/use-dropdown';
+import { useAuth } from '@/shared/auth/hooks/use-auth';
+import { clearTokens, getAccessToken } from '@/shared/auth/lib/token-storage';
 import { ShoppingCart, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

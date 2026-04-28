@@ -1,61 +1,24 @@
 'use client';
 
-import { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff, User, MapPin } from 'lucide-react';
-import useForm from '@/hooks/useForm';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import RegisterHeader from './partials/register-header';
-import LinkToLogin from './partials/link-to-login';
-import RegisterButton from './partials/register-button';
-import { registerApi } from '../../api/register.api';
-import ErrorMessage from '@/components/error-message';
+import RegisterHeader from './ui/register-header';
+import LinkToLogin from './ui/link-to-login';
+import RegisterButton from './ui/register-button';
+import ErrorMessage from '@/shared/common/components/error-message';
+import useRegisterForm from './hooks/use-register-form';
 
-export default function RegisterContainer() {
-  const router = useRouter();
-
-  const { form, setForm, handleChange } = useForm({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    address: '',
-    gender: 'refuse to answer',
-  });
-
-  const [showPass, setShowPass] = useState(false);
-  const [showConfirmPass, setShowConfirmPass] = useState(false);
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    try {
-      setIsSubmitting(true);
-      setErrorMessage(null);
-
-      await registerApi({
-        firstName: form.firstName,
-        lastName: form.lastName,
-        email: form.email,
-        password: form.password,
-        passwordConfirmation: form.confirmPassword,
-      });
-
-      router.push('/complete-information');
-      router.refresh();
-    } catch (error) {
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : 'Registration failed, try again.',
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+export default function Register() {
+  const {
+    form,
+    handleChange,
+    showPass,
+    setShowPass,
+    showConfirmPass,
+    setShowConfirmPass,
+    isSubmitting,
+    errorMessage,
+    handleSubmit,
+  } = useRegisterForm();
 
   return (
     <div className="flex flex-col items-center w-full max-w-md">

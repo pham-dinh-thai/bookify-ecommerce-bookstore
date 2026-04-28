@@ -1,8 +1,8 @@
-import CoverageCard from './partials/coverage-card';
-import DeliveryMethodsCard from './partials/delivery-methods-card';
-import GlobalAccessCard from './partials/global-access-card';
-import PackagingCard from './partials/packaging-card';
-import ShippingInfoHeader from './partials/shipping-info-header';
+import CoverageCard from './ui/coverage-card';
+import DeliveryMethodsCard from './ui/delivery-methods-card';
+import GlobalAccessCard from './ui/global-access-card';
+import PackagingCard from './ui/packaging-card';
+import ShippingInfoHeader from './ui/shipping-info-header';
 
 type ShippingInfoProps = {};
 
