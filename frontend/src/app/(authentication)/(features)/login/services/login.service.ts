@@ -8,15 +8,15 @@ export type LoginApiResponse = {
   refreshToken: string;
 };
 
-export async function loginApi(
-  payload: LoginApiRequest,
+export async function loginService(
+  request: LoginApiRequest,
 ): Promise<LoginApiResponse> {
   const response = await fetch(`/api/auth/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(request),
   });
 
   const data = await response.json();

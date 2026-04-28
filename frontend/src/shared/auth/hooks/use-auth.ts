@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAuthState, JwtPayload } from '@/lib/auth';
+import { getAuthState, JwtPayload } from '@/shared/auth/lib/auth';
 
 type AuthState = {
   isAuth: boolean;

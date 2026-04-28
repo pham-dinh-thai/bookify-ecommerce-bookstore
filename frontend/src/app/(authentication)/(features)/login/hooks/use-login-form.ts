@@ -1,8 +1,8 @@
-import { loginApi } from '@/app/(authentication)/api/login.api';
-import { saveTokens } from '@/app/(authentication)/lib/token-storage';
-import useForm from '@/hooks/useForm';
+import { saveTokens } from '@/app/(authentication)/(features)/login/lib/token-storage';
+import useForm from '@/shared/common/hooks/use-form';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { loginService } from '../services/login.service';
 
 export function useLoginForm() {
   const router = useRouter();
@@ -19,7 +19,7 @@ export function useLoginForm() {
     try {
       setIsSubmitting(true);
       setErrorMessage(null);
-      const { accessToken, refreshToken } = await loginApi({
+      const { accessToken, refreshToken } = await loginService({
         email: form.email,
         password: form.password,
       });

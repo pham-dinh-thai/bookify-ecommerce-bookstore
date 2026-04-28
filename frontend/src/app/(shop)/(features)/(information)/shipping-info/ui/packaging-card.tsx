@@ -1,4 +1,4 @@
-import shippingInfo from '@/assets/images/shippingInfo.jpg';
+import shippingInfo from '../../assets/images/shippingInfo.jpg';
 import Image from 'next/image';
 
 type PackagingCardProps = {};

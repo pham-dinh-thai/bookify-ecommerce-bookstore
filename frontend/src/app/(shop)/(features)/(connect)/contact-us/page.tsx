@@ -1,8 +1,8 @@
-import ContactArchivalHours from './partials/contact-archival-hours';
-import ContactEmail from './partials/contact-email';
-import ContactPhone from './partials/contact-phone';
-import ContactSocial from './partials/contact-social';
-import ContactUsHeader from './partials/contact-us-header';
+import ContactArchivalHours from './ui/contact-archival-hours';
+import ContactEmail from './ui/contact-email';
+import ContactPhone from './ui/contact-phone';
+import ContactSocial from './ui/contact-social';
+import ContactUsHeader from './ui/contact-us-header';
 
 type ContactUsProps = {};
 

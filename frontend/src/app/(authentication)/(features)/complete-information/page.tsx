@@ -1,6 +1,6 @@
 'use client';
 
-import useForm from '@/hooks/useForm';
+import useForm from '@/shared/common/hooks/use-form';
 import { Phone } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';

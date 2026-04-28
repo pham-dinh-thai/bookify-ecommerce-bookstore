@@ -1,10 +1,10 @@
-import DontHaveAnAccount from './partials/dont-have-an-account';
-import LoginForm from './partials/login-form';
-import LoginHeader from './partials/login-header';
+import DontHaveAnAccount from './ui/dont-have-an-account';
+import LoginForm from './ui/login-form';
+import LoginHeader from './ui/login-header';
 
-type LoginPresenterProps = {};
+type LoginProps = {};
 
-export default function LoginPresenter({}: LoginPresenterProps) {
+export default function Login({}: LoginProps) {
   return (
     <div className="flex flex-col items-center w-full max-w-md">
       <div

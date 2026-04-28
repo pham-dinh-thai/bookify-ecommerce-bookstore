@@ -1,10 +1,10 @@
 'use client';
 
-import ErrorMessage from '@/components/error-message';
+import ErrorMessage from '@/shared/common/components/error-message';
 import { Mail, EyeOff, Eye, Lock, LoaderCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
-import { useLoginForm } from '../hooks/useLoginForm';
+import { useLoginForm } from '../hooks/use-login-form';
 
 type LoginFormProps = {};
 

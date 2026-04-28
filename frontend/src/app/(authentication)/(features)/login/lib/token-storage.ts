@@ -1,5 +1,6 @@
-const ACCESS_TOKEN_KEY = 'bookify_access_token';
-const REFRESH_TOKEN_KEY = 'bookify_refresh_token';
+const ACCESS_TOKEN_KEY = process.env.ACCESS_TOKEN_KEY || 'bookify_access_token';
+const REFRESH_TOKEN_KEY =
+  process.env.REFRESH_TOKEN_KEY || 'bookify_refresh_token';
 
 export function saveTokens(
   accessToken: string,
