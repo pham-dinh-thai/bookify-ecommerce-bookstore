@@ -3,7 +3,7 @@ import { Email } from '../../../../shared/domain/value-objects/email/email.value
 import { Password } from '../../../../shared/domain/value-objects/password/password.value-object';
 import { UserRegistered } from './events/user-registered.event';
 
-export class AuthUser extends AggregateRoot {
+export class AuthenticableUser extends AggregateRoot {
   private constructor(
     private readonly id: string,
     private firstName: string,
@@ -23,8 +23,8 @@ export class AuthUser extends AggregateRoot {
     lastName: string,
     email: string,
     password: string,
-  ): Promise<AuthUser> {
-    const user = new AuthUser(
+  ): Promise<AuthenticableUser> {
+    const user = new AuthenticableUser(
       id,
       firstName,
       lastName,

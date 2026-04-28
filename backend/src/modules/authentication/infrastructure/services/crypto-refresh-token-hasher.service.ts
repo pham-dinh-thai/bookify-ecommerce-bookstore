@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IRefreshTokenHasherService } from '../../domain/services/refresh-token-hasher.service';
+import { IRefreshTokenHasherService } from '../../domain/authenticable-user-aggregate/services/refresh-token-hasher.service';
 import * as crypto from 'crypto';
 
 @Injectable()

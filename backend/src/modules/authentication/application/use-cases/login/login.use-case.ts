@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import {
   AUTHENTICABLE_USER_QUERY_REPOSITORY,
   type IAuthenticableUserQueryRepository,
-} from '../../../domain/repositories/authenticable-user-query.repository.interface';
+} from '../../../domain/authenticable-user-aggregate/repositories/authenticable-user-query.repository.interface';
 import { ILoginRequest } from './login.request';
 import { Password } from '../../../../../shared/domain/value-objects/password/password.value-object';
 import {
@@ -16,11 +16,11 @@ import {
 import {
   SIGN_TOKEN_SERVICE,
   type ISignTokenService,
-} from '../../../domain/services/sign-token.service';
+} from '../../../domain/authenticable-user-aggregate/services/sign-token.service';
 import {
   type IRefreshTokenHasherService,
   REFRESH_TOKEN_HASHER,
-} from '../../../domain/services/refresh-token-hasher.service';
+} from '../../../domain/authenticable-user-aggregate/services/refresh-token-hasher.service';
 
 @Injectable()
 export class LoginUseCase {
