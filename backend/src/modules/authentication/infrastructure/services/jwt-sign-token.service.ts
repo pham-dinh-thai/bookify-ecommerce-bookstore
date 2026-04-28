@@ -1,5 +1,5 @@
 import { JwtService } from '@nestjs/jwt';
-import { ISignTokenService } from '../../domain/services/sign-token.service';
+import { ISignTokenService } from '../../domain/authenticable-user-aggregate/services/sign-token.service';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
