@@ -2,6 +2,7 @@ import { AggregateRoot } from '../../../../shared/domain/aggregate-root';
 import { Email } from '../../../../shared/domain/value-objects/email/email.value-object';
 import { Password } from '../../../../shared/domain/value-objects/password/password.value-object';
 import { UserRegistered } from './events/user-registered.event';
+import { PasswordMismatchException } from './exceptions/password-mismatch.exception';
 
 export class AuthenticableUser extends AggregateRoot {
   private constructor(
@@ -17,13 +18,18 @@ export class AuthenticableUser extends AggregateRoot {
     super();
   }
 
-  public static async create(
+  public static async register(
     id: string,
     firstName: string,
     lastName: string,
     email: string,
     password: string,
+    passwordConfirmation: string,
   ): Promise<AuthenticableUser> {
+    if (password !== passwordConfirmation) {
+      throw new PasswordMismatchException();
+    }
+
     const user = new AuthenticableUser(
       id,
       firstName,
