@@ -1,6 +1,6 @@
 'use client';
 
-import { loginApi } from '@/app/(authentication)/api/auth.api';
+import { loginApi } from '@/app/(authentication)/api/login.api';
 import { saveTokens } from '@/app/(authentication)/lib/token-storage';
 import useForm from '@/hooks/useForm';
 import { Mail, EyeOff, Eye, Lock, LoaderCircle } from 'lucide-react';
@@ -63,7 +63,7 @@ export default function LoginForm({}: LoginFormProps) {
           className="absolute left-3 top-1/2 -translate-y-1/2 text-[#aab4ad]"
         />
         <input
-          type="email"
+          type="text"
           placeholder="email@example.com"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}

@@ -5,6 +5,9 @@ import { Mail, Lock, Eye, EyeOff, User, MapPin } from 'lucide-react';
 import useForm from '@/hooks/useForm';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import RegisterHeader from './partials/register-header';
+import LinkToLogin from './partials/link-to-login';
+import RegisterButton from './partials/register-button';
 
 export default function RegisterContainer() {
   const router = useRouter();
@@ -34,12 +37,10 @@ export default function RegisterContainer() {
         className="bg-white rounded-2xl p-7 w-full"
         style={{ boxShadow: '0px 4px 24px rgba(43,53,47,0.08)' }}
       >
-        <h1 className="text-[22px] font-bold text-[#1a3d2b] mb-1.5 text-center">
-          Create an account
-        </h1>
-        <p className="text-[13px] text-[#58615b] mb-7 text-center">
-          Please fill in the information to create an account
-        </p>
+        <RegisterHeader
+          title="Create an account"
+          description="Please fill in the information to create an account"
+        />
 
         {/* First Name */}
         <label className="text-[10px] font-bold tracking-[0.07em] uppercase text-[#58615b] mb-1.5 block">
@@ -87,7 +88,7 @@ export default function RegisterContainer() {
             className="absolute left-3 top-1/2 -translate-y-1/2 text-[#aab4ad]"
           />
           <input
-            type="email"
+            type="text"
             placeholder="Email123@example.com"
             value={form.email}
             onChange={(e) => handleChange('email', e.target.value)}
@@ -146,20 +147,10 @@ export default function RegisterContainer() {
         </div>
 
         {/* Submit */}
-        <button className="w-full h-[42px] bg-[#2d6a4f] text-white text-[13px] font-semibold rounded-xl hover:bg-[#1a3d2b] transition-colors mb-4">
-          Register
-        </button>
+        <RegisterButton>Register</RegisterButton>
 
         {/* Link to Login */}
-        <p className="text-[12px] text-[#58615b] text-center">
-          Already have an account{' '}
-          <Link
-            href="/login"
-            className="text-[#2d6a4f] font-semibold hover:underline"
-          >
-            Login
-          </Link>
-        </p>
+        <LinkToLogin href="/login" />
       </form>
     </div>
   );

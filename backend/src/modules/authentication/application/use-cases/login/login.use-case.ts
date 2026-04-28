@@ -21,6 +21,7 @@ import {
   type IRefreshTokenHasherService,
   REFRESH_TOKEN_HASHER,
 } from '../../../domain/authenticable-user-aggregate/services/refresh-token-hasher.service';
+import { LoginFailedException } from '../../../domain/authenticable-user-aggregate/exceptions/login-failed.exception';
 
 @Injectable()
 export class LoginUseCase {
@@ -56,11 +57,11 @@ export class LoginUseCase {
     );
 
     if (!isVerify || !authUser) {
-      return null;
+      throw new LoginFailedException();
     }
 
     if (!authUser.isActive) {
-      return null;
+      throw new LoginFailedException();
     }
 
     const accessToken = this.signTokenService.sign(
