@@ -18,6 +18,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from '../../shared/strategies/jwt.strategy';
 import { AUTHENTICABLE_USER_COMMAND_REPOSITORY } from './domain/authenticable-user-aggregate/repositories/authenticable-user-command.repository.interface';
 import { TypeOrmAuthenticableUserCommandRepository } from './infrastructure/repositories/typeorm-authenticable-user-command.repository';
+import { RegisterUseCase } from './application/use-cases/register/register.use-case';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { TypeOrmAuthenticableUserCommandRepository } from './infrastructure/repo
   providers: [
     JwtStrategy,
     LoginUseCase,
+    RegisterUseCase,
     {
       provide: AUTHENTICABLE_USER_QUERY_REPOSITORY,
       useClass: TypeOrmAuthenticableUserQueryRepository,

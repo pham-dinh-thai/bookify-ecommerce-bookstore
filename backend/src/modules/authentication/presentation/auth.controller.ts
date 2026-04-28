@@ -2,10 +2,15 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { LoginUseCase } from '../application/use-cases/login/login.use-case';
 import { LoginRequest } from './requests/login.request';
 import ExceptionHandler from '../../../shared/domain/exception/exception.handler';
+import { RegisterUseCase } from '../application/use-cases/register/register.use-case';
+import { RegisterRequest } from './requests/register.request';
 
 @Controller('auth')
 export class AuthController {
-  public constructor(private readonly loginUseCase: LoginUseCase) {}
+  public constructor(
+    private readonly loginUseCase: LoginUseCase,
+    private readonly registerUseCase: RegisterUseCase,
+  ) {}
 
   @Post('/login')
   public async login(
@@ -19,8 +24,9 @@ export class AuthController {
   }
 
   @Post('/register')
-  public async register(): Promise<void> {
+  public async register(@Body() request: RegisterRequest): Promise<void> {
     try {
+      await this.registerUseCase.execute(request);
     } catch (error) {
       ExceptionHandler.handle(error);
     }
