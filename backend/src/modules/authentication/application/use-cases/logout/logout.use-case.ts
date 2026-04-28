@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ILogoutRequest } from './logout.request';
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
@@ -12,12 +11,20 @@ export class LogoutUseCase {
     private readonly cache: ICacheRepository,
   ) {}
 
-  public async execute(request: ILogoutRequest): Promise<void> {
-    await this.cache.del(`refresh_token:${request.userId}`);
+  public async execute(
+    userId: string,
+    jti?: string,
+    exp?: number,
+  ): Promise<void> {
+    await this.cache.del(`refresh_token:${userId}`);
+
+    if (!jti || !exp) {
+      return;
+    }
 
     const now = Math.floor(Date.now() / 1000);
-    const ttl = Math.max(request.exp - now, 0);
+    const ttl = Math.max(exp - now, 1);
 
-    await this.cache.set(`blacklist_access_token:${request.jti}`, true, ttl);
+    await this.cache.set(`blacklist_access_token:${jti}`, true, ttl);
   }
 }

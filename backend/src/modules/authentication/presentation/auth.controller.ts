@@ -6,7 +6,6 @@ import { RegisterUseCase } from '../application/use-cases/register/register.use-
 import { RegisterRequest } from './requests/register.request';
 import { JwtAuthGuard } from '../../../shared/guards/jwt-auth.guard';
 import { LogoutUseCase } from '../application/use-cases/logout/logout.use-case';
-import { LogoutRequest } from './requests/logout.request';
 
 @Controller('auth')
 export class AuthController {
@@ -36,14 +35,16 @@ export class AuthController {
     }
   }
 
-  @Post('/logout')
   @UseGuards(JwtAuthGuard)
+  @Post('/logout')
   public async logout(
-    @Req() request: { user: { id: string; jti: string; exp: number } },
+    @Req() request: { user: { id: string; jti?: string; exp: number } },
   ): Promise<void> {
     try {
       await this.logoutUseCase.execute(
-        new LogoutRequest(request.user.id, request.user.jti, request.user.exp),
+        request.user.id,
+        request.user.jti,
+        request.user.exp,
       );
     } catch (error) {
       ExceptionHandler.handle(error);
