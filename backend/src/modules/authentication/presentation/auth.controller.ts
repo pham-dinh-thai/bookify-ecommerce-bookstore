@@ -17,4 +17,12 @@ export class AuthController {
       ExceptionHandler.handle(error);
     }
   }
+
+  @Post('/register')
+  public async register(): Promise<void> {
+    try {
+    } catch (error) {
+      ExceptionHandler.handle(error);
+    }
+  }
 }
