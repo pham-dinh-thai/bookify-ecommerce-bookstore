@@ -13,7 +13,7 @@ export default function ContactPhone({}: ContactPhoneProps) {
           Voice Connection
         </p>
         <p className="text-[#2b352f] font-semibold text-lg">
-          +84 (0) 24 3946 0123
+          +84 (0) 888 953 <br /> 492
         </p>
       </div>
     </div>

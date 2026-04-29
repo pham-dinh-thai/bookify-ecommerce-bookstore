@@ -12,7 +12,14 @@ export default function ContactSocial({}: ContactSocialProps) {
         <p className="text-xs uppercase tracking-widest text-[#58615b] mb-1 font-semibold">
           Instagram
         </p>
-        <p className="text-[#2b352f] font-semibold text-lg">@th41.0515</p>
+        <a
+          href="https://www.instagram.com/th41.0515"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#2b352f] font-semibold text-lg"
+        >
+          @th41.0515
+        </a>
       </div>
     </div>
   );
