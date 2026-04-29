@@ -1,5 +1,6 @@
 import { AggregateRoot } from '../../../../shared/domain/aggregate-root';
 import { Address } from './entities/address.entity';
+import { AddressProps } from './entities/address.props';
 import { CustomerId } from './value-objects/customer-id.value-object';
 import { PhoneNumber } from './value-objects/phone-number.value-object';
 
@@ -26,6 +27,12 @@ export class Customer extends AggregateRoot {
     );
 
     return customer;
+  }
+
+  public addAddress(props: AddressProps): void {
+    const address = Address.create(props);
+
+    this.addresses.push(address);
   }
 
   public getId(): string {
