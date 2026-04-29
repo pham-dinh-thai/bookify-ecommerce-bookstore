@@ -30,6 +30,11 @@ import {
   CUSTOMER_MODULE_USERS_COMMAND_REPOSITORY,
   type IUsersCommandRepository,
 } from '../../../domain/customer-aggregate/repositories/users-command.repository.interface';
+import {
+  type IPhoneNumberExistsChecker,
+  PHONE_NUMBER_EXISTS_CHECKER,
+} from '../../../domain/customer-aggregate/services/phone-number-exists-checker.service';
+import { PhoneNumberAlreadyBeenUseException } from '../../../domain/customer-aggregate/exceptions/phone-number-already-been-use.exception';
 
 @Injectable()
 export class CompleteInformationUseCase {
@@ -54,12 +59,23 @@ export class CompleteInformationUseCase {
 
     @Inject(CUSTOMER_MODULE_USERS_COMMAND_REPOSITORY)
     private readonly usersCommandRepository: IUsersCommandRepository,
+
+    @Inject(PHONE_NUMBER_EXISTS_CHECKER)
+    private readonly phoneNumberExistsChecker: IPhoneNumberExistsChecker,
   ) {}
 
   public async execute(
     email: string,
     request: ICompleteInformationRequest,
   ): Promise<void> {
+    const isPhoneExists = await this.phoneNumberExistsChecker.exists(
+      request.phoneNumber,
+    );
+
+    if (isPhoneExists) {
+      throw new PhoneNumberAlreadyBeenUseException();
+    }
+
     const userId = await this.queryRepository.findIdByEmail(email);
 
     if (!userId) {
