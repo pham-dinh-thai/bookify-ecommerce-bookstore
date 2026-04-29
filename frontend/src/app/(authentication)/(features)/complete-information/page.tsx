@@ -1,7 +1,8 @@
 'use client';
 
 import useForm from '@/shared/common/hooks/use-form';
-import { Phone } from 'lucide-react';
+import { ArrowBigRight, Phone } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -107,8 +108,18 @@ export default function CompleteInformation() {
 
         {/* Submit */}
         <button className="w-full h-[42px] bg-[#2d6a4f] text-white text-[13px] font-semibold rounded-xl hover:bg-[#1a3d2b] transition-colors mb-4">
-          Register
+          Confirm information
         </button>
+
+        <p className="text-center text-[13px] text-[#58615b] mt-4">
+          <Link
+            href="/login"
+            className="text-[#2d6a4f] font-bold hover:opacity-70"
+          >
+            I would like to complete information later{' '}
+            <ArrowBigRight size={14} className="inline-block ml-1" /> Login
+          </Link>
+        </p>
       </form>
     </div>
   );
