@@ -1,4 +1,4 @@
-import { Gender } from '../../../domain/customer-aggregate/enums/gender.enum';
+import { Gender } from '../../../../../shared/domain/enums/gender.enum';
 
 export interface ICompleteInformationRequest {
   phoneNumber: string;

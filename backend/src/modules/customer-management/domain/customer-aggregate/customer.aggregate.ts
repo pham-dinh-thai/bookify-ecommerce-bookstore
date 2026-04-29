@@ -1,7 +1,7 @@
 import { AggregateRoot } from '../../../../shared/domain/aggregate-root';
+import { Gender } from '../../../../shared/domain/enums/gender.enum';
 import { Address } from './entities/address.entity';
 import { AddressProps } from './entities/address.props';
-import { Gender } from './enums/gender.enum';
 import { CustomerId } from './value-objects/customer-id.value-object';
 import { PhoneNumber } from './value-objects/phone-number.value-object';
 

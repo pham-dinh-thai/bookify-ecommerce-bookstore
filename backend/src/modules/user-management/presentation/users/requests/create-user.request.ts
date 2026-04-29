@@ -6,7 +6,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { ICreateUserRequest } from '../../../application/user-use-cases/create-user/create-user.request';
-import { Gender } from '../../../domain/user-aggregate/enums/gender.enum';
+import { Gender } from '../../../../../shared/domain/enums/gender.enum';
 
 export class CreateUserRequest implements ICreateUserRequest {
   @IsNotEmpty()

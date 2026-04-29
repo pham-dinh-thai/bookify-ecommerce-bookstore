@@ -1,6 +1,6 @@
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { ICompleteInformationRequest } from '../../../application/customer-use-cases/complete-information/complete-information.request';
-import { Gender } from '../../../domain/customer-aggregate/enums/gender.enum';
+import { Gender } from '../../../../../shared/domain/enums/gender.enum';
 
 export class CompleteInformationRequest implements ICompleteInformationRequest {
   @IsString()

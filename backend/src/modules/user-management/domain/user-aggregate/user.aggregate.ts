@@ -1,7 +1,7 @@
 import { AggregateRoot } from '../../../../shared/domain/aggregate-root';
 import { Email } from '../../../../shared/domain/value-objects/email/email.value-object';
 import { Password } from '../../../../shared/domain/value-objects/password/password.value-object';
-import { Gender } from './enums/gender.enum';
+import { Gender } from '../../../../shared/domain/enums/gender.enum';
 import { PasswordChanged } from './events/password-changed';
 import { UserCreated } from './events/user-created.event';
 import { UserDeactivated } from './events/user-deactivated.event';
