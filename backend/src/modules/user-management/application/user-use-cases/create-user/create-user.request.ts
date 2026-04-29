@@ -1,4 +1,4 @@
-import { Gender } from '../../../domain/user-aggregate/enums/gender.enum';
+import { Gender } from '../../../../../shared/domain/enums/gender.enum';
 
 export interface ICreateUserRequest {
   firstName: string;

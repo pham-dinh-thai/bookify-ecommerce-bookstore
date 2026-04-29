@@ -1,3 +1,4 @@
+import { AddressProps } from './address.props';
 import { AddressId } from './value-objects/address-id.value-object';
 import { Street } from './value-objects/street.value-object';
 
@@ -7,34 +8,20 @@ export class Address {
     private street: Street,
     private provinceCode: string,
     private provinceName: string,
-    private districtCode: string,
-    private districtName: string,
     private wardCode: string,
     private wardName: string,
     private isDefault: boolean,
   ) {}
 
-  public static create(
-    id: string,
-    street: string,
-    provinceCode: string,
-    provinceName: string,
-    districtCode: string,
-    districtName: string,
-    wardCode: string,
-    wardName: string,
-    isDefault: boolean,
-  ): Address {
+  public static create(props: AddressProps): Address {
     return new Address(
-      AddressId.create(id),
-      new Street(street),
-      provinceCode,
-      provinceName,
-      districtCode,
-      districtName,
-      wardCode,
-      wardName,
-      isDefault,
+      AddressId.create(props.id),
+      new Street(props.street),
+      props.provinceCode,
+      props.provinceName,
+      props.wardCode,
+      props.wardName,
+      props.isDefault,
     );
   }
 
@@ -52,14 +39,6 @@ export class Address {
 
   public getProvinceName(): string {
     return this.provinceName;
-  }
-
-  public getDistrictCode(): string {
-    return this.districtCode;
-  }
-
-  public getDistrictName(): string {
-    return this.districtName;
   }
 
   public getWardCode(): string {
