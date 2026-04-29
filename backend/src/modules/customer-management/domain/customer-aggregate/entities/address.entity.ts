@@ -8,8 +8,6 @@ export class Address {
     private street: Street,
     private provinceCode: string,
     private provinceName: string,
-    private districtCode: string,
-    private districtName: string,
     private wardCode: string,
     private wardName: string,
     private isDefault: boolean,
@@ -21,8 +19,6 @@ export class Address {
       new Street(props.street),
       props.provinceCode,
       props.provinceName,
-      props.districtCode,
-      props.districtName,
       props.wardCode,
       props.wardName,
       props.isDefault,
@@ -43,14 +39,6 @@ export class Address {
 
   public getProvinceName(): string {
     return this.provinceName;
-  }
-
-  public getDistrictCode(): string {
-    return this.districtCode;
-  }
-
-  public getDistrictName(): string {
-    return this.districtName;
   }
 
   public getWardCode(): string {

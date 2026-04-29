@@ -14,10 +14,17 @@ import {
   type IUnitOfWork,
   UNIT_OF_WORK,
 } from '../../../../../shared/unit-of-work/application/unit-of-work';
+import {
+  CUSTOMERS_COMMAND_REPOSITORY,
+  type ICustomersCommandRepository,
+} from '../../../domain/customer-aggregate/repositories/customers-command.repository.interface';
 
 @Injectable()
 export class CompleteInformationUseCase {
   public constructor(
+    @Inject(CUSTOMERS_COMMAND_REPOSITORY)
+    private readonly commandRepository: ICustomersCommandRepository,
+
     @Inject(CUSTOMERS_QUERY_REPOSITORY)
     private readonly queryRepository: ICustomersQueryRepository,
 
@@ -44,6 +51,8 @@ export class CompleteInformationUseCase {
     const addressId = this.uuid.generate();
     customer.addAddress({ id: addressId, isDefault: true, ...request.address });
 
-    await this.unitOfWork.execute(async () => {});
+    await this.unitOfWork.execute(async () => {
+      await this.commandRepository.save(customer);
+    });
   }
 }
