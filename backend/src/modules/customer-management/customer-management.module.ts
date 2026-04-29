@@ -15,6 +15,8 @@ import { TypeOrmCustomersCommandRepository } from './infrastructure/repositories
 import { AddressTypeOrm } from './infrastructure/entities/address.entity';
 import { ADDRESSES_COMMAND_REPOSITORY } from './domain/customer-aggregate/entities/repositories/addresses-command.repository.interface';
 import { TypeOrmAddressesCommandRepository } from './infrastructure/repositories/addresses/typeorm-addresses-command.repository';
+import { CUSTOMER_MODULE_USERS_COMMAND_REPOSITORY } from './domain/customer-aggregate/repositories/users-command.repository.interface';
+import { TypeOrmUsersCommandRepository } from './infrastructure/repositories/users/typeorm-users-command.repository';
 
 @Module({
   imports: [
@@ -39,11 +41,16 @@ import { TypeOrmAddressesCommandRepository } from './infrastructure/repositories
       provide: ADDRESSES_COMMAND_REPOSITORY,
       useClass: TypeOrmAddressesCommandRepository,
     },
+    {
+      provide: CUSTOMER_MODULE_USERS_COMMAND_REPOSITORY,
+      useClass: TypeOrmUsersCommandRepository,
+    },
   ],
   exports: [
     CUSTOMERS_QUERY_REPOSITORY,
     CUSTOMERS_COMMAND_REPOSITORY,
     ADDRESSES_COMMAND_REPOSITORY,
+    CUSTOMER_MODULE_USERS_COMMAND_REPOSITORY,
   ],
 })
 export class CustomerManagementModule {}

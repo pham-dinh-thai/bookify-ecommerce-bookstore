@@ -2,7 +2,10 @@ import { Address } from '../../domain/customer-aggregate/entities/address.entity
 import { AddressTypeOrm } from '../entities/address.entity';
 
 export class AddressesMapper {
-  public static toTypeOrm(address: Address): AddressTypeOrm {
+  public static toTypeOrm(
+    customerId: string,
+    address: Address,
+  ): AddressTypeOrm {
     const addressTypeOrm = new AddressTypeOrm();
 
     addressTypeOrm.id = address.getId();
@@ -12,6 +15,7 @@ export class AddressesMapper {
     addressTypeOrm.wardCode = address.getWardCode();
     addressTypeOrm.wardName = address.getWardName();
     addressTypeOrm.isDefault = address.getIsDefault();
+    addressTypeOrm.customerId = customerId;
 
     return addressTypeOrm;
   }

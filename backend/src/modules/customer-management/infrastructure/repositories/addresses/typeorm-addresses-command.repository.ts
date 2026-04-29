@@ -9,9 +9,9 @@ import { AddressesMapper } from '../../mappers/addresses.mapper';
 export class TypeOrmAddressesCommandRepository implements IAddressesCommandRepository {
   public constructor(private readonly unitOfWork: TypeOrmUnitOfWork) {}
 
-  public async save(address: Address): Promise<void> {
+  public async save(customerId: string, address: Address): Promise<void> {
     await this.unitOfWork
       .getManager()
-      .save(AddressTypeOrm, AddressesMapper.toTypeOrm(address));
+      .save(AddressTypeOrm, AddressesMapper.toTypeOrm(customerId, address));
   }
 }

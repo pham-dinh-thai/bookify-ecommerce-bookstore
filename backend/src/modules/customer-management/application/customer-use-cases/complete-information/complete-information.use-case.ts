@@ -18,6 +18,18 @@ import {
   CUSTOMERS_COMMAND_REPOSITORY,
   type ICustomersCommandRepository,
 } from '../../../domain/customer-aggregate/repositories/customers-command.repository.interface';
+import {
+  ADDRESSES_COMMAND_REPOSITORY,
+  type IAddressesCommandRepository,
+} from '../../../domain/customer-aggregate/entities/repositories/addresses-command.repository.interface';
+import {
+  AUDIT_LOG_COMMAND_REPOSITORY,
+  type IAuditLogCommandRepository,
+} from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
+import {
+  CUSTOMER_MODULE_USERS_COMMAND_REPOSITORY,
+  type IUsersCommandRepository,
+} from '../../../domain/customer-aggregate/repositories/users-command.repository.interface';
 
 @Injectable()
 export class CompleteInformationUseCase {
@@ -33,6 +45,15 @@ export class CompleteInformationUseCase {
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
+
+    @Inject(ADDRESSES_COMMAND_REPOSITORY)
+    private readonly addressCommandRepository: IAddressesCommandRepository,
+
+    @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
+    private readonly auditLogCommandRepository: IAuditLogCommandRepository,
+
+    @Inject(CUSTOMER_MODULE_USERS_COMMAND_REPOSITORY)
+    private readonly usersCommandRepository: IUsersCommandRepository,
   ) {}
 
   public async execute(
@@ -46,13 +67,48 @@ export class CompleteInformationUseCase {
     }
 
     const id = this.uuid.generate();
-    const customer = Customer.create(id, userId, request.phoneNumber);
+    const customer = Customer.create(
+      id,
+      userId,
+      request.gender,
+      request.phoneNumber,
+    );
 
     const addressId = this.uuid.generate();
-    customer.addAddress({ id: addressId, isDefault: true, ...request.address });
+    const address = customer.addAddress({
+      id: addressId,
+      isDefault: true,
+      ...request.address,
+    });
 
     await this.unitOfWork.execute(async () => {
       await this.commandRepository.save(customer);
+
+      await this.usersCommandRepository.updateGender(
+        customer.getUserId(),
+        customer.getGender(),
+      );
+
+      await this.addressCommandRepository.save(customer.getId(), address);
+
+      await this.auditLogCommandRepository.write(
+        'COMPLETE_CUSTOMER_INFORMATION',
+        customer.getUserId(),
+        'customer-management',
+        'customers',
+        {
+          customerId: customer.getId(),
+          phoneNumber: request.phoneNumber,
+          address: {
+            addressId: address.getId(),
+            provinceCode: request.address.provinceCode,
+            provinceName: request.address.provinceName,
+            wardCode: request.address.wardCode,
+            wardName: request.address.wardName,
+            street: request.address.street,
+          },
+        },
+      );
     });
   }
 }
