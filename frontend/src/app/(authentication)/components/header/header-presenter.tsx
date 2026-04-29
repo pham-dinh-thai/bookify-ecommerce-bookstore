@@ -1,4 +1,4 @@
-import { BookOpen } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 type AuthHeaderPresenterProps = {
@@ -12,13 +12,10 @@ export default function AuthHeaderPresenter({
     <header className="flex items-center justify-between px-8 py-5">
       <Link
         href="/"
-        className="flex gap-1 text-[15px] font-bold text-[#2d6a4f]"
+        className="flex items-center gap-1 text-sm font-bold tracking-tight shrink-0 text-[#2d6a4f]"
       >
-        <BookOpen /> {appName}
+        <Image src="/icon.png" alt="Logo" width={32} height={32} /> {appName}
       </Link>
-      <span className="text-[11px] font-semibold tracking-[0.08em] uppercase text-[#047857B3]">
-        The Digital Archivist
-      </span>
     </header>
   );
 }

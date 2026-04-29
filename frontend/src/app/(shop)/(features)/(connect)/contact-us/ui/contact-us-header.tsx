@@ -7,7 +7,7 @@ export default function ContactUsHeader({}: ContactUsHeaderProps) {
         Contact Our Store
       </span>
       <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-[#2b352f] mb-8 leading-tight">
-        Connect with the <br />
+        Connect with <br />
         <span className="text-[#3f6754] italic font-medium">Bookify</span>
       </h1>
       <p className="text-lg text-[#58615b] max-w-2xl mx-auto leading-relaxed">

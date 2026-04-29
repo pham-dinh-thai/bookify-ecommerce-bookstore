@@ -17,6 +17,8 @@ import { ADDRESSES_COMMAND_REPOSITORY } from './domain/customer-aggregate/entiti
 import { TypeOrmAddressesCommandRepository } from './infrastructure/repositories/addresses/typeorm-addresses-command.repository';
 import { CUSTOMER_MODULE_USERS_COMMAND_REPOSITORY } from './domain/customer-aggregate/repositories/users-command.repository.interface';
 import { TypeOrmUsersCommandRepository } from './infrastructure/repositories/users/typeorm-users-command.repository';
+import { PHONE_NUMBER_EXISTS_CHECKER } from './domain/customer-aggregate/services/phone-number-exists-checker.service';
+import { PhoneNumberExistsCheckerService } from './infrastructure/services/phone-number-exists-checker.service';
 
 @Module({
   imports: [
@@ -45,12 +47,17 @@ import { TypeOrmUsersCommandRepository } from './infrastructure/repositories/use
       provide: CUSTOMER_MODULE_USERS_COMMAND_REPOSITORY,
       useClass: TypeOrmUsersCommandRepository,
     },
+    {
+      provide: PHONE_NUMBER_EXISTS_CHECKER,
+      useClass: PhoneNumberExistsCheckerService,
+    },
   ],
   exports: [
     CUSTOMERS_QUERY_REPOSITORY,
     CUSTOMERS_COMMAND_REPOSITORY,
     ADDRESSES_COMMAND_REPOSITORY,
     CUSTOMER_MODULE_USERS_COMMAND_REPOSITORY,
+    PHONE_NUMBER_EXISTS_CHECKER,
   ],
 })
 export class CustomerManagementModule {}

@@ -13,7 +13,9 @@ export default function ContactEmail({}: ContactEmailProps) {
           Electronic Mail
         </p>
         <p className="text-[#2b352f] font-semibold text-lg">
-          bookify@archivist.com
+          phamdinhthai2005
+          <br />
+          @gmail.com
         </p>
       </div>
     </div>

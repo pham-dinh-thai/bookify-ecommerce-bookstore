@@ -13,7 +13,7 @@ export default function ContactUs({}: ContactUsProps) {
 
       <main className="pb-32 px-6 max-w-5xl mx-auto">
         <section className="max-w-2xl mx-auto space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
             <ContactEmail />
 
             <ContactPhone />
