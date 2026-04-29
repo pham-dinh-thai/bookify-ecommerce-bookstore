@@ -37,7 +37,9 @@ export default function useRegisterForm() {
         passwordConfirmation: form.confirmPassword,
       });
 
-      router.push('/complete-information');
+      router.push(
+        `/account/complete-information?user=${encodeURIComponent(form.email)}`,
+      );
       router.refresh();
     } catch (error) {
       setErrorMessage(
