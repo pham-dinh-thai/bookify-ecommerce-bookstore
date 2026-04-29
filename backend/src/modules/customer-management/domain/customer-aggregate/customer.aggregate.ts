@@ -10,4 +10,30 @@ export class Customer extends AggregateRoot {
   ) {
     super();
   }
+
+  public static create(
+    id: string,
+    userId: string,
+    phoneNumber: string,
+  ): Customer {
+    const customer = new Customer(
+      CustomerId.create(id),
+      userId,
+      PhoneNumber.create(phoneNumber),
+    );
+
+    return customer;
+  }
+
+  public getId(): string {
+    return this.id.getValue();
+  }
+
+  public getUserId(): string {
+    return this.userId;
+  }
+
+  public getPhoneNumber(): string {
+    return this.phoneNumber.getValue();
+  }
 }
