@@ -12,7 +12,7 @@ export class AuthenticableUser extends AggregateRoot {
     private email: Email,
     private gender: string = 'other', // Customers can choose gender later
     private password: Password,
-    private isActive: boolean = false, // When customer register an account, the account is inactive by default, and they need to verify
+    private isActive: boolean = true,
     private roleId: string = 'user', // When customer register an account, it will be user
   ) {
     super();
@@ -37,7 +37,7 @@ export class AuthenticableUser extends AggregateRoot {
       Email.create(email),
       'other',
       await Password.create(password),
-      false,
+      true,
       'user',
     );
 
