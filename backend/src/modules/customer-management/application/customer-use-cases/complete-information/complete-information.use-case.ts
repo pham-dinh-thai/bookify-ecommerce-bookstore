@@ -1,0 +1,49 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { ICompleteInformationRequest } from './complete-information.request';
+import {
+  CUSTOMERS_QUERY_REPOSITORY,
+  type ICustomersQueryRepository,
+} from '../../../domain/customer-aggregate/repositories/customers-query.repository.interface';
+import { CustomerNotFoundException } from '../../../domain/customer-aggregate/exceptions/customer-not-found.exception';
+import { Customer } from '../../../domain/customer-aggregate/customer.aggregate';
+import {
+  type IUuidGenerator,
+  UUID_GENERATOR,
+} from '../../../../../shared/uuid/domain/uuid-generator.interface';
+import {
+  type IUnitOfWork,
+  UNIT_OF_WORK,
+} from '../../../../../shared/unit-of-work/application/unit-of-work';
+
+@Injectable()
+export class CompleteInformationUseCase {
+  public constructor(
+    @Inject(CUSTOMERS_QUERY_REPOSITORY)
+    private readonly queryRepository: ICustomersQueryRepository,
+
+    @Inject(UUID_GENERATOR)
+    private readonly uuid: IUuidGenerator,
+
+    @Inject(UNIT_OF_WORK)
+    private readonly unitOfWork: IUnitOfWork,
+  ) {}
+
+  public async execute(
+    email: string,
+    request: ICompleteInformationRequest,
+  ): Promise<void> {
+    const userId = await this.queryRepository.findIdByEmail(email);
+
+    if (!userId) {
+      throw new CustomerNotFoundException(email);
+    }
+
+    const id = this.uuid.generate();
+    const customer = Customer.create(id, userId, request.phoneNumber);
+
+    const addressId = this.uuid.generate();
+    customer.addAddress({ id: addressId, isDefault: true, ...request.address });
+
+    await this.unitOfWork.execute(async () => {});
+  }
+}
