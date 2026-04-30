@@ -22,7 +22,10 @@ import {
   AUDIT_LOG_COMMAND_REPOSITORY,
   type IAuditLogCommandRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
-import { first } from 'rxjs';
+import {
+  type ISignTokenService,
+  SIGN_TOKEN_SERVICE,
+} from '../../../domain/authenticable-user-aggregate/services/sign-token.service';
 
 @Injectable()
 export class RegisterUseCase {
@@ -41,9 +44,14 @@ export class RegisterUseCase {
 
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogRepository: IAuditLogCommandRepository,
+
+    @Inject(SIGN_TOKEN_SERVICE)
+    private readonly signTokenService: ISignTokenService,
   ) {}
 
-  public async execute(request: IRegisterRequest): Promise<void> {
+  public async execute(
+    request: IRegisterRequest,
+  ): Promise<{ tempToken: string }> {
     const existingUser = await this.queryRepository.findByEmail(request.email);
 
     if (existingUser) {
@@ -77,5 +85,15 @@ export class RegisterUseCase {
         },
       );
     });
+
+    const tempToken = this.signTokenService.sign(
+      {
+        userId: authUser.getId(),
+      },
+      process.env.TEMP_TOKEN_SECRET!,
+      '30m',
+    );
+
+    return { tempToken };
   }
 }
