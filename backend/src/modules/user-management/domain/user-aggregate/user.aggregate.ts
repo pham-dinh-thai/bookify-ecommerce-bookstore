@@ -5,19 +5,19 @@ import { Gender } from '../../../../shared/domain/enums/gender.enum';
 import { PasswordChanged } from './events/password-changed';
 import { UserCreated } from './events/user-created.event';
 import { UserDeactivated } from './events/user-deactivated.event';
-import { FirstNameEmptyException } from './exceptions/first-name-empty.exception';
 import { GenderEmptyException } from './exceptions/gender-empty.exception';
 import { GenderInvalidOptionException } from './exceptions/gender-invalid-option.exception';
-import { LastNameEmptyException } from './exceptions/last-name-empty.exception';
 import { PasswordNotMatchingException } from './exceptions/password-not-matching.exception';
 import { PasswordVerifyFailed } from './exceptions/password-verify-failed.exception';
-import { UserIdEmptyException } from './exceptions/user-id-empty.exception';
+import { UserId } from './value-objects/user-id.value-object';
+import { Name } from './value-objects/name.value-object';
+import { UserUpdated } from './events/user-updated.event';
 
 export class User extends AggregateRoot {
   private constructor(
-    private readonly id: string,
-    private firstName: string,
-    private lastName: string,
+    private readonly id: UserId,
+    private firstName: Name,
+    private lastName: Name,
     private email: Email,
     private gender: Gender,
     private password: Password,
@@ -36,18 +36,6 @@ export class User extends AggregateRoot {
     password: string,
     roleId: string,
   ): Promise<User> {
-    if (!id) {
-      throw new UserIdEmptyException();
-    }
-
-    if (!firstName) {
-      throw new FirstNameEmptyException();
-    }
-
-    if (!lastName) {
-      throw new LastNameEmptyException();
-    }
-
     if (!gender) {
       throw new GenderEmptyException();
     }
@@ -58,9 +46,9 @@ export class User extends AggregateRoot {
     }
 
     const user = new User(
-      id,
-      firstName,
-      lastName,
+      UserId.create(id),
+      Name.create(firstName),
+      Name.create(lastName),
       Email.create(email),
       gender,
       await Password.create(password),
@@ -84,9 +72,9 @@ export class User extends AggregateRoot {
     roleId: string,
   ): User {
     return new User(
-      id,
-      firstName,
-      lastName,
+      UserId.create(id),
+      Name.create(firstName),
+      Name.create(lastName),
       Email.create(email),
       gender as Gender,
       Password.fromHashed(password),
@@ -95,10 +83,58 @@ export class User extends AggregateRoot {
     );
   }
 
+  public update(
+    firstName: string,
+    lastName: string,
+    email: string,
+    gender: Gender,
+    roleId: string,
+  ): void {
+    if (!gender) {
+      throw new GenderEmptyException();
+    }
+
+    const isIncludesInGender = Object.values(Gender).includes(gender);
+    if (!isIncludesInGender) {
+      throw new GenderInvalidOptionException(gender);
+    }
+
+    let hasChanges = false;
+
+    if (this.firstName.getValue() !== firstName) {
+      this.firstName = Name.create(firstName);
+      hasChanges = true;
+    }
+
+    if (this.lastName.getValue() !== lastName) {
+      this.lastName = Name.create(lastName);
+      hasChanges = true;
+    }
+
+    if (this.email.getValue() !== email) {
+      this.email = Email.create(email);
+      hasChanges = true;
+    }
+
+    if (this.gender !== gender) {
+      this.gender = gender;
+      hasChanges = true;
+    }
+
+    if (this.roleId !== roleId) {
+      this.roleId = roleId;
+      hasChanges = true;
+    }
+
+    if (hasChanges) {
+      this.addDomainEvent(new UserUpdated(this.id.getValue()));
+    }
+  }
+
   public deactivate(): void {
     this.isActive = false;
 
-    this.addDomainEvent(new UserDeactivated(this.id));
+    this.addDomainEvent(new UserDeactivated(this.id.getValue()));
   }
 
   public async changePassword(
@@ -120,7 +156,7 @@ export class User extends AggregateRoot {
 
     this.password = password;
 
-    this.addDomainEvent(new PasswordChanged(this.id));
+    this.addDomainEvent(new PasswordChanged(this.id.getValue()));
   }
 
   public getIsActive(): boolean {
@@ -132,7 +168,7 @@ export class User extends AggregateRoot {
   }
 
   public getId(): string {
-    return this.id;
+    return this.id.getValue();
   }
 
   public getEmail(): string {
@@ -140,11 +176,11 @@ export class User extends AggregateRoot {
   }
 
   public getFirstName(): string {
-    return this.firstName;
+    return this.firstName.getValue();
   }
 
   public getLastName(): string {
-    return this.lastName;
+    return this.lastName.getValue();
   }
 
   public getGender(): Gender {

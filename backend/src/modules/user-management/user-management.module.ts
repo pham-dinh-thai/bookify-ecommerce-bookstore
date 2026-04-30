@@ -17,6 +17,10 @@ import { RolesModule } from '../authorization/roles.module';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { EMAIL_EXISTS_CHECKER } from './domain/user-aggregate/services/email-exists-checker.service';
 import { EmailExistsChecker } from './infrastructure/services/email-exists-checker.service';
+import { UpdateUserUseCase } from './application/user-use-cases/update-user/update-user.use-case';
+import { USER_EXISTS_CHECKER } from './domain/user-aggregate/services/user-exists-checker.service';
+import { UserExistsChecker } from './infrastructure/services/user-exists-checker.service';
+import { DeactivateUserUseCase } from './application/user-use-cases/deactivate-user/deactivate-user.use-case';
 
 @Module({
   imports: [
@@ -32,6 +36,8 @@ import { EmailExistsChecker } from './infrastructure/services/email-exists-check
     FindUsersUseCase,
     FindOneUserUseCase,
     CreateUserUseCase,
+    UpdateUserUseCase,
+    DeactivateUserUseCase,
     {
       provide: USERS_QUERY_REPOSITORY,
       useClass: TypeOrmUsersQueryRepository,
@@ -43,6 +49,10 @@ import { EmailExistsChecker } from './infrastructure/services/email-exists-check
     {
       provide: EMAIL_EXISTS_CHECKER,
       useClass: EmailExistsChecker,
+    },
+    {
+      provide: USER_EXISTS_CHECKER,
+      useClass: UserExistsChecker,
     },
   ],
   exports: [
