@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { FindUsersUseCase } from '../../application/user-use-cases/find-users/find-users.use-case';
 import { FindOneUserUseCase } from '../../application/user-use-cases/find-one-users/find-one-user.use-case';
 import { FindUsersResponse } from '../../application/user-use-cases/find-users/find-users.response';
@@ -10,6 +21,8 @@ import { JwtAuthGuard } from '../../../../shared/guards/jwt-auth.guard';
 import { RoleGuard } from '../../../../shared/guards/role.guard';
 import { Roles } from '../../../../shared/decorators/roles.decorator';
 import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
+import { UpdateUserRequest } from './requests/update-user.request';
+import { UpdateUserUseCase } from '../../application/user-use-cases/update-user/update-user.use-case';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RoleGuard)
@@ -19,6 +32,7 @@ export class UsersController {
     private readonly findUsersUseCase: FindUsersUseCase,
     private readonly findOneUserUseCase: FindOneUserUseCase,
     private readonly createUserUseCase: CreateUserUseCase,
+    private readonly updateUserUseCase: UpdateUserUseCase,
   ) {}
 
   @Get()
@@ -48,4 +62,21 @@ export class UsersController {
       ExceptionHandler.handle(error);
     }
   }
+
+  @Put(':id')
+  public async update(
+    @Param('id') id: string,
+    @Body() request: UpdateUserRequest,
+    @CurrentUser('userId') actorId: string,
+  ) {
+    try {
+      await this.updateUserUseCase.execute(id, request, actorId);
+    } catch (error) {
+      ExceptionHandler.handle(error);
+    }
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async remove() {}
 }
