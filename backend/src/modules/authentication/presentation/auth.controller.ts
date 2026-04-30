@@ -27,9 +27,11 @@ export class AuthController {
   }
 
   @Post('/register')
-  public async register(@Body() request: RegisterRequest): Promise<void> {
+  public async register(
+    @Body() request: RegisterRequest,
+  ): Promise<{ tempToken: string }> {
     try {
-      await this.registerUseCase.execute(request);
+      return await this.registerUseCase.execute(request);
     } catch (error) {
       ExceptionHandler.handle(error);
     }

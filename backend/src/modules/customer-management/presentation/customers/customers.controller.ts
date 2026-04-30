@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Param, Post, Query } from '@nestjs/common';
 import ExceptionHandler from '../../../../shared/domain/exception/exception.handler';
 import { CompleteInformationRequest } from './requests/complete-information.request';
 import { CompleteInformationUseCase } from '../../application/customer-use-cases/complete-information/complete-information.use-case';
@@ -9,13 +9,13 @@ export class CustomersController {
     private readonly completeInformationUseCase: CompleteInformationUseCase,
   ) {}
 
-  @Post(':email/complete-information')
+  @Post('complete-information')
   public async completeInformation(
-    @Param('email') email: string,
+    @Query('token') token: string,
     @Body() request: CompleteInformationRequest,
   ) {
     try {
-      await this.completeInformationUseCase.execute(email, request);
+      await this.completeInformationUseCase.execute(token, request);
     } catch (error) {
       ExceptionHandler.handle(error);
     }
