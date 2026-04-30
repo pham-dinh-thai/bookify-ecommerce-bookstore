@@ -3,12 +3,18 @@
 import useForm from '@/shared/common/hooks/use-form';
 import { ArrowBigRight, MapPin, MapPinIcon, Phone, User } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { completeInformationService } from './services/complete-information.service';
+import ErrorMessage from '@/shared/common/components/error-message';
+import { getProvinces, getWardsByProvince } from './services/provinces.service';
+
+type Province = { code: string; name: string };
+type Ward = { code: string; name: string };
 
 export default function CompleteInformation() {
   const router = useRouter();
-  const [error, setError] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const { form, setForm, handleChange } = useForm({
     phoneNumber: '',
@@ -18,10 +24,50 @@ export default function CompleteInformation() {
     street: '',
   });
 
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token') ?? '';
+
+  const [provinces, setProvinces] = useState<Province[]>([]);
+  const [wards, setWards] = useState<Ward[]>([]);
+
+  useEffect(() => {
+    getProvinces().then(setProvinces);
+  }, []);
+
+  useEffect(() => {
+    if (form.province) {
+      getWardsByProvince(form.province).then(setWards);
+    }
+  }, [form.province]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const selectedProvince = provinces.find(
+        (p: any) => p.code == form.province,
+      );
+      const selectedWard = wards.find((w: any) => w.code == form.ward);
+      await completeInformationService(token, {
+        phoneNumber: form.phoneNumber,
+        gender: form.gender,
+        address: {
+          provinceCode: form.province,
+          provinceName: selectedProvince?.name ?? '',
+          wardCode: form.ward,
+          wardName: selectedWard?.name ?? '',
+          street: form.street,
+        },
+      });
+      router.push('/login');
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : 'Failed');
+    }
+  };
+
   return (
     <div className="flex flex-col items-center w-full max-w-md">
       <form
-        onSubmit={(e) => {}}
+        onSubmit={handleSubmit}
         className="bg-white rounded-2xl p-7 w-full"
         style={{ boxShadow: '0px 4px 24px rgba(43,53,47,0.08)' }}
       >
@@ -89,9 +135,12 @@ export default function CompleteInformation() {
               onChange={(e) => handleChange('province', e.target.value)}
               className="w-full h-[42px] rounded-xl border-[1.5px] border-[#e8ede9] bg-[#f7faf5] pl-9 pr-3 text-[13px] text-[#1a3d2b] outline-none focus:border-[#2d6a4f] focus:bg-white transition-colors"
             >
-              <option value="hanoi">Hanoi</option>
-              <option value="hochiminh">Ho Chi Minh</option>
-              <option value="danang">Da Nang</option>
+              <option value="">-- Select province --</option>
+              {provinces.map((p: any) => (
+                <option key={p.code} value={p.code}>
+                  {p.name}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -109,11 +158,15 @@ export default function CompleteInformation() {
             <select
               value={form.ward}
               onChange={(e) => handleChange('ward', e.target.value)}
-              className="w-full h-[42px] rounded-xl border-[1.5px] border-[#e8ede9] bg-[#f7faf5] pl-9 pr-3 text-[13px] text-[#1a3d2b] outline-none focus:border-[#2d6a4f] focus:bg-white transition-colors"
+              disabled={!form.province}
+              className="w-full h-[42px] rounded-xl border-[1.5px] border-[#e8ede9] bg-[#f7faf5] pl-9 pr-3 text-[13px] text-[#1a3d2b] outline-none focus:border-[#2d6a4f] focus:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <option value="hoankiem">Hoan Kiem</option>
-              <option value="badinh">Ba Dinh</option>
-              <option value="caugiay">Cau Giay</option>
+              <option value="">-- Select ward --</option>
+              {wards.map((w: any) => (
+                <option key={w.code} value={w.code}>
+                  {w.name}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -137,6 +190,8 @@ export default function CompleteInformation() {
             />
           </div>
         </div>
+
+        <ErrorMessage message={errorMessage} />
 
         {/* Submit */}
         <button className="w-full h-[42px] bg-[#2d6a4f] text-white text-[13px] font-semibold rounded-xl hover:bg-[#1a3d2b] transition-colors mt-4">
