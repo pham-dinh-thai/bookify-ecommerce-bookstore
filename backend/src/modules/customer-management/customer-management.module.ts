@@ -19,6 +19,7 @@ import { CUSTOMER_MODULE_USERS_COMMAND_REPOSITORY } from './domain/customer-aggr
 import { TypeOrmUsersCommandRepository } from './infrastructure/repositories/users/typeorm-users-command.repository';
 import { PHONE_NUMBER_EXISTS_CHECKER } from './domain/customer-aggregate/services/phone-number-exists-checker.service';
 import { PhoneNumberExistsCheckerService } from './infrastructure/services/phone-number-exists-checker.service';
+import { SharedJwtModule } from '../../shared/jwt/shared-jwt.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { PhoneNumberExistsCheckerService } from './infrastructure/services/phone
     AuditLogModule,
     UuidModule,
     SharedCacheModule,
+    SharedJwtModule,
   ],
   controllers: [CustomersController],
   providers: [

@@ -6,7 +6,9 @@ export type RegisterRequest = {
   passwordConfirmation: string;
 };
 
-export async function registerService(request: RegisterRequest): Promise<void> {
+export async function registerService(
+  request: RegisterRequest,
+): Promise<{ tempToken: string }> {
   const response = await fetch('/api/auth/register/', {
     method: 'POST',
     headers: {
@@ -24,4 +26,6 @@ export async function registerService(request: RegisterRequest): Promise<void> {
       : data.message;
     throw new Error(message || 'Registration failed');
   }
+
+  return { tempToken: data.tempToken };
 }
