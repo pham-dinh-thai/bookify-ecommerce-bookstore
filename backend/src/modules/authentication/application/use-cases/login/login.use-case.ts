@@ -68,12 +68,12 @@ export class LoginUseCase {
 
     const accessToken = this.signTokenService.sign(
       {
-        userId: authUser.id,
+        sub: authUser.id,
         roleId: authUser.roleId,
-        jti: accessTokenId,
       },
       process.env.JWT_SECRET!,
       '15m',
+      accessTokenId,
     );
 
     const refreshToken = this.uuid.generate();

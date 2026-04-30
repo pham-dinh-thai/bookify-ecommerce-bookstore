@@ -3,6 +3,7 @@ export interface ISignTokenService {
     payload: Record<string, unknown>,
     secret: string,
     expiresIn: string,
+    jti: string,
   ): string;
 }
 

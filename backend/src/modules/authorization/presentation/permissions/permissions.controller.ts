@@ -51,7 +51,7 @@ export class PermissionsController {
   @Post()
   public async create(
     @Body() request: CreatePermissionRequest,
-    @CurrentUser('id') actorId: string,
+    @CurrentUser('userId') actorId: string,
   ) {
     try {
       await this.createPermissionUseCase.execute(request, actorId);
@@ -64,7 +64,7 @@ export class PermissionsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   public async remove(
     @Param('id') id: string,
-    @CurrentUser('id') actorId: string,
+    @CurrentUser('userId') actorId: string,
   ): Promise<void> {
     try {
       await this.deletePermissionUseCase.execute(id, actorId);

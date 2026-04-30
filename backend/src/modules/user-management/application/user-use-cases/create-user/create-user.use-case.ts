@@ -21,6 +21,11 @@ import {
   type IRolesCommandRepository,
   ROLES_COMMAND_REPOSITORY,
 } from '../../../../authorization/domain/role-aggregate/repositories/roles-command.repository.interface';
+import {
+  EMAIL_EXISTS_CHECKER,
+  type IEmailExistsChecker,
+} from '../../../domain/user-aggregate/services/email-exists-checker.service';
+import { EmailHasBeenUseException } from '../../../domain/user-aggregate/exceptions/email-has-been-use.exception';
 
 @Injectable()
 export class CreateUserUseCase {
@@ -39,12 +44,22 @@ export class CreateUserUseCase {
 
     @Inject(ROLES_COMMAND_REPOSITORY)
     private readonly roleRepository: IRolesCommandRepository,
+
+    @Inject(EMAIL_EXISTS_CHECKER)
+    private readonly emailExistsChecker: IEmailExistsChecker,
   ) {}
 
   public async execute(
     request: ICreateUserRequest,
     performedBy: string,
   ): Promise<void> {
+    const isEmailBeenUsed = await this.emailExistsChecker.isExists(
+      request.email,
+    );
+    if (isEmailBeenUsed) {
+      throw new EmailHasBeenUseException();
+    }
+
     const role = await this.roleRepository.findOne(request.roleId);
     const id = this.uuid.generate();
 

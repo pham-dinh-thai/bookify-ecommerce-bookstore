@@ -40,7 +40,7 @@ export class UsersController {
   @Post()
   public async create(
     @Body() request: CreateUserRequest,
-    @CurrentUser('id') actorId: string,
+    @CurrentUser('userId') actorId: string,
   ): Promise<void> {
     try {
       await this.createUserUseCase.execute(request, actorId);

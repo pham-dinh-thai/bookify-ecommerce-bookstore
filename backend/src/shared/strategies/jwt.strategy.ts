@@ -12,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     @Inject(CACHE_REPOSITORY)
     private readonly cache: ICacheRepository,
   ) {
-    const secret = process.env.JWT_SECRET;
+    const secret = process.env.JWT_SECRET!;
     if (!secret) throw new Error('JWT_SECRET is not defined');
 
     super({
@@ -27,7 +27,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     roleId: string;
     jti?: string;
     exp: number;
-  }): Promise<{ id: string; roleId: string; jti: string; exp: number }> {
+  }): Promise<{ userId: string; roleId: string; jti: string; exp: number }> {
     if (!payload.jti) {
       throw new UnauthorizedException('Access token does not contain jti');
     }
@@ -41,7 +41,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     return {
-      id: payload.sub,
+      userId: payload.sub,
       roleId: payload.roleId,
       jti: payload.jti,
       exp: payload.exp,
