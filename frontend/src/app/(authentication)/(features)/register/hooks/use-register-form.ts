@@ -29,7 +29,7 @@ export default function useRegisterForm() {
       setIsSubmitting(true);
       setErrorMessage(null);
 
-      await registerService({
+      const { tempToken } = await registerService({
         firstName: form.firstName,
         lastName: form.lastName,
         email: form.email,
@@ -37,10 +37,7 @@ export default function useRegisterForm() {
         passwordConfirmation: form.confirmPassword,
       });
 
-      router.push(
-        `/account/complete-information?user=${encodeURIComponent(form.email)}`,
-      );
-      router.refresh();
+      router.push(`/account/complete-information?token=${tempToken}`);
     } catch (error) {
       setErrorMessage(
         error instanceof Error
