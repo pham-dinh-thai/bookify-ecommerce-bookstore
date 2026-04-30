@@ -1,5 +1,9 @@
 export interface ISignTokenService {
-  sign(sub: string, roleId: string, jti: string): string;
+  sign(
+    payload: Record<string, unknown>,
+    secret: string,
+    expiresIn: string,
+  ): string;
 }
 
 export const SIGN_TOKEN_SERVICE = 'ISignTokenService';

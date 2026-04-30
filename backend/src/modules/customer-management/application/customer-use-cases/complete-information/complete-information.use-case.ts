@@ -35,6 +35,8 @@ import {
   PHONE_NUMBER_EXISTS_CHECKER,
 } from '../../../domain/customer-aggregate/services/phone-number-exists-checker.service';
 import { PhoneNumberAlreadyBeenUseException } from '../../../domain/customer-aggregate/exceptions/phone-number-already-been-use.exception';
+import { JWt_SERVICE } from '../../../../../shared/jwt/domain/jwt.service';
+import { SharedJwtService } from '../../../../../shared/jwt/infrastructure/shared-jwt.service';
 
 @Injectable()
 export class CompleteInformationUseCase {
@@ -62,24 +64,28 @@ export class CompleteInformationUseCase {
 
     @Inject(PHONE_NUMBER_EXISTS_CHECKER)
     private readonly phoneNumberExistsChecker: IPhoneNumberExistsChecker,
+
+    @Inject(JWt_SERVICE)
+    private readonly jwtService: SharedJwtService,
   ) {}
 
   public async execute(
-    email: string,
+    token: string,
     request: ICompleteInformationRequest,
   ): Promise<void> {
+    const payload = this.jwtService.verify(
+      token,
+      process.env.TEMP_TOKEN_SECRET!,
+    );
+
+    const userId = payload.userId as string;
+
     const isPhoneExists = await this.phoneNumberExistsChecker.exists(
       request.phoneNumber,
     );
 
     if (isPhoneExists) {
       throw new PhoneNumberAlreadyBeenUseException();
-    }
-
-    const userId = await this.queryRepository.findIdByEmail(email);
-
-    if (!userId) {
-      throw new CustomerNotFoundException(email);
     }
 
     const id = this.uuid.generate();
