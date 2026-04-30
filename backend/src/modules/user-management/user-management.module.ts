@@ -20,6 +20,7 @@ import { EmailExistsChecker } from './infrastructure/services/email-exists-check
 import { UpdateUserUseCase } from './application/user-use-cases/update-user/update-user.use-case';
 import { USER_EXISTS_CHECKER } from './domain/user-aggregate/services/user-exists-checker.service';
 import { UserExistsChecker } from './infrastructure/services/user-exists-checker.service';
+import { DeactivateUserUseCase } from './application/user-use-cases/deactivate-user/deactivate-user.use-case';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { UserExistsChecker } from './infrastructure/services/user-exists-checker
     FindOneUserUseCase,
     CreateUserUseCase,
     UpdateUserUseCase,
+    DeactivateUserUseCase,
     {
       provide: USERS_QUERY_REPOSITORY,
       useClass: TypeOrmUsersQueryRepository,

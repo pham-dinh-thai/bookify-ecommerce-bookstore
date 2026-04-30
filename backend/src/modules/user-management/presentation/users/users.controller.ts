@@ -1,11 +1,11 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Put,
   UseGuards,
@@ -23,6 +23,7 @@ import { Roles } from '../../../../shared/decorators/roles.decorator';
 import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
 import { UpdateUserRequest } from './requests/update-user.request';
 import { UpdateUserUseCase } from '../../application/user-use-cases/update-user/update-user.use-case';
+import { DeactivateUserUseCase } from '../../application/user-use-cases/deactivate-user/deactivate-user.use-case';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RoleGuard)
@@ -33,6 +34,7 @@ export class UsersController {
     private readonly findOneUserUseCase: FindOneUserUseCase,
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly updateUserUseCase: UpdateUserUseCase,
+    private readonly deactivateUserUseCase: DeactivateUserUseCase,
   ) {}
 
   @Get()
@@ -76,7 +78,15 @@ export class UsersController {
     }
   }
 
-  @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  public async remove() {}
+  @Patch(':id/deactivate')
+  public async deactivate(
+    @Param('id') id: string,
+    @CurrentUser('userId') actorId: string,
+  ): Promise<void> {
+    try {
+      await this.deactivateUserUseCase.execute(id, actorId);
+    } catch (error) {
+      ExceptionHandler.handle(error);
+    }
+  }
 }
