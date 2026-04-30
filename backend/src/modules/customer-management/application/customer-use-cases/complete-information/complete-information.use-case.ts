@@ -1,10 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ICompleteInformationRequest } from './complete-information.request';
-import {
-  CUSTOMERS_QUERY_REPOSITORY,
-  type ICustomersQueryRepository,
-} from '../../../domain/customer-aggregate/repositories/customers-query.repository.interface';
-import { CustomerNotFoundException } from '../../../domain/customer-aggregate/exceptions/customer-not-found.exception';
 import { Customer } from '../../../domain/customer-aggregate/customer.aggregate';
 import {
   type IUuidGenerator,
@@ -43,9 +38,6 @@ export class CompleteInformationUseCase {
   public constructor(
     @Inject(CUSTOMERS_COMMAND_REPOSITORY)
     private readonly commandRepository: ICustomersCommandRepository,
-
-    @Inject(CUSTOMERS_QUERY_REPOSITORY)
-    private readonly queryRepository: ICustomersQueryRepository,
 
     @Inject(UUID_GENERATOR)
     private readonly uuid: IUuidGenerator,
