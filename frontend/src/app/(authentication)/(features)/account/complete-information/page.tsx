@@ -3,12 +3,14 @@
 import useForm from '@/shared/common/hooks/use-form';
 import { ArrowBigRight, MapPin, MapPinIcon, Phone, User } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
+import { completeInformationService } from './services/complete-information.service';
+import ErrorMessage from '@/shared/common/components/error-message';
 
 export default function CompleteInformation() {
   const router = useRouter();
-  const [error, setError] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const { form, setForm, handleChange } = useForm({
     phoneNumber: '',
@@ -18,10 +20,33 @@ export default function CompleteInformation() {
     street: '',
   });
 
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token') ?? '';
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      await completeInformationService(token, {
+        phoneNumber: form.phoneNumber,
+        gender: form.gender,
+        address: {
+          provinceCode: form.province,
+          provinceName: form.province, // thay bằng name thật khi có API
+          wardCode: form.ward,
+          wardName: form.ward, // thay bằng name thật khi có API
+          street: form.street,
+        },
+      });
+      router.push('/login');
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : 'Failed');
+    }
+  };
+
   return (
     <div className="flex flex-col items-center w-full max-w-md">
       <form
-        onSubmit={(e) => {}}
+        onSubmit={handleSubmit}
         className="bg-white rounded-2xl p-7 w-full"
         style={{ boxShadow: '0px 4px 24px rgba(43,53,47,0.08)' }}
       >
@@ -137,6 +162,8 @@ export default function CompleteInformation() {
             />
           </div>
         </div>
+
+        <ErrorMessage message={errorMessage} />
 
         {/* Submit */}
         <button className="w-full h-[42px] bg-[#2d6a4f] text-white text-[13px] font-semibold rounded-xl hover:bg-[#1a3d2b] transition-colors mt-4">
