@@ -70,7 +70,7 @@ export class LoginUseCase {
       {
         userId: authUser.id,
         roleId: authUser.roleId,
-        accessTokenId: accessTokenId,
+        jti: accessTokenId,
       },
       process.env.JWT_SECRET!,
       '15m',
