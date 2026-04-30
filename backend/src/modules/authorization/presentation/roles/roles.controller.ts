@@ -61,7 +61,7 @@ export class RolesController {
   @Post()
   public async create(
     @Body() request: CreateRoleRequest,
-    @CurrentUser('id') actorId: string,
+    @CurrentUser('userId') actorId: string,
   ): Promise<void> {
     try {
       await this.createRoleUseCase.execute(request, actorId);
@@ -74,7 +74,7 @@ export class RolesController {
   public async rename(
     @Param('id') id: string,
     @Body() request: RenameRoleRequest,
-    @CurrentUser('id') actorId: string,
+    @CurrentUser('userId') actorId: string,
   ): Promise<void> {
     try {
       await this.renameRoleUseCase.execute(id, request, actorId);
@@ -87,7 +87,7 @@ export class RolesController {
   public async grantPermission(
     @Param('id') id: string,
     @Body() request: GrantPermissionRequest,
-    @CurrentUser('id') actorId: string,
+    @CurrentUser('userId') actorId: string,
   ): Promise<void> {
     try {
       await this.grantPermissionUseCase.execute(id, request, actorId);
@@ -101,7 +101,7 @@ export class RolesController {
   public async revokePermission(
     @Param('id') id: string,
     @Param('permissionId') permissionId: string,
-    @CurrentUser('id') actorId: string,
+    @CurrentUser('userId') actorId: string,
   ): Promise<void> {
     try {
       await this.revokePermissionUseCase.execute(id, permissionId, actorId);
@@ -114,7 +114,7 @@ export class RolesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   public async remove(
     @Param('id') id: string,
-    @CurrentUser('id') actorId: string,
+    @CurrentUser('userId') actorId: string,
   ): Promise<void> {
     try {
       await this.deleteRoleUseCase.execute(id, actorId);

@@ -92,6 +92,7 @@ export class RegisterUseCase {
       },
       process.env.TEMP_TOKEN_SECRET!,
       '30m',
+      this.uuid.generate(),
     );
 
     return { tempToken };

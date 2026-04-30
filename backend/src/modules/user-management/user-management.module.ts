@@ -15,6 +15,8 @@ import { USERS_COMMAND_REPOSITORY } from './domain/user-aggregate/repositories/u
 import { TypeOrmUsersCommandRepository } from './infrastructure/repositories/users/typeorm-users-command.repository';
 import { RolesModule } from '../authorization/roles.module';
 import { AuthenticationModule } from '../authentication/authentication.module';
+import { EMAIL_EXISTS_CHECKER } from './domain/user-aggregate/services/email-exists-checker.service';
+import { EmailExistsChecker } from './infrastructure/services/email-exists-checker.service';
 
 @Module({
   imports: [
@@ -38,8 +40,16 @@ import { AuthenticationModule } from '../authentication/authentication.module';
       provide: USERS_COMMAND_REPOSITORY,
       useClass: TypeOrmUsersCommandRepository,
     },
+    {
+      provide: EMAIL_EXISTS_CHECKER,
+      useClass: EmailExistsChecker,
+    },
   ],
-  exports: [USERS_QUERY_REPOSITORY, USERS_COMMAND_REPOSITORY],
+  exports: [
+    USERS_QUERY_REPOSITORY,
+    USERS_COMMAND_REPOSITORY,
+    EMAIL_EXISTS_CHECKER,
+  ],
   controllers: [UsersController],
 })
 export class UserManagementModule {}

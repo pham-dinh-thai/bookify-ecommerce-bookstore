@@ -11,10 +11,12 @@ export class JwtSignTokenService implements ISignTokenService {
     payload: Record<string, unknown>,
     secret: string,
     expiresIn: string,
+    jti: string,
   ): string {
     return this.jwtService.sign(payload, {
       secret,
       expiresIn: expiresIn as StringValue,
+      jwtid: jti,
     });
   }
 }
