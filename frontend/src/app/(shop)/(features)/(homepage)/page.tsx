@@ -81,14 +81,14 @@ export default function Homepage() {
           {/* Right image */}
           <div className="relative flex justify-center items-center">
             <div className="relative w-full max-w-2lg">
-              <div className="rounded-3xl overflow-hidden shadow-xl">
+              <div className="rounded-3xl overflow-hidden shadow-2xl rotate-2">
                 <Image
                   src={mainImg}
                   alt="Stack of books"
                   className="w-full h-[620px] object-cover"
                 />
               </div>
-              <div className="absolute bottom-6 left-[-24px] bg-white rounded-2xl shadow-lg px-4 py-3 flex flex-col gap-1 min-w-[180px]">
+              <div className="absolute bottom-1 left-[-24px] bg-white rounded-2xl shadow-xl px-6 py-6 flex flex-col gap-1 min-w-[200px] min-h-[80px] -rotate-2">
                 <span className="text-[9px] uppercase tracking-widest text-[#58615b] font-bold">
                   UTC+7. 2026
                 </span>
