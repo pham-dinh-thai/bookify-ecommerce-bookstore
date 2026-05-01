@@ -1,11 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import mainImg from './assets/img.jpg';
+import bgImg from './assets/img8.jpg';
 import { BookSection } from './components/book-section';
 import Category from './ui/category';
 import { BookSectionHorizontal } from './ui/book-section-horizontal';
 import { BookSectionHighlight } from './ui/book-section-featured';
-import { BookSectionBestSeller } from './ui/book-section-best-seller';
 
 const newArrivals = [
   {
@@ -160,6 +160,37 @@ export default function Homepage() {
         books={newArrivals}
       />
       <BookSection label="Limited Time" title="ON SALES" books={newArrivals} />
+
+      <section className="max-w-7xl mx-auto px-6 lg:px-8 mb-32">
+        <div className="relative rounded-3xl overflow-hidden">
+          <Image
+            src={bgImg}
+            alt="Background"
+            fill
+            className="object-cover"
+            priority
+          />
+
+          <div className="absolute inset-0 bg-black/40"></div>
+
+          <div className="relative z-10 p-12 lg:p-24 max-w-3xl text-white">
+            <h2 className="text-4xl font-bold tracking-tight mb-6">
+              Find Your Next Favorite Book.
+            </h2>
+            <p className="text-white/80 text-lg mb-10 leading-relaxed">
+              Explore our curated collection of world literature — timeless
+              classics, modern voices, and everything in between.
+            </p>
+            <br />
+            <Link
+              href="/books"
+              className="inline-flex items-center gap-3 bg-[#2d6a4f] text-white px-8 py-4 rounded-2xl font-bold hover:bg-[#1a3d2b] hover:scale-[0.98] active:scale-95 transition-all"
+            >
+              Browse All Books
+            </Link>
+          </div>
+        </div>
+      </section>
     </>
   );
 }
