@@ -1,5 +1,4 @@
 import { Sparkles, BookOpen, PenLine } from 'lucide-react';
-import Link from 'next/link';
 import img from '../assets/img7.jpg';
 import Image from 'next/image';
 
@@ -9,7 +8,7 @@ export default function Category() {
       <div className="max-w-8xl mx-auto px-6 lg:px-24">
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-[#f7faf5] tracking-tight mb-4">
-            Curated Collections
+            CURATED COLLECTIONS
           </h2>
           <p className="text-[#f7faf5]">
             Explore our definitive selection of English literary masterworks.
