@@ -156,7 +156,7 @@ export default function Homepage() {
       />
       <BookSectionHorizontal
         label="Just In"
-        title="New Arrivals"
+        title="NEW ARRIVALS"
         books={newArrivals}
       />
       <BookSection label="Limited Time" title="ON SALES" books={newArrivals} />
