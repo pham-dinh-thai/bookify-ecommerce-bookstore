@@ -21,6 +21,8 @@ import { TypeOrmAuthenticableUserCommandRepository } from './infrastructure/repo
 import { RegisterUseCase } from './application/use-cases/register/register.use-case';
 import { AuditLogModule } from '../audit-log/audit-log.module';
 import { LogoutUseCase } from './application/use-cases/logout/logout.use-case';
+import { RefreshTokenUseCase } from './application/use-cases/refresh-token/refresh-token.use-case';
+import { SharedJwtModule } from '../../shared/jwt/shared-jwt.module';
 
 @Module({
   imports: [
@@ -42,12 +44,14 @@ import { LogoutUseCase } from './application/use-cases/logout/logout.use-case';
       signOptions: { expiresIn: '1d' },
     }),
     AuditLogModule,
+    SharedJwtModule,
   ],
   providers: [
     JwtStrategy,
     LoginUseCase,
     RegisterUseCase,
     LogoutUseCase,
+    RefreshTokenUseCase,
     {
       provide: AUTHENTICABLE_USER_QUERY_REPOSITORY,
       useClass: TypeOrmAuthenticableUserQueryRepository,

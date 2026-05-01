@@ -26,8 +26,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     sub: string;
     roleId: string;
     jti?: string;
+    sessionId: string;
     exp: number;
-  }): Promise<{ userId: string; roleId: string; jti: string; exp: number }> {
+  }): Promise<{
+    userId: string;
+    roleId: string;
+    jti: string;
+    sessionId: string;
+    exp: number;
+  }> {
     if (!payload.jti) {
       throw new UnauthorizedException('Access token does not contain jti');
     }
@@ -44,6 +51,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       userId: payload.sub,
       roleId: payload.roleId,
       jti: payload.jti,
+      sessionId: payload.sessionId,
       exp: payload.exp,
     };
   }

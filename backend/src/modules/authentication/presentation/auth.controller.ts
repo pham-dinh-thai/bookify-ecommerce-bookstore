@@ -6,7 +6,8 @@ import { RegisterUseCase } from '../application/use-cases/register/register.use-
 import { RegisterRequest } from './requests/register.request';
 import { JwtAuthGuard } from '../../../shared/guards/jwt-auth.guard';
 import { LogoutUseCase } from '../application/use-cases/logout/logout.use-case';
-import { type Response } from 'express';
+import { response, type Request, type Response } from 'express';
+import { RefreshTokenUseCase } from '../application/use-cases/refresh-token/refresh-token.use-case';
 
 @Controller('auth')
 export class AuthController {
@@ -14,6 +15,7 @@ export class AuthController {
     private readonly loginUseCase: LoginUseCase,
     private readonly registerUseCase: RegisterUseCase,
     private readonly logoutUseCase: LogoutUseCase,
+    private readonly refreshTokenUseCase: RefreshTokenUseCase,
   ) {}
 
   @Post('/login')
@@ -57,13 +59,37 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('/logout')
   public async logout(
-    @Req() request: { user: { id: string; jti: string; exp: number } },
-  ): Promise<void> {
+    @Req()
+    request: {
+      user: { userId: string; jti: string; sessionId: string; exp: number };
+    },
+    @Res() response: Response,
+  ): Promise<any> {
     try {
       await this.logoutUseCase.execute(
-        request.user.id,
+        request.user.userId,
         request.user.jti,
         request.user.exp,
+        request.user.sessionId,
+      );
+
+      response.clearCookie('refresh_token');
+      return response.json({ message: 'Logged out' });
+    } catch (error) {
+      ExceptionHandler.handle(error);
+    }
+  }
+
+  @Post('/refresh')
+  public async refresh(
+    @Req() request: Request,
+    @Res() response: Response,
+  ): Promise<any> {
+    try {
+      const refreshToken = request.cookies['refresh_token'];
+
+      return response.send(
+        await this.refreshTokenUseCase.execute(refreshToken),
       );
     } catch (error) {
       ExceptionHandler.handle(error);
