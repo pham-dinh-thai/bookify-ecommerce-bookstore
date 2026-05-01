@@ -12,7 +12,7 @@ const newArrivals = [
     id: 1,
     title: 'Crime and punishment',
     author: 'Matt Haig',
-    price: '180.000₫',
+    price: '180.000 VND',
     cover:
       'https://tse1.mm.bing.net/th/id/OIP.dI055T7RdiMDYUAVQbp88AHaLX?o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3',
   },
@@ -20,21 +20,21 @@ const newArrivals = [
     id: 2,
     title: 'Klara and the Sun',
     author: 'Kazuo Ishiguro',
-    price: '210.000₫',
+    price: '210.000 VND',
     cover: 'https://m.media-amazon.com/images/I/91pSaVjfShL._SL1500_.jpg',
   },
   {
     id: 3,
     title: 'The Vegetarian',
     author: 'Han Kang',
-    price: '165.000₫',
+    price: '165.000 VND',
     cover: 'https://m.media-amazon.com/images/I/71rQZuITMKL._SL1500_.jpg',
   },
   {
     id: 4,
     title: 'Normal People',
     author: 'Sally Rooney',
-    price: '195.000₫',
+    price: '195.000 VND',
     cover:
       'https://m.media-amazon.com/images/I/411B+9Nj91L._SY445_SX342_QL70_FMwebp_.jpg',
   },
@@ -42,21 +42,21 @@ const newArrivals = [
     id: 5,
     title: 'Normal People',
     author: 'Sally Rooney',
-    price: '195.000₫',
+    price: '195.000 VND',
     cover: 'https://m.media-amazon.com/images/I/71j7bZTiYAL._SL1500_.jpg',
   },
   {
     id: 6,
     title: 'Crime and punishment',
     author: 'Matt Haig',
-    price: '180.000₫',
+    price: '180.000 VND',
     cover: 'https://m.media-amazon.com/images/I/811iBn28JdL._SY466_.jpg',
   },
   {
     id: 7,
     title: 'Klara and the Sun',
     author: 'Kazuo Ishiguro',
-    price: '210.000₫',
+    price: '210.000 VND',
     cover:
       'https://m.media-amazon.com/images/I/512dLJWJGIL._SY445_SX342_FMwebp_.jpg',
   },
@@ -64,7 +64,7 @@ const newArrivals = [
     id: 8,
     title: 'The Vegetarian',
     author: 'Han Kang',
-    price: '165.000₫',
+    price: '165.000 VND',
     cover:
       'https://m.media-amazon.com/images/I/41YRs-HV0SL._SY445_SX342_FMwebp_.jpg',
   },
@@ -72,14 +72,14 @@ const newArrivals = [
     id: 9,
     title: 'Normal People',
     author: 'Sally Rooney',
-    price: '195.000₫',
+    price: '195.000 VND',
     cover: 'https://m.media-amazon.com/images/I/71wSz6VVk6L._SL1500_.jpg',
   },
   {
     id: 10,
     title: 'Normal People',
     author: 'Sally Rooney',
-    price: '195.000₫',
+    price: '195.000 VND',
     cover:
       'https://m.media-amazon.com/images/I/41HlG+jCHDL._SY445_SX342_FMwebp_.jpg',
   },
@@ -151,7 +151,7 @@ export default function Homepage() {
 
       <BookSectionHighlight
         label="Crowd Favorites"
-        title="Current Best Seller"
+        title="CURRENT BEST SELLER"
         books={newArrivals}
       />
       <BookSectionHorizontal
@@ -159,7 +159,7 @@ export default function Homepage() {
         title="New Arrivals"
         books={newArrivals}
       />
-      <BookSection label="Limited Time" title="On Sales" books={newArrivals} />
+      <BookSection label="Limited Time" title="ON SALES" books={newArrivals} />
     </>
   );
 }
