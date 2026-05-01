@@ -14,7 +14,7 @@ type NavUserMenuProps = {};
 
 export default function NavUserMenu({}: NavUserMenuProps) {
   const dropdown = useDropdown();
-  const { isAuth, roleId } = useAuth();
+  const auth = useAuth();
   const router = useRouter();
 
   const handleLogout = async (): Promise<void> => {
@@ -58,7 +58,7 @@ export default function NavUserMenu({}: NavUserMenuProps) {
         </button>
         {dropdown.isOpen && (
           <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-            {isAuth ? (
+            {auth.isAuth ? (
               <>
                 <Link
                   href="/account"
@@ -67,7 +67,7 @@ export default function NavUserMenu({}: NavUserMenuProps) {
                 >
                   My Account
                 </Link>
-                {roleId === 'admin' && (
+                {auth.roleId === 'admin' && (
                   <Link
                     href="/users"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"

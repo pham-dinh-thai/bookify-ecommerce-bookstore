@@ -82,6 +82,7 @@ export class LoginUseCase {
       {
         sub: authUser.id,
         sessionId: sessionId,
+        roleId: authUser.roleId,
       },
       process.env.JWT_REFRESH_SECRET!,
       '7d',
