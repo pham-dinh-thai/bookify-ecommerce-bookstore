@@ -1,7 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import mainImg from './assets/main.jpg';
+import mainImg from './assets/img.jpg';
 import { BookSection } from './components/book-section';
+import Category from './ui/category';
+import { BookSectionHorizontal } from './ui/book-section-horizontal';
+import { BookSectionHighlight } from './ui/book-section-featured';
+import { BookSectionBestSeller } from './ui/book-section-best-seller';
 
 const newArrivals = [
   {
@@ -40,6 +44,44 @@ const newArrivals = [
     author: 'Sally Rooney',
     price: '195.000₫',
     cover: 'https://m.media-amazon.com/images/I/71j7bZTiYAL._SL1500_.jpg',
+  },
+  {
+    id: 6,
+    title: 'Crime and punishment',
+    author: 'Matt Haig',
+    price: '180.000₫',
+    cover: 'https://m.media-amazon.com/images/I/811iBn28JdL._SY466_.jpg',
+  },
+  {
+    id: 7,
+    title: 'Klara and the Sun',
+    author: 'Kazuo Ishiguro',
+    price: '210.000₫',
+    cover:
+      'https://m.media-amazon.com/images/I/512dLJWJGIL._SY445_SX342_FMwebp_.jpg',
+  },
+  {
+    id: 8,
+    title: 'The Vegetarian',
+    author: 'Han Kang',
+    price: '165.000₫',
+    cover:
+      'https://m.media-amazon.com/images/I/41YRs-HV0SL._SY445_SX342_FMwebp_.jpg',
+  },
+  {
+    id: 9,
+    title: 'Normal People',
+    author: 'Sally Rooney',
+    price: '195.000₫',
+    cover: 'https://m.media-amazon.com/images/I/71wSz6VVk6L._SL1500_.jpg',
+  },
+  {
+    id: 10,
+    title: 'Normal People',
+    author: 'Sally Rooney',
+    price: '195.000₫',
+    cover:
+      'https://m.media-amazon.com/images/I/41HlG+jCHDL._SY445_SX342_FMwebp_.jpg',
   },
 ];
 
@@ -105,9 +147,19 @@ export default function Homepage() {
         </div>
       </section>
 
-      <BookSection label="Just In" title="New Arrivals" books={newArrivals} />
+      <Category />
+
+      <BookSectionHighlight
+        label="Crowd Favorites"
+        title="Current Best Seller"
+        books={newArrivals}
+      />
+      <BookSectionHorizontal
+        label="Just In"
+        title="New Arrivals"
+        books={newArrivals}
+      />
       <BookSection label="Limited Time" title="On Sales" books={newArrivals} />
-      <BookSection label="Top Picks" title="Best Seller" books={newArrivals} />
     </>
   );
 }

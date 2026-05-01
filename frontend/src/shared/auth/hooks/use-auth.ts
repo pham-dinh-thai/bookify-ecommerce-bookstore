@@ -15,7 +15,12 @@ export function useAuth() {
   });
 
   useEffect(() => {
-    setAuth(getAuthState());
+    const update = () => setAuth(getAuthState());
+
+    update();
+    window.addEventListener('auth-changed', update);
+
+    return () => window.removeEventListener('auth-changed', update);
   }, []);
 
   return auth;

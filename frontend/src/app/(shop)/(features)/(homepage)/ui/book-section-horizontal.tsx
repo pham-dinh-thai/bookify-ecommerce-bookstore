@@ -21,7 +21,7 @@ type BookSectionProps = {
   viewAllHref?: string;
 };
 
-export function BookSection({
+export function BookSectionHorizontal({
   label,
   title,
   books,
@@ -29,7 +29,7 @@ export function BookSection({
 }: BookSectionProps) {
   const [start, setStart] = useState(0);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
-  const visible = 10;
+  const visible = 5;
 
   const prev = () => setStart((s) => Math.max(0, s - 1));
   const next = () => setStart((s) => Math.min(books.length - visible, s + 1));
@@ -37,26 +37,26 @@ export function BookSection({
   const visibleBooks = books.slice(start, start + visible);
 
   return (
-    <section className="relative py-20 px-8 md:px-16 lg:px-24 bg-[#f7faf5] overflow-hidden">
+    <section className="relative py-20 px-8 md:px-16 lg:px-24 bg-[#1a3d2b] overflow-hidden">
       <div className="max-w-8xl mx-auto relative">
         <div className="flex items-end justify-between mb-12">
           <div>
             {label && (
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-5 h-px bg-[#2d6a4f]" />
-                <p className="text-[10px] uppercase tracking-[0.2em] text-[#2d6a4f] font-bold">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-white font-bold">
                   {label}
                 </p>
               </div>
             )}
-            <h2 className="text-4xl font-black text-[#1a3d2b] tracking-tight">
+            <h2 className="text-4xl font-black text-white tracking-tight">
               {title}
             </h2>
           </div>
 
           <Link
             href={viewAllHref}
-            className="text-[#2d6a4f] font-semibold flex items-center gap-2 hover:opacity-80 transition-opacity group"
+            className="text-white hover:text-black font-semibold flex items-center gap-2 hover:opacity-80 transition-opacity group"
           >
             View More
             <ArrowRight
@@ -82,7 +82,6 @@ export function BookSection({
             >
               {/* Card */}
               <div className="relative overflow-hidden mb-4">
-                {/* Book cover */}
                 <div className="aspect-[3/4] flex items-center justify-center overflow-hidden">
                   <img
                     src={book.cover}
@@ -94,48 +93,24 @@ export function BookSection({
                     }}
                   />
                 </div>
-
-                {/* Hover overlay */}
                 <div
-                  className="absolute inset-0 flex items-end p-4 transition-opacity duration-300"
+                  className="absolute inset-0 flex items-end p-3 transition-opacity duration-300"
                   style={{
                     background:
-                      'linear-gradient(to top, rgba(26,61,43,0.85) 0%, transparent 50%)',
+                      'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%)',
                     opacity: hoveredId === book.id ? 1 : 0,
                   }}
                 >
-                  <button className="w-full py-2.5 rounded-xl bg-white text-[#1a3d2b] font-bold text-xs tracking-wide hover:bg-[#c1ecd4] transition-colors">
+                  <button className="w-full py-2 rounded-xl bg-white text-[#1a3d2b] font-bold text-xs">
                     View Details
                   </button>
                 </div>
-
-                {/* Edition badge */}
-                {book.edition && (
-                  <div className="absolute top-3 left-3">
-                    <span className="text-[8px] font-black tracking-widest uppercase bg-white/90 backdrop-blur-sm text-[#2d6a4f] px-2 py-1 rounded-md">
-                      {book.edition}
-                    </span>
-                  </div>
-                )}
               </div>
-
-              {/* Info */}
-              <div className="px-1">
-                <h3
-                  className="text-md font-bold text-[#1a3d2b] leading-tight mb-0.5 line-clamp-1 transition-colors duration-200"
-                  style={{
-                    color: hoveredId === book.id ? '#2d6a4f' : '#1a3d2b',
-                  }}
-                >
-                  {book.title}
-                </h3>
-                <p className="text-xs text-[#58615b] mb-1 line-clamp-1">
-                  {book.author}
-                </p>
-                <p className="text-sm font-black text-[#2d6a4f]">
-                  {book.price}
-                </p>
-              </div>
+              <h3 className="text-sm font-bold text-white line-clamp-1 mb-0.5">
+                {book.title}
+              </h3>
+              <p className="text-xs text-[#c1ecd4]/70 mb-1">{book.author}</p>
+              <p className="text-sm font-black text-[#c1ecd4]">{book.price}</p>
             </div>
           ))}
         </div>
