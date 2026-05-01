@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { LoginUseCase } from '../application/use-cases/login/login.use-case';
 import { LoginRequest } from './requests/login.request';
 import ExceptionHandler from '../../../shared/domain/exception/exception.handler';
@@ -6,6 +6,7 @@ import { RegisterUseCase } from '../application/use-cases/register/register.use-
 import { RegisterRequest } from './requests/register.request';
 import { JwtAuthGuard } from '../../../shared/guards/jwt-auth.guard';
 import { LogoutUseCase } from '../application/use-cases/logout/logout.use-case';
+import { type Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -18,9 +19,25 @@ export class AuthController {
   @Post('/login')
   public async login(
     @Body() request: LoginRequest,
-  ): Promise<{ accessToken: string; refreshToken: string } | null> {
+    @Res() response: Response,
+  ): Promise<any> {
     try {
-      return await this.loginUseCase.execute(request);
+      const result = await this.loginUseCase.execute(request);
+
+      if (!result) {
+        return response.status(401).json({ message: 'Login failed' });
+      }
+
+      const { accessToken, refreshToken } = result;
+
+      response.cookie('refresh_token', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
+
+      return response.json({ accessToken });
     } catch (error) {
       ExceptionHandler.handle(error);
     }
