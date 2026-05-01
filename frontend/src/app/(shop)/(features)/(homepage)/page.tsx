@@ -70,10 +70,10 @@ export default function Homepage() {
                 Browse New Arrivals
               </Link>
               <Link
-                href="/philosophy"
+                href="/contact-us"
                 className="text-[#1a3d2b] text-sm font-semibold hover:opacity-70 transition-opacity"
               >
-                Our Philosophy
+                Contact Us
               </Link>
             </div>
           </div>
