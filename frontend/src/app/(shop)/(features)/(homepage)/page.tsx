@@ -56,10 +56,11 @@ export default function Homepage() {
               <span className="italic text-[#2d6a4f]">borders.</span>
             </h1>
 
-            <p className="text-[#58615b] text-base leading-relaxed max-w-md">
-              Explore a meticulously curated selection of international voices.
-              From the streets of Paris to the hubs of Tokyo, we bring the
-              world's most profound narratives to your shelf.
+            <p className="text-[#58615b] text-base leading-relaxed max-w-xl">
+              The finest international literature, translated into English.
+              Carefully selected titles from every corner of the world — from
+              the cobblestone streets of Europe to the quiet temples of Asia,
+              one language, endless perspectives, infinite worlds to explore.
             </p>
 
             <div className="flex items-center gap-6 mt-2">
