@@ -15,8 +15,9 @@ export class LogoutUseCase {
     userId: string,
     jti: string,
     exp: number,
+    sessionId: string,
   ): Promise<void> {
-    await this.cache.del(`refresh_token:${userId}`);
+    await this.cache.del(`refresh_token:${userId}:${sessionId}`);
 
     const now = Math.floor(Date.now() / 1000);
     const ttl = Math.max(exp - now, 1) * 1000;

@@ -1,8 +1,8 @@
-import { saveTokens } from '@/app/(authentication)/(features)/login/lib/token-storage';
 import useForm from '@/shared/common/hooks/use-form';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { loginService } from '../services/login.service';
+import { setAccessToken } from '@/shared/auth/lib/token-storage';
 
 export function useLoginForm() {
   const router = useRouter();
@@ -19,11 +19,13 @@ export function useLoginForm() {
     try {
       setIsSubmitting(true);
       setErrorMessage(null);
-      const { accessToken, refreshToken } = await loginService({
+
+      const { accessToken } = await loginService({
         email: form.email,
         password: form.password,
       });
-      saveTokens(accessToken, refreshToken, form.remember);
+
+      setAccessToken(accessToken);
       router.push('/');
       router.refresh();
     } catch (error) {

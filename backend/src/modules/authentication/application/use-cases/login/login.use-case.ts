@@ -65,25 +65,35 @@ export class LoginUseCase {
     }
 
     const accessTokenId = this.uuid.generate();
+    const sessionId = this.uuid.generate();
 
     const accessToken = this.signTokenService.sign(
       {
         sub: authUser.id,
         roleId: authUser.roleId,
+        sessionId: sessionId,
       },
       process.env.JWT_SECRET!,
       '15m',
       accessTokenId,
     );
 
-    const refreshToken = this.uuid.generate();
+    const refreshToken = this.signTokenService.sign(
+      {
+        sub: authUser.id,
+        sessionId: sessionId,
+      },
+      process.env.JWT_REFRESH_SECRET!,
+      '7d',
+      this.uuid.generate(),
+    );
 
     const hashedRefreshToken = this.refreshTokenHasher.hash(refreshToken);
 
     await this.cache.set(
-      `refresh_token:${authUser.id}`,
+      `refresh_token:${authUser.id}:${sessionId}`,
       hashedRefreshToken,
-      7 * 24 * 60 * 60 * 1000, // 7 days
+      7 * 24 * 60 * 60 * 1000,
     );
 
     return { accessToken, refreshToken };

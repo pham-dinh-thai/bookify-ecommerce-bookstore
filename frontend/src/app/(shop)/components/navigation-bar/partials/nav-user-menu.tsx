@@ -2,7 +2,10 @@
 
 import { useDropdown } from '@/app/(shop)/hooks/use-dropdown';
 import { useAuth } from '@/shared/auth/hooks/use-auth';
-import { clearTokens, getAccessToken } from '@/shared/auth/lib/token-storage';
+import {
+  clearAccessToken,
+  getAccessToken,
+} from '@/shared/auth/lib/token-storage';
 import { ShoppingCart, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -20,11 +23,8 @@ export default function NavUserMenu({}: NavUserMenuProps) {
 
       const response = await fetch('/api/auth/logout', {
         method: 'POST',
-        headers: accessToken
-          ? {
-              Authorization: `Bearer ${accessToken}`,
-            }
-          : {},
+        credentials: 'include',
+        headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
       });
 
       if (!response.ok) {
@@ -36,7 +36,7 @@ export default function NavUserMenu({}: NavUserMenuProps) {
         throw new Error(message || 'Logout failed');
       }
     } finally {
-      clearTokens();
+      clearAccessToken();
       dropdown.close();
       router.push('/login');
       router.refresh();

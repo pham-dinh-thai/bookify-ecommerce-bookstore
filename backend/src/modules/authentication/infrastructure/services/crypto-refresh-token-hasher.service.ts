@@ -7,4 +7,10 @@ export class CryptoRefreshTokenHasherService implements IRefreshTokenHasherServi
   public hash(refreshToken: string): string {
     return crypto.createHash('sha256').update(refreshToken).digest('hex');
   }
+
+  public verify(refreshToken: string, storedHash: string): boolean {
+    const hashed = this.hash(refreshToken);
+
+    return hashed === storedHash;
+  }
 }
