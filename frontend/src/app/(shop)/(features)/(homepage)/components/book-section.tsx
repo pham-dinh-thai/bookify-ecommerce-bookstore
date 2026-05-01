@@ -39,21 +39,18 @@ export function BookSection({
   return (
     <section className="relative py-20 px-8 md:px-16 lg:px-24 bg-[#f7faf5] overflow-hidden">
       <div className="max-w-8xl mx-auto relative">
-        <div className="flex items-end justify-between mb-12">
-          <div>
-            {label && (
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-5 h-px bg-[#2d6a4f]" />
-                <p className="text-[10px] uppercase tracking-[0.2em] text-[#2d6a4f] font-bold">
-                  {label}
-                </p>
-              </div>
-            )}
-            <h2 className="text-4xl font-black text-[#1a3d2b] tracking-tight">
-              {title}
-            </h2>
-          </div>
-
+        <div className="text-center">
+          {label && (
+            <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#58615b] mb-4 block">
+              {label}
+            </span>
+          )}
+          <h2 className="text-4xl font-black tracking-tight text-[#1a3d2b] mb-4">
+            {title}
+          </h2>
+          <div className="h-1 w-20 bg-[#2d6a4f] mx-auto rounded-full" />
+        </div>
+        <div className="flex items-end justify-end mb-12">
           <Link
             href={viewAllHref}
             className="text-[#2d6a4f] font-semibold flex items-center gap-2 hover:opacity-80 transition-opacity group"
@@ -67,7 +64,7 @@ export function BookSection({
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-10">
           {visibleBooks.map((book, index) => (
             <div
               key={book.id}
@@ -132,9 +129,9 @@ export function BookSection({
                 <p className="text-xs text-[#58615b] mb-1 line-clamp-1">
                   {book.author}
                 </p>
-                <p className="text-sm font-black text-[#2d6a4f]">
+                <h3 className="text-md font-black text-[#2d6a4f]">
                   {book.price}
-                </p>
+                </h3>
               </div>
             </div>
           ))}

@@ -35,7 +35,7 @@ export function BookSectionHighlight({
       <div className="flex justify-between items-end mb-12">
         <div>
           {label && (
-            <span className="text-xs font-bold tracking-[0.2em] uppercase text-[#2d6a4f] mb-2 block">
+            <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#58615b] mb-4 block">
               {label}
             </span>
           )}

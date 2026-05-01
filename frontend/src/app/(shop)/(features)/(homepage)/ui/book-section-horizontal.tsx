@@ -42,12 +42,9 @@ export function BookSectionHorizontal({
         <div className="flex items-end justify-between mb-12">
           <div>
             {label && (
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-5 h-px bg-[#2d6a4f]" />
-                <p className="text-[10px] uppercase tracking-[0.2em] text-white font-bold">
-                  {label}
-                </p>
-              </div>
+              <span className="text-xs font-bold tracking-[0.3em] uppercase text-white mb-4 block">
+                {label}
+              </span>
             )}
             <h2 className="text-4xl font-black text-white tracking-tight">
               {title}
@@ -67,7 +64,7 @@ export function BookSectionHorizontal({
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-10">
           {visibleBooks.map((book, index) => (
             <div
               key={book.id}
@@ -110,7 +107,9 @@ export function BookSectionHorizontal({
                 {book.title}
               </h3>
               <p className="text-xs text-[#c1ecd4]/70 mb-1">{book.author}</p>
-              <p className="text-sm font-black text-[#c1ecd4]">{book.price}</p>
+              <h3 className="text-md font-black text-[#c1ecd4]">
+                {book.price}
+              </h3>
             </div>
           ))}
         </div>
