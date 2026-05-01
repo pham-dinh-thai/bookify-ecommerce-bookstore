@@ -5,7 +5,6 @@ export type LoginApiRequest = {
 
 export type LoginApiResponse = {
   accessToken: string;
-  refreshToken: string;
 };
 
 export async function loginService(
@@ -16,6 +15,7 @@ export async function loginService(
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
     body: JSON.stringify(request),
   });
 
@@ -28,5 +28,5 @@ export async function loginService(
     throw new Error(message || 'Login failed');
   }
 
-  return data as LoginApiResponse;
+  return data;
 }
