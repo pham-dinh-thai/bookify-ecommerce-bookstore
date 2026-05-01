@@ -61,17 +61,7 @@ export default function LoginForm({}: LoginFormProps) {
 
       <ErrorMessage message={errorMessage} />
 
-      <div className="flex items-center justify-between mb-5">
-        <label className="flex items-center gap-2 text-[12px] text-[#58615b] cursor-pointer">
-          <input
-            type="checkbox"
-            className="accent-[#2d6a4f] w-3.5 h-3.5"
-            checked={form.remember}
-            onChange={(e) => setForm({ ...form, remember: e.target.checked })}
-          />
-          Remember me
-        </label>
-
+      <div className="flex items-center justify-end mb-5">
         <Link
           href="/forgot-password"
           className="text-[12px] font-semibold text-[#2d6a4f] hover:opacity-70"
