@@ -1,6 +1,6 @@
 import { Sparkles, BookOpen, PenLine } from 'lucide-react';
 import Link from 'next/link';
-import img from '../assets/img.jpg';
+import img from '../assets/img7.jpg';
 import Image from 'next/image';
 
 export default function Category() {
