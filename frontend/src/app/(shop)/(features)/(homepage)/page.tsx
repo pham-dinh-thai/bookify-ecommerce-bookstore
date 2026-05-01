@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import mainImg from './assets/main.jpg';
 import { BookSection } from './components/book-section';
+import Category from './ui/category';
 
 const newArrivals = [
   {
@@ -104,6 +105,8 @@ export default function Homepage() {
           </div>
         </div>
       </section>
+
+      <Category />
 
       <BookSection label="Just In" title="New Arrivals" books={newArrivals} />
       <BookSection label="Limited Time" title="On Sales" books={newArrivals} />

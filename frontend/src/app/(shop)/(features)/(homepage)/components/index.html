@@ -1,0 +1,536 @@
+<!doctype html>
+
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>
+      The Curated Gallery | Foreign Literature &amp; Digital Archives
+    </title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'outline-variant': '#aab4ad',
+              'surface-container-low': '#eff5ef',
+              outline: '#737d76',
+              'secondary-fixed': '#d4e3ff',
+              'tertiary-dim': '#1e5b61',
+              'surface-variant': '#dbe5dd',
+              'on-primary': '#e6ffef',
+              'inverse-surface': '#0b0f0d',
+              primary: '#3f6754',
+              'on-secondary-fixed-variant': '#385d8d',
+              'on-secondary-container': '#2d5383',
+              'on-primary-fixed': '#1f4735',
+              surface: '#f7faf5',
+              'on-primary-container': '#325947',
+              'on-surface': '#2b352f',
+              error: '#a83836',
+              'surface-tint': '#3f6754',
+              'on-primary-fixed-variant': '#3c6351',
+              'on-tertiary-fixed-variant': '#2d676e',
+              'surface-container-highest': '#dbe5dd',
+              'on-tertiary': '#e9fdff',
+              'inverse-primary': '#d1fee5',
+              'tertiary-container': '#b8f2f9',
+              'secondary-container': '#d4e3ff',
+              'secondary-fixed-dim': '#bdd6ff',
+              'on-error-container': '#6e0a12',
+              'primary-fixed-dim': '#b3dec6',
+              background: '#f7faf5',
+              'inverse-on-surface': '#9a9e9a',
+              'primary-dim': '#335b48',
+              'on-surface-variant': '#58615b',
+              'surface-bright': '#f7faf5',
+              'surface-container-high': '#e2eae3',
+              'on-tertiary-fixed': '#034a51',
+              'tertiary-fixed-dim': '#aae4eb',
+              'error-dim': '#67040d',
+              'surface-dim': '#d2ddd5',
+              'on-background': '#2b352f',
+              'on-secondary-fixed': '#16406f',
+              'on-error': '#fff7f6',
+              'on-tertiary-container': '#215d63',
+              'surface-container': '#e8f0e9',
+              'primary-container': '#c1ecd4',
+              'surface-container-lowest': '#ffffff',
+              'secondary-dim': '#2e5484',
+              tertiary: '#2d676e',
+              'on-secondary': '#f8f8ff',
+              'primary-fixed': '#c1ecd4',
+              'tertiary-fixed': '#b8f2f9',
+              secondary: '#3c6091',
+              'error-container': '#fa746f',
+            },
+            borderRadius: {
+              DEFAULT: '0.25rem',
+              lg: '0.5rem',
+              xl: '0.75rem',
+              full: '9999px',
+            },
+            fontFamily: {
+              headline: ['Manrope'],
+              body: ['Manrope'],
+              label: ['Manrope'],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24;
+      }
+      .editorial-shadow {
+        box-shadow: 0px 20px 40px rgba(43, 53, 47, 0.06);
+      }
+      body {
+        font-family: 'Manrope', sans-serif;
+        background-color: #f7faf5;
+        color: #2b352f;
+      }
+    </style>
+  </head>
+  <body class="antialiased">
+    <!-- TopNavBar -->
+    <nav
+      class="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl rounded-full px-6 py-3 z-50 bg-white/80 dark:bg-emerald-950/80 backdrop-blur-xl shadow-[0px_20px_40px_rgba(43,53,47,0.06)] flex justify-between items-center font-manrope antialiased tracking-tight"
+    >
+      <div
+        class="text-xl font-bold tracking-tighter text-emerald-900 dark:text-emerald-50"
+      >
+        The Curated Gallery
+      </div>
+      <div class="hidden md:flex items-center space-x-8">
+        <a
+          class="text-emerald-700/70 dark:text-emerald-200/60 font-medium hover:text-emerald-900 dark:hover:text-white transition-colors duration-300"
+          href="#"
+          >Collections</a
+        >
+        <a
+          class="text-emerald-700/70 dark:text-emerald-200/60 font-medium hover:text-emerald-900 dark:hover:text-white transition-colors duration-300"
+          href="#"
+          >Languages</a
+        >
+        <a
+          class="text-emerald-700/70 dark:text-emerald-200/60 font-medium hover:text-emerald-900 dark:hover:text-white transition-colors duration-300"
+          href="#"
+          >Genres</a
+        >
+        <a
+          class="text-emerald-700/70 dark:text-emerald-200/60 font-medium hover:text-emerald-900 dark:hover:text-white transition-colors duration-300"
+          href="#"
+          >Authors</a
+        >
+      </div>
+      <div class="flex items-center space-x-5">
+        <button
+          class="scale-95 active:scale-90 transition-transform text-emerald-900 dark:text-emerald-50"
+        >
+          <span class="material-symbols-outlined" data-icon="shopping_cart"
+            >shopping_cart</span
+          >
+        </button>
+        <button
+          class="scale-95 active:scale-90 transition-transform text-emerald-900 dark:text-emerald-50"
+        >
+          <span class="material-symbols-outlined" data-icon="account_circle"
+            >account_circle</span
+          >
+        </button>
+      </div>
+    </nav>
+    <main class="pt-32 pb-24">
+      <!-- Hero Section: Asymmetric & Editorial -->
+      <section class="max-w-7xl mx-auto px-6 lg:px-8 mb-32">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div class="lg:col-span-7">
+            <h1
+              class="text-5xl lg:text-7xl font-extrabold tracking-[-0.02em] leading-[1.1] mb-8 text-on-surface"
+            >
+              Literature without<br /><span class="text-primary italic"
+                >borders.</span
+              >
+            </h1>
+            <p
+              class="text-lg lg:text-xl text-on-surface-variant leading-relaxed max-w-xl mb-10"
+            >
+              Explore a meticulously curated selection of international voices.
+              From the streets of Paris to the hubs of Tokyo, we bring the
+              world's most profound narratives to your shelf.
+            </p>
+            <div class="flex gap-4">
+              <button
+                class="px-8 py-4 bg-primary text-on-primary rounded-xl font-semibold shadow-lg bg-gradient-to-br from-primary to-primary-dim hover:opacity-95 transition-all"
+              >
+                Browse New Arrivals
+              </button>
+              <button
+                class="px-8 py-4 text-primary font-semibold underline decoration-primary-fixed-dim underline-offset-8"
+              >
+                Our Philosophy
+              </button>
+            </div>
+          </div>
+          <div class="lg:col-span-5 relative">
+            <div
+              class="aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl transform rotate-2"
+            >
+              <img
+                class="w-full h-full object-cover"
+                data-alt="stack of minimalist foreign language books with elegant typography on a clean wooden table in soft morning light"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTUUqiQ0Ocde6PZs5pIdTsxor-HTyRfBpd7-Xa3lgLlQg5xAtvTCaMPjti_0aQOKc_GikWixubtY067c4eREhzZLXEdDBb7yYJ1ltE-4LRYCdpGQ8ulSAeTg_DfBnlElwzmvTjcn0fERirfzB9KG1q1XBoGPLU6qXcbXMzaAW0k_OQUu6l3LcRkmibrXpMEAezEL2D7jw2YBdncs36K6JB3_AW3BGI8DDj3gps-z4xZFUUAf1m-tFvJBtQY5oQ9T0xgLcJBu8UOgiR"
+              />
+            </div>
+            <div
+              class="absolute -bottom-6 -left-6 bg-surface-container-lowest p-6 rounded-2xl shadow-xl max-w-[200px] transform -rotate-3 border border-outline-variant/10"
+            >
+              <p
+                class="text-xs font-bold tracking-[0.05em] uppercase text-outline mb-2"
+              >
+                Editor's Pick
+              </p>
+              <p class="text-sm font-semibold leading-tight">
+                The Art of Translation
+              </p>
+              <p class="text-xs text-on-surface-variant mt-1">
+                Available in 8 languages
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Categories by Language: Bento Grid -->
+      <section class="bg-surface-container-low py-24 mb-32">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+          <div class="mb-16">
+            <h2 class="text-3xl font-bold tracking-tight mb-4 text-on-surface">
+              Curated Collections
+            </h2>
+            <p class="text-on-surface-variant">
+              Explore our definitive selection of English literary masterworks.
+            </p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <!-- Modern Classics (Large) -->
+            <div
+              class="md:col-span-2 md:row-span-2 bg-surface-container-lowest p-8 rounded-[2rem] editorial-shadow group cursor-pointer overflow-hidden relative min-h-[400px]"
+            >
+              <div class="relative z-10">
+                <span
+                  class="text-xs font-bold tracking-widest uppercase text-primary mb-2 block"
+                  >Featured</span
+                >
+                <h3 class="text-3xl font-bold mb-4">Modern Classics</h3>
+                <p class="text-on-surface-variant max-w-xs">
+                  The defining narratives of the 20th century, from
+                  existentialist prose to groundbreaking social commentaries.
+                </p>
+              </div>
+              <div
+                class="absolute bottom-0 right-0 w-3/4 transform translate-y-8 translate-x-8 transition-transform group-hover:scale-105 duration-500"
+              >
+                <img
+                  class="rounded-tl-3xl shadow-2xl"
+                  data-alt="minimalist cover of a classic english novel with elegant typography and heavy paper texture"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBfzXCzunQJzSsTbw5DnjegUeYaKe1zgS3QzyvaQ4x5ci3kPjO6NBfrerLvgsQId2n_7eeWltq7xamD4VY2zNW9uZ4MRYn4ihot-m2lcxTOUHLH0agGcaVPvDTZwRx74lQAxkKBYjLHntzcDCoxvLek1IElbS0WapSmz09zpH_ktzXemhQUHjwVIolwq_YIr0qm1PzBvsgLX4hhjd-Z03EpzHF-qzm69kj_crU9SAffNUOk1soO1GD8nP-vXxzFmkYCddEIgFfv3h9"
+                />
+              </div>
+            </div>
+            <!-- Contemporary Fiction -->
+            <div
+              class="bg-primary text-on-primary p-8 rounded-[2rem] group cursor-pointer relative overflow-hidden"
+            >
+              <h3 class="text-2xl font-bold mb-2">Contemporary</h3>
+              <p class="text-on-primary/80 text-sm">
+                Bold new voices and winner-circle fiction from across the globe.
+              </p>
+              <div class="mt-8 flex justify-end">
+                <span
+                  class="material-symbols-outlined text-4xl opacity-50"
+                  data-icon="auto_awesome"
+                  >auto_awesome</span
+                >
+              </div>
+            </div>
+            <!-- Historical Archives -->
+            <div
+              class="bg-surface-container-highest p-8 rounded-[2rem] group cursor-pointer"
+            >
+              <h3 class="text-2xl font-bold mb-2">Archives</h3>
+              <p class="text-on-surface-variant text-sm">
+                Deep dives into historical records and seminal biographies.
+              </p>
+              <div class="mt-8 flex justify-end">
+                <span
+                  class="material-symbols-outlined text-primary"
+                  data-icon="history_edu"
+                  >history_edu</span
+                >
+              </div>
+            </div>
+            <!-- Poetry & Prose -->
+            <div
+              class="md:col-span-2 bg-secondary-container text-on-secondary-container p-8 rounded-[2rem] relative overflow-hidden group cursor-pointer"
+            >
+              <div class="flex justify-between items-start">
+                <div>
+                  <h3 class="text-2xl font-bold mb-2">Poetry &amp; Prose</h3>
+                  <p class="text-sm max-w-xs">
+                    The rhythmic pulse of modern literature, collected in
+                    elegant volumes.
+                  </p>
+                </div>
+                <span
+                  class="material-symbols-outlined text-4xl"
+                  data-icon="ink_pen"
+                  >ink_pen</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Featured Bestsellers: Carousel Mockup -->
+      <section class="max-w-7xl mx-auto px-6 lg:px-8 mb-32">
+        <div class="flex justify-between items-end mb-12">
+          <div>
+            <span
+              class="text-xs font-bold tracking-[0.05em] uppercase text-outline mb-2 block"
+              >Global Trends</span
+            >
+            <h2 class="text-4xl font-bold tracking-tight">The Best of 2024</h2>
+          </div>
+          <div class="flex gap-4">
+            <button
+              class="w-12 h-12 rounded-full border border-outline-variant/30 flex items-center justify-center hover:bg-surface-container transition-colors"
+            >
+              <span class="material-symbols-outlined" data-icon="arrow_back"
+                >arrow_back</span
+              >
+            </button>
+            <button
+              class="w-12 h-12 rounded-full border border-outline-variant/30 flex items-center justify-center hover:bg-surface-container transition-colors"
+            >
+              <span class="material-symbols-outlined" data-icon="arrow_forward"
+                >arrow_forward</span
+              >
+            </button>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <!-- Book Card 1 -->
+          <div class="group cursor-pointer">
+            <div
+              class="bg-surface-container-lowest p-4 rounded-2xl mb-6 shadow-sm group-hover:editorial-shadow transition-all duration-300 transform group-hover:-translate-y-2"
+            >
+              <div class="aspect-[2/3] rounded-xl overflow-hidden mb-4">
+                <img
+                  class="w-full h-full object-cover"
+                  data-alt="a modern minimalist poetry book cover with black ink strokes on white textured paper"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNev4s5miJkHYD8Gat7urHpZlLv9JNFnklyIbpgq0miSvWVbnuOnk-Okk34xLcngcKB6rzK652SMIILXbGx7pSf_lf01K7DJGebU9gJoRNGXKz32XLdkNSAEiUQC38z5KO9jLwn7Ql82Cvu8Wa0Boj8WeI0YBqH4WKJdPbSXjNHfUdRsYIpJyRTH7hQB-jx3z9vIFrJCrMa7ENpFhMBd0pqspABjHnFwQ02pbrtvnzJTPtL_ZRVh9x5IDbGx93QhnmS3aoeEgPWVfW"
+                />
+              </div>
+              <p
+                class="text-[10px] font-bold tracking-widest uppercase text-outline mb-1"
+              >
+                Stockholm Edition
+              </p>
+              <h4 class="font-bold text-lg mb-1 leading-tight">Vinterljus</h4>
+              <p class="text-sm text-on-surface-variant">Lars Gustafsson</p>
+            </div>
+          </div>
+          <!-- Book Card 2 -->
+          <div class="group cursor-pointer">
+            <div
+              class="bg-surface-container-lowest p-4 rounded-2xl mb-6 shadow-sm group-hover:editorial-shadow transition-all duration-300 transform group-hover:-translate-y-2"
+            >
+              <div class="aspect-[2/3] rounded-xl overflow-hidden mb-4">
+                <img
+                  class="w-full h-full object-cover"
+                  data-alt="a japanese paperback book with elegant vertical kanji and a small abstract illustration of a koi fish"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqo55VN6u6oOGH0RJJHFLU4SnrBWJEdCfZH7B-PmbnVlXMQwE-h_J39OHE9RYjE4XLnA8Fc1bxzq7_6wfVaCAwvJFWE2GflWG2t5JWZpJCgL3IJq7UcoAOUelJck1aSIB0oBUXXcXwQts7-E_Xe9qky0pKKhys-i_QdgHfSmLU9oWhE42COY0fbhIZ5s4lL4AVWdlNo4v_JwWyTBzT26ldw-2fJB-UqA34VZS6snuADDxoVbejzUrIAJtkkG17JG1yjs8AEVz0L48l"
+                />
+              </div>
+              <p
+                class="text-[10px] font-bold tracking-widest uppercase text-outline mb-1"
+              >
+                Kyoto Press
+              </p>
+              <h4 class="font-bold text-lg mb-1 leading-tight">
+                Memory of Water
+              </h4>
+              <p class="text-sm text-on-surface-variant">Hiroshi Yuki</p>
+            </div>
+          </div>
+          <!-- Book Card 3 -->
+          <div class="group cursor-pointer">
+            <div
+              class="bg-surface-container-lowest p-4 rounded-2xl mb-6 shadow-sm group-hover:editorial-shadow transition-all duration-300 transform group-hover:-translate-y-2"
+            >
+              <div class="aspect-[2/3] rounded-xl overflow-hidden mb-4">
+                <img
+                  class="w-full h-full object-cover"
+                  data-alt="a stylish italian design book with bold serif typography and a minimalist architectural photography of Milan"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnsBQ4NoFTXrPp2O14iKFvCmmNYhAg2PwwzQndI_c-xkZ_PQTsb8j9khUfwnta0bXv4iGOFevEbOWpBWCwlo6zcCTUMa3vImjjx8sRCSokQd4CU6Z9aUfV8BHJrnSKQvgrCNEuzMlY0kt_nEYhgcqYRflRTG2VgqV-S3OCk7e_WY3tTmE5lVY7X46kzLBzOV2Ovgu4w-BrwDD0D8JL_M8GC5TOTK6qq36Q12WQdlJxPEZxGIFDjckVcpWJ5B8sD9BVOCxSqPaSJg3n"
+                />
+              </div>
+              <p
+                class="text-[10px] font-bold tracking-widest uppercase text-outline mb-1"
+              >
+                Milano Design
+              </p>
+              <h4 class="font-bold text-lg mb-1 leading-tight">
+                Forma e Spazio
+              </h4>
+              <p class="text-sm text-on-surface-variant">Paola Ferraro</p>
+            </div>
+          </div>
+          <!-- Book Card 4 -->
+          <div class="group cursor-pointer">
+            <div
+              class="bg-surface-container-lowest p-4 rounded-2xl mb-6 shadow-sm group-hover:editorial-shadow transition-all duration-300 transform group-hover:-translate-y-2"
+            >
+              <div class="aspect-[2/3] rounded-xl overflow-hidden mb-4">
+                <img
+                  class="w-full h-full object-cover"
+                  data-alt="a classic leather-bound book lying on a dark green velvet surface under soft warm lamp light"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBfzXCzunQJzSsTbw5DnjegUeYaKe1zgS3QzyvaQ4x5ci3kPjO6NBfrerLvgsQId2n_7eeWltq7xamD4VY2zNW9uZ4MRYn4ihot-m2lcxTOUHLH0agGcaVPvDTZwRx74lQAxkKBYjLHntzcDCoxvLek1IElbS0WapSmz09zpH_ktzXemhQUHjwVIolwq_YIr0qm1PzBvsgLX4hhjd-Z03EpzHF-qzm69kj_crU9SAffNUOk1soO1GD8nP-vXxzFmkYCddEIgFfv3h9"
+                />
+              </div>
+              <p
+                class="text-[10px] font-bold tracking-widest uppercase text-outline mb-1"
+              >
+                Paris Archivist
+              </p>
+              <h4 class="font-bold text-lg mb-1 leading-tight">
+                Les Rues Perdues
+              </h4>
+              <p class="text-sm text-on-surface-variant">Jean-Luc Moreau</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- New Arrivals: Newsletter Style -->
+      <section class="max-w-7xl mx-auto px-6 lg:px-8 mb-32">
+        <div
+          class="bg-primary-container rounded-[3rem] p-12 lg:p-24 relative overflow-hidden"
+        >
+          <div class="relative z-10 max-w-2xl">
+            <h2
+              class="text-4xl font-bold tracking-tight mb-6 text-on-primary-container"
+            >
+              Subscribe to The Archivist.
+            </h2>
+            <p
+              class="text-on-primary-container/80 text-lg mb-10 leading-relaxed"
+            >
+              Every Thursday, we release a curated dossier of foreign literature
+              new to our gallery. No clutter, just the most significant voices
+              of the week.
+            </p>
+            <form class="flex flex-col sm:flex-row gap-4">
+              <input
+                class="flex-1 px-6 py-4 rounded-2xl border-none bg-surface-container-lowest focus:ring-2 focus:ring-primary text-on-surface"
+                placeholder="Enter your email"
+                type="email"
+              />
+              <button
+                class="bg-primary text-on-primary px-10 py-4 rounded-2xl font-bold hover:scale-[0.98] transition-transform"
+              >
+                Join the Gallery
+              </button>
+            </form>
+          </div>
+          <div
+            class="absolute right-[-10%] top-[-10%] w-[50%] h-[120%] opacity-10 pointer-events-none"
+          >
+            <span
+              class="material-symbols-outlined text-[40rem]"
+              data-icon="auto_stories"
+              >auto_stories</span
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- Footer -->
+    <footer class="bg-emerald-50 dark:bg-emerald-950 w-full py-12 px-8">
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-7xl mx-auto font-manrope text-sm"
+      >
+        <div>
+          <div
+            class="text-lg font-bold text-emerald-900 dark:text-emerald-50 mb-4"
+          >
+            The Curated Gallery
+          </div>
+          <p class="text-emerald-700/80 max-w-xs mb-8">
+            Crafting a bridge between cultures through the timeless medium of
+            the printed page. Visit our flagship store in Zurich or browse our
+            digital archives.
+          </p>
+          <p class="text-emerald-700/80">
+            © 2024 The Curated Gallery. Crafted for the Digital Archivist.
+          </p>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col space-y-4">
+            <h4
+              class="font-bold text-emerald-900 dark:text-emerald-50 uppercase tracking-widest text-[10px]"
+            >
+              Information
+            </h4>
+            <a
+              class="text-emerald-700/80 hover:text-emerald-900 underline transition-all opacity-80 hover:opacity-100"
+              href="#"
+              >Privacy Policy</a
+            >
+            <a
+              class="text-emerald-700/80 hover:text-emerald-900 underline transition-all opacity-80 hover:opacity-100"
+              href="#"
+              >Shipping Info</a
+            >
+          </div>
+          <div class="flex flex-col space-y-4">
+            <h4
+              class="font-bold text-emerald-900 dark:text-emerald-50 uppercase tracking-widest text-[10px]"
+            >
+              Connect
+            </h4>
+            <a
+              class="text-emerald-700/80 hover:text-emerald-900 underline transition-all opacity-80 hover:opacity-100"
+              href="#"
+              >Terms of Service</a
+            >
+            <a
+              class="text-emerald-700/80 hover:text-emerald-900 underline transition-all opacity-80 hover:opacity-100"
+              href="#"
+              >Contact Us</a
+            >
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
