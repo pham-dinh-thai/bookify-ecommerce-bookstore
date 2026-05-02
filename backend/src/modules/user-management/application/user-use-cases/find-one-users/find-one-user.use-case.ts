@@ -22,6 +22,7 @@ export class FindOneUserUseCase {
           user.lastName,
           user.email,
           user.gender,
+          user.roleId,
           user.isActive,
         )
       : null;

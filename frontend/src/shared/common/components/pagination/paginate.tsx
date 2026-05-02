@@ -1,0 +1,85 @@
+import PaginateButton from './ui/paginate-button';
+
+type PaginateProps = {
+  page: number;
+  pageSize: number;
+  total: number;
+  onPageChange: (page: number) => void;
+  showTotal?: boolean;
+};
+
+export default function Paginate({
+  page,
+  pageSize,
+  total,
+  onPageChange,
+  showTotal = true,
+}: PaginateProps) {
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  const handlePrevious = () => {
+    if (page > 1) onPageChange(page - 1);
+  };
+
+  const handleNext = () => {
+    if (page < totalPages) onPageChange(page + 1);
+  };
+
+  const handleFirst = () => {
+    if (page > 1) onPageChange(1);
+  };
+
+  const handleLast = () => {
+    if (page < totalPages) onPageChange(totalPages);
+  };
+
+  const pageNumbers = Array.from(
+    { length: totalPages },
+    (_, index) => index + 1,
+  );
+
+  const fromRecord = (page - 1) * pageSize + 1;
+  const toRecord = Math.min(page * pageSize, total);
+  const totalEntries = total;
+
+  return (
+    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between px-6 py-4 bg-white text-sm text-[#4f6553]">
+      {showTotal ? (
+        <div>{`Showing ${fromRecord} to ${toRecord} of ${totalEntries} entries`}</div>
+      ) : null}
+
+      <div className="flex items-center flex-wrap gap-2">
+        <PaginateButton onClick={handleFirst} disabled={page === 1}>
+          First
+        </PaginateButton>
+
+        <PaginateButton onClick={handlePrevious} disabled={page === 1}>
+          Previous
+        </PaginateButton>
+
+        {pageNumbers.map((pageNumber) => (
+          <button
+            key={pageNumber}
+            type="button"
+            onClick={() => onPageChange(pageNumber)}
+            className={`inline-flex h-10 min-w-[38px] items-center justify-center rounded-full border px-3 text-sm font-semibold ${
+              pageNumber === page
+                ? 'border-[#2d6a4e] bg-[#2d6a4e] text-white'
+                : 'border-[#d6ded4] bg-white text-[#4f6553] hover:bg-[#f5fbf5]'
+            }`}
+          >
+            {pageNumber}
+          </button>
+        ))}
+
+        <PaginateButton onClick={handleNext} disabled={page === totalPages}>
+          Next
+        </PaginateButton>
+
+        <PaginateButton onClick={handleLast} disabled={page === totalPages}>
+          Last
+        </PaginateButton>
+      </div>
+    </div>
+  );
+}

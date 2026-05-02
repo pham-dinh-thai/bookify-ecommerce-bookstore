@@ -11,7 +11,7 @@ export class TypeOrmUsersQueryRepository implements IUsersQueryRepository {
   ) {}
 
   public async findAll(): Promise<UserReadModel[]> {
-    const users = await this.repository.find();
+    const users = await this.repository.find({ order: { createdAt: 'DESC' } });
 
     return users;
   }

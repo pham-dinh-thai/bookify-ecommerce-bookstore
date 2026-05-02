@@ -23,6 +23,7 @@ export class FindUsersUseCase {
           user.lastName,
           user.email,
           user.gender,
+          user.roleId,
           user.isActive,
         ),
     );

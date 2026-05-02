@@ -5,6 +5,7 @@ export class FindOneUserResponse {
     public readonly lastName: string,
     public readonly email: string,
     public readonly gender: string,
+    public readonly roleId: string,
     public readonly isActive: boolean,
   ) {}
 }

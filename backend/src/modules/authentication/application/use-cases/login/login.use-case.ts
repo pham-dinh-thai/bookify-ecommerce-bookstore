@@ -47,7 +47,11 @@ export class LoginUseCase {
 
   public async execute(
     request: ILoginRequest,
-  ): Promise<{ accessToken: string; refreshToken: string } | null> {
+  ): Promise<{
+    accessToken: string;
+    refreshToken: string;
+    roleId: string;
+  } | null> {
     const authUser = await this.repository.findByEmail(request.email);
 
     const password = authUser ? authUser.password : LoginUseCase.DUMMY_HASH;
@@ -97,6 +101,6 @@ export class LoginUseCase {
       7 * 24 * 60 * 60 * 1000,
     );
 
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, roleId: authUser.roleId };
   }
 }
