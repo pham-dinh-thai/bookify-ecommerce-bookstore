@@ -161,6 +161,8 @@ export default function Homepage() {
       />
       <BookSection label="Limited Time" title="ON SALES" books={newArrivals} />
 
+      <br />
+      <br />
       <section className="max-w-7xl mx-auto px-6 lg:px-8 mb-32">
         <div className="relative rounded-3xl overflow-hidden">
           <Image
