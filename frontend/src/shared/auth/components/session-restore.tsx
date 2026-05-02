@@ -7,18 +7,17 @@ import {
 } from '@/shared/auth/lib/token-storage';
 
 async function refreshSession() {
-  const response = await fetch('/api/auth/refresh', {
-    method: 'POST',
-    credentials: 'include',
-  });
+  try {
+    const response = await fetch('/api/auth/refresh', {
+      method: 'POST',
+      credentials: 'include',
+    });
 
-  if (response.ok) {
-    const { accessToken } = await response.json();
-    setAccessToken(accessToken);
-  } else {
-    clearAccessToken();
-    window.location.href = '/login';
-  }
+    if (response.ok) {
+      const { accessToken } = await response.json();
+      setAccessToken(accessToken);
+    }
+  } catch {}
 }
 
 export default function SessionRestore() {

@@ -30,13 +30,20 @@ export class AuthController {
         return response.status(401).json({ message: 'Login failed' });
       }
 
-      const { accessToken, refreshToken } = result;
+      const { accessToken, refreshToken, roleId } = result;
 
       response.cookie('refresh_token', refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
+
+      response.cookie('user_role', roleId, {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
       return response.json({ accessToken });
@@ -74,6 +81,7 @@ export class AuthController {
       );
 
       response.clearCookie('refresh_token');
+      response.clearCookie('user_role');
       return response.json({ message: 'Logged out' });
     } catch (error) {
       ExceptionHandler.handle(error);
@@ -87,6 +95,10 @@ export class AuthController {
   ): Promise<any> {
     try {
       const refreshToken = request.cookies['refresh_token'];
+
+      if (!refreshToken) {
+        return response.status(401).json({ message: 'No refresh token' });
+      }
 
       return response.send(
         await this.refreshTokenUseCase.execute(refreshToken),
