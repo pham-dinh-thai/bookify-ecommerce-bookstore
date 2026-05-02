@@ -91,14 +91,14 @@ export function BookSectionHorizontal({
                   />
                 </div>
                 <div
-                  className="absolute inset-0 flex items-end p-3 transition-opacity duration-300"
+                  className="absolute inset-0 flex items-end p-4 transition-opacity duration-300"
                   style={{
                     background:
-                      'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%)',
+                      'linear-gradient(to top, rgba(26,61,43,0.85) 0%, transparent 50%)',
                     opacity: hoveredId === book.id ? 1 : 0,
                   }}
                 >
-                  <button className="w-full py-2 rounded-xl bg-white text-[#1a3d2b] font-bold text-xs">
+                  <button className="w-full py-2.5 rounded-xl bg-white text-[#1a3d2b] font-bold text-xs tracking-wide hover:bg-[#c1ecd4] transition-colors">
                     View Details
                   </button>
                 </div>
