@@ -9,7 +9,7 @@ import Table from '@/shared/common/components/table/table';
 import Paginate from '@/shared/common/components/pagination/paginate';
 
 export default function Users() {
-  const { users, loading, errors } = useUsers();
+  const { users } = useUsers();
   const pageSize = 4;
   const { search, setSearch, page, setPage, filteredUsers, paginatedUsers } =
     useUsersFilter({ users, pageSize });
@@ -54,7 +54,7 @@ export default function Users() {
                 <Funnel className="w-4" /> Filter
               </button>
               <Link
-                href="/users/create"
+                href="/admin/users/create"
                 className="inline-flex items-center gap-2 h-12 rounded-full bg-[#2d6a4f] px-4 py-2 text-sm font-semibold text-white hover:bg-[#166244] transition-colors"
               >
                 <UserRoundPlus className="w-4" /> Create User

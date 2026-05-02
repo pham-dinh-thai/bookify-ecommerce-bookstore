@@ -17,9 +17,14 @@ const navItems = [
     icon: LayoutDashboard,
     path: '/admin/system-overview',
   },
+
+  { label: 'User Management', icon: Users, path: '/admin/users' },
+  {
+    label: 'Customer Management',
+    icon: AlignEndHorizontal,
+    path: '/admin/customers',
+  },
   { label: 'Genre Management', icon: BookOpen, path: '/genres' },
-  { label: 'User Management', icon: Users, path: '/users' },
-  { label: 'Statistics', icon: AlignEndHorizontal, path: '/statistics' },
 ];
 
 export default function AdminSidebar() {

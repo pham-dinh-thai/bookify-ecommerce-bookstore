@@ -5,12 +5,12 @@ type TableHeadProps = {
 
 export default function TableHead({ columns, rowActions }: TableHeadProps) {
   return (
-    <thead className="bg-[#f8faf7]">
+    <thead className="bg-[#2d6a4f]">
       <tr>
         {columns.map((column) => (
           <th
             key={column.key}
-            className={`px-6 py-4 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#6d7f72] ${
+            className={`px-6 py-4 text-[12px] font-semibold uppercase tracking-[0.18em] text-white ${
               column.align === 'center'
                 ? 'text-center'
                 : column.align === 'right'
@@ -22,7 +22,7 @@ export default function TableHead({ columns, rowActions }: TableHeadProps) {
           </th>
         ))}
         {rowActions ? (
-          <th className="px-6 py-4 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#6d7f72] text-right">
+          <th className="px-6 py-4 text-[12px] font-semibold uppercase tracking-[0.18em] text-white text-right">
             Action
           </th>
         ) : null}

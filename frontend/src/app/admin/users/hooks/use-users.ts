@@ -20,8 +20,14 @@ export default function useUsers() {
         const normalized = data.map((user: User) => ({
           ...user,
           name: `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim(),
-          gender: user.gender ?? 'N/A',
-          role: user.roleId ?? 'N/A',
+          gender: !user.gender
+            ? 'N/A'
+            : user.gender.charAt(0).toUpperCase() +
+              user.gender.slice(1).toLowerCase(),
+          role: !user.roleId
+            ? 'N/A'
+            : user.roleId.charAt(0).toUpperCase() +
+              user.roleId.slice(1).toLowerCase(),
           status: user.isActive ? 'Active' : 'Inactive',
         }));
 
