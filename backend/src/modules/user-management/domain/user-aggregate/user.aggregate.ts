@@ -12,6 +12,7 @@ import { PasswordVerifyFailed } from './exceptions/password-verify-failed.except
 import { UserId } from './value-objects/user-id.value-object';
 import { Name } from './value-objects/name.value-object';
 import { UserUpdated } from './events/user-updated.event';
+import { UserActivated } from './events/user-activated.event';
 
 export class User extends AggregateRoot {
   private constructor(
@@ -135,6 +136,12 @@ export class User extends AggregateRoot {
     this.isActive = false;
 
     this.addDomainEvent(new UserDeactivated(this.id.getValue()));
+  }
+
+  public activate(): void {
+    this.isActive = true;
+
+    this.addDomainEvent(new UserActivated(this.id.getValue()));
   }
 
   public async changePassword(

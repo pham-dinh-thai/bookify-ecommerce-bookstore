@@ -24,6 +24,7 @@ import { CurrentUser } from '../../../../shared/decorators/current-user.decorato
 import { UpdateUserRequest } from './requests/update-user.request';
 import { UpdateUserUseCase } from '../../application/user-use-cases/update-user/update-user.use-case';
 import { DeactivateUserUseCase } from '../../application/user-use-cases/deactivate-user/deactivate-user.use-case';
+import { ActivateUserUseCase } from '../../application/user-use-cases/activate-user/activate-user.use-case';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RoleGuard)
@@ -35,6 +36,7 @@ export class UsersController {
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly updateUserUseCase: UpdateUserUseCase,
     private readonly deactivateUserUseCase: DeactivateUserUseCase,
+    private readonly activateUserUseCase: ActivateUserUseCase,
   ) {}
 
   @Get()
@@ -85,6 +87,18 @@ export class UsersController {
   ): Promise<void> {
     try {
       await this.deactivateUserUseCase.execute(id, actorId);
+    } catch (error) {
+      ExceptionHandler.handle(error);
+    }
+  }
+
+  @Patch(':id/activate')
+  public async activate(
+    @Param('id') id: string,
+    @CurrentUser('userId') actorId: string,
+  ): Promise<void> {
+    try {
+      await this.activateUserUseCase.execute(id, actorId);
     } catch (error) {
       ExceptionHandler.handle(error);
     }

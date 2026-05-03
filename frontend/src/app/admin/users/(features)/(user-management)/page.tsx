@@ -1,15 +1,27 @@
 'use client';
 
-import { CircleOff, Funnel, Pencil, Trash2, UserRoundPlus } from 'lucide-react';
+import {
+  CircleCheck,
+  CircleOff,
+  Funnel,
+  Pencil,
+  Trash2,
+  UserRoundPlus,
+} from 'lucide-react';
 import useUsers from '../../hooks/use-users';
 import useUsersFilter from '../../hooks/use-users-filter';
 import Link from 'next/link';
 import AdminSearchBar from '../../ui/search-bar';
 import Table from '@/shared/common/components/table/table';
 import Paginate from '@/shared/common/components/pagination/paginate';
+import React from 'react';
+import { useToast } from '@/app/admin/components/toast/toast';
+import { deactivateUserService } from './services/deactivate-user.service';
+import { activateUserService } from './services/activate-user.service';
 
 export default function Users() {
-  const { users } = useUsers();
+  const { users, refetch } = useUsers();
+
   const pageSize = 4;
   const { search, setSearch, page, setPage, filteredUsers, paginatedUsers } =
     useUsersFilter({ users, pageSize });
@@ -34,6 +46,8 @@ export default function Users() {
       className: 'text-[#4f6553]',
     },
   ];
+
+  const { addToast } = useToast();
 
   return (
     <div>
@@ -88,11 +102,32 @@ export default function Users() {
               </Link>
               <button
                 type="button"
-                title="Deactivate User"
-                onClick={() => console.log('Delete', item.id)}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#fff1f1] text-[#b33a3a] hover:bg-[#ffdede]"
+                title={item.isActive ? 'Deactivate User' : 'Activate User'}
+                onClick={async () => {
+                  try {
+                    if (item.isActive) {
+                      await deactivateUserService(item.id);
+                      addToast('User deactivated successfully', 'success');
+                    } else {
+                      await activateUserService(item.id);
+                      addToast('User activated successfully', 'success');
+                    }
+                    refetch();
+                  } catch (err: unknown) {
+                    // error handling giữ nguyên
+                  }
+                }}
+                className={`inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
+                  item.isActive
+                    ? 'bg-[#fff1f1] text-[#b33a3a] hover:bg-[#ffdede]'
+                    : 'bg-[#f0faf4] text-[#2d6a4f] hover:bg-[#d4eddf]'
+                }`}
               >
-                <CircleOff className="w-4" />
+                {item.isActive ? (
+                  <CircleOff className="w-4" />
+                ) : (
+                  <CircleCheck className="w-4" />
+                )}
               </button>
             </div>
           )}
