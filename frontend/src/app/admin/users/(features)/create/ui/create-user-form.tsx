@@ -6,6 +6,8 @@ import CreateUserAction from './create-user-action';
 import { createUserService } from '../services/create-user-service';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/app/admin/components/toast/toast';
+import { formStyles } from '@/shared/common/form/form-styles';
+import { validateUserForm } from '../services/use-user-validate';
 
 export default function CreateUserForm() {
   const router = useRouter();
@@ -25,24 +27,6 @@ export default function CreateUserForm() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const validateForm = (): FormErrors => {
-    const newErrors: FormErrors = {};
-    if (!formData.firstName.trim())
-      newErrors.firstName = 'First name is required';
-    if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Email invalid format';
-    }
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password too short. Min 8 characters';
-    }
-    return newErrors;
-  };
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
@@ -53,17 +37,12 @@ export default function CreateUserForm() {
     }
   };
 
-  const fieldStyle = { backgroundColor: '#e2eae3', color: '#2b352f' };
-  const inputClass =
-    'w-full border-none rounded-2xl py-4 px-6 outline-none transition-all placeholder:opacity-40 focus:ring-2 focus:ring-[#3f6754]/20';
-  const selectClass =
-    'w-full border-none rounded-2xl py-4 px-6 pr-10 outline-none transition-all appearance-none focus:ring-2 focus:ring-[#3f6754]/20';
-  const labelClass = 'block text-[13px] font-bold uppercase ml-1';
-  const labelStyle = { letterSpacing: '0.08em', color: '#58615b' };
+  const { fieldStyle, inputClass, selectClass, labelClass, labelStyle } =
+    formStyles();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newErrors = validateForm();
+    const newErrors = validateUserForm(formData);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;

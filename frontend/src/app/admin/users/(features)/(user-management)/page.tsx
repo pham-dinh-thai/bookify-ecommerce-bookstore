@@ -1,10 +1,10 @@
 'use client';
 
-import { Funnel, Pencil, Trash2, UserRoundPlus } from 'lucide-react';
-import useUsers from './hooks/use-users';
-import useUsersFilter from './hooks/use-users-filter';
+import { CircleOff, Funnel, Pencil, Trash2, UserRoundPlus } from 'lucide-react';
+import useUsers from '../../hooks/use-users';
+import useUsersFilter from '../../hooks/use-users-filter';
 import Link from 'next/link';
-import AdminSearchBar from './ui/search-bar';
+import AdminSearchBar from '../../ui/search-bar';
 import Table from '@/shared/common/components/table/table';
 import Paginate from '@/shared/common/components/pagination/paginate';
 
@@ -37,7 +37,17 @@ export default function Users() {
 
   return (
     <div>
-      <div className="px-12">
+      <div className="p-12">
+        <div>
+          <h2
+            className="text-5xl font-extrabold tracking-tighter mb-6 leading-[1.1]"
+            style={{ color: '#2b352f' }}
+          >
+            <span className="italic" style={{ color: '#335b48' }}>
+              User Management
+            </span>
+          </h2>
+        </div>
         <AdminSearchBar
           value={search}
           onChange={(value) => {
@@ -69,21 +79,20 @@ export default function Users() {
           rowKey="id"
           rowActions={(item) => (
             <div className="flex items-center justify-end gap-2">
-              <button
-                type="button"
-                title="Edit"
-                onClick={() => console.log('Edit', item.id)}
+              <Link
+                title="Edit User"
+                href={`/admin/users/${item.id}`}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#eef6ff] text-[#204877] hover:bg-[#dbe9ff]"
               >
                 <Pencil className="w-4" />
-              </button>
+              </Link>
               <button
                 type="button"
-                title="Delete"
+                title="Deactivate User"
                 onClick={() => console.log('Delete', item.id)}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#fff1f1] text-[#b33a3a] hover:bg-[#ffdede]"
               >
-                <Trash2 className="w-4" />
+                <CircleOff className="w-4" />
               </button>
             </div>
           )}

@@ -3,6 +3,7 @@
 import {
   AlignEndHorizontal,
   BookOpen,
+  BookUser,
   LayoutDashboard,
   Users,
 } from 'lucide-react';
@@ -21,7 +22,7 @@ const navItems = [
   { label: 'User Management', icon: Users, path: '/admin/users' },
   {
     label: 'Customer Management',
-    icon: AlignEndHorizontal,
+    icon: BookUser,
     path: '/admin/customers',
   },
   { label: 'Genre Management', icon: BookOpen, path: '/genres' },
