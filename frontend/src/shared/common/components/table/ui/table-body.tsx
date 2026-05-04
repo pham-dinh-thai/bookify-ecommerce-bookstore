@@ -38,7 +38,7 @@ export default function TableBody<T extends Record<string, any>>({
             {columns.map((column) => (
               <td
                 key={column.key}
-                className={`px-6 py-4 align-top text-sm text-[#2b322f] ${
+                className={`px-6 py-4 align-middle text-sm text-[#2b322f] ${
                   column.align === 'center'
                     ? 'text-center'
                     : column.align === 'right'

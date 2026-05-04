@@ -6,4 +6,5 @@ type User = {
   gender: string;
   roleId: string;
   isActive: boolean;
+  status: string;
 };

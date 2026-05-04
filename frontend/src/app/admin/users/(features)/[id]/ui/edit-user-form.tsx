@@ -53,10 +53,8 @@ export default function EditUserForm({ id }: { id: string }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('formData:', formData);
 
     const newErrors = validateUserForm(formData);
-    console.log('errors:', newErrors);
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -67,7 +65,6 @@ export default function EditUserForm({ id }: { id: string }) {
       setIsLoading(true);
 
       await updateUserService(id, formData);
-      console.log('calling updateUserService...');
       addToast('User updated successfully', 'success');
     } catch (err: unknown) {
       let message = 'Something went wrong';
