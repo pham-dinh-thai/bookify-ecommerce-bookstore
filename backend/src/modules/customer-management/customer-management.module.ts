@@ -21,6 +21,7 @@ import { PHONE_NUMBER_EXISTS_CHECKER } from './domain/customer-aggregate/service
 import { PhoneNumberExistsCheckerService } from './infrastructure/services/phone-number-exists-checker.service';
 import { SharedJwtModule } from '../../shared/jwt/shared-jwt.module';
 import { FindCustomersUseCase } from './application/customer-use-cases/find-customers/find-customers.use-case';
+import { AuthenticationModule } from '../authentication/authentication.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { FindCustomersUseCase } from './application/customer-use-cases/find-cust
     UuidModule,
     SharedCacheModule,
     SharedJwtModule,
+    AuthenticationModule,
   ],
   controllers: [CustomersController],
   providers: [
