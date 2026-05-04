@@ -26,6 +26,10 @@ import {
   type IEmailExistsChecker,
 } from '../../../domain/user-aggregate/services/email-exists-checker.service';
 import { EmailHasBeenUseException } from '../../../domain/user-aggregate/exceptions/email-has-been-use.exception';
+import {
+  CACHE_REPOSITORY,
+  type ICacheRepository,
+} from '../../../../../shared/cache/domain/cache.repository.interface';
 
 @Injectable()
 export class CreateUserUseCase {
@@ -47,6 +51,9 @@ export class CreateUserUseCase {
 
     @Inject(EMAIL_EXISTS_CHECKER)
     private readonly emailExistsChecker: IEmailExistsChecker,
+
+    @Inject(CACHE_REPOSITORY)
+    private readonly cache: ICacheRepository,
   ) {}
 
   public async execute(
@@ -93,5 +100,7 @@ export class CreateUserUseCase {
 
       user.clearDomainEvents();
     });
+
+    await this.cache.del('users');
   }
 }
