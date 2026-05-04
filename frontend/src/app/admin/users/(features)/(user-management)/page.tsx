@@ -8,23 +8,51 @@ import {
   Trash2,
   UserRoundPlus,
 } from 'lucide-react';
-import useUsers from '../../hooks/use-users';
-import useUsersFilter from '../../hooks/use-users-filter';
+import useUsers from './hooks/use-users';
+import useUsersFilter from './hooks/use-users-filter';
 import Link from 'next/link';
-import AdminSearchBar from '../../ui/search-bar';
+import AdminSearchBar from './ui/search-bar';
 import Table from '@/shared/common/components/table/table';
 import Paginate from '@/shared/common/components/pagination/paginate';
-import React from 'react';
 import { useToast } from '@/app/admin/components/toast/toast';
 import { deactivateUserService } from './services/deactivate-user.service';
 import { activateUserService } from './services/activate-user.service';
+import { useEffect, useRef, useState } from 'react';
+import FilterDropdown from './components/filter-dropdown';
 
 export default function Users() {
   const { users, refetch } = useUsers();
 
+  const [showFilter, setShowFilter] = useState(false);
   const pageSize = 4;
-  const { search, setSearch, page, setPage, filteredUsers, paginatedUsers } =
-    useUsersFilter({ users, pageSize });
+  const {
+    search,
+    setSearch,
+    page,
+    setPage,
+    filteredUsers,
+    paginatedUsers,
+    filter,
+    setFilter,
+  } = useUsersFilter({ users, pageSize });
+
+  const filterRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
+        setShowFilter(false);
+      }
+    };
+
+    if (showFilter) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showFilter]);
 
   const columns = [
     {
@@ -43,7 +71,17 @@ export default function Users() {
     {
       key: 'status',
       label: 'Status',
-      className: 'text-[#4f6553]',
+      render: (item: any) => (
+        <span
+          className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
+            item.status === 'Active'
+              ? 'bg-[#f0faf4] text-[#2d6a4f]'
+              : 'bg-[#fff1f1] text-[#b33a3a]'
+          }`}
+        >
+          {item.status}
+        </span>
+      ),
     },
   ];
 
@@ -70,13 +108,25 @@ export default function Users() {
           }}
           actions={
             <>
-              <button
-                type="button"
-                onClick={() => console.log('Filter clicked')}
-                className="inline-flex items-center gap-2 h-12 rounded-full bg-[#eef6ff] px-4 py-2 text-sm font-semibold text-[#204877] hover:bg-[#dbe9ff] transition-colors"
-              >
-                <Funnel className="w-4" /> Filter
-              </button>
+              <div className="relative" ref={filterRef}>
+                <button
+                  type="button"
+                  onClick={() => setShowFilter(!showFilter)}
+                  className="inline-flex items-center gap-2 h-12 rounded-full bg-[#eef6ff] px-4 py-2 text-sm font-semibold text-[#204877] hover:bg-[#dbe9ff] transition-colors"
+                >
+                  <Funnel className="w-4" /> Filter
+                  {(filter.role || filter.status) && (
+                    <span className="ml-1 w-2 h-2 rounded-full bg-[#b33a3a] inline-block" />
+                  )}
+                </button>
+                {showFilter && (
+                  <FilterDropdown
+                    filter={filter}
+                    setFilter={setFilter}
+                    onClose={() => setShowFilter(false)}
+                  />
+                )}
+              </div>
               <Link
                 href="/admin/users/create"
                 className="inline-flex items-center gap-2 h-12 rounded-full bg-[#2d6a4f] px-4 py-2 text-sm font-semibold text-white hover:bg-[#166244] transition-colors"
@@ -114,7 +164,19 @@ export default function Users() {
                     }
                     refetch();
                   } catch (err: unknown) {
-                    // error handling giữ nguyên
+                    let message = 'Something went wrong';
+
+                    if (err instanceof Error) {
+                      message = err.message;
+                    } else if (
+                      typeof err === 'object' &&
+                      err !== null &&
+                      'message' in err
+                    ) {
+                      message = String((err as any).message);
+                    }
+
+                    addToast(message, 'error');
                   }
                 }}
                 className={`inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
