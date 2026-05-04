@@ -11,6 +11,7 @@ import { SharedCacheModule } from './shared/cache/cache.module';
 import { AuditLogModule } from './modules/audit-log/audit-log.module';
 import { UserManagementModule } from './modules/user-management/user-management.module';
 import { CustomerManagementModule } from './modules/customer-management/customer-management.module';
+import { GenreManagementModule } from './modules/genre-management/genre-management.module';
 import Keyv from 'keyv';
 import KeyvRedis from '@keyv/redis';
 
@@ -55,6 +56,7 @@ import KeyvRedis from '@keyv/redis';
     AuditLogModule,
     UserManagementModule,
     CustomerManagementModule,
+    GenreManagementModule,
   ],
   controllers: [AppController],
   providers: [AppService],
