@@ -32,6 +32,10 @@ import {
 import { PhoneNumberAlreadyBeenUseException } from '../../../domain/customer-aggregate/exceptions/phone-number-already-been-use.exception';
 import { JWt_SERVICE } from '../../../../../shared/jwt/domain/jwt.service';
 import { SharedJwtService } from '../../../../../shared/jwt/infrastructure/shared-jwt.service';
+import {
+  CACHE_REPOSITORY,
+  type ICacheRepository,
+} from '../../../../../shared/cache/domain/cache.repository.interface';
 
 @Injectable()
 export class CompleteInformationUseCase {
@@ -59,6 +63,9 @@ export class CompleteInformationUseCase {
 
     @Inject(JWt_SERVICE)
     private readonly jwtService: SharedJwtService,
+
+    @Inject(CACHE_REPOSITORY)
+    private readonly cache: ICacheRepository,
   ) {}
 
   public async execute(
@@ -124,5 +131,7 @@ export class CompleteInformationUseCase {
         },
       );
     });
+
+    await this.cache.del('customers');
   }
 }
