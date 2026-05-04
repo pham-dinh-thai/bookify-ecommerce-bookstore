@@ -1,5 +1,4 @@
 type FilterOptions = {
-  role: string;
   status: string;
 };
 
@@ -21,24 +20,6 @@ export default function FilterDropdown({
           className="text-xs font-bold uppercase"
           style={{ color: '#58615b' }}
         >
-          Role
-        </label>
-        <select
-          value={filter.role}
-          onChange={(e) => setFilter({ ...filter, role: e.target.value })}
-          className="w-full rounded-xl px-3 py-2 text-sm border border-[#e8ede9]"
-        >
-          <option value="">All</option>
-          <option value="admin">Admin</option>
-          <option value="staff">Staff</option>
-        </select>
-      </div>
-
-      <div className="space-y-2">
-        <label
-          className="text-xs font-bold uppercase"
-          style={{ color: '#58615b' }}
-        >
           Status
         </label>
         <select
@@ -53,7 +34,7 @@ export default function FilterDropdown({
       </div>
 
       <button
-        onClick={() => setFilter({ role: '', status: '' })}
+        onClick={() => setFilter({ status: '' })}
         className="w-full text-sm text-[#b33a3a]"
       >
         Clear filter

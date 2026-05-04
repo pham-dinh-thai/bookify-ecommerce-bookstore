@@ -1,5 +1,9 @@
 'use client';
 
+import { useToast } from '@/app/admin/components/toast/toast';
+import AdminSearchBar from '@/app/admin/users/(features)/(user-management)/ui/search-bar';
+import Paginate from '@/shared/common/components/pagination/paginate';
+import Table from '@/shared/common/components/table/table';
 import {
   CircleCheck,
   CircleOff,
@@ -8,20 +12,16 @@ import {
   Trash2,
   UserRoundPlus,
 } from 'lucide-react';
-import useUsers from './hooks/use-users';
-import useUsersFilter from './hooks/use-users-filter';
 import Link from 'next/link';
-import AdminSearchBar from './ui/search-bar';
-import Table from '@/shared/common/components/table/table';
-import Paginate from '@/shared/common/components/pagination/paginate';
-import { useToast } from '@/app/admin/components/toast/toast';
-import { deactivateUserService } from './services/deactivate-user.service';
-import { activateUserService } from './services/activate-user.service';
 import { useEffect, useRef, useState } from 'react';
+import useCustomers from './hooks/use-customers';
+import { deactivateUserService } from '@/app/admin/users/(features)/(user-management)/services/deactivate-user.service';
+import { activateUserService } from '@/app/admin/users/(features)/(user-management)/services/activate-user.service';
+import useCustomersFilter from './hooks/use-customers-filter';
 import FilterDropdown from './components/filter-dropdown';
 
-export default function UserManagement() {
-  const { users, refetch } = useUsers();
+export default function CustomerManagement() {
+  const { customers, refetch } = useCustomers();
 
   const [showFilter, setShowFilter] = useState(false);
   const pageSize = 4;
@@ -34,7 +34,7 @@ export default function UserManagement() {
     paginatedUsers,
     filter,
     setFilter,
-  } = useUsersFilter({ users, pageSize });
+  } = useCustomersFilter({ customers, pageSize });
 
   const filterRef = useRef<HTMLDivElement>(null);
 
@@ -57,7 +57,7 @@ export default function UserManagement() {
   const columns = [
     {
       key: 'name',
-      label: 'User Identity',
+      label: 'Customer Identity',
       render: (item: any) => (
         <div className="space-y-1">
           <p className="font-semibold text-[#1c3725]">{item.name}</p>
@@ -66,8 +66,8 @@ export default function UserManagement() {
       ),
       className: 'max-w-[320px]',
     },
+    { key: 'address', label: 'Address', className: 'text-[#4f6553]' },
     { key: 'gender', label: 'Gender', className: 'text-[#4f6553]' },
-    { key: 'role', label: 'Role', className: 'text-[#4f6553]' },
     {
       key: 'status',
       label: 'Status',
@@ -96,7 +96,7 @@ export default function UserManagement() {
             style={{ color: '#2b352f' }}
           >
             <span className="italic" style={{ color: '#335b48' }}>
-              User Management
+              Customer Management
             </span>
           </h2>
         </div>
@@ -115,9 +115,6 @@ export default function UserManagement() {
                   className="inline-flex items-center gap-2 h-12 rounded-full bg-[#eef6ff] px-4 py-2 text-sm font-semibold text-[#204877] hover:bg-[#dbe9ff] transition-colors"
                 >
                   <Funnel className="w-4" /> Filter
-                  {(filter.role || filter.status) && (
-                    <span className="ml-1 w-2 h-2 rounded-full bg-[#b33a3a] inline-block" />
-                  )}
                 </button>
                 {showFilter && (
                   <FilterDropdown
@@ -127,12 +124,6 @@ export default function UserManagement() {
                   />
                 )}
               </div>
-              <Link
-                href="/admin/users/create"
-                className="inline-flex items-center gap-2 h-12 rounded-full bg-[#2d6a4f] px-4 py-2 text-sm font-semibold text-white hover:bg-[#166244] transition-colors"
-              >
-                <UserRoundPlus className="w-4" /> Create User
-              </Link>
             </>
           }
         />
@@ -145,7 +136,7 @@ export default function UserManagement() {
             <div className="flex items-center justify-end gap-2">
               <Link
                 title="Edit User"
-                href={`/admin/users/${item.id}`}
+                href={`/admin/customers/${item.userId}`}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#eef6ff] text-[#204877] hover:bg-[#dbe9ff]"
               >
                 <Pencil className="w-4" />
@@ -156,10 +147,10 @@ export default function UserManagement() {
                 onClick={async () => {
                   try {
                     if (item.isActive) {
-                      await deactivateUserService(item.id);
+                      await deactivateUserService(item.userId);
                       addToast('User deactivated successfully', 'success');
                     } else {
-                      await activateUserService(item.id);
+                      await activateUserService(item.userId);
                       addToast('User activated successfully', 'success');
                     }
                     refetch();

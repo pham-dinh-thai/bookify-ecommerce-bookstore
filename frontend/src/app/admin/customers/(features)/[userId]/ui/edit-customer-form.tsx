@@ -1,24 +1,24 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ChevronDown, X } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useToast } from '@/app/admin/components/toast/toast';
-import EditUserAction from './edit-user-action';
 import { formStyles } from '@/shared/common/form/form-styles';
-import useEditUser from '../hooks/use-edit-user';
-import { updateUserService } from '../services/update-user.service';
-import { validateUserForm } from '../services/update-user-validate';
+import useEditUser from '@/app/admin/users/(features)/[id]/hooks/use-edit-user';
+import { validateUserForm } from '@/app/admin/users/(features)/[id]/services/update-user-validate';
+import { updateUserService } from '@/app/admin/users/(features)/[id]/services/update-user.service';
+import EditCustomerAction from './edit-customer-action';
 
-export default function EditUserForm({ id }: { id: string }) {
-  const [formData, setFormData] = useState<EditUserForm>({
+export default function EditCustomerForm({ userId }: { userId: string }) {
+  const [formData, setFormData] = useState<EditCustomerForm>({
     firstName: '',
     lastName: '',
     email: '',
     gender: 'other',
-    roleId: 'staff',
+    roleId: 'user',
   });
 
-  const { user, loading } = useEditUser(id);
+  const { user, loading } = useEditUser(userId);
 
   useEffect(() => {
     if (user) {
@@ -27,7 +27,7 @@ export default function EditUserForm({ id }: { id: string }) {
         lastName: user.lastName ?? '',
         email: user.email ?? '',
         gender: user.gender ?? 'other',
-        roleId: user.roleId ?? 'staff',
+        roleId: user.roleId ?? 'user',
       });
     }
   }, [user]);
@@ -64,8 +64,8 @@ export default function EditUserForm({ id }: { id: string }) {
     try {
       setIsLoading(true);
 
-      await updateUserService(id, formData);
-      addToast('User updated successfully', 'success');
+      await updateUserService(userId, formData);
+      addToast('Customer updated successfully', 'success');
     } catch (err: unknown) {
       let message = 'Something went wrong';
 
@@ -175,11 +175,11 @@ export default function EditUserForm({ id }: { id: string }) {
             name="roleId"
             value={formData.roleId}
             onChange={handleChange}
+            disabled
             className={selectClass}
-            style={fieldStyle}
+            style={{ ...fieldStyle, opacity: 0.6, cursor: 'not-allowed' }}
           >
-            <option value="staff">Staff</option>
-            <option value="admin">Admin</option>
+            <option value="user">User</option>
           </select>
           <ChevronDown
             className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none w-5 h-5"
@@ -188,7 +188,7 @@ export default function EditUserForm({ id }: { id: string }) {
         </div>
       </div>
 
-      <EditUserAction
+      <EditCustomerAction
         setErrors={setErrors}
         setFormData={setFormData}
         isLoading={isLoading}

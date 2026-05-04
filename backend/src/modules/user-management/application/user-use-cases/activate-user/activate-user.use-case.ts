@@ -11,6 +11,10 @@ import {
   AUDIT_LOG_COMMAND_REPOSITORY,
   type IAuditLogCommandRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
+import {
+  CACHE_REPOSITORY,
+  type ICacheRepository,
+} from '../../../../../shared/cache/domain/cache.repository.interface';
 
 @Injectable()
 export class ActivateUserUseCase {
@@ -23,6 +27,9 @@ export class ActivateUserUseCase {
 
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogRepository: IAuditLogCommandRepository,
+
+    @Inject(CACHE_REPOSITORY)
+    private readonly cache: ICacheRepository,
   ) {}
 
   public async execute(id: string, performedBy: string): Promise<void> {
@@ -47,5 +54,8 @@ export class ActivateUserUseCase {
         },
       );
     });
+
+    await this.cache.del('users');
+    await this.cache.del('customers');
   }
 }

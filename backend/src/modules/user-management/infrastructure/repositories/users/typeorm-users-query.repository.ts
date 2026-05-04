@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { IUsersQueryRepository } from '../../../domain/user-aggregate/repositories/users-query.repository.interface';
 import { UserTypeOrm } from '../../entities/user.entity';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { UserReadModel } from '../../../domain/user-aggregate/read-models/user.read-model';
 import { Injectable } from '@nestjs/common';
 
@@ -13,7 +13,10 @@ export class TypeOrmUsersQueryRepository implements IUsersQueryRepository {
   ) {}
 
   public async findAll(): Promise<UserReadModel[]> {
-    const users = await this.repository.find({ order: { createdAt: 'DESC' } });
+    const users = await this.repository.find({
+      order: { createdAt: 'DESC' },
+      where: { roleId: Not('user') },
+    });
 
     return users;
   }
