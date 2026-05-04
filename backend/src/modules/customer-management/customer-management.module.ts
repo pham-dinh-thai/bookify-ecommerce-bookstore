@@ -20,6 +20,7 @@ import { TypeOrmUsersCommandRepository } from './infrastructure/repositories/use
 import { PHONE_NUMBER_EXISTS_CHECKER } from './domain/customer-aggregate/services/phone-number-exists-checker.service';
 import { PhoneNumberExistsCheckerService } from './infrastructure/services/phone-number-exists-checker.service';
 import { SharedJwtModule } from '../../shared/jwt/shared-jwt.module';
+import { FindCustomersUseCase } from './application/customer-use-cases/find-customers/find-customers.use-case';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { SharedJwtModule } from '../../shared/jwt/shared-jwt.module';
   controllers: [CustomersController],
   providers: [
     CompleteInformationUseCase,
+    FindCustomersUseCase,
     {
       provide: CUSTOMERS_QUERY_REPOSITORY,
       useClass: TypeOrmCustomersQueryRepository,

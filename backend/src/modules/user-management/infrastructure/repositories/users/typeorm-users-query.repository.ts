@@ -3,7 +3,9 @@ import { IUsersQueryRepository } from '../../../domain/user-aggregate/repositori
 import { UserTypeOrm } from '../../entities/user.entity';
 import { Repository } from 'typeorm';
 import { UserReadModel } from '../../../domain/user-aggregate/read-models/user.read-model';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class TypeOrmUsersQueryRepository implements IUsersQueryRepository {
   public constructor(
     @InjectRepository(UserTypeOrm)

@@ -1,5 +1,13 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+} from 'typeorm';
 import { UserTypeOrm } from '../../../user-management/infrastructure/entities/user.entity';
+import { AddressTypeOrm } from './address.entity';
 
 @Entity('customers')
 export class CustomerTypeOrm {
@@ -15,4 +23,7 @@ export class CustomerTypeOrm {
 
   @Column({ type: 'varchar', length: 50, unique: true })
   phoneNumber!: string;
+
+  @OneToMany(() => AddressTypeOrm, (address) => address.customer)
+  addresses!: AddressTypeOrm[];
 }
