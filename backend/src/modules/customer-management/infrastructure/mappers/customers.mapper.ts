@@ -31,6 +31,7 @@ export class CustomersMapper {
             AddressesMapper.toReadModel(address),
           )
         : [],
+      customerTypeOrm.user.isActive,
     );
   }
 }

@@ -11,5 +11,6 @@ export class CustomerReadModel {
     public readonly gender: Gender,
     public readonly phoneNumber: string,
     public readonly addresses: AddressReadModel[],
+    public readonly isActive: boolean,
   ) {}
 }

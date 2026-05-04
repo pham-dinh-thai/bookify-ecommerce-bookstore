@@ -22,6 +22,10 @@ import {
   type IUnitOfWork,
   UNIT_OF_WORK,
 } from '../../../../../shared/unit-of-work/application/unit-of-work';
+import {
+  CACHE_REPOSITORY,
+  type ICacheRepository,
+} from '../../../../../shared/cache/domain/cache.repository.interface';
 
 @Injectable()
 export class UpdateUserUseCase {
@@ -40,6 +44,9 @@ export class UpdateUserUseCase {
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
+
+    @Inject(CACHE_REPOSITORY)
+    private readonly cache: ICacheRepository,
   ) {}
 
   public async execute(
@@ -82,5 +89,8 @@ export class UpdateUserUseCase {
         },
       );
     });
+
+    await this.cache.del('users');
+    await this.cache.del('customers');
   }
 }
