@@ -24,7 +24,7 @@ export default function CustomerManagement() {
   const { customers, refetch } = useCustomers();
 
   const [showFilter, setShowFilter] = useState(false);
-  const pageSize = 4;
+  const pageSize = 5;
   const {
     search,
     setSearch,
@@ -100,33 +100,37 @@ export default function CustomerManagement() {
             </span>
           </h2>
         </div>
-        <AdminSearchBar
-          value={search}
-          onChange={(value) => {
-            setSearch(value);
-            setPage(1);
-          }}
-          actions={
-            <>
-              <div className="relative" ref={filterRef}>
-                <button
-                  type="button"
-                  onClick={() => setShowFilter(!showFilter)}
-                  className="inline-flex items-center gap-2 h-12 rounded-full bg-[#eef6ff] px-4 py-2 text-sm font-semibold text-[#204877] hover:bg-[#dbe9ff] transition-colors"
-                >
-                  <Funnel className="w-4" /> Filter
-                </button>
-                {showFilter && (
-                  <FilterDropdown
-                    filter={filter}
-                    setFilter={setFilter}
-                    onClose={() => setShowFilter(false)}
-                  />
-                )}
-              </div>
-            </>
-          }
-        />
+
+        <div className="mb-4">
+          <AdminSearchBar
+            value={search}
+            onChange={(value) => {
+              setSearch(value);
+              setPage(1);
+            }}
+            actions={
+              <>
+                <div className="relative" ref={filterRef}>
+                  <button
+                    type="button"
+                    onClick={() => setShowFilter(!showFilter)}
+                    className="inline-flex items-center gap-2 h-12 rounded-full bg-[#eef6ff] px-4 py-2 text-sm font-semibold text-[#204877] hover:bg-[#dbe9ff] transition-colors"
+                  >
+                    <Funnel className="w-4" /> Filter
+                  </button>
+                  {showFilter && (
+                    <FilterDropdown
+                      filter={filter}
+                      setFilter={setFilter}
+                      onClose={() => setShowFilter(false)}
+                    />
+                  )}
+                </div>
+              </>
+            }
+            variant="minimal"
+          />
+        </div>
 
         <Table
           columns={columns}

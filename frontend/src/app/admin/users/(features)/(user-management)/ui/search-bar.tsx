@@ -4,16 +4,23 @@ type AdminSearchBarProps = {
   value: string;
   onChange?: (value: string) => void;
   actions?: React.ReactNode;
+  variant?: 'default' | 'minimal';
 };
 
 export default function AdminSearchBar({
   value,
   onChange,
   actions,
+  variant = 'default',
 }: AdminSearchBarProps) {
+  const containerClass =
+    variant === 'minimal'
+      ? 'flex flex-col rounded-2xl md:flex-row md:items-center gap-3 justify-between'
+      : 'flex flex-col bg-white p-6 rounded-2xl md:flex-row md:items-center gap-3 justify-between mb-6';
+
   return (
-    <div className="flex flex-col bg-white p-6 rounded-2xl md:flex-row md:items-center gap-3 justify-between mb-6">
-      <div className="flex items-center w-full max-w-2xl bg-[#f6f8f5] rounded-full px-4 h-12 border border-[#e8ede9] shadow-sm">
+    <div className={containerClass}>
+      <div className="flex items-center w-full max-w-2xl bg-white rounded-full px-4 h-12 border border-[#e8ede9] shadow-sm">
         <Search size={18} className="text-[#4b7761] shrink-0" />
         <input
           type="text"
