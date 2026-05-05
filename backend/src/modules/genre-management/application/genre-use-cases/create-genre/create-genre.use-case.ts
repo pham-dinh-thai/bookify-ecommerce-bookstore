@@ -17,11 +17,6 @@ import {
   type IAuditLogCommandRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
 import { Genre } from '../../../domain/genre-aggregate/genre.aggregate';
-import {
-  type IRolesCommandRepository,
-  ROLES_COMMAND_REPOSITORY,
-} from '../../../../authorization/domain/role-aggregate/repositories/roles-command.repository.interface';
-import { UnauthorizedException } from '../../../../../shared/domain/exception/unauthorized.exception';
 
 @Injectable()
 export class CreateGenreUseCase {
@@ -37,22 +32,12 @@ export class CreateGenreUseCase {
 
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogRepository: IAuditLogCommandRepository,
-
-    @Inject(ROLES_COMMAND_REPOSITORY)
-    private readonly roleRepository: IRolesCommandRepository,
   ) {}
 
   public async execute(
     request: ICreateGenreRequest,
     performedBy: string,
-    roleId: string,
   ): Promise<void> {
-    const role = await this.roleRepository.findOne(roleId);
-
-    if (!role.hasPermission('genres.write')) {
-      throw new UnauthorizedException();
-    }
-
     const id = this.uuid.generate();
 
     const genre = Genre.create(id, request.name);
