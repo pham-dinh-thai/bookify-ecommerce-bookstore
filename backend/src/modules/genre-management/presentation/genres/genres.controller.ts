@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -19,6 +22,7 @@ import { Roles } from '../../../../shared/decorators/roles.decorator';
 import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
 import { RenameGenreRequest } from './requests/rename-genre.request';
 import { RenameGenreUseCase } from '../../application/genre-use-cases/rename-genre/rename-genre.use-case';
+import { DeleteGenreUseCase } from '../../application/genre-use-cases/delete-genre/delete-genre.use-case';
 
 @Controller('genres')
 @UseGuards(JwtAuthGuard, RoleGuard)
@@ -29,6 +33,7 @@ export class GenresController {
     private readonly findOneGenreUseCase: FindOneGenreUseCase,
     private readonly createGenreUseCase: CreateGenreUseCase,
     private readonly renameGenreUseCase: RenameGenreUseCase,
+    private readonly deleteGenreUseCase: DeleteGenreUseCase,
   ) {}
 
   @Get()
@@ -65,6 +70,20 @@ export class GenresController {
   ): Promise<void> {
     try {
       await this.renameGenreUseCase.execute(id, request, actorId, roleId);
+    } catch (error) {
+      ExceptionHandler.handle(error);
+    }
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async remove(
+    @Param('id') id: string,
+    @CurrentUser('userId') actorId: string,
+    @CurrentUser('roleId') roleId: string,
+  ): Promise<void> {
+    try {
+      await this.deleteGenreUseCase.execute(id, actorId, roleId);
     } catch (error) {
       ExceptionHandler.handle(error);
     }

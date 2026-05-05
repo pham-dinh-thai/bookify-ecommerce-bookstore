@@ -31,6 +31,6 @@ export class TypeOrmGenresCommandRepository implements IGenresCommandRepository 
   public async delele(genre: Genre): Promise<void> {
     await this.unitOfWork
       .getManager()
-      .delete(GenreTypeOrm, { where: { id: genre.getId() } });
+      .delete(GenreTypeOrm, { id: genre.getId() });
   }
 }
