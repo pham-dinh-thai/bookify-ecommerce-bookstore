@@ -25,8 +25,6 @@ import { RenameGenreUseCase } from '../../application/genre-use-cases/rename-gen
 import { DeleteGenreUseCase } from '../../application/genre-use-cases/delete-genre/delete-genre.use-case';
 
 @Controller('genres')
-@UseGuards(JwtAuthGuard, RoleGuard)
-@Roles('admin', 'staff')
 export class GenresController {
   public constructor(
     private readonly findGenresUseCase: FindGenresUseCase,
@@ -49,27 +47,29 @@ export class GenresController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles('admin')
   public async create(
     @Body() request: CreateGenreRequest,
     @CurrentUser('userId') actorId: string,
-    @CurrentUser('roleId') roleId: string,
   ): Promise<void> {
     try {
-      await this.createGenreUseCase.execute(request, actorId, roleId);
+      await this.createGenreUseCase.execute(request, actorId);
     } catch (error) {
       ExceptionHandler.handle(error);
     }
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles('admin')
   public async rename(
     @Param('id') id: string,
     @Body() request: RenameGenreRequest,
     @CurrentUser('userId') actorId: string,
-    @CurrentUser('roleId') roleId: string,
   ): Promise<void> {
     try {
-      await this.renameGenreUseCase.execute(id, request, actorId, roleId);
+      await this.renameGenreUseCase.execute(id, request, actorId);
     } catch (error) {
       ExceptionHandler.handle(error);
     }
@@ -77,13 +77,14 @@ export class GenresController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles('admin')
   public async remove(
     @Param('id') id: string,
     @CurrentUser('userId') actorId: string,
-    @CurrentUser('roleId') roleId: string,
   ): Promise<void> {
     try {
-      await this.deleteGenreUseCase.execute(id, actorId, roleId);
+      await this.deleteGenreUseCase.execute(id, actorId);
     } catch (error) {
       ExceptionHandler.handle(error);
     }
