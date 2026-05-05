@@ -14,6 +14,7 @@ import { AuditLogModule } from '../audit-log/audit-log.module';
 import { CreateGenreUseCase } from './application/genre-use-cases/create-genre/create-genre.use-case';
 import { RolesModule } from '../authorization/roles.module';
 import { AuthenticationModule } from '../authentication/authentication.module';
+import { RenameGenreUseCase } from './application/genre-use-cases/rename-genre/rename-genre.use-case';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { AuthenticationModule } from '../authentication/authentication.module';
     FindGenresUseCase,
     FindOneGenreUseCase,
     CreateGenreUseCase,
+    RenameGenreUseCase,
     {
       provide: GENRES_QUERY_REPOSITORY,
       useClass: TypeOrmGenresQueryRepository,

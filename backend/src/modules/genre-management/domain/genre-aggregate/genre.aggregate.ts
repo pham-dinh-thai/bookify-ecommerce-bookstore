@@ -26,10 +26,13 @@ export class Genre extends AggregateRoot {
     return new Genre(id, name);
   }
 
-  public rename(name: string): void {
-    if (this.name !== name) {
+  public rename(name: string): { oldName: string; newName: string } {
+    const oldName = this.name;
+    if (oldName !== name) {
       this.name = name;
     }
+
+    return { oldName, newName: this.name };
   }
 
   public getId(): string {
