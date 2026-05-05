@@ -24,7 +24,7 @@ export default function UserManagement() {
   const { users, refetch } = useUsers();
 
   const [showFilter, setShowFilter] = useState(false);
-  const pageSize = 4;
+  const pageSize = 5;
   const {
     search,
     setSearch,
@@ -100,42 +100,46 @@ export default function UserManagement() {
             </span>
           </h2>
         </div>
-        <AdminSearchBar
-          value={search}
-          onChange={(value) => {
-            setSearch(value);
-            setPage(1);
-          }}
-          actions={
-            <>
-              <div className="relative" ref={filterRef}>
-                <button
-                  type="button"
-                  onClick={() => setShowFilter(!showFilter)}
-                  className="inline-flex items-center gap-2 h-12 rounded-full bg-[#eef6ff] px-4 py-2 text-sm font-semibold text-[#204877] hover:bg-[#dbe9ff] transition-colors"
-                >
-                  <Funnel className="w-4" /> Filter
-                  {(filter.role || filter.status) && (
-                    <span className="ml-1 w-2 h-2 rounded-full bg-[#b33a3a] inline-block" />
+
+        <div className="mb-4">
+          <AdminSearchBar
+            value={search}
+            onChange={(value) => {
+              setSearch(value);
+              setPage(1);
+            }}
+            actions={
+              <>
+                <div className="relative" ref={filterRef}>
+                  <button
+                    type="button"
+                    onClick={() => setShowFilter(!showFilter)}
+                    className="inline-flex items-center gap-2 h-12 rounded-full bg-[#eef6ff] px-4 py-2 text-sm font-semibold text-[#204877] hover:bg-[#dbe9ff] transition-colors"
+                  >
+                    <Funnel className="w-4" /> Filter
+                    {(filter.role || filter.status) && (
+                      <span className="ml-1 w-2 h-2 rounded-full bg-[#b33a3a] inline-block" />
+                    )}
+                  </button>
+                  {showFilter && (
+                    <FilterDropdown
+                      filter={filter}
+                      setFilter={setFilter}
+                      onClose={() => setShowFilter(false)}
+                    />
                   )}
-                </button>
-                {showFilter && (
-                  <FilterDropdown
-                    filter={filter}
-                    setFilter={setFilter}
-                    onClose={() => setShowFilter(false)}
-                  />
-                )}
-              </div>
-              <Link
-                href="/admin/users/create"
-                className="inline-flex items-center gap-2 h-12 rounded-full bg-[#2d6a4f] px-4 py-2 text-sm font-semibold text-white hover:bg-[#166244] transition-colors"
-              >
-                <UserRoundPlus className="w-4" /> Create User
-              </Link>
-            </>
-          }
-        />
+                </div>
+                <Link
+                  href="/admin/users/create"
+                  className="inline-flex items-center gap-2 h-12 rounded-full bg-[#2d6a4f] px-4 py-2 text-sm font-semibold text-white hover:bg-[#166244] transition-colors"
+                >
+                  <UserRoundPlus className="w-4" /> Create User
+                </Link>
+              </>
+            }
+            variant="minimal"
+          />
+        </div>
 
         <Table
           columns={columns}

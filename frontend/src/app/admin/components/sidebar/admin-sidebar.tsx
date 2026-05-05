@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  AlignEndHorizontal,
-  BookOpen,
-  BookUser,
-  LayoutDashboard,
-  Users,
-} from 'lucide-react';
+import { BookOpen, BookUser, LayoutDashboard, Users } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import SidebarNav from './ui/sidebar-nav';
 import SidebarFooter from './ui/sidebar-footer';
@@ -25,7 +19,7 @@ const navItems = [
     icon: BookUser,
     path: '/admin/customers',
   },
-  { label: 'Genre Management', icon: BookOpen, path: '/genres' },
+  { label: 'Genre Management', icon: BookOpen, path: '/admin/genres' },
 ];
 
 export default function AdminSidebar() {
