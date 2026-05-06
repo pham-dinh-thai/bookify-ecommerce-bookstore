@@ -2,37 +2,8 @@
 
 import { Users, BookUser, BookOpen, ScrollText } from 'lucide-react';
 import totalStaffService from './services/total-staff.service';
-
-const stats = [
-  {
-    label: 'Total Staff',
-    value: totalStaffService(),
-    icon: Users,
-    color: '#eef6ff',
-    text: '#204877',
-  },
-  {
-    label: 'Total Customers',
-    value: 148,
-    icon: BookUser,
-    color: '#f0faf4',
-    text: '#2d6a4f',
-  },
-  {
-    label: 'Total Genres',
-    value: 24,
-    icon: BookOpen,
-    color: '#fff8e6',
-    text: '#7a5800',
-  },
-  {
-    label: 'Audit Logs',
-    value: 320,
-    icon: ScrollText,
-    color: '#fff1f1',
-    text: '#b33a3a',
-  },
-];
+import totalCustomerService from './services/total-customer.service';
+import { useEffect, useState } from 'react';
 
 const recentActivities = [
   {
@@ -63,6 +34,45 @@ const recentActivities = [
 ];
 
 export default function SystemOverview() {
+  const [totalStaff, setTotalStaff] = useState(0);
+  const [totalCustomers, setTotalCustomers] = useState(0);
+
+  useEffect(() => {
+    totalStaffService().then(setTotalStaff).catch(console.error);
+    totalCustomerService().then(setTotalCustomers).catch(console.error);
+  }, []);
+
+  const stats = [
+    {
+      label: 'Total Staff',
+      value: totalStaff,
+      icon: Users,
+      color: '#eef6ff',
+      text: '#204877',
+    },
+    {
+      label: 'Total Customers',
+      value: totalCustomers,
+      icon: BookUser,
+      color: '#f0faf4',
+      text: '#2d6a4f',
+    },
+    {
+      label: 'Total Genres',
+      value: 24,
+      icon: BookOpen,
+      color: '#fff8e6',
+      text: '#7a5800',
+    },
+    {
+      label: 'Audit Logs',
+      value: 320,
+      icon: ScrollText,
+      color: '#fff1f1',
+      text: '#b33a3a',
+    },
+  ];
+
   return (
     <div className="p-12">
       <h2
