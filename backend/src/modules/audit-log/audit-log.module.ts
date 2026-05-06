@@ -12,8 +12,8 @@ import { FindAuditLogsUseCase } from './application/audit-log-use-cases/find-aud
 import { SharedCacheModule } from '../../shared/cache/cache.module';
 import { FORMAT_AUDIT_MESSAGE } from './domain/audit-log-aggregate/services/format-audit-message.service';
 import { FormatAuditMessage } from './infrastructure/services/format-audit-message.service';
-import { AuthenticationModule } from '../authentication/authentication.module';
 import { FindTotalAuditLogUseCase } from './application/audit-log-use-cases/find-total-audit-log/find-total-audit-log.use-case';
+import { AuthenticationModule } from '../authentication/authentication.module';
 
 @Module({
   imports: [
