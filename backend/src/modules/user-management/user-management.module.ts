@@ -22,6 +22,7 @@ import { USER_EXISTS_CHECKER } from './domain/user-aggregate/services/user-exist
 import { UserExistsChecker } from './infrastructure/services/user-exists-checker.service';
 import { DeactivateUserUseCase } from './application/user-use-cases/deactivate-user/deactivate-user.use-case';
 import { ActivateUserUseCase } from './application/user-use-cases/activate-user/activate-user.use-case';
+import { FindTotalByRoleUseCase } from './application/user-use-cases/find-total-by-role/find-total-by-role.use-case';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { ActivateUserUseCase } from './application/user-use-cases/activate-user/
     UpdateUserUseCase,
     DeactivateUserUseCase,
     ActivateUserUseCase,
+    FindTotalByRoleUseCase,
     {
       provide: USERS_QUERY_REPOSITORY,
       useClass: TypeOrmUsersQueryRepository,

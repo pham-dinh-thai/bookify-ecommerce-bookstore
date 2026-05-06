@@ -26,4 +26,10 @@ export class TypeOrmUsersQueryRepository implements IUsersQueryRepository {
 
     return user;
   }
+
+  public async countByRole(roleId: string): Promise<number> {
+    const total = await this.repository.countBy({ roleId });
+
+    return total;
+  }
 }
