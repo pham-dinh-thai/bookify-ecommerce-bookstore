@@ -4,6 +4,7 @@ import { Users, BookUser, BookOpen, ScrollText } from 'lucide-react';
 import totalStaffService from './services/total-staff.service';
 import totalCustomerService from './services/total-customer.service';
 import { useEffect, useState } from 'react';
+import totalGenreService from './services/total-genre.service';
 
 const recentActivities = [
   {
@@ -36,10 +37,12 @@ const recentActivities = [
 export default function SystemOverview() {
   const [totalStaff, setTotalStaff] = useState(0);
   const [totalCustomers, setTotalCustomers] = useState(0);
+  const [totalGenres, setTotalGenres] = useState(0);
 
   useEffect(() => {
     totalStaffService().then(setTotalStaff).catch(console.error);
     totalCustomerService().then(setTotalCustomers).catch(console.error);
+    totalGenreService().then(setTotalGenres).catch(console.error);
   }, []);
 
   const stats = [
@@ -59,7 +62,7 @@ export default function SystemOverview() {
     },
     {
       label: 'Total Genres',
-      value: 24,
+      value: totalGenres,
       icon: BookOpen,
       color: '#fff8e6',
       text: '#7a5800',

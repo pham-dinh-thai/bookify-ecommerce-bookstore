@@ -16,6 +16,7 @@ import { RolesModule } from '../authorization/roles.module';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { RenameGenreUseCase } from './application/genre-use-cases/rename-genre/rename-genre.use-case';
 import { DeleteGenreUseCase } from './application/genre-use-cases/delete-genre/delete-genre.use-case';
+import { FindTotalGenreUseCase } from './application/genre-use-cases/find-total-genre/find-total-genre.use-case';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { DeleteGenreUseCase } from './application/genre-use-cases/delete-genre/d
   providers: [
     FindGenresUseCase,
     FindOneGenreUseCase,
+    FindTotalGenreUseCase,
     CreateGenreUseCase,
     RenameGenreUseCase,
     DeleteGenreUseCase,
