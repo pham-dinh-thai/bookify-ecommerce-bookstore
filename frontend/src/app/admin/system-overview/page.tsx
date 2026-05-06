@@ -5,6 +5,7 @@ import totalStaffService from './services/total-staff.service';
 import totalCustomerService from './services/total-customer.service';
 import { useEffect, useState } from 'react';
 import totalGenreService from './services/total-genre.service';
+import totalAuditLogService from './services/total-audit-log.service';
 
 const recentActivities = [
   {
@@ -38,11 +39,13 @@ export default function SystemOverview() {
   const [totalStaff, setTotalStaff] = useState(0);
   const [totalCustomers, setTotalCustomers] = useState(0);
   const [totalGenres, setTotalGenres] = useState(0);
+  const [totalAuditLogs, setTotalAuditLogs] = useState(0);
 
   useEffect(() => {
     totalStaffService().then(setTotalStaff).catch(console.error);
     totalCustomerService().then(setTotalCustomers).catch(console.error);
     totalGenreService().then(setTotalGenres).catch(console.error);
+    totalAuditLogService().then(setTotalAuditLogs).catch(console.error);
   }, []);
 
   const stats = [
@@ -69,7 +72,7 @@ export default function SystemOverview() {
     },
     {
       label: 'Audit Logs',
-      value: 320,
+      value: totalAuditLogs,
       icon: ScrollText,
       color: '#fff1f1',
       text: '#b33a3a',

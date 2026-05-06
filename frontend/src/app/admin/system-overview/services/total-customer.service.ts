@@ -15,9 +15,5 @@ export default async function totalCustomerService() {
     },
   });
 
-  if (!res.ok) {
-    throw new Error(`HTTP error: ${res.status}`);
-  }
-
   return await res.json();
 }

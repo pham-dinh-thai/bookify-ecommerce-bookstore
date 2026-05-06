@@ -32,4 +32,10 @@ export class TypeormAuditlogQueryRepository implements IAuditLogQueryRepository 
         )
       : [];
   }
+
+  public async count(): Promise<number> {
+    const total = await this.repository.count();
+
+    return total;
+  }
 }
