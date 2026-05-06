@@ -41,18 +41,18 @@ export class GenresController {
     return await this.findGenresUseCase.execute();
   }
 
-  @Get(':id')
-  public async findOne(
-    @Param('id') id: string,
-  ): Promise<GenreReadModel | null> {
-    return await this.findOneGenreUseCase.execute(id);
-  }
-
   @Get('total')
   public async total(): Promise<number> {
     const total = await this.findTotalGenreUseCase.execute();
 
     return total;
+  }
+
+  @Get(':id')
+  public async findOne(
+    @Param('id') id: string,
+  ): Promise<GenreReadModel | null> {
+    return await this.findOneGenreUseCase.execute(id);
   }
 
   @Post()
