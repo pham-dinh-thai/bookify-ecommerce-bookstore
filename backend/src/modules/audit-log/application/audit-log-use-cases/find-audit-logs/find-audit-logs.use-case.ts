@@ -3,7 +3,6 @@ import {
   AUDIT_LOG_QUERY_REPOSITORY,
   type IAuditLogQueryRepository,
 } from '../../../domain/audit-log-aggregate/repositories/audit-log-query.repositoy.interface';
-import { AuditLogReadModel } from '../../../domain/audit-log-aggregate/read-models/audit-log.read-model';
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
