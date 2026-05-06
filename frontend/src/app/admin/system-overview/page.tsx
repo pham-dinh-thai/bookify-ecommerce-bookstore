@@ -6,36 +6,11 @@ import totalCustomerService from './services/total-customer.service';
 import { useEffect, useState } from 'react';
 import totalGenreService from './services/total-genre.service';
 import totalAuditLogService from './services/total-audit-log.service';
-
-const recentActivities = [
-  {
-    message: 'Created genre "Nordic Noir"',
-    performedBy: 'admin@bookify.dev',
-    createdAt: '2026-05-06 08:12',
-  },
-  {
-    message: 'Deactivated user "john@example.com"',
-    performedBy: 'admin@bookify.dev',
-    createdAt: '2026-05-06 07:55',
-  },
-  {
-    message: 'Renamed genre "Horror" to "Magic"',
-    performedBy: 'admin@bookify.dev',
-    createdAt: '2026-05-05 23:41',
-  },
-  {
-    message: 'Created user "jane@bookify.dev"',
-    performedBy: 'admin@bookify.dev',
-    createdAt: '2026-05-05 22:10',
-  },
-  {
-    message: 'Deleted genre "Sad"',
-    performedBy: 'admin@bookify.dev',
-    createdAt: '2026-05-05 21:03',
-  },
-];
+import useRecentActivities from './hooks/use-recent-activities';
 
 export default function SystemOverview() {
+  const { recentActivities } = useRecentActivities();
+
   const [totalStaff, setTotalStaff] = useState(0);
   const [totalCustomers, setTotalCustomers] = useState(0);
   const [totalGenres, setTotalGenres] = useState(0);

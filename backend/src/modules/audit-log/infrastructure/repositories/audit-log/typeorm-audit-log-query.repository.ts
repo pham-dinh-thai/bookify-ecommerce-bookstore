@@ -33,6 +33,28 @@ export class TypeormAuditlogQueryRepository implements IAuditLogQueryRepository 
       : [];
   }
 
+  public async recentActivity(): Promise<AuditLogReadModel[]> {
+    const auditLogs = await this.repository.find({
+      order: {
+        createdAt: 'DESC',
+      },
+      take: 5,
+    });
+
+    return auditLogs
+      ? auditLogs.map(
+          (auditLog) =>
+            new AuditLogReadModel(
+              auditLog.id,
+              auditLog.action,
+              auditLog.performedBy,
+              auditLog.metadata,
+              auditLog.createdAt,
+            ),
+        )
+      : [];
+  }
+
   public async count(): Promise<number> {
     const total = await this.repository.count();
 

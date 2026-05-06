@@ -14,6 +14,7 @@ import { FORMAT_AUDIT_MESSAGE } from './domain/audit-log-aggregate/services/form
 import { FormatAuditMessage } from './infrastructure/services/format-audit-message.service';
 import { FindTotalAuditLogUseCase } from './application/audit-log-use-cases/find-total-audit-log/find-total-audit-log.use-case';
 import { AuthenticationModule } from '../authentication/authentication.module';
+import { FindRecentActivityUseCase } from './application/audit-log-use-cases/find-recent-activity/find-recent-activity.use-case';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { AuthenticationModule } from '../authentication/authentication.module';
   providers: [
     FindAuditLogsUseCase,
     FindTotalAuditLogUseCase,
+    FindRecentActivityUseCase,
     {
       provide: AUDIT_LOG_COMMAND_REPOSITORY,
       useClass: TypeOrmAuditLogCommandRepository,
