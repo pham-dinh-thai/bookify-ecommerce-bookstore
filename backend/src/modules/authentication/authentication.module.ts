@@ -19,7 +19,6 @@ import { JwtStrategy } from '../../shared/strategies/jwt.strategy';
 import { AUTHENTICABLE_USER_COMMAND_REPOSITORY } from './domain/authenticable-user-aggregate/repositories/authenticable-user-command.repository.interface';
 import { TypeOrmAuthenticableUserCommandRepository } from './infrastructure/repositories/typeorm-authenticable-user-command.repository';
 import { RegisterUseCase } from './application/use-cases/register/register.use-case';
-import { AuditLogModule } from '../audit-log/audit-log.module';
 import { LogoutUseCase } from './application/use-cases/logout/logout.use-case';
 import { RefreshTokenUseCase } from './application/use-cases/refresh-token/refresh-token.use-case';
 import { SharedJwtModule } from '../../shared/jwt/shared-jwt.module';
@@ -43,7 +42,6 @@ import { SharedJwtModule } from '../../shared/jwt/shared-jwt.module';
       secret: process.env.JWT_SECRET!,
       signOptions: { expiresIn: '1d' },
     }),
-    AuditLogModule,
     SharedJwtModule,
   ],
   providers: [

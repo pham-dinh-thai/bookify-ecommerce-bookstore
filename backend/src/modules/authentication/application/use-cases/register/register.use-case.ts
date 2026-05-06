@@ -19,10 +19,6 @@ import {
   UNIT_OF_WORK,
 } from '../../../../../shared/unit-of-work/application/unit-of-work';
 import {
-  AUDIT_LOG_COMMAND_REPOSITORY,
-  type IAuditLogCommandRepository,
-} from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
-import {
   type ISignTokenService,
   SIGN_TOKEN_SERVICE,
 } from '../../../domain/authenticable-user-aggregate/services/sign-token.service';
@@ -41,9 +37,6 @@ export class RegisterUseCase {
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
-
-    @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
-    private readonly auditLogRepository: IAuditLogCommandRepository,
 
     @Inject(SIGN_TOKEN_SERVICE)
     private readonly signTokenService: ISignTokenService,
@@ -71,19 +64,6 @@ export class RegisterUseCase {
 
     await this.unitOfWork.execute(async () => {
       await this.repository.register(authUser);
-
-      await this.auditLogRepository.write(
-        'REGISTER_USER',
-        id,
-        'authentication',
-        'users',
-        {
-          id: authUser.getId(),
-          firstName: authUser.getFirstName(),
-          lastName: authUser.getLastName(),
-          email: authUser.getEmail(),
-        },
-      );
     });
 
     const tempToken = this.signTokenService.sign(

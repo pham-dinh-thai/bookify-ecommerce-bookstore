@@ -37,4 +37,10 @@ export class TypeOrmCustomersQueryRepository implements ICustomersQueryRepositor
 
     return user?.id || null;
   }
+
+  public async count(): Promise<number> {
+    const total = await this.repository.count();
+
+    return total;
+  }
 }

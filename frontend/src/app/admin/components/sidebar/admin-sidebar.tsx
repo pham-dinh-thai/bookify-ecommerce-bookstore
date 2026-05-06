@@ -38,7 +38,7 @@ export default function AdminSidebar() {
 
   return (
     <aside
-      className="w-[250px] bg-[#dff0e0] flex flex-col px-3 py-5 shrink-0 min-h-screen"
+      className="w-[250px] bg-[#dff0e0] flex flex-col px-3 py-5 shrink-0 h-screen sticky top-0"
       style={{ boxShadow: '2px 0px 12px rgba(43,53,47,0.06)' }}
     >
       <SidebarBrand />
