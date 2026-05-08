@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { FindAuthorsUseCase } from '../../application/author-use-cases/find-authors/find-authors.use-case';
 import { FindOneAuthorUseCase } from '../../application/author-use-cases/find-one-author/find-one-author.use-case';
 import { AuthorReadModel } from '../../domain/author-aggregate/read-models/author.read-model';
@@ -9,6 +17,9 @@ import { CreateAuthorRequest } from './requests/create-author.request';
 import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
 import ExceptionHandler from '../../../../shared/domain/exception/exception.handler';
 import { CreateAuthorUseCase } from '../../application/author-use-cases/create-author/create-author.use-case';
+import { RenameAuthorUseCase } from '../../application/author-use-cases/rename-author/rename-author.use-case';
+import { request } from 'http';
+import { RenameAuthorRequest } from './requests/rename-author.request';
 
 @Controller('authors')
 export class AuthorsController {
@@ -16,6 +27,7 @@ export class AuthorsController {
     private readonly findAuthorsUseCase: FindAuthorsUseCase,
     private readonly findOneAuthorUseCase: FindOneAuthorUseCase,
     private readonly createAuthorUseCase: CreateAuthorUseCase,
+    private readonly renameAuthorUseCase: RenameAuthorUseCase,
   ) {}
 
   @Get()
@@ -43,6 +55,21 @@ export class AuthorsController {
   ): Promise<void> {
     try {
       await this.createAuthorUseCase.execute(request, actorId);
+    } catch (error) {
+      ExceptionHandler.handle(error);
+    }
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles('admin')
+  public async rename(
+    @Param('id') id: string,
+    @Body() request: RenameAuthorRequest,
+    @CurrentUser('userId') actorId: string,
+  ): Promise<void> {
+    try {
+      await this.renameAuthorUseCase.execute(id, request, actorId);
     } catch (error) {
       ExceptionHandler.handle(error);
     }

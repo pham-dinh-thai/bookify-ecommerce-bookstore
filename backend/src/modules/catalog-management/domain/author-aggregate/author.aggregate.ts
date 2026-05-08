@@ -29,7 +29,7 @@ export class Author extends AggregateRoot {
   public rename(name: string): { oldName: string; newName: string } {
     const oldName = this.name;
 
-    if (!name && oldName !== name) {
+    if (name && oldName !== name) {
       this.name = name;
     }
 

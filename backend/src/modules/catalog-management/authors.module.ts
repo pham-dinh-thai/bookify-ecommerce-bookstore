@@ -14,6 +14,7 @@ import { AuditLogModule } from '../audit-log/audit-log.module';
 import { SharedCacheModule } from '../../shared/cache/cache.module';
 import { CreateAuthorUseCase } from './application/author-use-cases/create-author/create-author.use-case';
 import { AuthenticationModule } from '../authentication/authentication.module';
+import { RenameAuthorUseCase } from './application/author-use-cases/rename-author/rename-author.use-case';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AuthenticationModule } from '../authentication/authentication.module';
     FindAuthorsUseCase,
     FindOneAuthorUseCase,
     CreateAuthorUseCase,
+    RenameAuthorUseCase,
     {
       provide: AUTHORS_QUERY_REPOSITORY,
       useClass: TypeOrmAuthorsQueryRepository,
