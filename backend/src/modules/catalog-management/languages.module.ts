@@ -13,6 +13,7 @@ import { CreateLanguageUseCase } from './application/language-use-cases/create-l
 import { LANGUAGES_COMMAND_REPOSITORY } from './domain/language-aggregate/repositories/languages-command.repository.interface';
 import { TypeOrmLanguagesCommandRepository } from './infrastructure/repositories/languages/typeorm-languages-command.repository';
 import { AuditLogModule } from '../audit-log/audit-log.module';
+import { RenameLanguageUseCase } from './application/language-use-cases/rename-language/rename-language.use-case';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AuditLogModule } from '../audit-log/audit-log.module';
     FindLanguagesUseCase,
     FindOneLanguageUseCase,
     CreateLanguageUseCase,
+    RenameLanguageUseCase,
     {
       provide: LANGUAGES_QUERY_REPOSITORY,
       useClass: TypeOrmLanguagesQueryRepository,

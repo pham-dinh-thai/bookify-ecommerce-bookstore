@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { LanguageReadModel } from '../../domain/language-aggregate/read-models/language.read-model';
 import { FindLanguagesUseCase } from '../../application/language-use-cases/find-languages/find-languages.use-case';
 import { FindOneLanguageUseCase } from '../../application/language-use-cases/find-one-language/find-one-language.use-case';
@@ -9,6 +17,8 @@ import { Roles } from '../../../../shared/decorators/roles.decorator';
 import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
 import ExceptionHandler from '../../../../shared/domain/exception/exception.handler';
 import { CreateLanguageUseCase } from '../../application/language-use-cases/create-language/create-language.use-case';
+import { RenameLanguageUseCase } from '../../application/language-use-cases/rename-language/rename-language.use-case';
+import { RenameLanguageRequest } from './requests/rename-language.request';
 
 @Controller('languages')
 export class LanguagesController {
@@ -16,6 +26,7 @@ export class LanguagesController {
     private readonly findLanguagesUseCase: FindLanguagesUseCase,
     private readonly findOneLanguageUseCase: FindOneLanguageUseCase,
     private readonly createLanguageUseCase: CreateLanguageUseCase,
+    private readonly renameLanguageUseCase: RenameLanguageUseCase,
   ) {}
 
   @Get()
@@ -43,6 +54,21 @@ export class LanguagesController {
   ): Promise<void> {
     try {
       await this.createLanguageUseCase.execute(request, actorId);
+    } catch (error) {
+      ExceptionHandler.handle(error);
+    }
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles('admin')
+  public async rename(
+    @Param('id') id: string,
+    @Body() request: RenameLanguageRequest,
+    @CurrentUser('userId') actorId: string,
+  ): Promise<void> {
+    try {
+      await this.renameLanguageUseCase.execute(id, request, actorId);
     } catch (error) {
       ExceptionHandler.handle(error);
     }
