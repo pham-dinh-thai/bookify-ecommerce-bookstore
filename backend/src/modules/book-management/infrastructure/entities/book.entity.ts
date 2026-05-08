@@ -11,8 +11,8 @@ import {
 } from 'typeorm';
 import { BookGenreTypeOrm } from './book-genre.entity';
 import { BookAuthorTypeOrm } from './book-author.entity';
-import { PublisherTypeOrm } from './publisher.entity';
-import { LanguageTypeOrm } from './language.entity';
+import { PublisherTypeOrm } from '../../../catalog-management/infrastructure/entities/publisher.entity';
+import { LanguageTypeOrm } from '../../../catalog-management/infrastructure/entities/language.entity';
 import { BookCoverTypeOrm } from './book-cover.entity';
 
 @Entity('books')
