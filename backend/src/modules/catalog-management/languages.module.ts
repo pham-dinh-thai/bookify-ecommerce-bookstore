@@ -15,6 +15,8 @@ import { TypeOrmLanguagesCommandRepository } from './infrastructure/repositories
 import { AuditLogModule } from '../audit-log/audit-log.module';
 import { RenameLanguageUseCase } from './application/language-use-cases/rename-language/rename-language.use-case';
 import { DeleteLanguageUseCase } from './application/language-use-cases/delete-language/delete-language.use-case';
+import { LANGUAGE_EXISTS_CHECKER } from './domain/language-aggregate/services/language-exists-checker.service';
+import { LanguageExistsChecker } from './infrastructure/services/languages/language-exists-checker.service';
 
 @Module({
   imports: [
@@ -39,7 +41,15 @@ import { DeleteLanguageUseCase } from './application/language-use-cases/delete-l
       provide: LANGUAGES_COMMAND_REPOSITORY,
       useClass: TypeOrmLanguagesCommandRepository,
     },
+    {
+      provide: LANGUAGE_EXISTS_CHECKER,
+      useClass: LanguageExistsChecker,
+    },
   ],
-  exports: [LANGUAGES_QUERY_REPOSITORY, LANGUAGES_COMMAND_REPOSITORY],
+  exports: [
+    LANGUAGES_QUERY_REPOSITORY,
+    LANGUAGES_COMMAND_REPOSITORY,
+    LANGUAGE_EXISTS_CHECKER,
+  ],
 })
 export class LanguagesModule {}

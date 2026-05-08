@@ -18,6 +18,11 @@ import {
 import { ICreateLanguageRequest } from './create-language.request';
 import { Language } from '../../../domain/language-aggregate/language.aggregate';
 import { LANGUAGE_CACHE_KEYS } from '../language-cache.constants';
+import {
+  type ILanguageExistsChecker,
+  LANGUAGE_EXISTS_CHECKER,
+} from '../../../domain/language-aggregate/services/language-exists-checker.service';
+import { LanguageIdDuplicateException } from '../../../domain/language-aggregate/exceptions/language-id-duplicate.exception';
 
 @Injectable()
 export class CreateLanguageUseCase {
@@ -33,12 +38,20 @@ export class CreateLanguageUseCase {
 
     @Inject(CACHE_REPOSITORY)
     private readonly cacheRepository: ICacheRepository,
+
+    @Inject(LANGUAGE_EXISTS_CHECKER)
+    private readonly languageExistsChecker: ILanguageExistsChecker,
   ) {}
 
   public async execute(
     request: ICreateLanguageRequest,
     performedBy: string,
   ): Promise<void> {
+    const isExists = await this.languageExistsChecker.isExists(request.id);
+    if (isExists) {
+      throw new LanguageIdDuplicateException();
+    }
+
     const language = Language.create(request.id, request.name);
 
     await this.unitOfWork.execute(async () => {
