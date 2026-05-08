@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -19,6 +22,7 @@ import { CurrentUser } from '../../../../shared/decorators/current-user.decorato
 import ExceptionHandler from '../../../../shared/domain/exception/exception.handler';
 import { RenamePublisherUseCase } from '../../application/publisher-use-cases/rename-publisher/rename-publisher.use-case';
 import { RenamePublisherRequest } from './requests/rename-publisher.request';
+import { DeletePublisherUseCase } from '../../application/publisher-use-cases/delete-publisher/delete-publisher.use-case';
 
 @Controller('publishers')
 export class PublishersController {
@@ -27,6 +31,7 @@ export class PublishersController {
     private readonly findOnePublisherUseCase: FindOnePublisherUseCase,
     private readonly createPublisherUseCase: CreatePublisherUseCase,
     private readonly renamePublisherUseCase: RenamePublisherUseCase,
+    private readonly deletePublisherUseCase: DeletePublisherUseCase,
   ) {}
 
   @Get()
@@ -69,6 +74,21 @@ export class PublishersController {
   ): Promise<void> {
     try {
       await this.renamePublisherUseCase.execute(id, request, actorId);
+    } catch (error) {
+      ExceptionHandler.handle(error);
+    }
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles('admin')
+  public async remove(
+    @Param('id') id: string,
+    @CurrentUser('userId') actorId: string,
+  ): Promise<void> {
+    try {
+      await this.deletePublisherUseCase.execute(id, actorId);
     } catch (error) {
       ExceptionHandler.handle(error);
     }

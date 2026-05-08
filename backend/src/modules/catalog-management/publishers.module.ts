@@ -15,6 +15,7 @@ import { CreatePublisherUseCase } from './application/publisher-use-cases/create
 import { PUBLISHERS_COMMAND_REPOSITORY } from './domain/publisher-aggregate/repositories/publishers-command.repository.inerface';
 import { TypeOrmPublishersCommandRepository } from './infrastructure/repositories/publishers/typeorm-publishers-command.repository';
 import { RenamePublisherUseCase } from './application/publisher-use-cases/rename-publisher/rename-publisher.use-case';
+import { DeletePublisherUseCase } from './application/publisher-use-cases/delete-publisher/delete-publisher.use-case';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { RenamePublisherUseCase } from './application/publisher-use-cases/rename
     FindOnePublisherUseCase,
     CreatePublisherUseCase,
     RenamePublisherUseCase,
+    DeletePublisherUseCase,
     {
       provide: PUBLISHERS_QUERY_REPOSITORY,
       useClass: TypeOrmPublishersQueryRepository,
