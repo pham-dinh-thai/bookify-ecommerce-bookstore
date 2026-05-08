@@ -11,6 +11,9 @@ import { PUBLISHERS_QUERY_REPOSITORY } from './domain/publisher-aggregate/reposi
 import { TypeOrmPublishersQueryRepository } from './infrastructure/repositories/publishers/typeorm-publishers-query.repository';
 import { FindPublishersUseCase } from './application/publisher-use-cases/find-publishers/find-publishers.use-case';
 import { FindOnePublisherUseCase } from './application/publisher-use-cases/find-one-publisher/find-one-publisher.use-case';
+import { CreatePublisherUseCase } from './application/publisher-use-cases/create-publisher/create-publisher.use-case';
+import { PUBLISHERS_COMMAND_REPOSITORY } from './domain/publisher-aggregate/repositories/publishers-command.repository.inerface';
+import { TypeOrmPublishersCommandRepository } from './infrastructure/repositories/publishers/typeorm-publishers-command.repository';
 
 @Module({
   imports: [
@@ -25,11 +28,16 @@ import { FindOnePublisherUseCase } from './application/publisher-use-cases/find-
   providers: [
     FindPublishersUseCase,
     FindOnePublisherUseCase,
+    CreatePublisherUseCase,
     {
       provide: PUBLISHERS_QUERY_REPOSITORY,
       useClass: TypeOrmPublishersQueryRepository,
     },
+    {
+      provide: PUBLISHERS_COMMAND_REPOSITORY,
+      useClass: TypeOrmPublishersCommandRepository,
+    },
   ],
-  exports: [PUBLISHERS_QUERY_REPOSITORY],
+  exports: [PUBLISHERS_QUERY_REPOSITORY, PUBLISHERS_COMMAND_REPOSITORY],
 })
 export class PublishersModule {}
