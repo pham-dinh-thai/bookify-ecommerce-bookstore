@@ -12,6 +12,11 @@ import {
   type IUnitOfWork,
   UNIT_OF_WORK,
 } from '../../../../../shared/unit-of-work/application/unit-of-work';
+import {
+  CACHE_REPOSITORY,
+  type ICacheRepository,
+} from '../../../../../shared/cache/domain/cache.repository.interface';
+import { GENRE_CACHE_KEYS } from '../genre-cache.constants';
 
 @Injectable()
 export class RenameGenreUseCase {
@@ -24,6 +29,9 @@ export class RenameGenreUseCase {
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
+
+    @Inject(CACHE_REPOSITORY)
+    private readonly cacheRepository: ICacheRepository,
   ) {}
 
   public async execute(
@@ -54,5 +62,7 @@ export class RenameGenreUseCase {
         },
       );
     });
+
+    await this.cacheRepository.del(GENRE_CACHE_KEYS.ALL);
   }
 }

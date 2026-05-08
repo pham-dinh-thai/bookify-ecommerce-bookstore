@@ -17,6 +17,11 @@ import {
   type IAuditLogCommandRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
 import { Genre } from '../../../domain/genre-aggregate/genre.aggregate';
+import {
+  CACHE_REPOSITORY,
+  type ICacheRepository,
+} from '../../../../../shared/cache/domain/cache.repository.interface';
+import { GENRE_CACHE_KEYS } from '../genre-cache.constants';
 
 @Injectable()
 export class CreateGenreUseCase {
@@ -32,6 +37,9 @@ export class CreateGenreUseCase {
 
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogRepository: IAuditLogCommandRepository,
+
+    @Inject(CACHE_REPOSITORY)
+    private readonly cacheRepository: ICacheRepository,
   ) {}
 
   public async execute(
@@ -56,5 +64,7 @@ export class CreateGenreUseCase {
         },
       );
     });
+
+    await this.cacheRepository.del(GENRE_CACHE_KEYS.ALL);
   }
 }

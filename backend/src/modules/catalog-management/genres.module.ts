@@ -17,6 +17,7 @@ import { AuthenticationModule } from '../authentication/authentication.module';
 import { RenameGenreUseCase } from './application/genre-use-cases/rename-genre/rename-genre.use-case';
 import { DeleteGenreUseCase } from './application/genre-use-cases/delete-genre/delete-genre.use-case';
 import { FindTotalGenreUseCase } from './application/genre-use-cases/find-total-genre/find-total-genre.use-case';
+import { SharedCacheModule } from '../../shared/cache/cache.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { FindTotalGenreUseCase } from './application/genre-use-cases/find-total-
     AuditLogModule,
     RolesModule,
     AuthenticationModule,
+    SharedCacheModule,
   ],
   controllers: [GenresController],
   providers: [
