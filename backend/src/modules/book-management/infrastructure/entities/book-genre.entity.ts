@@ -1,6 +1,6 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { BookTypeOrm } from './book.entity';
-import { GenreTypeOrm } from '../../../genre-management/infrastructure/entities/genre.entity';
+import { GenreTypeOrm } from '../../../catalog-management/infrastructure/entities/genre.entity';
 
 @Entity('books_genres')
 export class BookGenreTypeOrm {
