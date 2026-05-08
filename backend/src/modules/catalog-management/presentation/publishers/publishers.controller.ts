@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { FindPublishersUseCase } from '../../application/publisher-use-cases/find-publishers/find-publishers.use-case';
 import { FindOnePublisherUseCase } from '../../application/publisher-use-cases/find-one-publisher/find-one-publisher.use-case';
 import { PublisherReadModel } from '../../domain/publisher-aggregate/read-models/publisher.read-model';
@@ -9,6 +17,8 @@ import { CreatePublisherUseCase } from '../../application/publisher-use-cases/cr
 import { CreatePublisherRequest } from './requests/create-publisher.request';
 import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
 import ExceptionHandler from '../../../../shared/domain/exception/exception.handler';
+import { RenamePublisherUseCase } from '../../application/publisher-use-cases/rename-publisher/rename-publisher.use-case';
+import { RenamePublisherRequest } from './requests/rename-publisher.request';
 
 @Controller('publishers')
 export class PublishersController {
@@ -16,6 +26,7 @@ export class PublishersController {
     private readonly findPublishersUseCase: FindPublishersUseCase,
     private readonly findOnePublisherUseCase: FindOnePublisherUseCase,
     private readonly createPublisherUseCase: CreatePublisherUseCase,
+    private readonly renamePublisherUseCase: RenamePublisherUseCase,
   ) {}
 
   @Get()
@@ -43,6 +54,21 @@ export class PublishersController {
   ): Promise<void> {
     try {
       await this.createPublisherUseCase.execute(request, actorId);
+    } catch (error) {
+      ExceptionHandler.handle(error);
+    }
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles('admin')
+  public async rename(
+    @Param('id') id: string,
+    @Body() request: RenamePublisherRequest,
+    @CurrentUser('userId') actorId: string,
+  ): Promise<void> {
+    try {
+      await this.renamePublisherUseCase.execute(id, request, actorId);
     } catch (error) {
       ExceptionHandler.handle(error);
     }
