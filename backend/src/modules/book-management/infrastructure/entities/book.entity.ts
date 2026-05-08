@@ -2,11 +2,18 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { BookGenreTypeOrm } from './book-genre.entity';
+import { BookAuthorTypeOrm } from './book-author.entity';
+import { PublisherTypeOrm } from './publisher.entity';
+import { LanguageTypeOrm } from './language.entity';
+import { BookCoverTypeOrm } from './book-cover.entity';
 
 @Entity('books')
 export class BookTypeOrm {
@@ -19,11 +26,8 @@ export class BookTypeOrm {
   @Column({ type: 'varchar', length: 255 })
   title!: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  author!: string;
-
-  @Column({ type: 'varchar', length: 255 })
-  publisher!: string;
+  @Column({ type: 'uuid' })
+  publisherId!: string;
 
   @Column({ type: 'text', nullable: true })
   description!: string | null;
@@ -34,20 +38,14 @@ export class BookTypeOrm {
   @Column({ type: 'int' })
   quantity!: number;
 
-  @Column({ type: 'varchar', length: 100 })
-  language!: string;
+  @Column({ type: 'varchar', length: 50 })
+  languageId!: string;
 
   @Column({ type: 'int' })
   pageCount!: number;
 
-  @Column({ type: 'date' })
-  publishedDate!: Date;
-
-  @Column({ type: 'varchar', length: 500, nullable: true })
-  coverImageUrl!: string | null;
-
   @Column({ type: 'boolean', default: true })
-  isActive!: boolean;
+  isInStock!: boolean;
 
   @CreateDateColumn()
   createdAt!: Date;
@@ -55,6 +53,20 @@ export class BookTypeOrm {
   @UpdateDateColumn()
   updatedAt!: Date;
 
+  @OneToMany(() => BookCoverTypeOrm, (cover) => cover.book)
+  covers!: BookCoverTypeOrm[];
+
+  @OneToOne(() => LanguageTypeOrm)
+  @JoinColumn({ name: 'languageId' })
+  language!: LanguageTypeOrm;
+
+  @ManyToOne(() => PublisherTypeOrm)
+  @JoinColumn({ name: 'publisherId' })
+  publisher!: PublisherTypeOrm;
+
+  @OneToMany(() => BookAuthorTypeOrm, (bookAuthor) => bookAuthor.book)
+  bookAuthor!: BookAuthorTypeOrm[];
+
   @OneToMany(() => BookGenreTypeOrm, (bookGenre) => bookGenre.book)
-  bookGenres!: BookGenreTypeOrm[];
+  bookGenre!: BookGenreTypeOrm[];
 }
