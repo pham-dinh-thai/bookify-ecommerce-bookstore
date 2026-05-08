@@ -21,7 +21,6 @@ import { CurrentUser } from '../../../../shared/decorators/current-user.decorato
 import ExceptionHandler from '../../../../shared/domain/exception/exception.handler';
 import { CreateAuthorUseCase } from '../../application/author-use-cases/create-author/create-author.use-case';
 import { RenameAuthorUseCase } from '../../application/author-use-cases/rename-author/rename-author.use-case';
-import { request } from 'http';
 import { RenameAuthorRequest } from './requests/rename-author.request';
 import { DeleteAuthorUseCase } from '../../application/author-use-cases/delete-author/delete-author.use-case';
 
