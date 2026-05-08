@@ -9,6 +9,10 @@ import { LANGUAGES_QUERY_REPOSITORY } from './domain/language-aggregate/reposito
 import { TypeOrmLanguagesQueryRepository } from './infrastructure/repositories/languages/typeorm-languages-query.repository';
 import { FindLanguagesUseCase } from './application/language-use-cases/find-languages/find-languages.use-case';
 import { FindOneLanguageUseCase } from './application/language-use-cases/find-one-language/find-one-language.use-case';
+import { CreateLanguageUseCase } from './application/language-use-cases/create-language/create-language.use-case';
+import { LANGUAGES_COMMAND_REPOSITORY } from './domain/language-aggregate/repositories/languages-command.repository.interface';
+import { TypeOrmLanguagesCommandRepository } from './infrastructure/repositories/languages/typeorm-languages-command.repository';
+import { AuditLogModule } from '../audit-log/audit-log.module';
 
 @Module({
   imports: [
@@ -16,16 +20,22 @@ import { FindOneLanguageUseCase } from './application/language-use-cases/find-on
     UnitOfWorkModule,
     AuthenticationModule,
     SharedCacheModule,
+    AuditLogModule,
   ],
   controllers: [LanguagesController],
   providers: [
     FindLanguagesUseCase,
     FindOneLanguageUseCase,
+    CreateLanguageUseCase,
     {
       provide: LANGUAGES_QUERY_REPOSITORY,
       useClass: TypeOrmLanguagesQueryRepository,
     },
+    {
+      provide: LANGUAGES_COMMAND_REPOSITORY,
+      useClass: TypeOrmLanguagesCommandRepository,
+    },
   ],
-  exports: [LANGUAGES_QUERY_REPOSITORY],
+  exports: [LANGUAGES_QUERY_REPOSITORY, LANGUAGES_COMMAND_REPOSITORY],
 })
 export class LanguagesModule {}
