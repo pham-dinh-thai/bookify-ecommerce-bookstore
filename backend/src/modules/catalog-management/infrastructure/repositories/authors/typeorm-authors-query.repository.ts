@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AuthorTypeOrm } from '../../entities/author.entity';
 import { Repository } from 'typeorm';
 import { AuthorReadModel } from '../../../domain/author-aggregate/read-models/author.read-model';
+import { AuthorsMapper } from '../../mappers/authors.mapper';
 
 @Injectable()
 export class TypeOrmAuthorsQueryRepository implements IAuthorsQueryRepository {
@@ -13,16 +14,18 @@ export class TypeOrmAuthorsQueryRepository implements IAuthorsQueryRepository {
   ) {}
 
   public async findAll(): Promise<AuthorReadModel[]> {
-    const authors = await this.repository.find();
+    const authorsTypeOrm = await this.repository.find();
 
-    return authors
-      ? authors.map((author) => new AuthorReadModel(author.id, author.name))
+    return authorsTypeOrm
+      ? authorsTypeOrm.map((authorTypeOrm) =>
+          AuthorsMapper.toReadModel(authorTypeOrm),
+        )
       : [];
   }
 
   public async findOne(id: string): Promise<AuthorReadModel | null> {
-    const author = await this.repository.findOne({ where: { id } });
+    const authorTypeOrm = await this.repository.findOne({ where: { id } });
 
-    return author ? new AuthorReadModel(author.id, author.name) : null;
+    return authorTypeOrm ? AuthorsMapper.toReadModel(authorTypeOrm) : null;
   }
 }
