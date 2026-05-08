@@ -15,6 +15,7 @@ import { SharedCacheModule } from '../../shared/cache/cache.module';
 import { CreateAuthorUseCase } from './application/author-use-cases/create-author/create-author.use-case';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { RenameAuthorUseCase } from './application/author-use-cases/rename-author/rename-author.use-case';
+import { DeleteAuthorUseCase } from './application/author-use-cases/delete-author/delete-author.use-case';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { RenameAuthorUseCase } from './application/author-use-cases/rename-autho
     FindOneAuthorUseCase,
     CreateAuthorUseCase,
     RenameAuthorUseCase,
+    DeleteAuthorUseCase,
     {
       provide: AUTHORS_QUERY_REPOSITORY,
       useClass: TypeOrmAuthorsQueryRepository,
