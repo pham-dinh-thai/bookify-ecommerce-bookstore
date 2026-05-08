@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -19,6 +22,7 @@ import ExceptionHandler from '../../../../shared/domain/exception/exception.hand
 import { CreateLanguageUseCase } from '../../application/language-use-cases/create-language/create-language.use-case';
 import { RenameLanguageUseCase } from '../../application/language-use-cases/rename-language/rename-language.use-case';
 import { RenameLanguageRequest } from './requests/rename-language.request';
+import { DeleteLanguageUseCase } from '../../application/language-use-cases/delete-language/delete-language.use-case';
 
 @Controller('languages')
 export class LanguagesController {
@@ -27,6 +31,7 @@ export class LanguagesController {
     private readonly findOneLanguageUseCase: FindOneLanguageUseCase,
     private readonly createLanguageUseCase: CreateLanguageUseCase,
     private readonly renameLanguageUseCase: RenameLanguageUseCase,
+    private readonly deleteLanguageUseCase: DeleteLanguageUseCase,
   ) {}
 
   @Get()
@@ -69,6 +74,21 @@ export class LanguagesController {
   ): Promise<void> {
     try {
       await this.renameLanguageUseCase.execute(id, request, actorId);
+    } catch (error) {
+      ExceptionHandler.handle(error);
+    }
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles('admin')
+  public async remove(
+    @Param('id') id: string,
+    @CurrentUser('userId') actorId: string,
+  ): Promise<void> {
+    try {
+      await this.deleteLanguageUseCase.execute(id, actorId);
     } catch (error) {
       ExceptionHandler.handle(error);
     }
