@@ -1,6 +1,6 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { BookTypeOrm } from './book.entity';
-import { AuthorTypeOrm } from './author.entity';
+import { AuthorTypeOrm } from '../../../catalog-management/infrastructure/entities/author.entity';
 
 @Entity('books_authors')
 export class BookAuthorTypeOrm {

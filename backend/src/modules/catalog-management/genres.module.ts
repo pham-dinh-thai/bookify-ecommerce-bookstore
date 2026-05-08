@@ -46,4 +46,4 @@ import { FindTotalGenreUseCase } from './application/genre-use-cases/find-total-
   ],
   exports: [GENRES_QUERY_REPOSITORY, GENRES_COMMAND_REPOSITORY],
 })
-export class GenreManagementModule {}
+export class GenresModule {}
