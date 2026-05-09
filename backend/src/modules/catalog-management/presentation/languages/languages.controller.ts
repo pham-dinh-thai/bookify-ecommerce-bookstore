@@ -19,7 +19,6 @@ import { JwtAuthGuard } from '../../../../shared/guards/jwt-auth.guard';
 import { RoleGuard } from '../../../../shared/guards/role.guard';
 import { Roles } from '../../../../shared/decorators/roles.decorator';
 import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
-import ExceptionHandler from '../../../../shared/domain/exception/exception.handler';
 import { CreateLanguageUseCase } from '../../application/language-use-cases/create-language/create-language.use-case';
 import { RenameLanguageUseCase } from '../../application/language-use-cases/rename-language/rename-language.use-case';
 import { RenameLanguageRequest } from './requests/rename-language.request';
@@ -78,11 +77,7 @@ export class LanguagesController {
     @Body() request: CreateLanguageRequest,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.createLanguageUseCase.execute(request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.createLanguageUseCase.execute(request, actorId);
   }
 
   @Patch(':id')
@@ -93,11 +88,7 @@ export class LanguagesController {
     @Body() request: RenameLanguageRequest,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.renameLanguageUseCase.execute(id, request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.renameLanguageUseCase.execute(id, request, actorId);
   }
 
   @Delete(':id')
@@ -108,10 +99,6 @@ export class LanguagesController {
     @Param('id') id: string,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.deleteLanguageUseCase.execute(id, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.deleteLanguageUseCase.execute(id, actorId);
   }
 }

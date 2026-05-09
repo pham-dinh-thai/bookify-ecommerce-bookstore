@@ -1,6 +1,6 @@
-import { DomainException } from '../../../../../shared/domain/exception/domain.exception';
+import { BadRequestDomainException } from '../../../../../shared/domain/exception/domain.exception';
 
-export class UserNameEmptyException extends DomainException {
+export class UserNameEmptyException extends BadRequestDomainException {
   public constructor() {
     super('Name is required,', 'NAME_EMPTY');
   }

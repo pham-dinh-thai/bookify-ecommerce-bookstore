@@ -1,6 +1,6 @@
-import { DomainException } from '../../../../../shared/domain/exception/domain.exception';
+import { BadRequestDomainException } from '../../../../../shared/domain/exception/domain.exception';
 
-export class PublisherNameEmptyException extends DomainException {
+export class PublisherNameEmptyException extends BadRequestDomainException {
   public constructor() {
     super('Publisher name is required', 'PUBLISHER_NAME_EMPTY');
   }

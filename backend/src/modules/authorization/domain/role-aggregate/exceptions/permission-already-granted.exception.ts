@@ -1,6 +1,6 @@
-import { DomainException } from '../../../../../shared/domain/exception/domain.exception';
+import { ConflictDomainException } from '../../../../../shared/domain/exception/domain.exception';
 
-export class PermissionAlreadyGrantedException extends DomainException {
+export class PermissionAlreadyGrantedException extends ConflictDomainException {
   public constructor(permission: string) {
     super(
       `Permission '${permission}' is already granted`,

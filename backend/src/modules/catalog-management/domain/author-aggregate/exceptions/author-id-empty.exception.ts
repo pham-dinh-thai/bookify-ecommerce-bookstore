@@ -1,6 +1,6 @@
-import { DomainException } from '../../../../../shared/domain/exception/domain.exception';
+import { BadRequestDomainException } from '../../../../../shared/domain/exception/domain.exception';
 
-export class AuthorIdEmptyException extends DomainException {
+export class AuthorIdEmptyException extends BadRequestDomainException {
   public constructor() {
     super('Author id is required', 'AUTHOR_ID_EMPTY');
   }

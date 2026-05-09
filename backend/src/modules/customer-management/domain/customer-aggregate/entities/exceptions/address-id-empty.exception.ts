@@ -1,7 +1,7 @@
-import { DomainException } from '../../../../../../shared/domain/exception/domain.exception';
+import { BadRequestDomainException } from '../../../../../../shared/domain/exception/domain.exception';
 
-export class AddressIdEmptyException extends DomainException {
+export class AddressIdEmptyException extends BadRequestDomainException {
   public constructor() {
-    super('AddressId should not be empty', 'ADDRESS_ID_EMPTY', 400);
+    super('AddressId should not be empty', 'ADDRESS_ID_EMPTY');
   }
 }

@@ -12,7 +12,10 @@ export abstract class DomainException extends Error {
 }
 
 export class BadRequestDomainException extends DomainException {
-  constructor(message: string = 'Bad Request Exception', code: string) {
+  constructor(
+    message: string = 'Bad Request Exception',
+    code: string = 'BAD_REQUEST',
+  ) {
     super(message, code, ErrorStatus.BAD_REQUEST);
   }
 }
@@ -27,19 +30,28 @@ export class UnauthorizedDomainException extends DomainException {
 }
 
 export class ForbiddenDomainException extends DomainException {
-  constructor(message: string = 'Forbidden Exception', code: string) {
+  constructor(
+    message: string = 'Forbidden Exception',
+    code: string = 'FORBIDDEN',
+  ) {
     super(message, code, ErrorStatus.FORBIDDEN);
   }
 }
 
 export class NotFoundDomainException extends DomainException {
-  constructor(message: string = 'Not Found Exception', code: string) {
+  constructor(
+    message: string = 'Not Found Exception',
+    code: string = 'NOT_FOUND',
+  ) {
     super(message, code, ErrorStatus.NOT_FOUND);
   }
 }
 
 export class ConflictDomainException extends DomainException {
-  constructor(message: string = 'Conflict Exception', code: string) {
+  constructor(
+    message: string = 'Conflict Exception',
+    code: string = 'CONFLICT',
+  ) {
     super(message, code, ErrorStatus.CONFLICT);
   }
 }
@@ -47,7 +59,7 @@ export class ConflictDomainException extends DomainException {
 export class UnprocessableEntityDomainException extends DomainException {
   constructor(
     message: string = 'Unprocessable Entity Exception',
-    code: string,
+    code: string = 'UNPROCESSABLE_ENTITY',
   ) {
     super(message, code, ErrorStatus.UNPROCESSABLE_ENTITY);
   }

@@ -1,6 +1,6 @@
-import { DomainException } from '../../../../../shared/domain/exception/domain.exception';
+import { NotFoundDomainException } from '../../../../../shared/domain/exception/domain.exception';
 
-export class UserNotFoundException extends DomainException {
+export class UserNotFoundException extends NotFoundDomainException {
   public constructor() {
     super('User not found', 'USER_NOT_FOUND');
   }

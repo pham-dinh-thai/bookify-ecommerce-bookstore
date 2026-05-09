@@ -19,7 +19,6 @@ import { RoleGuard } from '../../../../shared/guards/role.guard';
 import { Roles } from '../../../../shared/decorators/roles.decorator';
 import { CreateAuthorRequest } from './requests/create-author.request';
 import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
-import ExceptionHandler from '../../../../shared/domain/exception/exception.handler';
 import { CreateAuthorUseCase } from '../../application/author-use-cases/create-author/create-author.use-case';
 import { RenameAuthorUseCase } from '../../application/author-use-cases/rename-author/rename-author.use-case';
 import { RenameAuthorRequest } from './requests/rename-author.request';
@@ -78,11 +77,7 @@ export class AuthorsController {
     @Body() request: CreateAuthorRequest,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.createAuthorUseCase.execute(request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.createAuthorUseCase.execute(request, actorId);
   }
 
   @Patch(':id')
@@ -93,11 +88,7 @@ export class AuthorsController {
     @Body() request: RenameAuthorRequest,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.renameAuthorUseCase.execute(id, request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.renameAuthorUseCase.execute(id, request, actorId);
   }
 
   @Delete(':id')
@@ -108,10 +99,6 @@ export class AuthorsController {
     @Param('id') id: string,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.deleteAuthorUseCase.execute(id, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.deleteAuthorUseCase.execute(id, actorId);
   }
 }

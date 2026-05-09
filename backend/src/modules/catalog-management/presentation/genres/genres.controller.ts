@@ -16,7 +16,6 @@ import { FindOneGenreUseCase } from '../../application/genre-use-cases/find-one-
 import { CreateGenreUseCase } from '../../application/genre-use-cases/create-genre/create-genre.use-case';
 import { CreateGenreRequest } from './requests/create-genre.request';
 import { GenreReadModel } from '../../domain/genre-aggregate/read-models/genre.read-model';
-import ExceptionHandler from '../../../../shared/domain/exception/exception.handler';
 import { JwtAuthGuard } from '../../../../shared/guards/jwt-auth.guard';
 import { RoleGuard } from '../../../../shared/guards/role.guard';
 import { Roles } from '../../../../shared/decorators/roles.decorator';
@@ -74,11 +73,7 @@ export class GenresController {
     @Body() request: CreateGenreRequest,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.createGenreUseCase.execute(request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.createGenreUseCase.execute(request, actorId);
   }
 
   @Patch(':id')
@@ -89,11 +84,7 @@ export class GenresController {
     @Body() request: RenameGenreRequest,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.renameGenreUseCase.execute(id, request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.renameGenreUseCase.execute(id, request, actorId);
   }
 
   @Delete(':id')
@@ -104,10 +95,6 @@ export class GenresController {
     @Param('id') id: string,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.deleteGenreUseCase.execute(id, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.deleteGenreUseCase.execute(id, actorId);
   }
 }

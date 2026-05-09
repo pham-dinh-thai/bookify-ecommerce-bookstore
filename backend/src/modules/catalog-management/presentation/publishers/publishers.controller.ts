@@ -20,7 +20,6 @@ import { Roles } from '../../../../shared/decorators/roles.decorator';
 import { CreatePublisherUseCase } from '../../application/publisher-use-cases/create-publisher/create-publisher.use-case';
 import { CreatePublisherRequest } from './requests/create-publisher.request';
 import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
-import ExceptionHandler from '../../../../shared/domain/exception/exception.handler';
 import { RenamePublisherUseCase } from '../../application/publisher-use-cases/rename-publisher/rename-publisher.use-case';
 import { RenamePublisherRequest } from './requests/rename-publisher.request';
 import { DeletePublisherUseCase } from '../../application/publisher-use-cases/delete-publisher/delete-publisher.use-case';
@@ -78,11 +77,7 @@ export class PublishersController {
     @Body() request: CreatePublisherRequest,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.createPublisherUseCase.execute(request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.createPublisherUseCase.execute(request, actorId);
   }
 
   @Patch(':id')
@@ -93,11 +88,7 @@ export class PublishersController {
     @Body() request: RenamePublisherRequest,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.renamePublisherUseCase.execute(id, request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.renamePublisherUseCase.execute(id, request, actorId);
   }
 
   @Delete(':id')
@@ -108,10 +99,6 @@ export class PublishersController {
     @Param('id') id: string,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.deletePublisherUseCase.execute(id, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.deletePublisherUseCase.execute(id, actorId);
   }
 }
