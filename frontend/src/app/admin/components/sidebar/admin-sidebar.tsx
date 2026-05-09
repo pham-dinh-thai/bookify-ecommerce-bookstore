@@ -26,6 +26,7 @@ const navItems = [
     path: '/admin/customers',
   },
   { label: 'Genre Management', icon: BookOpen, path: '/admin/genres' },
+  { label: 'Author Management', icon: BookUser, path: '/admin/authors' },
   {
     label: 'Audit Log',
     icon: ClipboardList,
