@@ -1,10 +1,11 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
 } from '../cache/domain/cache.repository.interface';
+import { UnauthorizedDomainException } from '../domain/exception/domain.exception';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -36,7 +37,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     exp: number;
   }> {
     if (!payload.jti) {
-      throw new UnauthorizedException('Access token does not contain jti');
+      throw new UnauthorizedDomainException(
+        'Access token does not contain jti',
+        'INVALID_TOKEN',
+      );
     }
 
     const isAccessTokenBlacklisted = await this.cache.get<boolean>(
@@ -44,7 +48,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     );
 
     if (isAccessTokenBlacklisted) {
-      throw new UnauthorizedException('Access token has been revoked');
+      throw new UnauthorizedDomainException(
+        'Access token has been revoked',
+        'REVOKED_TOKEN',
+      );
     }
 
     return {
