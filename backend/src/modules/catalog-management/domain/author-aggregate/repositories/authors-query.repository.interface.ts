@@ -4,6 +4,8 @@ export interface IAuthorsQueryRepository {
   findAll(): Promise<AuthorReadModel[]>;
 
   findOne(id: string): Promise<AuthorReadModel | null>;
+
+  count(): Promise<number>;
 }
 
 export const AUTHORS_QUERY_REPOSITORY = 'IAuthorsQueryRepository';

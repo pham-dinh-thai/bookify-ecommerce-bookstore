@@ -23,12 +23,14 @@ import { CreateAuthorUseCase } from '../../application/author-use-cases/create-a
 import { RenameAuthorUseCase } from '../../application/author-use-cases/rename-author/rename-author.use-case';
 import { RenameAuthorRequest } from './requests/rename-author.request';
 import { DeleteAuthorUseCase } from '../../application/author-use-cases/delete-author/delete-author.use-case';
+import { FindTotalAuthorUseCase } from '../../application/author-use-cases/find-total-author/find-total-author.use-case';
 
 @Controller('authors')
 export class AuthorsController {
   public constructor(
     private readonly findAuthorsUseCase: FindAuthorsUseCase,
     private readonly findOneAuthorUseCase: FindOneAuthorUseCase,
+    private readonly findTotalAuthorUseCase: FindTotalAuthorUseCase,
     private readonly createAuthorUseCase: CreateAuthorUseCase,
     private readonly renameAuthorUseCase: RenameAuthorUseCase,
     private readonly deleteAuthorUseCase: DeleteAuthorUseCase,
@@ -39,6 +41,15 @@ export class AuthorsController {
     const authors = await this.findAuthorsUseCase.execute();
 
     return authors;
+  }
+
+  @Get('total')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles('admin')
+  public async total(): Promise<number> {
+    const total = await this.findTotalAuthorUseCase.execute();
+
+    return total;
   }
 
   @Get(':id')

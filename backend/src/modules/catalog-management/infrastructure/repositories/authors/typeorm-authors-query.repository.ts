@@ -28,4 +28,8 @@ export class TypeOrmAuthorsQueryRepository implements IAuthorsQueryRepository {
 
     return authorTypeOrm ? AuthorsMapper.toReadModel(authorTypeOrm) : null;
   }
+
+  public async count(): Promise<number> {
+    return this.repository.count();
+  }
 }
