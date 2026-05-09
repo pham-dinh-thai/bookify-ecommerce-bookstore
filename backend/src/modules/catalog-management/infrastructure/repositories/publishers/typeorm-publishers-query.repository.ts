@@ -30,4 +30,8 @@ export class TypeOrmPublishersQueryRepository implements IPublishersQueryReposit
       ? PublishersMapper.toReadModel(publisherTypeOrm)
       : null;
   }
+
+  public async count(): Promise<number> {
+    return this.repository.count();
+  }
 }
