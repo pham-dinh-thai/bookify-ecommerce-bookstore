@@ -28,6 +28,11 @@ const navItems = [
   { label: 'Genre Management', icon: BookOpen, path: '/admin/genres' },
   { label: 'Author Management', icon: BookUser, path: '/admin/authors' },
   {
+    label: 'Publisher Management',
+    icon: BookUser,
+    path: '/admin/publishers',
+  },
+  {
     label: 'Audit Log',
     icon: ClipboardList,
     path: '/admin/audit-logs',
