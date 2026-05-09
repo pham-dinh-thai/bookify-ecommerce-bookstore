@@ -28,7 +28,7 @@ export class TypeOrmGenresCommandRepository implements IGenresCommandRepository 
       .save(GenreTypeOrm, GenresMapper.toTypeOrm(genre));
   }
 
-  public async delele(genre: Genre): Promise<void> {
+  public async delete(genre: Genre): Promise<void> {
     await this.unitOfWork
       .getManager()
       .delete(GenreTypeOrm, { id: genre.getId() });

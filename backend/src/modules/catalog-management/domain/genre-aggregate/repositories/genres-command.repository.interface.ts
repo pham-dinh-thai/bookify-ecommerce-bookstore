@@ -5,7 +5,7 @@ export interface IGenresCommandRepository {
 
   save(genre: Genre): Promise<void>;
 
-  delele(genre: Genre): Promise<void>;
+  delete(genre: Genre): Promise<void>;
 }
 
 export const GENRES_COMMAND_REPOSITORY = 'IGenresCommandRepository';
