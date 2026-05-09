@@ -1,9 +1,19 @@
 import { getAccessToken } from '@/shared/auth/lib/token-storage';
 
-export const allGenreService = async () => {
+export const allGenreService = async (
+  page: number,
+  limit: number,
+  search: string,
+) => {
   const token = getAccessToken();
 
-  const res = await fetch('/api/genres', {
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+    ...(search ? { search } : {}),
+  });
+
+  const res = await fetch(`/api/genres?${params.toString()}`, {
     credentials: 'include',
     headers: {
       Authorization: `Bearer ${token}`,

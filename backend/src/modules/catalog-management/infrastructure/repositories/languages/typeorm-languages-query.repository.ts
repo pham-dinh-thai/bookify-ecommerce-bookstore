@@ -13,14 +13,25 @@ export class TypeOrmLanguagesQueryRepository implements ILanguagesQueryRepositor
     private readonly repository: Repository<LanguageTypeOrm>,
   ) {}
 
-  public async findAll(): Promise<LanguageReadModel[]> {
-    const languagesTypeOrm = await this.repository.find();
+  public async findAll(
+    page: number,
+    limit: number,
+    search?: string,
+  ): Promise<LanguageReadModel[]> {
+    const query = this.repository.createQueryBuilder('language');
 
-    return languagesTypeOrm
-      ? languagesTypeOrm.map((languageTypeOrm) =>
-          LanguagesMapper.toReadModel(languageTypeOrm),
-        )
-      : [];
+    if (search) {
+      query.where('language.name LIKE :search', { search: `%${search}%` });
+    }
+
+    const languagesTypeOrm = await query
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getMany();
+
+    return languagesTypeOrm.map((languageTypeOrm) =>
+      LanguagesMapper.toReadModel(languageTypeOrm),
+    );
   }
 
   public async findOne(id: string): Promise<LanguageReadModel | null> {
@@ -29,5 +40,15 @@ export class TypeOrmLanguagesQueryRepository implements ILanguagesQueryRepositor
     return languageTypeOrm
       ? LanguagesMapper.toReadModel(languageTypeOrm)
       : null;
+  }
+
+  public async count(search?: string): Promise<number> {
+    const query = this.repository.createQueryBuilder('language');
+
+    if (search) {
+      query.where('language.name LIKE :search', { search: `%${search}%` });
+    }
+
+    return await query.getCount();
   }
 }

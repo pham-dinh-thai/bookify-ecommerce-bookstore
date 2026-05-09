@@ -15,7 +15,6 @@ import {
   CACHE_REPOSITORY,
   type ICacheRepository,
 } from '../../../../../shared/cache/domain/cache.repository.interface';
-import { GENRE_CACHE_KEYS } from '../genre-cache.constants';
 
 @Injectable()
 export class DeleteGenreUseCase {
@@ -51,6 +50,6 @@ export class DeleteGenreUseCase {
       );
     });
 
-    await this.cacheRepository.del(GENRE_CACHE_KEYS.ALL);
+    await this.cacheRepository.delByPattern('genres:*');
   }
 }

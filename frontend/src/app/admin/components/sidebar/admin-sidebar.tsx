@@ -3,9 +3,15 @@
 import {
   BookOpen,
   BookUser,
+  Building2,
   ClipboardList,
+  LanguagesIcon,
   LayoutDashboard,
+  PenLine,
+  ShoppingCart,
+  Tag,
   Users,
+  User,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import SidebarNav from './ui/sidebar-nav';
@@ -22,10 +28,21 @@ const navItems = [
   { label: 'User Management', icon: Users, path: '/admin/users' },
   {
     label: 'Customer Management',
-    icon: BookUser,
+    icon: ShoppingCart,
     path: '/admin/customers',
   },
-  { label: 'Genre Management', icon: BookOpen, path: '/admin/genres' },
+  { label: 'Genre Management', icon: Tag, path: '/admin/genres' },
+  { label: 'Author Management', icon: PenLine, path: '/admin/authors' },
+  {
+    label: 'Publisher Management',
+    icon: Building2,
+    path: '/admin/publishers',
+  },
+  {
+    label: 'Language Management',
+    icon: LanguagesIcon,
+    path: '/admin/languages',
+  },
   {
     label: 'Audit Log',
     icon: ClipboardList,

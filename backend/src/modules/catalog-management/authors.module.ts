@@ -9,13 +9,14 @@ import { FindOneAuthorUseCase } from './application/author-use-cases/find-one-au
 import { UnitOfWorkModule } from '../../shared/unit-of-work/unit-of-work.module';
 import { UuidModule } from '../../shared/uuid/uuid.module';
 import { AUTHORS_COMMAND_REPOSITORY } from './domain/author-aggregate/repositories/authors-command.repository.interface';
-import { TypeOrmAuthorsCommandRepository } from './infrastructure/repositories/authors/typerm-authors-command.repository';
+import { TypeOrmAuthorsCommandRepository } from './infrastructure/repositories/authors/typeorm-authors-command.repository';
 import { AuditLogModule } from '../audit-log/audit-log.module';
 import { SharedCacheModule } from '../../shared/cache/cache.module';
 import { CreateAuthorUseCase } from './application/author-use-cases/create-author/create-author.use-case';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { RenameAuthorUseCase } from './application/author-use-cases/rename-author/rename-author.use-case';
 import { DeleteAuthorUseCase } from './application/author-use-cases/delete-author/delete-author.use-case';
+import { FindTotalAuthorUseCase } from './application/author-use-cases/find-total-author/find-total-author.use-case';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { DeleteAuthorUseCase } from './application/author-use-cases/delete-autho
   providers: [
     FindAuthorsUseCase,
     FindOneAuthorUseCase,
+    FindTotalAuthorUseCase,
     CreateAuthorUseCase,
     RenameAuthorUseCase,
     DeleteAuthorUseCase,

@@ -33,10 +33,21 @@ export default function Paginate({
     if (page < totalPages) onPageChange(totalPages);
   };
 
-  const pageNumbers = Array.from(
-    { length: totalPages },
-    (_, index) => index + 1,
-  );
+  const getPageNumbers = () => {
+    const delta = 3;
+    let start = Math.max(1, page - delta);
+    let end = Math.min(totalPages, page + delta);
+
+    if (page - delta < 1) {
+      end = Math.min(totalPages, end + (delta - page + 1));
+    }
+
+    if (page + delta > totalPages) {
+      start = Math.max(1, start - (page + delta - totalPages));
+    }
+
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  };
 
   const fromRecord = (page - 1) * pageSize + 1;
   const toRecord = Math.min(page * pageSize, total);
@@ -57,7 +68,7 @@ export default function Paginate({
           Previous
         </PaginateButton>
 
-        {pageNumbers.map((pageNumber) => (
+        {getPageNumbers().map((pageNumber) => (
           <button
             key={pageNumber}
             type="button"

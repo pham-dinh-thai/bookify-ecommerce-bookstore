@@ -1,11 +1,24 @@
 'use client';
 
-import { Users, BookUser, BookOpen, ScrollText } from 'lucide-react';
+import {
+  Users,
+  BookUser,
+  BookOpen,
+  ScrollText,
+  Building,
+  UserCheck,
+  Globe,
+  Book,
+} from 'lucide-react';
 import totalStaffService from './services/total-staff.service';
 import totalCustomerService from './services/total-customer.service';
 import { useEffect, useState } from 'react';
 import totalGenreService from './services/total-genre.service';
 import totalAuditLogService from './services/total-audit-log.service';
+import totalPublisherService from './services/total-publisher.service';
+import totalAuthorService from './services/total-author.service';
+import totalLanguageService from './services/total-language.service';
+import totalBookService from './services/total-book.service';
 import useRecentActivities from './hooks/use-recent-activities';
 
 export default function SystemOverview() {
@@ -15,12 +28,20 @@ export default function SystemOverview() {
   const [totalCustomers, setTotalCustomers] = useState(0);
   const [totalGenres, setTotalGenres] = useState(0);
   const [totalAuditLogs, setTotalAuditLogs] = useState(0);
+  const [totalPublishers, setTotalPublishers] = useState(0);
+  const [totalAuthors, setTotalAuthors] = useState(0);
+  const [totalLanguages, setTotalLanguages] = useState(0);
+  const [totalBooks, setTotalBooks] = useState(0);
 
   useEffect(() => {
     totalStaffService().then(setTotalStaff).catch(console.error);
     totalCustomerService().then(setTotalCustomers).catch(console.error);
     totalGenreService().then(setTotalGenres).catch(console.error);
     totalAuditLogService().then(setTotalAuditLogs).catch(console.error);
+    totalPublisherService().then(setTotalPublishers).catch(console.error);
+    totalAuthorService().then(setTotalAuthors).catch(console.error);
+    totalLanguageService().then(setTotalLanguages).catch(console.error);
+    totalBookService().then(setTotalBooks).catch(console.error);
   }, []);
 
   const stats = [
@@ -44,6 +65,34 @@ export default function SystemOverview() {
       icon: BookOpen,
       color: '#fff8e6',
       text: '#7a5800',
+    },
+    {
+      label: 'Total Publishers',
+      value: totalPublishers,
+      icon: Building,
+      color: '#f3e8ff',
+      text: '#6b21a8',
+    },
+    {
+      label: 'Total Authors',
+      value: totalAuthors,
+      icon: UserCheck,
+      color: '#fef3c7',
+      text: '#92400e',
+    },
+    {
+      label: 'Total Languages',
+      value: totalLanguages,
+      icon: Globe,
+      color: '#dbeafe',
+      text: '#1e40af',
+    },
+    {
+      label: 'Total Books',
+      value: totalBooks,
+      icon: Book,
+      color: '#ecfdf5',
+      text: '#065f46',
     },
     {
       label: 'Audit Logs',

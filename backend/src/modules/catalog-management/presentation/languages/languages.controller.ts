@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { LanguageReadModel } from '../../domain/language-aggregate/read-models/language.read-model';
@@ -23,22 +24,42 @@ import { CreateLanguageUseCase } from '../../application/language-use-cases/crea
 import { RenameLanguageUseCase } from '../../application/language-use-cases/rename-language/rename-language.use-case';
 import { RenameLanguageRequest } from './requests/rename-language.request';
 import { DeleteLanguageUseCase } from '../../application/language-use-cases/delete-language/delete-language.use-case';
+import { FindTotalLanguageUseCase } from '../../application/language-use-cases/find-total-language/find-total-language.use-case';
+import { FindLanguagesResponse } from '../../application/language-use-cases/find-languages/find-languages.response';
 
 @Controller('languages')
 export class LanguagesController {
   public constructor(
     private readonly findLanguagesUseCase: FindLanguagesUseCase,
     private readonly findOneLanguageUseCase: FindOneLanguageUseCase,
+    private readonly findTotalLanguageUseCase: FindTotalLanguageUseCase,
     private readonly createLanguageUseCase: CreateLanguageUseCase,
     private readonly renameLanguageUseCase: RenameLanguageUseCase,
     private readonly deleteLanguageUseCase: DeleteLanguageUseCase,
   ) {}
 
   @Get()
-  public async findAll(): Promise<LanguageReadModel[]> {
-    const languages = await this.findLanguagesUseCase.execute();
+  public async findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+    @Query('search') search?: string,
+  ): Promise<FindLanguagesResponse> {
+    const response = await this.findLanguagesUseCase.execute(
+      parseInt(page, 10),
+      parseInt(limit, 10),
+      search,
+    );
 
-    return languages;
+    return response;
+  }
+
+  @Get('total')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles('admin')
+  public async total(): Promise<number> {
+    const total = await this.findTotalLanguageUseCase.execute();
+
+    return total;
   }
 
   @Get(':id')

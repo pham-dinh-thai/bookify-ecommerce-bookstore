@@ -17,7 +17,6 @@ import {
 } from '../../../../../shared/cache/domain/cache.repository.interface';
 import { ICreateLanguageRequest } from './create-language.request';
 import { Language } from '../../../domain/language-aggregate/language.aggregate';
-import { LANGUAGE_CACHE_KEYS } from '../language-cache.constants';
 import {
   type ILanguageExistsChecker,
   LANGUAGE_EXISTS_CHECKER,
@@ -66,6 +65,6 @@ export class CreateLanguageUseCase {
       );
     });
 
-    await this.cacheRepository.del(LANGUAGE_CACHE_KEYS.ALL);
+    await this.cacheRepository.delByPattern('languages:*');
   }
 }

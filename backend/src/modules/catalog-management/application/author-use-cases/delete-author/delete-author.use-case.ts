@@ -50,6 +50,6 @@ export class DeleteAuthorUseCase {
       );
     });
 
-    await this.cacheRepository.del(AUTHOR_CACHE_KEYS.ALL);
+    await this.cacheRepository.delByPattern('authors:*');
   }
 }

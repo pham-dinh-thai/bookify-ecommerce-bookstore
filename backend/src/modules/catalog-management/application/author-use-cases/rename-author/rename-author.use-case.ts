@@ -63,6 +63,6 @@ export class RenameAuthorUseCase {
       );
     });
 
-    await this.cacheRepository.del(AUTHOR_CACHE_KEYS.ALL);
+    await this.cacheRepository.delByPattern('authors:*');
   }
 }

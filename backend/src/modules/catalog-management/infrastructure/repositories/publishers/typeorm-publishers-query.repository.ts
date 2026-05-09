@@ -13,14 +13,25 @@ export class TypeOrmPublishersQueryRepository implements IPublishersQueryReposit
     private readonly repository: Repository<PublisherTypeOrm>,
   ) {}
 
-  public async findAll(): Promise<PublisherReadModel[]> {
-    const publishersTypeOrm = await this.repository.find();
+  public async findAll(
+    page: number,
+    limit: number,
+    search?: string,
+  ): Promise<PublisherReadModel[]> {
+    const query = this.repository.createQueryBuilder('publisher');
 
-    return publishersTypeOrm
-      ? publishersTypeOrm.map((publisherTypeOrm) =>
-          PublishersMapper.toReadModel(publisherTypeOrm),
-        )
-      : [];
+    if (search) {
+      query.where('publisher.name LIKE :search', { search: `%${search}%` });
+    }
+
+    const publishersTypeOrm = await query
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getMany();
+
+    return publishersTypeOrm.map((publisherTypeOrm) =>
+      PublishersMapper.toReadModel(publisherTypeOrm),
+    );
   }
 
   public async findOne(id: string): Promise<PublisherReadModel | null> {
@@ -29,5 +40,15 @@ export class TypeOrmPublishersQueryRepository implements IPublishersQueryReposit
     return publisherTypeOrm
       ? PublishersMapper.toReadModel(publisherTypeOrm)
       : null;
+  }
+
+  public async count(search?: string): Promise<number> {
+    const query = this.repository.createQueryBuilder('publisher');
+
+    if (search) {
+      query.where('publisher.name LIKE :search', { search: `%${search}%` });
+    }
+
+    return await query.getCount();
   }
 }

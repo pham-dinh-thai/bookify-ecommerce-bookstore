@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { FindAuthorsUseCase } from '../../application/author-use-cases/find-authors/find-authors.use-case';
@@ -23,22 +24,42 @@ import { CreateAuthorUseCase } from '../../application/author-use-cases/create-a
 import { RenameAuthorUseCase } from '../../application/author-use-cases/rename-author/rename-author.use-case';
 import { RenameAuthorRequest } from './requests/rename-author.request';
 import { DeleteAuthorUseCase } from '../../application/author-use-cases/delete-author/delete-author.use-case';
+import { FindTotalAuthorUseCase } from '../../application/author-use-cases/find-total-author/find-total-author.use-case';
+import { FindAuthorsResponse } from '../../application/author-use-cases/find-authors/find-authors.response';
 
 @Controller('authors')
 export class AuthorsController {
   public constructor(
     private readonly findAuthorsUseCase: FindAuthorsUseCase,
     private readonly findOneAuthorUseCase: FindOneAuthorUseCase,
+    private readonly findTotalAuthorUseCase: FindTotalAuthorUseCase,
     private readonly createAuthorUseCase: CreateAuthorUseCase,
     private readonly renameAuthorUseCase: RenameAuthorUseCase,
     private readonly deleteAuthorUseCase: DeleteAuthorUseCase,
   ) {}
 
   @Get()
-  public async findAll(): Promise<AuthorReadModel[]> {
-    const authors = await this.findAuthorsUseCase.execute();
+  public async findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+    @Query('search') search?: string,
+  ): Promise<FindAuthorsResponse> {
+    const response = await this.findAuthorsUseCase.execute(
+      parseInt(page, 10),
+      parseInt(limit, 10),
+      search,
+    );
 
-    return authors;
+    return response;
+  }
+
+  @Get('total')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles('admin')
+  public async total(): Promise<number> {
+    const total = await this.findTotalAuthorUseCase.execute();
+
+    return total;
   }
 
   @Get(':id')

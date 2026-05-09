@@ -21,7 +21,6 @@ import {
 } from '../../../../../shared/uuid/domain/uuid-generator.interface';
 import { ICreatePublisherRequest } from './create-publisher.request';
 import { Publisher } from '../../../domain/publisher-aggregate/publisher.aggregate';
-import { PUBLISHER_CACHE_KEYS } from '../publisher-cache.constants';
 
 @Injectable()
 export class CreatePublisherUseCase {
@@ -60,6 +59,6 @@ export class CreatePublisherUseCase {
       );
     });
 
-    await this.cacheRepository.del(PUBLISHER_CACHE_KEYS.ALL);
+    await this.cacheRepository.delByPattern('publishers:*');
   }
 }
