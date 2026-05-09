@@ -4,6 +4,7 @@ import {
   BookOpen,
   BookUser,
   ClipboardList,
+  LanguagesIcon,
   LayoutDashboard,
   Users,
 } from 'lucide-react';
@@ -31,6 +32,11 @@ const navItems = [
     label: 'Publisher Management',
     icon: BookUser,
     path: '/admin/publishers',
+  },
+  {
+    label: 'Language Management',
+    icon: LanguagesIcon,
+    path: '/admin/languages',
   },
   {
     label: 'Audit Log',
