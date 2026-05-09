@@ -1,8 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
+import { GlobalExceptionFilter } from './shared/domain/exception/global-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,10 +13,13 @@ async function bootstrap() {
   app.use(cookieParser());
   app.use(helmet());
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   const PORT = process.env.PORT || 3000;
+
+  const logger = new Logger('Bootstrap');
   await app.listen(PORT, () => {
-    console.log('Running API on', PORT);
+    logger.log(`Running API on port ${PORT}`);
   });
 }
 bootstrap();
