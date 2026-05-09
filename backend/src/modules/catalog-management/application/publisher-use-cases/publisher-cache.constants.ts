@@ -1,5 +1,7 @@
 export const PUBLISHER_CACHE_KEYS = {
-  ALL: 'publishers',
+  ALL: 'publishers:all',
+  PAGE: (page: number, limit: number, search?: string) =>
+    `publishers:page=${page}:limit=${limit}:search=${search ?? ''}`,
 } as const;
 
 export const PUBLISHER_CACHE_TTL = {

@@ -11,25 +11,24 @@ import PublisherManagementHeader from './ui/publisher-management-header';
 import { createPublisherService } from './services/create-publisher.service';
 import { deletePublisherService } from './services/delete-publisher.service';
 import { updatePublisherService } from './services/update-publisher.service';
-import usePublishersFilter from './hooks/use-publishers-filter';
 
 export default function PublisherManagement() {
-  const { publishers, loading, errors, refetch } = usePublishers();
+  const pageSize = 5;
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+
+  const { publishers, total, loading, errors, refetch } = usePublishers(
+    page,
+    pageSize,
+    search,
+  );
+
   const { addToast } = useToast();
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
   const [newName, setNewName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
-  const pageSize = 5;
-  const {
-    search,
-    setSearch,
-    page,
-    setPage,
-    filteredPublishers,
-    paginatedPublishers,
-  } = usePublishersFilter({ publishers, pageSize });
 
   const handleEdit = (item: any) => {
     setEditingId(item.id);
@@ -148,7 +147,7 @@ export default function PublisherManagement() {
 
             <Table
               columns={columns}
-              data={paginatedPublishers}
+              data={publishers}
               rowKey="id"
               emptyText="No publishers found"
               rowActions={(item) => (
@@ -196,7 +195,7 @@ export default function PublisherManagement() {
                 <Paginate
                   page={page}
                   pageSize={pageSize}
-                  total={filteredPublishers.length}
+                  total={total}
                   onPageChange={setPage}
                 />
               }

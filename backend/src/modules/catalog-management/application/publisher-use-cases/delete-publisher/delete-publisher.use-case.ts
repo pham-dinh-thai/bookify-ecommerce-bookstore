@@ -15,7 +15,6 @@ import {
   type IUnitOfWork,
   UNIT_OF_WORK,
 } from '../../../../../shared/unit-of-work/application/unit-of-work';
-import { PUBLISHER_CACHE_KEYS } from '../publisher-cache.constants';
 
 @Injectable()
 export class DeletePublisherUseCase {
@@ -50,6 +49,6 @@ export class DeletePublisherUseCase {
       );
     });
 
-    await this.cacheRepository.del(PUBLISHER_CACHE_KEYS.ALL);
+    await this.cacheRepository.delByPattern('publishers:*');
   }
 }

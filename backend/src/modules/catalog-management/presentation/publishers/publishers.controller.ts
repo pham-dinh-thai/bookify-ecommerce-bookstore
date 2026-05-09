@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { FindPublishersUseCase } from '../../application/publisher-use-cases/find-publishers/find-publishers.use-case';
@@ -24,6 +25,7 @@ import { RenamePublisherUseCase } from '../../application/publisher-use-cases/re
 import { RenamePublisherRequest } from './requests/rename-publisher.request';
 import { DeletePublisherUseCase } from '../../application/publisher-use-cases/delete-publisher/delete-publisher.use-case';
 import { FindTotalPublisherUseCase } from '../../application/publisher-use-cases/find-total-publisher/find-total-publisher.use-case';
+import { FindPublishersResponse } from '../../application/publisher-use-cases/find-publishers/find-publishers.response';
 
 @Controller('publishers')
 export class PublishersController {
@@ -37,10 +39,18 @@ export class PublishersController {
   ) {}
 
   @Get()
-  public async findAll(): Promise<PublisherReadModel[]> {
-    const publishers = await this.findPublishersUseCase.execute();
+  public async findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+    @Query('search') search?: string,
+  ): Promise<FindPublishersResponse> {
+    const response = await this.findPublishersUseCase.execute(
+      parseInt(page, 10),
+      parseInt(limit, 10),
+      search,
+    );
 
-    return publishers;
+    return response;
   }
 
   @Get('total')
