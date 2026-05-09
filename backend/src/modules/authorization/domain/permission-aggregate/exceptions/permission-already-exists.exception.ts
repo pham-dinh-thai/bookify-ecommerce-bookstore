@@ -1,6 +1,6 @@
-import { DomainException } from '../../../../../shared/domain/exception/domain.exception';
+import { ConflictDomainException } from '../../../../../shared/domain/exception/domain.exception';
 
-export class PermissionAlreadyExistsException extends DomainException {
+export class PermissionAlreadyExistsException extends ConflictDomainException {
   public constructor(id: string) {
     super(
       `Permission with id '${id}' already exists`,

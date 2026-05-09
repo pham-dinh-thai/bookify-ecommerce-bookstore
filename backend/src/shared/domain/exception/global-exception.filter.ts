@@ -1,4 +1,9 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpException,
+} from '@nestjs/common';
 import { DomainException } from './domain.exception';
 import { Response } from 'express';
 
@@ -11,6 +16,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     if (exception instanceof DomainException) {
       response.status(exception.statusCode).json({
         code: exception.code,
+        message: exception.message,
+      });
+    } else if (exception instanceof HttpException) {
+      response.status(exception.getStatus()).json({
+        code: 'HTTP_EXCEPTION',
         message: exception.message,
       });
     } else {

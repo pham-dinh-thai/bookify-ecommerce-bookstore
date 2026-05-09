@@ -1,6 +1,6 @@
-import { DomainException } from '../../../../../shared/domain/exception/domain.exception';
+import { BadRequestDomainException } from '../../../../../shared/domain/exception/domain.exception';
 
-export class GenderEmptyException extends DomainException {
+export class GenderEmptyException extends BadRequestDomainException {
   public constructor() {
     super('Gender is required,', 'GENDER_EMPTY');
   }

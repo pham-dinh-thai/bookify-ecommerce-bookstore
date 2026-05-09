@@ -78,11 +78,7 @@ export class AuthorsController {
     @Body() request: CreateAuthorRequest,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.createAuthorUseCase.execute(request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.createAuthorUseCase.execute(request, actorId);
   }
 
   @Patch(':id')
@@ -93,11 +89,7 @@ export class AuthorsController {
     @Body() request: RenameAuthorRequest,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.renameAuthorUseCase.execute(id, request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.renameAuthorUseCase.execute(id, request, actorId);
   }
 
   @Delete(':id')
@@ -108,10 +100,6 @@ export class AuthorsController {
     @Param('id') id: string,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.deleteAuthorUseCase.execute(id, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.deleteAuthorUseCase.execute(id, actorId);
   }
 }

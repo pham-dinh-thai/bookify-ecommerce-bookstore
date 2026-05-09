@@ -1,7 +1,7 @@
-import { DomainException } from '../../../../../shared/domain/exception/domain.exception';
+import { UnauthorizedDomainException } from '../../../../../shared/domain/exception/domain.exception';
 
-export class LoginFailedException extends DomainException {
+export class LoginFailedException extends UnauthorizedDomainException {
   public constructor() {
-    super('Email or password incorrect', 'LOGIN_FAILED', 401);
+    super('Email or password incorrect', 'LOGIN_FAILED');
   }
 }

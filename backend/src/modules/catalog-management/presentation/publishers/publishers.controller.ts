@@ -78,11 +78,7 @@ export class PublishersController {
     @Body() request: CreatePublisherRequest,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.createPublisherUseCase.execute(request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.createPublisherUseCase.execute(request, actorId);
   }
 
   @Patch(':id')
@@ -93,11 +89,7 @@ export class PublishersController {
     @Body() request: RenamePublisherRequest,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.renamePublisherUseCase.execute(id, request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.renamePublisherUseCase.execute(id, request, actorId);
   }
 
   @Delete(':id')
@@ -108,10 +100,6 @@ export class PublishersController {
     @Param('id') id: string,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.deletePublisherUseCase.execute(id, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.deletePublisherUseCase.execute(id, actorId);
   }
 }

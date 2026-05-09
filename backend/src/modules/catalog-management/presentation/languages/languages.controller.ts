@@ -78,11 +78,7 @@ export class LanguagesController {
     @Body() request: CreateLanguageRequest,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.createLanguageUseCase.execute(request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.createLanguageUseCase.execute(request, actorId);
   }
 
   @Patch(':id')
@@ -93,11 +89,7 @@ export class LanguagesController {
     @Body() request: RenameLanguageRequest,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.renameLanguageUseCase.execute(id, request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.renameLanguageUseCase.execute(id, request, actorId);
   }
 
   @Delete(':id')
@@ -108,10 +100,6 @@ export class LanguagesController {
     @Param('id') id: string,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.deleteLanguageUseCase.execute(id, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.deleteLanguageUseCase.execute(id, actorId);
   }
 }

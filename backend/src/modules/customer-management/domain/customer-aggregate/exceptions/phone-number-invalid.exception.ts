@@ -1,7 +1,7 @@
-import { DomainException } from '../../../../../shared/domain/exception/domain.exception';
+import { BadRequestDomainException } from '../../../../../shared/domain/exception/domain.exception';
 
-export class PhoneNumberInvalidException extends DomainException {
+export class PhoneNumberInvalidException extends BadRequestDomainException {
   public constructor() {
-    super('Phone number is invalid', 'PHONE_NUMBER_INVALID', 400);
+    super('Phone number is invalid', 'PHONE_NUMBER_INVALID');
   }
 }

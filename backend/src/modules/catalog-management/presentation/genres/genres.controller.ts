@@ -74,11 +74,7 @@ export class GenresController {
     @Body() request: CreateGenreRequest,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.createGenreUseCase.execute(request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.createGenreUseCase.execute(request, actorId);
   }
 
   @Patch(':id')
@@ -89,11 +85,7 @@ export class GenresController {
     @Body() request: RenameGenreRequest,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.renameGenreUseCase.execute(id, request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.renameGenreUseCase.execute(id, request, actorId);
   }
 
   @Delete(':id')
@@ -104,10 +96,6 @@ export class GenresController {
     @Param('id') id: string,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.deleteGenreUseCase.execute(id, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.deleteGenreUseCase.execute(id, actorId);
   }
 }

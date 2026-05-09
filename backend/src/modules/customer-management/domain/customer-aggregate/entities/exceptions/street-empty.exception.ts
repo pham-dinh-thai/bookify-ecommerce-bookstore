@@ -1,7 +1,7 @@
-import { DomainException } from '../../../../../../shared/domain/exception/domain.exception';
+import { BadRequestDomainException } from '../../../../../../shared/domain/exception/domain.exception';
 
-export class StreetEmptyException extends DomainException {
+export class StreetEmptyException extends BadRequestDomainException {
   public constructor() {
-    super('Street should not be empty', 'STREET_EMPTY', 400);
+    super('Street should not be empty', 'STREET_EMPTY');
   }
 }
