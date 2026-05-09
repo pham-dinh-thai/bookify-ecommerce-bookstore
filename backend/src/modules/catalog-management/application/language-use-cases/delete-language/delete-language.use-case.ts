@@ -15,7 +15,6 @@ import {
   CACHE_REPOSITORY,
   type ICacheRepository,
 } from '../../../../../shared/cache/domain/cache.repository.interface';
-import { LANGUAGE_CACHE_KEYS } from '../language-cache.constants';
 
 @Injectable()
 export class DeleteLanguageUseCase {
@@ -48,6 +47,6 @@ export class DeleteLanguageUseCase {
       );
     });
 
-    await this.cacheRepository.del(LANGUAGE_CACHE_KEYS.ALL);
+    await this.cacheRepository.delByPattern('languages:*');
   }
 }

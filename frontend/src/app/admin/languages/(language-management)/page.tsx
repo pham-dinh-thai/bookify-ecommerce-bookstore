@@ -6,15 +6,23 @@ import { Pencil, Trash2, Plus, Check, X } from 'lucide-react';
 import { useState } from 'react';
 import Paginate from '@/shared/common/components/pagination/paginate';
 import AdminSearchBar from '../../users/(features)/(user-management)/ui/search-bar';
-import useLanguages from './hooks/use-languages';
 import LanguageManagementHeader from './ui/language-management-header';
 import { createLanguageService } from './services/create-language.service';
 import { deleteLanguageService } from './services/delete-language.service';
 import { updateLanguageService } from './services/update-language.service';
-import useLanguagesFilter from './hooks/use-languages-filter';
+import useLanguages from './hooks/use-languages';
 
 export default function LanguageManagement() {
-  const { languages, loading, errors, refetch } = useLanguages();
+  const pageSize = 5;
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+
+  const { languages, total, loading, errors, refetch } = useLanguages(
+    page,
+    pageSize,
+    search,
+  );
+
   const { addToast } = useToast();
 
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -22,15 +30,6 @@ export default function LanguageManagement() {
   const [newId, setNewId] = useState('');
   const [newName, setNewName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
-  const pageSize = 5;
-  const {
-    search,
-    setSearch,
-    page,
-    setPage,
-    filteredLanguages,
-    paginatedLanguages,
-  } = useLanguagesFilter({ languages, pageSize });
 
   const handleEdit = (item: any) => {
     setEditingId(item.id);
@@ -171,7 +170,7 @@ export default function LanguageManagement() {
 
             <Table
               columns={columns}
-              data={paginatedLanguages}
+              data={languages}
               rowKey="id"
               emptyText="No languages found"
               rowActions={(item) => (
@@ -219,7 +218,7 @@ export default function LanguageManagement() {
                 <Paginate
                   page={page}
                   pageSize={pageSize}
-                  total={filteredLanguages.length}
+                  total={total}
                   onPageChange={setPage}
                 />
               }

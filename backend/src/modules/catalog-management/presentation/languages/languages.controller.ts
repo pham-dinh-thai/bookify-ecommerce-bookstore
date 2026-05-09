@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { LanguageReadModel } from '../../domain/language-aggregate/read-models/language.read-model';
@@ -24,6 +25,7 @@ import { RenameLanguageUseCase } from '../../application/language-use-cases/rena
 import { RenameLanguageRequest } from './requests/rename-language.request';
 import { DeleteLanguageUseCase } from '../../application/language-use-cases/delete-language/delete-language.use-case';
 import { FindTotalLanguageUseCase } from '../../application/language-use-cases/find-total-language/find-total-language.use-case';
+import { FindLanguagesResponse } from '../../application/language-use-cases/find-languages/find-languages.response';
 
 @Controller('languages')
 export class LanguagesController {
@@ -37,10 +39,18 @@ export class LanguagesController {
   ) {}
 
   @Get()
-  public async findAll(): Promise<LanguageReadModel[]> {
-    const languages = await this.findLanguagesUseCase.execute();
+  public async findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+    @Query('search') search?: string,
+  ): Promise<FindLanguagesResponse> {
+    const response = await this.findLanguagesUseCase.execute(
+      parseInt(page, 10),
+      parseInt(limit, 10),
+      search,
+    );
 
-    return languages;
+    return response;
   }
 
   @Get('total')

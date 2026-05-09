@@ -1,9 +1,19 @@
 import { getAccessToken } from '@/shared/auth/lib/token-storage';
 
-export const allLanguageService = async () => {
+export const allLanguageService = async (
+  page: number,
+  limit: number,
+  search?: string,
+) => {
   const token = getAccessToken();
 
-  const res = await fetch('/api/languages', {
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+    ...(search ? { search } : {}),
+  });
+
+  const res = await fetch(`/api/languages?${params.toString()}`, {
     credentials: 'include',
     headers: {
       Authorization: `Bearer ${token}`,

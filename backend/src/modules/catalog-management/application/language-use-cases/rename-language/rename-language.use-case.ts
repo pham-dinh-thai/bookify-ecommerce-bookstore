@@ -16,7 +16,6 @@ import {
   type ICacheRepository,
 } from '../../../../../shared/cache/domain/cache.repository.interface';
 import { IRenameLanguageRequest } from './rename-language.request';
-import { LANGUAGE_CACHE_KEYS } from '../language-cache.constants';
 
 @Injectable()
 export class RenameLanguageUseCase {
@@ -59,6 +58,6 @@ export class RenameLanguageUseCase {
       );
     });
 
-    await this.cacheRepository.del(LANGUAGE_CACHE_KEYS.ALL);
+    await this.cacheRepository.delByPattern('languages:*');
   }
 }
