@@ -9,33 +9,41 @@ import {
   type ICacheRepository,
 } from '../../../../../shared/cache/domain/cache.repository.interface';
 import { GENRE_CACHE_KEYS, GENRE_CACHE_TTL } from '../genre-cache.constants';
+import { FindGenresResponse } from './find-genres.response';
 
 @Injectable()
 export class FindGenresUseCase {
   public constructor(
     @Inject(GENRES_QUERY_REPOSITORY)
-    private readonly repository: IGenresQueryRepository,
+    private readonly genresQueryRepository: IGenresQueryRepository,
 
     @Inject(CACHE_REPOSITORY)
     private readonly cacheRepository: ICacheRepository,
   ) {}
 
-  public async execute(): Promise<GenreReadModel[]> {
-    const cached = await this.cacheRepository.get<GenreReadModel[]>(
-      GENRE_CACHE_KEYS.ALL,
-    );
+  public async execute(
+    page: number,
+    limit: number,
+    search?: string,
+  ): Promise<FindGenresResponse> {
+    const cacheKey = GENRE_CACHE_KEYS.PAGE(page, limit, search);
+
+    const cached = await this.cacheRepository.get<FindGenresResponse>(cacheKey);
     if (cached) {
       return cached;
     }
 
-    const genres = await this.repository.findAll();
-
-    await this.cacheRepository.set(
-      GENRE_CACHE_KEYS.ALL,
-      genres,
-      GENRE_CACHE_TTL.ALL,
+    const genres = await this.genresQueryRepository.findAll(
+      page,
+      limit,
+      search,
     );
+    const total = await this.genresQueryRepository.count(search);
 
-    return genres;
+    const response = new FindGenresResponse(genres, total);
+
+    await this.cacheRepository.set(cacheKey, response, GENRE_CACHE_TTL.ALL);
+
+    return response;
   }
 }

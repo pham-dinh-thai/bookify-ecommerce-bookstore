@@ -1,5 +1,5 @@
 export const AUTHOR_CACHE_KEYS = {
-  ALL: 'authors',
+  ALL: 'authors:all',
   PAGE: (page: number, limit: number, search?: string) =>
     `authors:page=${page}:limit=${limit}:search=${search ?? ''}`,
 } as const;

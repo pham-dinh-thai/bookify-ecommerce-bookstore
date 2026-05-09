@@ -9,21 +9,26 @@ import { updateGenreService } from './services/update-genre.service';
 import { deleteGenreService } from './services/delete-genre.service';
 import { createGenreService } from './services/create-genre.service';
 import Paginate from '@/shared/common/components/pagination/paginate';
-import useGenresFilter from './hooks/use-genres-filter';
 import AdminSearchBar from '../../users/(features)/(user-management)/ui/search-bar';
 import GenreManagementHeader from './ui/genre-management-header';
 
 export default function GenreManagement() {
-  const { genres, refetch } = useGenres();
+  const pageSize = 5;
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+
+  const { genres, total, loading, errors, refetch } = useGenres(
+    page,
+    pageSize,
+    search,
+  );
+
   const { addToast } = useToast();
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
   const [newName, setNewName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
-  const pageSize = 5;
-  const { search, setSearch, page, setPage, filteredGenres, paginatedGenres } =
-    useGenresFilter({ genres, pageSize });
 
   const handleEdit = (item: any) => {
     setEditingId(item.id);
@@ -46,7 +51,12 @@ export default function GenreManagement() {
     try {
       await deleteGenreService(id);
       addToast('Genre deleted successfully', 'success');
-      refetch();
+
+      if (genres.length === 1 && page > 1) {
+        setPage((prev) => prev - 1);
+      } else {
+        refetch();
+      }
     } catch (err: any) {
       addToast(err?.message || 'Something went wrong', 'error');
     }
@@ -142,7 +152,7 @@ export default function GenreManagement() {
 
             <Table
               columns={columns}
-              data={paginatedGenres}
+              data={genres}
               rowKey="id"
               emptyText="No genres found"
               rowActions={(item) => (
@@ -190,7 +200,7 @@ export default function GenreManagement() {
                 <Paginate
                   page={page}
                   pageSize={pageSize}
-                  total={filteredGenres.length}
+                  total={total}
                   onPageChange={setPage}
                 />
               }

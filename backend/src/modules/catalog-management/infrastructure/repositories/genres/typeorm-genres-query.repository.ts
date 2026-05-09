@@ -12,15 +12,25 @@ export class TypeOrmGenresQueryRepository implements IGenresQueryRepository {
     private readonly repository: Repository<GenreTypeOrm>,
   ) {}
 
-  public async findAll(): Promise<GenreReadModel[]> {
-    const genresTypeOrm = await this.repository.find();
+  public async findAll(
+    page: number,
+    limit: number,
+    search?: string,
+  ): Promise<GenreReadModel[]> {
+    const query = this.repository.createQueryBuilder('genre');
 
-    return genresTypeOrm
-      ? genresTypeOrm.map(
-          (genreTypeOrm) =>
-            new GenreReadModel(genreTypeOrm.id, genreTypeOrm.name),
-        )
-      : [];
+    if (search) {
+      query.where('genre.name LIKE :search', { search: `%${search}%` });
+    }
+
+    const genresTypeOrm = await query
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getMany();
+
+    return genresTypeOrm.map(
+      (genreTypeOrm) => new GenreReadModel(genreTypeOrm.id, genreTypeOrm.name),
+    );
   }
 
   public async findOne(id: string): Promise<GenreReadModel | null> {
@@ -31,9 +41,13 @@ export class TypeOrmGenresQueryRepository implements IGenresQueryRepository {
       : null;
   }
 
-  public async count(): Promise<number> {
-    const total = await this.repository.count({});
+  public async count(search?: string): Promise<number> {
+    const query = this.repository.createQueryBuilder('genre');
 
-    return total;
+    if (search) {
+      query.where('genre.name LIKE :search', { search: `%${search}%` });
+    }
+
+    return await query.getCount();
   }
 }

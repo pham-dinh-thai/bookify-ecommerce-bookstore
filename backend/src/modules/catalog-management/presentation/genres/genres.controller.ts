@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { FindGenresUseCase } from '../../application/genre-use-cases/find-genres/find-genres.use-case';
@@ -24,6 +25,7 @@ import { RenameGenreRequest } from './requests/rename-genre.request';
 import { RenameGenreUseCase } from '../../application/genre-use-cases/rename-genre/rename-genre.use-case';
 import { DeleteGenreUseCase } from '../../application/genre-use-cases/delete-genre/delete-genre.use-case';
 import { FindTotalGenreUseCase } from '../../application/genre-use-cases/find-total-genre/find-total-genre.use-case';
+import { FindGenresResponse } from '../../application/genre-use-cases/find-genres/find-genres.response';
 
 @Controller('genres')
 export class GenresController {
@@ -37,8 +39,18 @@ export class GenresController {
   ) {}
 
   @Get()
-  public async findAll(): Promise<GenreReadModel[]> {
-    return await this.findGenresUseCase.execute();
+  public async findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+    @Query('search') search?: string,
+  ): Promise<FindGenresResponse> {
+    const response = await this.findGenresUseCase.execute(
+      parseInt(page, 10),
+      parseInt(limit, 10),
+      search,
+    );
+
+    return response;
   }
 
   @Get('total')

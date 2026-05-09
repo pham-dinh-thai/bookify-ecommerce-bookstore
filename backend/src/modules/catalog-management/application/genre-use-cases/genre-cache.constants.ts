@@ -1,5 +1,7 @@
 export const GENRE_CACHE_KEYS = {
-  ALL: 'genres',
+  ALL: 'genres:all',
+  PAGE: (page: number, limit: number, search?: string) =>
+    `genres:page=${page}:limit=${limit}:search=${search ?? ''}`,
 } as const;
 
 export const GENRE_CACHE_TTL = {
