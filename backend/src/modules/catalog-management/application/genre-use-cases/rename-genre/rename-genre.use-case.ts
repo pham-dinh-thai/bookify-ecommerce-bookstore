@@ -21,10 +21,10 @@ import {
 export class RenameGenreUseCase {
   public constructor(
     @Inject(GENRES_COMMAND_REPOSITORY)
-    private readonly repository: IGenresCommandRepository,
+    private readonly genresCommandRepository: IGenresCommandRepository,
 
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
-    private readonly auditLogRepository: IAuditLogCommandRepository,
+    private readonly auditLogCommandRepository: IAuditLogCommandRepository,
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
@@ -38,7 +38,7 @@ export class RenameGenreUseCase {
     request: IRenameGenreRequest,
     performedBy: string,
   ): Promise<void> {
-    const genre = await this.repository.findOne(id);
+    const genre = await this.genresCommandRepository.findOne(id);
 
     if (genre.getName() === request.name) {
       return;
@@ -47,9 +47,9 @@ export class RenameGenreUseCase {
     const { oldName, newName } = genre.rename(request.name);
 
     await this.unitOfWork.execute(async () => {
-      await this.repository.save(genre);
+      await this.genresCommandRepository.save(genre);
 
-      await this.auditLogRepository.write(
+      await this.auditLogCommandRepository.write(
         'RENAME_GENRE',
         performedBy,
         'genre-management',

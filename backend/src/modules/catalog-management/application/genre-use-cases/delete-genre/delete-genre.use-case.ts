@@ -36,7 +36,7 @@ export class DeleteGenreUseCase {
     const genre = await this.repository.findOne(id);
 
     await this.unitOfWork.execute(async () => {
-      await this.repository.delele(genre);
+      await this.repository.delete(genre);
 
       await this.auditLogRepository.write(
         'DELETE_GENRES',
