@@ -1,7 +1,6 @@
 import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { LoginUseCase } from '../application/use-cases/login/login.use-case';
 import { LoginRequest } from './requests/login.request';
-import ExceptionHandler from '../../../shared/domain/exception/exception.handler';
 import { RegisterUseCase } from '../application/use-cases/register/register.use-case';
 import { RegisterRequest } from './requests/register.request';
 import { JwtAuthGuard } from '../../../shared/guards/jwt-auth.guard';
@@ -23,44 +22,36 @@ export class AuthController {
     @Body() request: LoginRequest,
     @Res() response: Response,
   ): Promise<any> {
-    try {
-      const result = await this.loginUseCase.execute(request);
+    const result = await this.loginUseCase.execute(request);
 
-      if (!result) {
-        return response.status(401).json({ message: 'Login failed' });
-      }
-
-      const { accessToken, refreshToken, roleId } = result;
-
-      response.cookie('refresh_token', refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      });
-
-      response.cookie('user_role', roleId, {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
-
-      return response.json({ accessToken });
-    } catch (error) {
-      ExceptionHandler.handle(error);
+    if (!result) {
+      return response.status(401).json({ message: 'Login failed' });
     }
+
+    const { accessToken, refreshToken, roleId } = result;
+
+    response.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+    response.cookie('user_role', roleId, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return response.json({ accessToken });
   }
 
   @Post('/register')
   public async register(
     @Body() request: RegisterRequest,
   ): Promise<{ tempToken: string }> {
-    try {
-      return await this.registerUseCase.execute(request);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    return await this.registerUseCase.execute(request);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -72,20 +63,16 @@ export class AuthController {
     },
     @Res() response: Response,
   ): Promise<any> {
-    try {
-      await this.logoutUseCase.execute(
-        request.user.userId,
-        request.user.jti,
-        request.user.exp,
-        request.user.sessionId,
-      );
+    await this.logoutUseCase.execute(
+      request.user.userId,
+      request.user.jti,
+      request.user.exp,
+      request.user.sessionId,
+    );
 
-      response.clearCookie('refresh_token');
-      response.clearCookie('user_role');
-      return response.json({ message: 'Logged out' });
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    response.clearCookie('refresh_token');
+    response.clearCookie('user_role');
+    return response.json({ message: 'Logged out' });
   }
 
   @Post('/refresh')
@@ -93,18 +80,12 @@ export class AuthController {
     @Req() request: Request,
     @Res() response: Response,
   ): Promise<any> {
-    try {
-      const refreshToken = request.cookies['refresh_token'];
+    const refreshToken = request.cookies['refresh_token'];
 
-      if (!refreshToken) {
-        return response.status(401).json({ message: 'No refresh token' });
-      }
-
-      return response.send(
-        await this.refreshTokenUseCase.execute(refreshToken),
-      );
-    } catch (error) {
-      ExceptionHandler.handle(error);
+    if (!refreshToken) {
+      return response.status(401).json({ message: 'No refresh token' });
     }
+
+    return response.send(await this.refreshTokenUseCase.execute(refreshToken));
   }
 }

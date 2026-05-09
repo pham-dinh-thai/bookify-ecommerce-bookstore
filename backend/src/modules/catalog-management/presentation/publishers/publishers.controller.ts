@@ -20,7 +20,6 @@ import { Roles } from '../../../../shared/decorators/roles.decorator';
 import { CreatePublisherUseCase } from '../../application/publisher-use-cases/create-publisher/create-publisher.use-case';
 import { CreatePublisherRequest } from './requests/create-publisher.request';
 import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
-import ExceptionHandler from '../../../../shared/domain/exception/exception.handler';
 import { RenamePublisherUseCase } from '../../application/publisher-use-cases/rename-publisher/rename-publisher.use-case';
 import { RenamePublisherRequest } from './requests/rename-publisher.request';
 import { DeletePublisherUseCase } from '../../application/publisher-use-cases/delete-publisher/delete-publisher.use-case';

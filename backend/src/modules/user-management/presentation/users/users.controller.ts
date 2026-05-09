@@ -15,7 +15,6 @@ import { FindOneUserUseCase } from '../../application/user-use-cases/find-one-us
 import { FindUsersResponse } from '../../application/user-use-cases/find-users/find-users.response';
 import { FindOneUserResponse } from '../../application/user-use-cases/find-one-users/find-one-user.response';
 import { CreateUserRequest } from './requests/create-user.request';
-import ExceptionHandler from '../../../../shared/domain/exception/exception.handler';
 import { CreateUserUseCase } from '../../application/user-use-cases/create-user/create-user.use-case';
 import { JwtAuthGuard } from '../../../../shared/guards/jwt-auth.guard';
 import { RoleGuard } from '../../../../shared/guards/role.guard';
@@ -69,11 +68,7 @@ export class UsersController {
     @Body() request: CreateUserRequest,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.createUserUseCase.execute(request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.createUserUseCase.execute(request, actorId);
   }
 
   @Put(':id')
@@ -82,11 +77,7 @@ export class UsersController {
     @Body() request: UpdateUserRequest,
     @CurrentUser('userId') actorId: string,
   ) {
-    try {
-      await this.updateUserUseCase.execute(id, request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.updateUserUseCase.execute(id, request, actorId);
   }
 
   @Patch(':id/deactivate')
@@ -94,11 +85,7 @@ export class UsersController {
     @Param('id') id: string,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.deactivateUserUseCase.execute(id, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.deactivateUserUseCase.execute(id, actorId);
   }
 
   @Patch(':id/activate')
@@ -106,10 +93,6 @@ export class UsersController {
     @Param('id') id: string,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.activateUserUseCase.execute(id, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.activateUserUseCase.execute(id, actorId);
   }
 }

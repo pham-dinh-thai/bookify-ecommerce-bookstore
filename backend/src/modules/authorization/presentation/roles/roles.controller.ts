@@ -20,7 +20,6 @@ import { CreateRoleRequest } from './requests/create-role.request';
 import { RenameRoleRequest } from './requests/rename-role.request';
 import { GrantPermissionRequest } from './requests/grant-permission.request';
 import { GrantPermissionUseCase } from '../../application/role-use-cases/grant-permission/grant-permission.use-case';
-import ExceptionHandler from '../../../../shared/domain/exception/exception.handler';
 import { RevokePermissionUseCase } from '../../application/role-use-cases/revoke-permission/revoke-permission.use-case';
 import { DeleteRoleUseCase } from '../../application/role-use-cases/delete-role/delete-role.use-case';
 import { JwtAuthGuard } from '../../../../shared/guards/jwt-auth.guard';
@@ -63,11 +62,7 @@ export class RolesController {
     @Body() request: CreateRoleRequest,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.createRoleUseCase.execute(request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.createRoleUseCase.execute(request, actorId);
   }
 
   @Patch(':id')
@@ -76,11 +71,7 @@ export class RolesController {
     @Body() request: RenameRoleRequest,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.renameRoleUseCase.execute(id, request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.renameRoleUseCase.execute(id, request, actorId);
   }
 
   @Post(':id/permissions')
@@ -89,11 +80,7 @@ export class RolesController {
     @Body() request: GrantPermissionRequest,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.grantPermissionUseCase.execute(id, request, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.grantPermissionUseCase.execute(id, request, actorId);
   }
 
   @Delete(':id/permissions/:permissionId')
@@ -103,11 +90,7 @@ export class RolesController {
     @Param('permissionId') permissionId: string,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.revokePermissionUseCase.execute(id, permissionId, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.revokePermissionUseCase.execute(id, permissionId, actorId);
   }
 
   @Delete(':id')
@@ -116,10 +99,6 @@ export class RolesController {
     @Param('id') id: string,
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
-    try {
-      await this.deleteRoleUseCase.execute(id, actorId);
-    } catch (error) {
-      ExceptionHandler.handle(error);
-    }
+    await this.deleteRoleUseCase.execute(id, actorId);
   }
 }

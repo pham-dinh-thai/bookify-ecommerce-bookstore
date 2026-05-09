@@ -19,7 +19,6 @@ import { JwtAuthGuard } from '../../../../shared/guards/jwt-auth.guard';
 import { RoleGuard } from '../../../../shared/guards/role.guard';
 import { Roles } from '../../../../shared/decorators/roles.decorator';
 import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
-import ExceptionHandler from '../../../../shared/domain/exception/exception.handler';
 import { CreateLanguageUseCase } from '../../application/language-use-cases/create-language/create-language.use-case';
 import { RenameLanguageUseCase } from '../../application/language-use-cases/rename-language/rename-language.use-case';
 import { RenameLanguageRequest } from './requests/rename-language.request';

@@ -16,7 +16,6 @@ import { FindOneGenreUseCase } from '../../application/genre-use-cases/find-one-
 import { CreateGenreUseCase } from '../../application/genre-use-cases/create-genre/create-genre.use-case';
 import { CreateGenreRequest } from './requests/create-genre.request';
 import { GenreReadModel } from '../../domain/genre-aggregate/read-models/genre.read-model';
-import ExceptionHandler from '../../../../shared/domain/exception/exception.handler';
 import { JwtAuthGuard } from '../../../../shared/guards/jwt-auth.guard';
 import { RoleGuard } from '../../../../shared/guards/role.guard';
 import { Roles } from '../../../../shared/decorators/roles.decorator';

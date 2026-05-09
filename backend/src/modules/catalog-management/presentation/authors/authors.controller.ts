@@ -19,7 +19,6 @@ import { RoleGuard } from '../../../../shared/guards/role.guard';
 import { Roles } from '../../../../shared/decorators/roles.decorator';
 import { CreateAuthorRequest } from './requests/create-author.request';
 import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
-import ExceptionHandler from '../../../../shared/domain/exception/exception.handler';
 import { CreateAuthorUseCase } from '../../application/author-use-cases/create-author/create-author.use-case';
 import { RenameAuthorUseCase } from '../../application/author-use-cases/rename-author/rename-author.use-case';
 import { RenameAuthorRequest } from './requests/rename-author.request';
