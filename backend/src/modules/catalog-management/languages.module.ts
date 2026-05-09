@@ -17,6 +17,7 @@ import { RenameLanguageUseCase } from './application/language-use-cases/rename-l
 import { DeleteLanguageUseCase } from './application/language-use-cases/delete-language/delete-language.use-case';
 import { LANGUAGE_EXISTS_CHECKER } from './domain/language-aggregate/services/language-exists-checker.service';
 import { LanguageExistsChecker } from './infrastructure/services/languages/language-exists-checker.service';
+import { FindTotalLanguageUseCase } from './application/language-use-cases/find-total-language/find-total-language.use-case';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { LanguageExistsChecker } from './infrastructure/services/languages/langu
   providers: [
     FindLanguagesUseCase,
     FindOneLanguageUseCase,
+    FindTotalLanguageUseCase,
     CreateLanguageUseCase,
     RenameLanguageUseCase,
     DeleteLanguageUseCase,

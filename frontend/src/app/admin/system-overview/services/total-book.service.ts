@@ -8,8 +8,6 @@ export default async function totalBookService() {
 
   const token = getAccessToken();
 
-  return 0;
-
   const res = await fetch('/api/books/total', {
     credentials: 'include',
     headers: {

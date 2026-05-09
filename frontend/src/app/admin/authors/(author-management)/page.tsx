@@ -7,29 +7,28 @@ import { useState } from 'react';
 import Paginate from '@/shared/common/components/pagination/paginate';
 import AdminSearchBar from '../../users/(features)/(user-management)/ui/search-bar';
 import useAuthors from './hooks/use-authors';
-import useAuthorsFilter from './hooks/use-authors-filter';
 import AuthorManagementHeader from './ui/author-management-header';
 import { updateAuthorService } from './services/update-author.service';
 import { deleteAuthorService } from './services/delete-author.service';
 import { createAuthorService } from './services/create-author.service';
 
 export default function AuthorManagement() {
-  const { authors, loading, errors, refetch } = useAuthors();
+  const pageSize = 5;
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+
+  const { authors, total, loading, errors, refetch } = useAuthors(
+    page,
+    pageSize,
+    search,
+  );
+
   const { addToast } = useToast();
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
   const [newName, setNewName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
-  const pageSize = 5;
-  const {
-    search,
-    setSearch,
-    page,
-    setPage,
-    filteredAuthors,
-    paginatedAuthors,
-  } = useAuthorsFilter({ authors, pageSize });
 
   const handleEdit = (item: any) => {
     setEditingId(item.id);
@@ -52,7 +51,12 @@ export default function AuthorManagement() {
     try {
       await deleteAuthorService(id);
       addToast('Author deleted successfully', 'success');
-      refetch();
+
+      if (authors.length === 1 && page > 1) {
+        setPage((prev) => prev - 1);
+      } else {
+        refetch();
+      }
     } catch (err: any) {
       addToast(err?.message || 'Something went wrong', 'error');
     }
@@ -148,7 +152,7 @@ export default function AuthorManagement() {
 
             <Table
               columns={columns}
-              data={paginatedAuthors}
+              data={authors}
               rowKey="id"
               emptyText="No authors found"
               rowActions={(item) => (
@@ -196,7 +200,7 @@ export default function AuthorManagement() {
                 <Paginate
                   page={page}
                   pageSize={pageSize}
-                  total={filteredAuthors.length}
+                  total={total}
                   onPageChange={setPage}
                 />
               }

@@ -3,5 +3,5 @@ export const GENRE_CACHE_KEYS = {
 } as const;
 
 export const GENRE_CACHE_TTL = {
-  ALL: 60 * 60 * 24,
+  ALL: 60 * 60 * 24 * 1000,
 } as const;

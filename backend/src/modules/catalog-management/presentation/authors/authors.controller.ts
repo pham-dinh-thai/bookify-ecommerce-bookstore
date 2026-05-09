@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { FindAuthorsUseCase } from '../../application/author-use-cases/find-authors/find-authors.use-case';
@@ -24,6 +25,7 @@ import { RenameAuthorUseCase } from '../../application/author-use-cases/rename-a
 import { RenameAuthorRequest } from './requests/rename-author.request';
 import { DeleteAuthorUseCase } from '../../application/author-use-cases/delete-author/delete-author.use-case';
 import { FindTotalAuthorUseCase } from '../../application/author-use-cases/find-total-author/find-total-author.use-case';
+import { FindAuthorsResponse } from '../../application/author-use-cases/find-authors/find-authors.response';
 
 @Controller('authors')
 export class AuthorsController {
@@ -37,10 +39,18 @@ export class AuthorsController {
   ) {}
 
   @Get()
-  public async findAll(): Promise<AuthorReadModel[]> {
-    const authors = await this.findAuthorsUseCase.execute();
+  public async findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+    @Query('search') search?: string,
+  ): Promise<FindAuthorsResponse> {
+    const response = await this.findAuthorsUseCase.execute(
+      parseInt(page, 10),
+      parseInt(limit, 10),
+      search,
+    );
 
-    return authors;
+    return response;
   }
 
   @Get('total')

@@ -3,7 +3,7 @@ import {
   clearAccessToken,
   getAccessToken,
 } from '@/shared/auth/lib/token-storage';
-import { Settings, LogOut } from 'lucide-react';
+import { Settings, LogOut, Home, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -37,6 +37,20 @@ export default function SidebarFooter() {
 
   return (
     <div className="flex flex-col gap-0.5">
+      <Link
+        href="/"
+        className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13px] font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+      >
+        <Home size={16} strokeWidth={1.8} />
+        Go to Homepage
+      </Link>
+      <Link
+        href="/admin/profile"
+        className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13px] font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+      >
+        <User size={16} strokeWidth={1.8} />
+        My Account
+      </Link>
       <button
         onClick={handleLogout}
         className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13px] font-medium text-red-500 hover:bg-red-50 transition-colors w-full"

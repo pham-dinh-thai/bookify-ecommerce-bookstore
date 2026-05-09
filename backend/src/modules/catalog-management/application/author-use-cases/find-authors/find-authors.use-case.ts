@@ -9,6 +9,7 @@ import {
   type ICacheRepository,
 } from '../../../../../shared/cache/domain/cache.repository.interface';
 import { AUTHOR_CACHE_KEYS, AUTHOR_CACHE_TTL } from '../author-cache.constants';
+import { FindAuthorsResponse } from './find-authors.response';
 
 @Injectable()
 export class FindAuthorsUseCase {
@@ -20,22 +21,30 @@ export class FindAuthorsUseCase {
     private readonly cacheRepository: ICacheRepository,
   ) {}
 
-  public async execute(): Promise<AuthorReadModel[]> {
-    const cached = await this.cacheRepository.get<AuthorReadModel[]>(
-      AUTHOR_CACHE_KEYS.ALL,
-    );
+  public async execute(
+    page: number,
+    limit: number,
+    search?: string,
+  ): Promise<FindAuthorsResponse> {
+    const cacheKey = AUTHOR_CACHE_KEYS.PAGE(page, limit, search);
+
+    const cached =
+      await this.cacheRepository.get<FindAuthorsResponse>(cacheKey);
     if (cached) {
       return cached;
     }
 
-    const authors = await this.authorsQueryRepository.findAll();
-
-    await this.cacheRepository.set(
-      AUTHOR_CACHE_KEYS.ALL,
-      authors,
-      AUTHOR_CACHE_TTL.ALL,
+    const authors = await this.authorsQueryRepository.findAll(
+      page,
+      limit,
+      search,
     );
+    const total = await this.authorsQueryRepository.count(search);
 
-    return authors;
+    const response = new FindAuthorsResponse(authors, total);
+
+    await this.cacheRepository.set(cacheKey, response, AUTHOR_CACHE_TTL.ALL);
+
+    return response;
   }
 }

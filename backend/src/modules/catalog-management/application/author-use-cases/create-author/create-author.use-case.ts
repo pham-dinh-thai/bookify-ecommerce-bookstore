@@ -21,7 +21,6 @@ import {
   type IUuidGenerator,
   UUID_GENERATOR,
 } from '../../../../../shared/uuid/domain/uuid-generator.interface';
-import { AUTHOR_CACHE_KEYS } from '../author-cache.constants';
 
 @Injectable()
 export class CreateAuthorUseCase {
@@ -63,6 +62,6 @@ export class CreateAuthorUseCase {
       );
     });
 
-    await this.cacheRepository.del(AUTHOR_CACHE_KEYS.ALL);
+    await this.cacheRepository.delByPattern('authors:*');
   }
 }

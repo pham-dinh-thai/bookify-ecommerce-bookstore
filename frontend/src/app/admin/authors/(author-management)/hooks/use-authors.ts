@@ -3,20 +3,24 @@ import { getAccessToken } from '@/shared/auth/lib/token-storage';
 import { useEffect, useState } from 'react';
 import { allAuthorService } from '../services/all-author.service';
 
-export default function useAuthors() {
+export default function useAuthors(
+  page: number,
+  limit: number,
+  search: string,
+) {
   const [authors, setAuthors] = useState<Author[]>([]);
   const [errors, setErrors] = useState<Error | null>(null);
   const [loading, setLoading] = useState(false);
+  const [total, setTotal] = useState(0);
+
   const fetchAuthors = async () => {
     setLoading(true);
     try {
-      if (!getAccessToken()) {
-        await refreshAccessToken();
-      }
+      if (!getAccessToken()) await refreshAccessToken();
+      const data = await allAuthorService(page, limit, search);
 
-      const data = await allAuthorService();
-
-      setAuthors(data);
+      setAuthors(data.authors);
+      setTotal(data.total);
     } catch (err: any) {
       setErrors(err);
     } finally {
@@ -26,7 +30,7 @@ export default function useAuthors() {
 
   useEffect(() => {
     fetchAuthors();
-  }, []);
+  }, [page, limit, search]);
 
-  return { authors, loading, errors, refetch: fetchAuthors };
+  return { authors, total, loading, errors, refetch: fetchAuthors };
 }

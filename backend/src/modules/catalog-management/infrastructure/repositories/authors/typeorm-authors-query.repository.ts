@@ -13,14 +13,25 @@ export class TypeOrmAuthorsQueryRepository implements IAuthorsQueryRepository {
     private readonly repository: Repository<AuthorTypeOrm>,
   ) {}
 
-  public async findAll(): Promise<AuthorReadModel[]> {
-    const authorsTypeOrm = await this.repository.find();
+  public async findAll(
+    page: number,
+    limit: number,
+    search?: string,
+  ): Promise<AuthorReadModel[]> {
+    const query = this.repository.createQueryBuilder('author');
 
-    return authorsTypeOrm
-      ? authorsTypeOrm.map((authorTypeOrm) =>
-          AuthorsMapper.toReadModel(authorTypeOrm),
-        )
-      : [];
+    if (search) {
+      query.where('author.name LIKE :search', { search: `%${search}%` });
+    }
+
+    const authorsTypeOrm = await query
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getMany();
+
+    return authorsTypeOrm.map((authorTypeOrm) =>
+      AuthorsMapper.toReadModel(authorTypeOrm),
+    );
   }
 
   public async findOne(id: string): Promise<AuthorReadModel | null> {
@@ -29,7 +40,13 @@ export class TypeOrmAuthorsQueryRepository implements IAuthorsQueryRepository {
     return authorTypeOrm ? AuthorsMapper.toReadModel(authorTypeOrm) : null;
   }
 
-  public async count(): Promise<number> {
-    return this.repository.count();
+  public async count(search?: string): Promise<number> {
+    const query = this.repository.createQueryBuilder('author');
+
+    if (search) {
+      query.where('author.name LIKE :search', { search: `%${search}%` });
+    }
+
+    return await query.getCount();
   }
 }

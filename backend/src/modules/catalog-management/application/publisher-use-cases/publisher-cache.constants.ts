@@ -3,5 +3,5 @@ export const PUBLISHER_CACHE_KEYS = {
 } as const;
 
 export const PUBLISHER_CACHE_TTL = {
-  ALL: 60 * 60 * 24,
+  ALL: 60 * 60 * 24 * 1000,
 } as const;

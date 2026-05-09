@@ -1,9 +1,19 @@
 import { getAccessToken } from '@/shared/auth/lib/token-storage';
 
-export const allAuthorService = async () => {
+export const allAuthorService = async (
+  page: number,
+  limit: number,
+  search: string,
+) => {
   const token = getAccessToken();
 
-  const res = await fetch('/api/authors', {
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+    ...(search ? { search } : {}),
+  });
+
+  const res = await fetch(`/api/authors?${params.toString()}`, {
     credentials: 'include',
     headers: {
       Authorization: `Bearer ${token}`,

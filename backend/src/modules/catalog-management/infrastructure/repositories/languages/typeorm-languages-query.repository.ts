@@ -30,4 +30,8 @@ export class TypeOrmLanguagesQueryRepository implements ILanguagesQueryRepositor
       ? LanguagesMapper.toReadModel(languageTypeOrm)
       : null;
   }
+
+  public async count(): Promise<number> {
+    return this.repository.count();
+  }
 }
