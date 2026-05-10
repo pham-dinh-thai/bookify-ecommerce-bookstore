@@ -55,14 +55,14 @@ export class UsersController {
       isActive !== undefined ? isActive === 'true' : undefined,
     );
 
-    const users = await this.findUsersUseCase.execute(
+    const response = await this.findUsersUseCase.execute(
       parseInt(page),
       parseInt(limit),
       filter,
       search,
     );
 
-    return users;
+    return response;
   }
 
   @Get(':id')

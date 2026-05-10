@@ -1,10 +1,12 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { UserTypeOrm } from '../../../user-management/infrastructure/entities/user.entity';
 import { AddressTypeOrm } from './address.entity';
@@ -26,4 +28,10 @@ export class CustomerTypeOrm {
 
   @OneToMany(() => AddressTypeOrm, (address) => address.customer)
   addresses!: AddressTypeOrm[];
+
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }

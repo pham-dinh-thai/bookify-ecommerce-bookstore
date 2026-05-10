@@ -24,7 +24,7 @@ export default function UserManagement() {
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState({ role: '', status: '' });
   const [showFilter, setShowFilter] = useState(false);
-  const pageSize = 5;
+  const pageSize = 10;
 
   const isActive =
     filter.status === 'Active'

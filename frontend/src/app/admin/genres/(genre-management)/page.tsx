@@ -13,7 +13,7 @@ import AdminSearchBar from '../../users/(features)/(user-management)/ui/search-b
 import GenreManagementHeader from './ui/genre-management-header';
 
 export default function GenreManagement() {
-  const pageSize = 5;
+  const pageSize = 10;
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
 

@@ -8,6 +8,12 @@ import {
   CACHE_REPOSITORY,
   type ICacheRepository,
 } from '../../../../../shared/cache/domain/cache.repository.interface';
+import { CustomerFilter } from '../../../domain/customer-aggregate/customer.filter';
+import { FindCustomersResponse } from './find-customers.response';
+import {
+  CUSTOMER_CACHE_KEYS,
+  CUSTOMER_CACHE_TTL,
+} from '../customer-cache.constants';
 
 @Injectable()
 export class FindCustomersUseCase {
@@ -19,17 +25,31 @@ export class FindCustomersUseCase {
     private readonly cache: ICacheRepository,
   ) {}
 
-  public async execute(): Promise<CustomerReadModel[]> {
-    const cacheKey = 'customers';
+  public async execute(
+    page: number,
+    limit: number,
+    filter?: CustomerFilter,
+    search?: string,
+  ): Promise<FindCustomersResponse> {
+    const cacheKey = CUSTOMER_CACHE_KEYS.PAGE(page, limit, filter, search);
 
-    const cached = await this.cache.get<CustomerReadModel[]>(cacheKey);
+    const cached = await this.cache.get<FindCustomersResponse>(cacheKey);
     if (cached) {
       return cached;
     }
 
-    const customers = await this.repository.findAll();
-    await this.cache.set(cacheKey, customers);
+    const customers = await this.repository.findAll(
+      page,
+      limit,
+      filter,
+      search,
+    );
+    const total = await this.repository.count(filter, search);
 
-    return customers;
+    const response = new FindCustomersResponse(customers, total);
+
+    await this.cache.set(cacheKey, response, CUSTOMER_CACHE_TTL.ALL);
+
+    return response;
   }
 }

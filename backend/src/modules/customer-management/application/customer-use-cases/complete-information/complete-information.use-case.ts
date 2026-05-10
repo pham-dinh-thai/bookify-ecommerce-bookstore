@@ -132,6 +132,6 @@ export class CompleteInformationUseCase {
       );
     });
 
-    await this.cache.del('customers');
+    await this.cache.delByPattern('customers:*');
   }
 }

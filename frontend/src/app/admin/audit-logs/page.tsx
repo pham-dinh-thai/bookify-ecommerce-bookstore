@@ -8,7 +8,7 @@ import { type AuditLog } from './types';
 import { useState } from 'react';
 
 export default function AuditLog() {
-  const pageSize = 5;
+  const pageSize = 10;
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
 
