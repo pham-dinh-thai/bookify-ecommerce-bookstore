@@ -1,9 +1,19 @@
 import { getAccessToken } from '@/shared/auth/lib/token-storage';
 
-export const allAuditLogsService = async () => {
+export const allAuditLogsService = async (
+  page: number,
+  limit: number,
+  search: string,
+) => {
   const token = getAccessToken();
 
-  const res = await fetch('/api/audit-logs', {
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+    ...(search ? { search } : {}),
+  });
+
+  const res = await fetch(`/api/audit-logs?${params.toString()}`, {
     credentials: 'include',
     headers: {
       Authorization: `Bearer ${token}`,

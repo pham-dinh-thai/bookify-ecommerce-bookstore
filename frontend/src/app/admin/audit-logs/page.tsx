@@ -5,15 +5,18 @@ import Table from '@/shared/common/components/table/table';
 import useAuditLogs from './hooks/use-audit-logs';
 import usePaginate from '../users/(features)/(user-management)/hooks/use-paginate';
 import { type AuditLog } from './types';
+import { useState } from 'react';
 
 export default function AuditLog() {
-  const { auditLogs } = useAuditLogs();
-
   const pageSize = 5;
-  const { page, setPage, paginated } = usePaginate<AuditLog>({
-    items: auditLogs,
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+
+  const { auditLogs, total, loading, errors, refetch } = useAuditLogs(
+    page,
     pageSize,
-  });
+    search,
+  );
 
   const columns = [
     {
@@ -52,13 +55,13 @@ export default function AuditLog() {
         <div className="mb-4">
           <Table
             columns={columns}
-            data={paginated}
+            data={auditLogs}
             rowKey="id"
             footer={
               <Paginate
                 page={page}
                 pageSize={pageSize}
-                total={auditLogs.length}
+                total={total}
                 onPageChange={setPage}
               />
             }
