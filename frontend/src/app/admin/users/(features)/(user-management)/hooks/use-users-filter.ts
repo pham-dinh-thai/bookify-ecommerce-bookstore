@@ -30,7 +30,11 @@ export default function useUsersFilter({
   const filtered = useMemo(() => {
     return searched
       .filter((item) => !filter.role || item.roleId === filter.role)
-      .filter((item) => !filter.status || item.status === filter.status);
+      .filter(
+        (item) =>
+          !filter.status ||
+          (filter.status === 'Active' ? item.isActive : !item.isActive),
+      );
   }, [searched, filter]);
 
   const { page, setPage, paginated, totalPages, resetPage } = usePaginate<User>(

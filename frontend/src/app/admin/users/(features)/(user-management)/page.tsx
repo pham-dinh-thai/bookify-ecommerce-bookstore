@@ -9,7 +9,6 @@ import {
   UserRoundPlus,
 } from 'lucide-react';
 import useUsers from './hooks/use-users';
-import useUsersFilter from './hooks/use-users-filter';
 import Link from 'next/link';
 import AdminSearchBar from './ui/search-bar';
 import Table from '@/shared/common/components/table/table';
@@ -21,22 +20,34 @@ import { useEffect, useRef, useState } from 'react';
 import FilterDropdown from './components/filter-dropdown';
 
 export default function UserManagement() {
-  const { users, refetch } = useUsers();
-
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [filter, setFilter] = useState({ role: '', status: '' });
   const [showFilter, setShowFilter] = useState(false);
   const pageSize = 5;
-  const {
-    search,
-    setSearch,
+
+  const isActive =
+    filter.status === 'Active'
+      ? true
+      : filter.status === 'Inactive'
+        ? false
+        : undefined;
+  const roleId = filter.role || undefined;
+
+  const { users, total, loading, refetch } = useUsers(
     page,
-    setPage,
-    filteredUsers,
-    paginatedUsers,
-    filter,
-    setFilter,
-  } = useUsersFilter({ users, pageSize });
+    pageSize,
+    roleId,
+    'user',
+    isActive,
+    search,
+  );
 
   const filterRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, filter]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -74,12 +85,12 @@ export default function UserManagement() {
       render: (item: any) => (
         <span
           className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
-            item.status === 'Active'
+            item.isActive
               ? 'bg-[#f0faf4] text-[#2d6a4f]'
               : 'bg-[#fff1f1] text-[#b33a3a]'
           }`}
         >
-          {item.status}
+          {item.isActive ? 'Active' : 'Inactive'}
         </span>
       ),
     },
@@ -143,7 +154,7 @@ export default function UserManagement() {
 
         <Table
           columns={columns}
-          data={paginatedUsers}
+          data={users}
           rowKey="id"
           rowActions={(item) => (
             <div className="flex items-center justify-end gap-2">
@@ -201,7 +212,7 @@ export default function UserManagement() {
             <Paginate
               page={page}
               pageSize={pageSize}
-              total={filteredUsers.length}
+              total={total}
               onPageChange={setPage}
             />
           }

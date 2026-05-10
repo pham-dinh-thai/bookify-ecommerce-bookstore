@@ -2,12 +2,11 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
-  HttpStatus,
   Param,
   Patch,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { FindUsersUseCase } from '../../application/user-use-cases/find-users/find-users.use-case';
@@ -25,6 +24,7 @@ import { UpdateUserUseCase } from '../../application/user-use-cases/update-user/
 import { DeactivateUserUseCase } from '../../application/user-use-cases/deactivate-user/deactivate-user.use-case';
 import { ActivateUserUseCase } from '../../application/user-use-cases/activate-user/activate-user.use-case';
 import { FindTotalByRoleUseCase } from '../../application/user-use-cases/find-total-by-role/find-total-by-role.use-case';
+import { UserFilter } from '../../domain/user-aggregate/user-filter';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RoleGuard)
@@ -41,8 +41,26 @@ export class UsersController {
   ) {}
 
   @Get()
-  public async findAll(): Promise<FindUsersResponse[]> {
-    const users = await this.findUsersUseCase.execute();
+  public async findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+    @Query('roleId') roleId?: string,
+    @Query('excludeRoleId') excludeRoleId?: string,
+    @Query('isActive') isActive?: string,
+    @Query('search') search?: string,
+  ): Promise<FindUsersResponse> {
+    const filter = new UserFilter(
+      roleId,
+      excludeRoleId,
+      isActive !== undefined ? isActive === 'true' : undefined,
+    );
+
+    const users = await this.findUsersUseCase.execute(
+      parseInt(page),
+      parseInt(limit),
+      filter,
+      search,
+    );
 
     return users;
   }

@@ -101,6 +101,7 @@ export class CreateUserUseCase {
       user.clearDomainEvents();
     });
 
-    await this.cache.del('users');
+    await this.cache.delByPattern('users:*');
+    await this.cache.delByPattern('customers:*');
   }
 }

@@ -8,6 +8,8 @@ import {
   CACHE_REPOSITORY,
   type ICacheRepository,
 } from '../../../../../shared/cache/domain/cache.repository.interface';
+import { UserFilter } from '../../../domain/user-aggregate/user-filter';
+import { USER_CACHE_KEYS, USER_CACHE_TTL } from '../user-cache.constants';
 
 @Injectable()
 export class FindUsersUseCase {
@@ -19,28 +21,26 @@ export class FindUsersUseCase {
     private readonly cache: ICacheRepository,
   ) {}
 
-  public async execute(): Promise<FindUsersResponse[]> {
-    const cacheKey = 'users';
+  public async execute(
+    page: number,
+    limit: number,
+    filter?: UserFilter,
+    search?: string,
+  ): Promise<FindUsersResponse> {
+    const cacheKey = USER_CACHE_KEYS.PAGE(page, limit, filter, search);
 
-    const cached = await this.cache.get<FindUsersResponse[]>(cacheKey);
+    const cached = await this.cache.get<FindUsersResponse>(cacheKey);
     if (cached) {
       return cached;
     }
 
-    const users = await this.repository.findAll();
-    await this.cache.set(cacheKey, users);
+    const users = await this.repository.findAll(page, limit, filter, search);
+    const total = await this.repository.count(filter, search);
 
-    return users.map(
-      (user) =>
-        new FindUsersResponse(
-          user.id,
-          user.firstName,
-          user.lastName,
-          user.email,
-          user.gender,
-          user.roleId,
-          user.isActive,
-        ),
-    );
+    const response = new FindUsersResponse(users, total);
+
+    await this.cache.set(cacheKey, response, USER_CACHE_TTL.ALL);
+
+    return response;
   }
 }
