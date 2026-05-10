@@ -1,3 +1,4 @@
+import { UserReadModel } from '../../../domain/user-aggregate/read-models/user.read-model';
 import { User } from '../../../domain/user-aggregate/user.aggregate';
 import { UserTypeOrm } from '../../entities/user.entity';
 
@@ -28,5 +29,17 @@ export class UsersMapper {
     userTypeOrm.roleId = user.getRoleId();
 
     return userTypeOrm;
+  }
+
+  public static toReadModel(userTypeOrm: UserTypeOrm): UserReadModel {
+    return new UserReadModel(
+      userTypeOrm.id,
+      userTypeOrm.firstName,
+      userTypeOrm.lastName,
+      userTypeOrm.email,
+      userTypeOrm.gender,
+      userTypeOrm.roleId,
+      userTypeOrm.isActive,
+    );
   }
 }

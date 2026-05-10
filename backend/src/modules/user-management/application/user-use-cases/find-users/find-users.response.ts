@@ -1,11 +1,8 @@
+import { UserReadModel } from '../../../domain/user-aggregate/read-models/user.read-model';
+
 export class FindUsersResponse {
   public constructor(
-    public readonly id: string,
-    public readonly firstName: string,
-    public readonly lastName: string,
-    public readonly email: string,
-    public readonly gender: string,
-    public readonly roleId: string,
-    public readonly isActive: boolean,
+    public readonly users: UserReadModel[],
+    public readonly total: number,
   ) {}
 }

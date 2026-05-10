@@ -90,7 +90,7 @@ export class UpdateUserUseCase {
       );
     });
 
-    await this.cache.del('users');
-    await this.cache.del('customers');
+    await this.cache.delByPattern('users:*');
+    await this.cache.delByPattern('customers:*');
   }
 }
