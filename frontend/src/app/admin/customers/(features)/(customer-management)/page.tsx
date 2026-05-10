@@ -4,37 +4,38 @@ import { useToast } from '@/app/admin/components/toast/toast';
 import AdminSearchBar from '@/app/admin/users/(features)/(user-management)/ui/search-bar';
 import Paginate from '@/shared/common/components/pagination/paginate';
 import Table from '@/shared/common/components/table/table';
-import {
-  CircleCheck,
-  CircleOff,
-  Funnel,
-  Pencil,
-  Trash2,
-  UserRoundPlus,
-} from 'lucide-react';
+import { CircleCheck, CircleOff, Funnel, Pencil } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import useCustomers from './hooks/use-customers';
 import { deactivateUserService } from '@/app/admin/users/(features)/(user-management)/services/deactivate-user.service';
 import { activateUserService } from '@/app/admin/users/(features)/(user-management)/services/activate-user.service';
-import useCustomersFilter from './hooks/use-customers-filter';
 import FilterDropdown from './components/filter-dropdown';
 
 export default function CustomerManagement() {
-  const { customers, refetch } = useCustomers();
-
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [filter, setFilter] = useState({ status: '' });
   const [showFilter, setShowFilter] = useState(false);
-  const pageSize = 5;
-  const {
-    search,
-    setSearch,
+  const pageSize = 10;
+
+  const isActive =
+    filter.status === 'Active'
+      ? true
+      : filter.status === 'Inactive'
+        ? false
+        : undefined;
+
+  const { customers, total, loading, refetch } = useCustomers(
     page,
-    setPage,
-    filteredUsers,
-    paginatedUsers,
-    filter,
-    setFilter,
-  } = useCustomersFilter({ customers, pageSize });
+    pageSize,
+    isActive,
+    search,
+  );
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, filter]);
 
   const filterRef = useRef<HTMLDivElement>(null);
 
@@ -134,7 +135,7 @@ export default function CustomerManagement() {
 
         <Table
           columns={columns}
-          data={paginatedUsers}
+          data={customers}
           rowKey="id"
           rowActions={(item) => (
             <div className="flex items-center justify-end gap-2">
@@ -192,7 +193,7 @@ export default function CustomerManagement() {
             <Paginate
               page={page}
               pageSize={pageSize}
-              total={filteredUsers.length}
+              total={total}
               onPageChange={setPage}
             />
           }

@@ -2,11 +2,12 @@ import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { CompleteInformationRequest } from './requests/complete-information.request';
 import { CompleteInformationUseCase } from '../../application/customer-use-cases/complete-information/complete-information.use-case';
 import { FindCustomersUseCase } from '../../application/customer-use-cases/find-customers/find-customers.use-case';
-import { CustomerReadModel } from '../../domain/customer-aggregate/read-models/customer.read-model';
+import { FindCustomersResponse } from '../../application/customer-use-cases/find-customers/find-customers.response';
 import { JwtAuthGuard } from '../../../../shared/guards/jwt-auth.guard';
 import { RoleGuard } from '../../../../shared/guards/role.guard';
 import { Roles } from '../../../../shared/decorators/roles.decorator';
 import { FindTotalCustomerUseCase } from '../../application/customer-use-cases/find-total-customer/find-total-customer.use-case';
+import { CustomerFilter } from '../../domain/customer-aggregate/customer.filter';
 
 @Controller('customers')
 export class CustomersController {
@@ -19,8 +20,24 @@ export class CustomersController {
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Roles('admin')
   @Get()
-  public async findAll(): Promise<CustomerReadModel[]> {
-    return await this.findCustomersUseCase.execute();
+  public async findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+    @Query('isActive') isActive?: string,
+    @Query('search') search?: string,
+  ): Promise<FindCustomersResponse> {
+    const filter = new CustomerFilter(
+      isActive !== undefined ? isActive === 'true' : undefined,
+    );
+
+    const response = await this.findCustomersUseCase.execute(
+      parseInt(page),
+      parseInt(limit),
+      filter,
+      search,
+    );
+
+    return response;
   }
 
   @UseGuards(JwtAuthGuard, RoleGuard)

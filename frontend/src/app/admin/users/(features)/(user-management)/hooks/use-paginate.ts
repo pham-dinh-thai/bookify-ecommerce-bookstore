@@ -7,7 +7,7 @@ type UsePaginateProps<T> = {
 
 export default function usePaginate<T extends Record<string, any>>({
   items,
-  pageSize = 4,
+  pageSize = 10,
 }: UsePaginateProps<T>) {
   const [page, setPage] = useState(1);
 

@@ -13,7 +13,7 @@ import { updateLanguageService } from './services/update-language.service';
 import useLanguages from './hooks/use-languages';
 
 export default function LanguageManagement() {
-  const pageSize = 5;
+  const pageSize = 10;
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
 

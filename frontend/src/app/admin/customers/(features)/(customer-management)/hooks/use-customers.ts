@@ -3,8 +3,14 @@ import { getAccessToken } from '@/shared/auth/lib/token-storage';
 import { useEffect, useState } from 'react';
 import { allCustomerService } from '../services/all-customer.service';
 
-export default function useCustomers() {
+export default function useCustomers(
+  page: number,
+  limit: number,
+  isActive?: boolean,
+  search?: string,
+) {
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [total, setTotal] = useState(0);
   const [errors, setErrors] = useState<Error | null>(null);
   const [loading, setLoading] = useState(false);
   const fetchCustomers = async () => {
@@ -14,8 +20,8 @@ export default function useCustomers() {
         await refreshAccessToken();
       }
 
-      const data = await allCustomerService();
-      const normalized = data.map((customer: Customer) => ({
+      const data = await allCustomerService(page, limit, isActive, search);
+      const normalized = data.customers.map((customer: Customer) => ({
         ...customer,
         name: `${customer.firstName ?? ''} ${customer.lastName ?? ''}`.trim(),
         gender: !customer.gender
@@ -39,7 +45,7 @@ export default function useCustomers() {
       }));
 
       setCustomers(normalized);
-      console.log(normalized);
+      setTotal(data.total);
     } catch (err: any) {
       setErrors(err);
     } finally {
@@ -49,7 +55,7 @@ export default function useCustomers() {
 
   useEffect(() => {
     fetchCustomers();
-  }, []);
+  }, [page, limit, isActive, search]);
 
-  return { customers, loading, errors, refetch: fetchCustomers };
+  return { customers, total, loading, errors, refetch: fetchCustomers };
 }

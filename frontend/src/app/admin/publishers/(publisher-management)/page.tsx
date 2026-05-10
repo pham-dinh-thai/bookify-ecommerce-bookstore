@@ -13,7 +13,7 @@ import { deletePublisherService } from './services/delete-publisher.service';
 import { updatePublisherService } from './services/update-publisher.service';
 
 export default function PublisherManagement() {
-  const pageSize = 5;
+  const pageSize = 10;
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
 

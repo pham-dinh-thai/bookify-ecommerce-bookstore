@@ -13,7 +13,7 @@ import { deleteAuthorService } from './services/delete-author.service';
 import { createAuthorService } from './services/create-author.service';
 
 export default function AuthorManagement() {
-  const pageSize = 5;
+  const pageSize = 10;
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
 
