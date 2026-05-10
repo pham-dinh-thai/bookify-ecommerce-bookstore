@@ -1,9 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { IFormatAuditMessage } from '../../domain/audit-log-aggregate/services/format-audit-message.service';
-
-@Injectable()
-export class FormatAuditMessage implements IFormatAuditMessage {
-  public format(action: string): string {
+export class FormatAuditMessage {
+  public static format(action: string): string {
     const [verb, ...resourceParts] = action.split('_');
     const resource = resourceParts.join(' ').toLowerCase();
 

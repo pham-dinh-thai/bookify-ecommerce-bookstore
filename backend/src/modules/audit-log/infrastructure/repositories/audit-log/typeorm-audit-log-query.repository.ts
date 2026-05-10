@@ -12,25 +12,33 @@ export class TypeormAuditlogQueryRepository implements IAuditLogQueryRepository 
     private readonly repository: Repository<AuditLogTypeOrm>,
   ) {}
 
-  public async findAll(): Promise<AuditLogReadModel[]> {
-    const auditLogs = await this.repository.find({
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+  public async findAll(
+    page: number,
+    limit: number,
+    search?: string,
+  ): Promise<AuditLogReadModel[]> {
+    const query = this.repository.createQueryBuilder('audit_log');
 
-    return auditLogs
-      ? auditLogs.map(
-          (auditLog) =>
-            new AuditLogReadModel(
-              auditLog.id,
-              auditLog.action,
-              auditLog.performedBy,
-              auditLog.metadata,
-              auditLog.createdAt,
-            ),
-        )
-      : [];
+    if (search) {
+      query.where('audit_log.action LIKE :search', { search: `%${search}%` });
+    }
+
+    const auditLogs = await query
+      .orderBy('audit_log.createdAt', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getMany();
+
+    return auditLogs.map(
+      (auditLog) =>
+        new AuditLogReadModel(
+          auditLog.id,
+          auditLog.action,
+          auditLog.performedBy,
+          auditLog.metadata,
+          auditLog.createdAt,
+        ),
+    );
   }
 
   public async recentActivity(): Promise<AuditLogReadModel[]> {
@@ -55,9 +63,13 @@ export class TypeormAuditlogQueryRepository implements IAuditLogQueryRepository 
       : [];
   }
 
-  public async count(): Promise<number> {
-    const total = await this.repository.count();
+  public async count(search?: string): Promise<number> {
+    const query = this.repository.createQueryBuilder('audit_log');
 
-    return total;
+    if (search) {
+      query.where('audit_log.action LIKE :search', { search: `%${search}%` });
+    }
+
+    return await query.getCount();
   }
 }

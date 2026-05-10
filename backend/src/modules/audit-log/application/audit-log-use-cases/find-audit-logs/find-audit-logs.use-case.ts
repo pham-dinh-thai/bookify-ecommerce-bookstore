@@ -7,11 +7,11 @@ import {
   CACHE_REPOSITORY,
   type ICacheRepository,
 } from '../../../../../shared/cache/domain/cache.repository.interface';
-import { findAuditLogsResponse } from './find-audit-logs.response';
+import { FindAuditLogsResponse } from './find-audit-logs.response';
 import {
-  FORMAT_AUDIT_MESSAGE,
-  type IFormatAuditMessage,
-} from '../../../domain/audit-log-aggregate/services/format-audit-message.service';
+  AUDIT_LOG_CACHE_KEYS,
+  AUDIT_LOG_CACHE_TTL,
+} from '../audit-log-cache.constants';
 
 @Injectable()
 export class FindAuditLogsUseCase {
@@ -21,35 +21,26 @@ export class FindAuditLogsUseCase {
 
     @Inject(CACHE_REPOSITORY)
     private readonly cache: ICacheRepository,
-
-    @Inject(FORMAT_AUDIT_MESSAGE)
-    private readonly formatAuditMessage: IFormatAuditMessage,
   ) {}
 
-  public async execute(): Promise<findAuditLogsResponse[]> {
-    const cacheKey = 'auditLogs';
+  public async execute(
+    page: number,
+    limit: number,
+    search?: string,
+  ): Promise<FindAuditLogsResponse> {
+    const cacheKey = AUDIT_LOG_CACHE_KEYS.PAGE(page, limit, search);
 
-    const cached = await this.cache.get<findAuditLogsResponse[]>(cacheKey);
+    const cached = await this.cache.get<FindAuditLogsResponse>(cacheKey);
     if (cached) {
       return cached;
     }
 
-    const auditLogs = await this.repository.findAll();
+    const auditLogs = await this.repository.findAll(page, limit, search);
+    const total = await this.repository.count(search);
 
-    const response = auditLogs
-      ? auditLogs.map(
-          (auditLog) =>
-            new findAuditLogsResponse(
-              auditLog.id,
-              auditLog.performedBy,
-              this.formatAuditMessage.format(auditLog.action),
-              auditLog.metadata,
-              auditLog.createdAt,
-            ),
-        )
-      : [];
+    const response = new FindAuditLogsResponse(auditLogs, total);
 
-    await this.cache.set(cacheKey, response);
+    await this.cache.set(cacheKey, response, AUDIT_LOG_CACHE_TTL.ALL);
 
     return response;
   }

@@ -31,6 +31,6 @@ export class TypeOrmAuditLogCommandRepository implements IAuditLogCommandReposit
       metadata,
     });
 
-    await this.cache.del('auditLogs');
+    await this.cache.delByPattern('auditLogs:*');
   }
 }
