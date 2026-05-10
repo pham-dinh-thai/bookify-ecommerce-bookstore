@@ -1,9 +1,8 @@
-export class findAuditLogsResponse {
+import { AuditLogReadModel } from '../../../domain/audit-log-aggregate/read-models/audit-log.read-model';
+
+export class FindAuditLogsResponse {
   public constructor(
-    public readonly id: string,
-    public readonly performedBy: string,
-    public readonly message: string,
-    public readonly metadata: any,
-    public readonly createdAt: Date,
+    public readonly auditLogs: AuditLogReadModel[],
+    public readonly total: number,
   ) {}
 }

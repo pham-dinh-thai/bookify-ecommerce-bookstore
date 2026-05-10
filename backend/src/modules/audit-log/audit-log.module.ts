@@ -10,8 +10,6 @@ import { AUDIT_LOG_QUERY_REPOSITORY } from './domain/audit-log-aggregate/reposit
 import { TypeormAuditlogQueryRepository } from './infrastructure/repositories/audit-log/typeorm-audit-log-query.repository';
 import { FindAuditLogsUseCase } from './application/audit-log-use-cases/find-audit-logs/find-audit-logs.use-case';
 import { SharedCacheModule } from '../../shared/cache/cache.module';
-import { FORMAT_AUDIT_MESSAGE } from './domain/audit-log-aggregate/services/format-audit-message.service';
-import { FormatAuditMessage } from './infrastructure/services/format-audit-message.service';
 import { FindTotalAuditLogUseCase } from './application/audit-log-use-cases/find-total-audit-log/find-total-audit-log.use-case';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { FindRecentActivityUseCase } from './application/audit-log-use-cases/find-recent-activity/find-recent-activity.use-case';
@@ -35,10 +33,6 @@ import { FindRecentActivityUseCase } from './application/audit-log-use-cases/fin
     {
       provide: AUDIT_LOG_QUERY_REPOSITORY,
       useClass: TypeormAuditlogQueryRepository,
-    },
-    {
-      provide: FORMAT_AUDIT_MESSAGE,
-      useClass: FormatAuditMessage,
     },
   ],
   exports: [AUDIT_LOG_COMMAND_REPOSITORY],
