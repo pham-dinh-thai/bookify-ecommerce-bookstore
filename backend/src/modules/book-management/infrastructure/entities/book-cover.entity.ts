@@ -5,10 +5,12 @@ import {
   ManyToOne,
   JoinColumn,
   CreateDateColumn,
+  Index,
 } from 'typeorm';
 import { BookTypeOrm } from './book.entity';
 
 @Entity('book_covers')
+@Index(['bookId', 'displayOrder'], { unique: true })
 export class BookCoverTypeOrm {
   @PrimaryColumn({ type: 'uuid' })
   id!: string;
