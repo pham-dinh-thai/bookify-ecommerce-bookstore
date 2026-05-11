@@ -1,4 +1,4 @@
-import { BadRequestDomainException } from '../../../../../../shared/domain/exception/domain.exception';
+import { BadRequestDomainException } from '../../../../../../../shared/domain/exception/domain.exception';
 
 export class BookCoverDisplayOrderNegativeException extends BadRequestDomainException {
   public constructor() {

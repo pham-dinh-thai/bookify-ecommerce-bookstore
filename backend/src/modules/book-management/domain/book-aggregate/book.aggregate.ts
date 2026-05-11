@@ -1,5 +1,5 @@
 import { AggregateRoot } from '../../../../shared/domain/aggregate-root';
-import { BookCover, BookCoverProps } from './entities/book-cover.entity';
+import { BookCover, BookCoverProps } from './entities/book-cover/book-cover.entity';
 import { BookAuthorEmptyException } from './exceptions/book-author-empty.exception';
 import { BookDescriptionEmptyException } from './exceptions/book-description-empty.exception';
 import { BookGenreEmptyException } from './exceptions/book-genre-empty.exception';

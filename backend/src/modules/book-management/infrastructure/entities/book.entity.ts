@@ -30,7 +30,7 @@ export class BookTypeOrm {
   publisherId!: string;
 
   @Column({ type: 'text', nullable: true })
-  description!: string | null;
+  description!: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   originalPrice!: number;
