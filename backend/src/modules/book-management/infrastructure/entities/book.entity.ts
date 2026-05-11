@@ -44,9 +44,6 @@ export class BookTypeOrm {
   @Column({ type: 'int' })
   pageCount!: number;
 
-  @Column({ type: 'boolean', default: true })
-  isInStock!: boolean;
-
   @CreateDateColumn()
   createdAt!: Date;
 
