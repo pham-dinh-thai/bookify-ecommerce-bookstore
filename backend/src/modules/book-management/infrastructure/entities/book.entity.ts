@@ -51,7 +51,7 @@ export class BookTypeOrm {
   updatedAt!: Date;
 
   @OneToMany(() => BookCoverTypeOrm, (cover) => cover.book)
-  covers!: BookCoverTypeOrm[];
+  covers!: BookCoverTypeOrm[] | null;
 
   @OneToOne(() => LanguageTypeOrm)
   @JoinColumn({ name: 'languageId' })
@@ -62,8 +62,8 @@ export class BookTypeOrm {
   publisher!: PublisherTypeOrm;
 
   @OneToMany(() => BookAuthorTypeOrm, (bookAuthor) => bookAuthor.book)
-  bookAuthor!: BookAuthorTypeOrm[];
+  bookAuthors!: BookAuthorTypeOrm[];
 
   @OneToMany(() => BookGenreTypeOrm, (bookGenre) => bookGenre.book)
-  bookGenre!: BookGenreTypeOrm[];
+  bookGenres!: BookGenreTypeOrm[];
 }

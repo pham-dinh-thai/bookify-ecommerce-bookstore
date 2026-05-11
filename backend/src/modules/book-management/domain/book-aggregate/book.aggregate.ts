@@ -1,5 +1,8 @@
 import { AggregateRoot } from '../../../../shared/domain/aggregate-root';
-import { BookCover, BookCoverProps } from './entities/book-cover/book-cover.entity';
+import {
+  BookCover,
+  BookCoverProps,
+} from './entities/book-cover/book-cover.entity';
 import { BookAuthorEmptyException } from './exceptions/book-author-empty.exception';
 import { BookDescriptionEmptyException } from './exceptions/book-description-empty.exception';
 import { BookGenreEmptyException } from './exceptions/book-genre-empty.exception';
@@ -20,7 +23,7 @@ export type BookProps = {
   description: string;
   originalPrice: number;
   quantity: number;
-  bookCovers: BookCoverProps[];
+  bookCovers?: BookCoverProps[];
   languageId: string;
   pageCount: number;
 };
@@ -99,7 +102,7 @@ export class Book extends AggregateRoot {
       params.description,
       BookPrice.create(params.originalPrice),
       BookQuantity.create(params.quantity),
-      params.bookCovers.map((cover) => BookCover.fromPersistent(cover)),
+      (params.bookCovers ?? []).map((cover) => BookCover.fromPersistent(cover)),
       params.languageId,
       params.pageCount,
     );

@@ -1,3 +1,4 @@
+import { url } from 'inspector';
 import { Book } from '../../domain/book-aggregate/book.aggregate';
 import { BookReadModel } from '../../domain/book-aggregate/read-models/book.read-model';
 import { BookTypeOrm } from '../entities/book.entity';
@@ -8,15 +9,15 @@ export class BooksMapper {
       id: bookTypeOrm.id,
       isbn: bookTypeOrm.isbn,
       title: bookTypeOrm.title,
-      authorIds: bookTypeOrm.bookAuthor.map(
+      authorIds: bookTypeOrm.bookAuthors.map(
         (bookAuthor) => bookAuthor.authorId,
       ),
       publisherId: bookTypeOrm.publisherId,
-      genreIds: bookTypeOrm.bookGenre.map((bookGenre) => bookGenre.genreId),
+      genreIds: bookTypeOrm.bookGenres.map((bookGenre) => bookGenre.genreId),
       description: bookTypeOrm.description,
       originalPrice: bookTypeOrm.originalPrice,
       quantity: bookTypeOrm.quantity,
-      bookCovers: bookTypeOrm.covers.map((cover) => ({
+      bookCovers: (bookTypeOrm.covers ?? []).map((cover) => ({
         id: cover.id,
         url: cover.url,
         isPrimary: cover.isPrimary,
@@ -51,8 +52,22 @@ export class BooksMapper {
       bookTypeOrm.description,
       bookTypeOrm.originalPrice,
       bookTypeOrm.quantity,
-      bookTypeOrm.languageId,
       bookTypeOrm.pageCount,
+      true,
+      bookTypeOrm.language.name,
+      bookTypeOrm.publisher.name,
+      bookTypeOrm.bookAuthors.map(
+        (bookAuthorTypeOrm) => bookAuthorTypeOrm.author.name,
+      ),
+      bookTypeOrm.bookGenres.map(
+        (bookGenreTypeOrm) => bookGenreTypeOrm.genre.name,
+      ),
+      (bookTypeOrm.covers ?? []).map((bookCoverTypeOrm) => ({
+        id: bookCoverTypeOrm.id,
+        url: bookCoverTypeOrm.url,
+        isPrimary: bookCoverTypeOrm.isPrimary,
+        displayOrder: bookCoverTypeOrm.displayOrder,
+      })),
     );
   }
 }

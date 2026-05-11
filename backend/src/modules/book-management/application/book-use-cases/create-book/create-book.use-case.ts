@@ -21,7 +21,7 @@ import { BookAuthor } from '../../../domain/book-aggregate/entities/book-author/
 import {
   BOOK_GENRES_COMMAND_REPOSITORY,
   type IBookGenresCommandRepository,
-} from '../../../domain/book-aggregate/entities/book-genre/repositories/book-genres-command.repository';
+} from '../../../domain/book-aggregate/entities/book-genre/repositories/book-genres-command.repository.interface';
 import { BookGenre } from '../../../domain/book-aggregate/entities/book-genre/book-genre.entity';
 import {
   AUDIT_LOG_COMMAND_REPOSITORY,
@@ -85,7 +85,7 @@ export class CreateBookUseCase {
       );
 
       await this.auditLogCommandRepository.write(
-        'CREATE BOOK',
+        'CREATE_BOOK',
         performedBy,
         'book-management',
         'books',
