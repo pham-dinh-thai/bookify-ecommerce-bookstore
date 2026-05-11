@@ -1,0 +1,18 @@
+import { Inject, Injectable } from '@nestjs/common';
+import {
+  BOOKS_QUERY_REPOSITORY,
+  type IBooksQueryRepository,
+} from '../../../domain/book-aggregate/repositories/books-query.repository.interface';
+
+@Injectable()
+export class FindTotalBookUseCase {
+  public constructor(
+    @Inject(BOOKS_QUERY_REPOSITORY)
+    private readonly booksQueryRepository: IBooksQueryRepository,
+  ) {}
+
+  public async execute(): Promise<number> {
+    // TODO: Implement the logic to find the total number of books
+    return 1;
+  }
+}

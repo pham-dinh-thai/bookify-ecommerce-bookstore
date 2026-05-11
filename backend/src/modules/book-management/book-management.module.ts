@@ -8,9 +8,18 @@ import { UuidModule } from '../../shared/uuid/uuid.module';
 import { AuditLogModule } from '../audit-log/audit-log.module';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { BOOKS_QUERY_REPOSITORY } from './domain/book-aggregate/repositories/books-query.repository.interface';
-import { TypeormBooksQueryRepository } from './infrastructure/repositories/typeorm-books-query.repository';
+import { TypeormBooksQueryRepository } from './infrastructure/repositories/books/typeorm-books-query.repository';
 import { FindBooksUseCase } from './application/book-use-cases/find-books/find-books.use-case';
 import { FindOneBookUseCase } from './application/book-use-cases/find-one-book/find-one-book.use-case';
+import { FindTotalBookUseCase } from './application/book-use-cases/find-total-book/find-total-book.use-case';
+import { UnitOfWorkModule } from '../../shared/unit-of-work/unit-of-work.module';
+import { CreateBookUseCase } from './application/book-use-cases/create-book/create-book.use-case';
+import { TypeormBooksCommandRepository } from './infrastructure/repositories/books/typeorm-books-command.repository';
+import { BOOKS_COMMAND_REPOSITORY } from './domain/book-aggregate/repositories/books-command.repository.interface';
+import { BOOK_AUTHORS_COMMAND_REPOSITORY } from './domain/book-aggregate/entities/book-author/repositories/book-authors-command.repository.interface';
+import { TypeormBookAuthorsCommandRepository } from './infrastructure/repositories/book-authors/typeorm-book-authors-command.repository';
+import { BOOK_GENRES_COMMAND_REPOSITORY } from './domain/book-aggregate/entities/book-genre/repositories/book-genres-command.repository';
+import { TypeormBookGenresCommandRepository } from './infrastructure/repositories/book-genres/typeorm-book-genres-command.repository';
 
 @Module({
   controllers: [BooksController],
@@ -19,14 +28,29 @@ import { FindOneBookUseCase } from './application/book-use-cases/find-one-book/f
     SharedCacheModule,
     UuidModule,
     AuditLogModule,
+    UnitOfWorkModule,
     AuthenticationModule,
   ],
   providers: [
     FindBooksUseCase,
     FindOneBookUseCase,
+    FindTotalBookUseCase,
+    CreateBookUseCase,
     {
       provide: BOOKS_QUERY_REPOSITORY,
       useClass: TypeormBooksQueryRepository,
+    },
+    {
+      provide: BOOKS_COMMAND_REPOSITORY,
+      useClass: TypeormBooksCommandRepository,
+    },
+    {
+      provide: BOOK_AUTHORS_COMMAND_REPOSITORY,
+      useClass: TypeormBookAuthorsCommandRepository,
+    },
+    {
+      provide: BOOK_GENRES_COMMAND_REPOSITORY,
+      useClass: TypeormBookGenresCommandRepository,
     },
   ],
   exports: [BOOKS_QUERY_REPOSITORY],
