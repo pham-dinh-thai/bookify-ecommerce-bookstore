@@ -29,6 +29,10 @@ import { PublishersModule } from '../catalog-management/publishers.module';
 import { LanguagesModule } from '../catalog-management/languages.module';
 import { BOOK_VALIDATION } from './domain/book-aggregate/services/book-validation.service';
 import { BookValidation } from './infrastructure/services/books/book-validation.service';
+import { BOOK_COVERS_COMMAND_REPOSITORY } from './domain/book-aggregate/entities/book-cover/repositories/book-covers-command.repository.interface';
+import { TypeOrmBookCoversCommandRepository } from './infrastructure/repositories/book-covers/typeorm-book-covers-command.repository';
+import { AddBookCoverUseCase } from './application/book-use-cases/add-book-cover/add-book-cover.use-case';
+import { RemoveBookCoverUseCase } from './application/book-use-cases/remove-book-cover/remove-book-cover.use-case';
 
 @Module({
   controllers: [BooksController],
@@ -50,6 +54,8 @@ import { BookValidation } from './infrastructure/services/books/book-validation.
     FindTotalBookUseCase,
     CreateBookUseCase,
     UpdateBookUseCase,
+    AddBookCoverUseCase,
+    RemoveBookCoverUseCase,
     {
       provide: BOOKS_QUERY_REPOSITORY,
       useClass: TypeormBooksQueryRepository,
@@ -73,6 +79,10 @@ import { BookValidation } from './infrastructure/services/books/book-validation.
     {
       provide: BOOK_VALIDATION,
       useClass: BookValidation,
+    },
+    {
+      provide: BOOK_COVERS_COMMAND_REPOSITORY,
+      useClass: TypeOrmBookCoversCommandRepository,
     },
   ],
   exports: [BOOKS_QUERY_REPOSITORY, BOOK_EXISTS_CHECKER, BOOK_VALIDATION],

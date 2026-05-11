@@ -27,6 +27,10 @@ import {
   AUDIT_LOG_COMMAND_REPOSITORY,
   type IAuditLogCommandRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
+import {
+  BOOK_VALIDATION,
+  type IBookValidation,
+} from '../../../domain/book-aggregate/services/book-validation.service';
 
 @Injectable()
 export class CreateBookUseCase {
@@ -48,12 +52,22 @@ export class CreateBookUseCase {
 
     @Inject(UUID_GENERATOR)
     private readonly uuidGenerator: IUuidGenerator,
+
+    @Inject(BOOK_VALIDATION)
+    private readonly bookValidation: IBookValidation,
   ) {}
 
   public async execute(
     request: ICreateBookRequest,
     performedBy: string,
   ): Promise<void> {
+    await this.bookValidation.validateBookRelations({
+      authorIds: request.authorIds,
+      publisherId: request.publisherId,
+      genreIds: request.genreIds,
+      languageId: request.languageId,
+    });
+
     const book = Book.create({
       id: this.uuidGenerator.generate(),
       isbn: request.isbn,

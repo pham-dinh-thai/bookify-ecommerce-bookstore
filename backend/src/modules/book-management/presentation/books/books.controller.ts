@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -18,6 +21,9 @@ import { CurrentUser } from '../../../../shared/decorators/current-user.decorato
 import { CreateBookUseCase } from '../../application/book-use-cases/create-book/create-book.use-case';
 import { UpdateBookUseCase } from '../../application/book-use-cases/update-book/update-book.use-case';
 import { UpdateBookRequest } from './requests/update-book.request';
+import { AddBookCoverRequest } from './requests/add-book-cover.request';
+import { AddBookCoverUseCase } from '../../application/book-use-cases/add-book-cover/add-book-cover.use-case';
+import { RemoveBookCoverUseCase } from '../../application/book-use-cases/remove-book-cover/remove-book-cover.use-case';
 
 @Controller('books')
 export class BooksController {
@@ -27,6 +33,8 @@ export class BooksController {
     private readonly findTotalBookUseCase: FindTotalBookUseCase,
     private readonly createBookUseCase: CreateBookUseCase,
     private readonly updateBookUseCase: UpdateBookUseCase,
+    private readonly addBookCoverUseCase: AddBookCoverUseCase,
+    private readonly removeBookCoverUseCase: RemoveBookCoverUseCase,
   ) {}
 
   @Get()
@@ -63,5 +71,28 @@ export class BooksController {
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
     await this.updateBookUseCase.execute(id, request, actorId);
+  }
+
+  @Post(':id/book-cover')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles('admin', 'staff')
+  public async addBookCover(
+    @Param('id') id: string,
+    @Body() request: AddBookCoverRequest,
+    @CurrentUser('userId') actorId: string,
+  ): Promise<void> {
+    await this.addBookCoverUseCase.execute(id, request, actorId);
+  }
+
+  @Delete(':bookId/book-cover/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles('admin', 'staff')
+  public async removeBookCover(
+    @Param('bookId') bookId: string,
+    @Param('id') id: string,
+    @CurrentUser('userId') actorId: string,
+  ): Promise<void> {
+    await this.removeBookCoverUseCase.execute(bookId, id, actorId);
   }
 }

@@ -3,6 +3,8 @@ import {
   BookCover,
   BookCoverProps,
 } from './entities/book-cover/book-cover.entity';
+import { BookCoverDisplayOrderDuplicateException } from './entities/book-cover/exceptions/book-cover-display-order-duplicate.exception';
+import { BookCoverPrimaryDuplicateException } from './entities/book-cover/exceptions/book-cover-primary-duplicate.exception';
 import { BookAuthorEmptyException } from './exceptions/book-author-empty.exception';
 import { BookDescriptionEmptyException } from './exceptions/book-description-empty.exception';
 import { BookGenreEmptyException } from './exceptions/book-genre-empty.exception';
@@ -130,13 +132,22 @@ export class Book extends AggregateRoot {
   }
 
   public addCover(cover: BookCover): void {
-    this.bookCovers.push(cover);
-  }
+    if (
+      cover.getIsPrimary() &&
+      this.bookCovers.some((existing) => existing.getIsPrimary())
+    ) {
+      throw new BookCoverPrimaryDuplicateException();
+    }
 
-  public removeCover(coverId: string): void {
-    this.bookCovers = this.bookCovers.filter(
-      (cover) => cover.getId() !== coverId,
-    );
+    if (
+      this.bookCovers.some(
+        (existing) => existing.getDisplayOrder() === cover.getDisplayOrder(),
+      )
+    ) {
+      throw new BookCoverDisplayOrderDuplicateException();
+    }
+
+    this.bookCovers.push(cover);
   }
 
   public updatePrice(newPrice: number): void {
