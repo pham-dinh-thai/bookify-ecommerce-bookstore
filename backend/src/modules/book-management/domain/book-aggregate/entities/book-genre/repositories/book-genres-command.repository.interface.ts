@@ -6,6 +6,8 @@ export interface IBookGenresCommandRepository {
   save(bookGenre: BookGenre): Promise<void>;
 
   delete(bookId: string, genreId: string): Promise<void>;
+
+  deleteByBookId(bookId: string): Promise<void>;
 }
 
 export const BOOK_GENRES_COMMAND_REPOSITORY = 'IBookGenresCommandRepository';

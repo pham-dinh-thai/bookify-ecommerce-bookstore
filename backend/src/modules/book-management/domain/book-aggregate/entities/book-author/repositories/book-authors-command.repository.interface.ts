@@ -6,6 +6,8 @@ export interface IBookAuthorsCommandRepository {
   save(bookAuthor: BookAuthor): Promise<void>;
 
   delete(bookId: string, authorId: string): Promise<void>;
+
+  deleteByBookId(bookId: string): Promise<void>;
 }
 
 export const BOOK_AUTHORS_COMMAND_REPOSITORY = 'IBookAuthorsCommandRepository';

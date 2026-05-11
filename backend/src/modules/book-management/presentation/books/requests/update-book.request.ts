@@ -5,9 +5,9 @@ import {
   IsNumber,
   IsString,
 } from 'class-validator';
-import { ICreateBookRequest } from '../../../application/book-use-cases/create-book/create-book.request';
+import { IUpdateBookRequest } from '../../../application/book-use-cases/update-book/update-book.request';
 
-export class CreateBookRequest implements ICreateBookRequest {
+export class UpdateBookRequest implements IUpdateBookRequest {
   @IsString()
   @IsNotEmpty()
   isbn!: string;
@@ -33,12 +33,6 @@ export class CreateBookRequest implements ICreateBookRequest {
   @IsString()
   @IsNotEmpty()
   description!: string;
-
-  @IsNumber()
-  originalPrice!: number;
-
-  @IsNumber()
-  quantity!: number;
 
   @IsString()
   @IsNotEmpty()

@@ -33,4 +33,8 @@ export class TypeormBookGenresCommandRepository implements IBookGenresCommandRep
       .getManager()
       .delete(BookGenreTypeOrm, { bookId, genreId });
   }
+
+  public async deleteByBookId(bookId: string): Promise<void> {
+    await this.unitOfWork.getManager().delete(BookGenreTypeOrm, { bookId });
+  }
 }
