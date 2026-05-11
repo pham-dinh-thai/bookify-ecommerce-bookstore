@@ -1,3 +1,4 @@
+import { BookCoverCanNotBeRemovedException } from './exceptions/book-cover-can-not-be-removed.exception';
 import { BookCoverDisplayOrderNegativeException } from './exceptions/book-cover-display-order-negative.exception';
 import { BookCoverIdEmptyException } from './exceptions/book-cover-id-empty.exception';
 import { BookCoverUrlEmptyException } from './exceptions/book-cover-url-empty.exception';
@@ -45,6 +46,12 @@ export class BookCover {
       params.isPrimary,
       params.displayOrder,
     );
+  }
+
+  public ensureCanBeRemoved(): void {
+    if (this.isPrimary) {
+      throw new BookCoverCanNotBeRemovedException();
+    }
   }
 
   public getId(): string {

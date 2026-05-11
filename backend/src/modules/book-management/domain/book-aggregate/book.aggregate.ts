@@ -150,12 +150,6 @@ export class Book extends AggregateRoot {
     this.bookCovers.push(cover);
   }
 
-  public removeCover(coverId: string): void {
-    this.bookCovers = this.bookCovers.filter(
-      (cover) => cover.getId() !== coverId,
-    );
-  }
-
   public updatePrice(newPrice: number): void {
     this.originalPrice = this.originalPrice.updatePrice(newPrice);
   }

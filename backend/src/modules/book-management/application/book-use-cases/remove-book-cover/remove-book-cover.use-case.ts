@@ -1,28 +1,23 @@
-import { Inject } from '@nestjs/common';
-import { IAddBookCoverRequest } from './add-book-cover.request';
+import { Inject, Injectable } from '@nestjs/common';
 import {
   BOOKS_COMMAND_REPOSITORY,
   type IBooksCommandRepository,
 } from '../../../domain/book-aggregate/repositories/books-command.repository.interface';
-import { BookCover } from '../../../domain/book-aggregate/entities/book-cover/book-cover.entity';
-import {
-  type IUuidGenerator,
-  UUID_GENERATOR,
-} from '../../../../../shared/uuid/domain/uuid-generator.interface';
 import {
   BOOK_COVERS_COMMAND_REPOSITORY,
   type IBookCoversCommandRepository,
 } from '../../../domain/book-aggregate/entities/book-cover/repositories/book-covers-command.repository.interface';
 import {
-  type IUnitOfWork,
-  UNIT_OF_WORK,
-} from '../../../../../shared/unit-of-work/application/unit-of-work';
-import {
   AUDIT_LOG_COMMAND_REPOSITORY,
   type IAuditLogCommandRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
+import {
+  type IUnitOfWork,
+  UNIT_OF_WORK,
+} from '../../../../../shared/unit-of-work/application/unit-of-work';
 
-export class AddBookCoverUseCase {
+@Injectable()
+export class RemoveBookCoverUseCase {
   public constructor(
     @Inject(BOOKS_COMMAND_REPOSITORY)
     private readonly booksCommandRepository: IBooksCommandRepository,
@@ -33,42 +28,33 @@ export class AddBookCoverUseCase {
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogCommandRepository: IAuditLogCommandRepository,
 
-    @Inject(UUID_GENERATOR)
-    private readonly uuidGenerator: IUuidGenerator,
-
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
   ) {}
 
   public async execute(
     bookId: string,
-    request: IAddBookCoverRequest,
+    id: string,
     performedBy: string,
   ): Promise<void> {
     const book = await this.booksCommandRepository.findOne(bookId);
 
-    const hasPrimaryCover = book
-      .getBookCovers()
-      .some((cover) => cover.getIsPrimary());
+    const bookCover = await this.bookCoversCommandRepository.findOne(id);
 
-    const bookCover = BookCover.create({
-      id: this.uuidGenerator.generate(),
-      url: request.url,
-      isPrimary: hasPrimaryCover ? false : true,
-      displayOrder: request.displayOrder,
-    });
-
-    book.addCover(bookCover);
+    bookCover.ensureCanBeRemoved();
 
     await this.unitOfWork.execute(async () => {
-      await this.bookCoversCommandRepository.save(book.getId(), bookCover);
+      await this.bookCoversCommandRepository.delete(bookCover.getId());
 
       await this.auditLogCommandRepository.write(
-        'ADD_COVER',
+        'REMOVE_COVER',
         performedBy,
         'book-management',
         'bookCovers',
-        { bookId: book.getId(), bookCover },
+        {
+          bookId,
+          bookCover,
+        },
       );
     });
   }
