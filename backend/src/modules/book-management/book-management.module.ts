@@ -18,8 +18,9 @@ import { TypeormBooksCommandRepository } from './infrastructure/repositories/boo
 import { BOOKS_COMMAND_REPOSITORY } from './domain/book-aggregate/repositories/books-command.repository.interface';
 import { BOOK_AUTHORS_COMMAND_REPOSITORY } from './domain/book-aggregate/entities/book-author/repositories/book-authors-command.repository.interface';
 import { TypeormBookAuthorsCommandRepository } from './infrastructure/repositories/book-authors/typeorm-book-authors-command.repository';
-import { BOOK_GENRES_COMMAND_REPOSITORY } from './domain/book-aggregate/entities/book-genre/repositories/book-genres-command.repository';
+import { BOOK_GENRES_COMMAND_REPOSITORY } from './domain/book-aggregate/entities/book-genre/repositories/book-genres-command.repository.interface';
 import { TypeormBookGenresCommandRepository } from './infrastructure/repositories/book-genres/typeorm-book-genres-command.repository';
+import { UpdateBookUseCase } from './application/book-use-cases/update-book/update-book.use-case';
 
 @Module({
   controllers: [BooksController],
@@ -36,6 +37,7 @@ import { TypeormBookGenresCommandRepository } from './infrastructure/repositorie
     FindOneBookUseCase,
     FindTotalBookUseCase,
     CreateBookUseCase,
+    UpdateBookUseCase,
     {
       provide: BOOKS_QUERY_REPOSITORY,
       useClass: TypeormBooksQueryRepository,

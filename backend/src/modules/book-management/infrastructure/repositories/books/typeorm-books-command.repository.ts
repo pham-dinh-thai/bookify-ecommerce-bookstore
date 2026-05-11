@@ -16,8 +16,8 @@ export class TypeormBooksCommandRepository implements IBooksCommandRepository {
         where: { id },
         relations: {
           covers: true,
-          bookAuthor: { author: true },
-          bookGenre: { genre: true },
+          bookAuthors: { author: true },
+          bookGenres: { genre: true },
         },
       });
 

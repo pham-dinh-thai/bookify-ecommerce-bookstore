@@ -14,13 +14,34 @@ export class TypeormBooksQueryRepository implements IBooksQueryRepository {
   ) {}
 
   public async findAll(): Promise<BookReadModel[]> {
-    const books = await this.repository.find();
+    const books = await this.repository.find({
+      relations: [
+        'language',
+        'publisher',
+        'bookAuthors',
+        'bookAuthors.author',
+        'bookGenres',
+        'bookGenres.genre',
+        'covers',
+      ],
+    });
 
     return books.map((book) => BooksMapper.toReadModel(book));
   }
 
   public async findOne(id: string): Promise<BookReadModel | null> {
-    const book = await this.repository.findOneBy({ id });
+    const book = await this.repository.findOne({
+      where: { id },
+      relations: [
+        'language',
+        'publisher',
+        'bookAuthors',
+        'bookAuthors.author',
+        'bookGenres',
+        'bookGenres.genre',
+        'covers',
+      ],
+    });
 
     return book ? BooksMapper.toReadModel(book) : null;
   }

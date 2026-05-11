@@ -1,5 +1,8 @@
 import { AggregateRoot } from '../../../../shared/domain/aggregate-root';
-import { BookCover, BookCoverProps } from './entities/book-cover/book-cover.entity';
+import {
+  BookCover,
+  BookCoverProps,
+} from './entities/book-cover/book-cover.entity';
 import { BookAuthorEmptyException } from './exceptions/book-author-empty.exception';
 import { BookDescriptionEmptyException } from './exceptions/book-description-empty.exception';
 import { BookGenreEmptyException } from './exceptions/book-genre-empty.exception';
@@ -7,23 +10,9 @@ import { BookIdEmptyException } from './exceptions/book-id-empty.exception';
 import { BookIsbnEmptyException } from './exceptions/book-isbn-empty.exception';
 import { BookPageCountInvalidException } from './exceptions/book-page-count-invalid.exception';
 import { BookTitleEmptyException } from './exceptions/book-title-empty.exception';
+import { BookProps, updateBookProps } from './types';
 import { BookPrice } from './value-objects/book-price.value-object';
 import { BookQuantity } from './value-objects/book-quantity.value-object';
-
-export type BookProps = {
-  id: string;
-  isbn: string;
-  title: string;
-  authorIds: string[];
-  publisherId: string;
-  genreIds: string[];
-  description: string;
-  originalPrice: number;
-  quantity: number;
-  bookCovers: BookCoverProps[];
-  languageId: string;
-  pageCount: number;
-};
 
 export class Book extends AggregateRoot {
   private constructor(
@@ -99,40 +88,45 @@ export class Book extends AggregateRoot {
       params.description,
       BookPrice.create(params.originalPrice),
       BookQuantity.create(params.quantity),
-      params.bookCovers.map((cover) => BookCover.fromPersistent(cover)),
+      (params.bookCovers ?? []).map((cover) => BookCover.fromPersistent(cover)),
       params.languageId,
       params.pageCount,
     );
   }
 
-  public updateDetails(
-    title: string,
-    authorIds: string[],
-    publisherId: string,
-    genreIds: string[],
-    description: string,
-  ): void {
-    if (!title || title.trim() === '') {
+  public updateDetails(params: updateBookProps): void {
+    if (!params.isbn || params.isbn.trim() === '') {
+      throw new BookIsbnEmptyException();
+    }
+
+    if (!params.title || params.title.trim() === '') {
       throw new BookTitleEmptyException();
     }
 
-    if (!authorIds || authorIds.length === 0) {
+    if (!params.authorIds || params.authorIds.length === 0) {
       throw new BookAuthorEmptyException();
     }
 
-    if (!genreIds || genreIds.length === 0) {
+    if (!params.genreIds || params.genreIds.length === 0) {
       throw new BookGenreEmptyException();
     }
 
-    if (!description || description.trim() === '') {
+    if (!params.description || params.description.trim() === '') {
       throw new BookDescriptionEmptyException();
     }
 
-    this.title = title;
-    this.authorIds = authorIds;
-    this.publisherId = publisherId;
-    this.genreIds = genreIds;
-    this.description = description;
+    if (params.pageCount <= 0) {
+      throw new BookPageCountInvalidException();
+    }
+
+    this.isbn = params.isbn;
+    this.title = params.title;
+    this.authorIds = params.authorIds;
+    this.publisherId = params.publisherId;
+    this.genreIds = params.genreIds;
+    this.description = params.description;
+    this.languageId = params.languageId;
+    this.pageCount = params.pageCount;
   }
 
   public addCover(cover: BookCover): void {

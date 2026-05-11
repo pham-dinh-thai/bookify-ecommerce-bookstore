@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { FindBooksUseCase } from '../../application/book-use-cases/find-books/find-books.use-case';
 import { FindOneBookUseCase } from '../../application/book-use-cases/find-one-book/find-one-book.use-case';
 import { FindTotalBookUseCase } from '../../application/book-use-cases/find-total-book/find-total-book.use-case';
@@ -8,6 +16,8 @@ import { Roles } from '../../../../shared/decorators/roles.decorator';
 import { CreateBookRequest } from './requests/create-book.request';
 import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
 import { CreateBookUseCase } from '../../application/book-use-cases/create-book/create-book.use-case';
+import { UpdateBookUseCase } from '../../application/book-use-cases/update-book/update-book.use-case';
+import { UpdateBookRequest } from './requests/update-book.request';
 
 @Controller('books')
 export class BooksController {
@@ -16,6 +26,7 @@ export class BooksController {
     private readonly findOneBookUseCase: FindOneBookUseCase,
     private readonly findTotalBookUseCase: FindTotalBookUseCase,
     private readonly createBookUseCase: CreateBookUseCase,
+    private readonly updateBookUseCase: UpdateBookUseCase,
   ) {}
 
   @Get()
@@ -41,5 +52,16 @@ export class BooksController {
     @CurrentUser('userId') actorId,
   ): Promise<void> {
     await this.createBookUseCase.execute(request, actorId);
+  }
+
+  @Put(':id')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles('admin', 'staff')
+  public async update(
+    @Param('id') id: string,
+    @Body() request: UpdateBookRequest,
+    @CurrentUser('userId') actorId: string,
+  ): Promise<void> {
+    await this.updateBookUseCase.execute(id, request, actorId);
   }
 }

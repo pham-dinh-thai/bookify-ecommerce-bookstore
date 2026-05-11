@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IBookGenresCommandRepository } from '../../../domain/book-aggregate/entities/book-genre/repositories/book-genres-command.repository';
+import { IBookGenresCommandRepository } from '../../../domain/book-aggregate/entities/book-genre/repositories/book-genres-command.repository.interface';
 import { TypeOrmUnitOfWork } from '../../../../../shared/unit-of-work/infrastructure/typeorm-unit-of-work';
 import { BookGenreTypeOrm } from '../../entities/book-genre.entity';
 import { BookGenreNotFoundException } from '../../../domain/book-aggregate/entities/book-genre/exceptions/book-genre-not-found.exception';
@@ -32,5 +32,9 @@ export class TypeormBookGenresCommandRepository implements IBookGenresCommandRep
     await this.unitOfWork
       .getManager()
       .delete(BookGenreTypeOrm, { bookId, genreId });
+  }
+
+  public async deleteByBookId(bookId: string): Promise<void> {
+    await this.unitOfWork.getManager().delete(BookGenreTypeOrm, { bookId });
   }
 }
