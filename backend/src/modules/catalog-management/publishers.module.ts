@@ -17,6 +17,8 @@ import { TypeOrmPublishersCommandRepository } from './infrastructure/repositorie
 import { RenamePublisherUseCase } from './application/publisher-use-cases/rename-publisher/rename-publisher.use-case';
 import { DeletePublisherUseCase } from './application/publisher-use-cases/delete-publisher/delete-publisher.use-case';
 import { FindTotalPublisherUseCase } from './application/publisher-use-cases/find-total-publisher/find-total-publisher.use-case';
+import { PUBLISHER_EXISTS_CHECKER } from './domain/publisher-aggregate/services/publisher-exists-checker.service';
+import { PublisherExistsChecker } from './infrastructure/services/publishers/publisher-exists-checker.service';
 
 @Module({
   imports: [
@@ -43,7 +45,15 @@ import { FindTotalPublisherUseCase } from './application/publisher-use-cases/fin
       provide: PUBLISHERS_COMMAND_REPOSITORY,
       useClass: TypeOrmPublishersCommandRepository,
     },
+    {
+      provide: PUBLISHER_EXISTS_CHECKER,
+      useClass: PublisherExistsChecker,
+    },
   ],
-  exports: [PUBLISHERS_QUERY_REPOSITORY, PUBLISHERS_COMMAND_REPOSITORY],
+  exports: [
+    PUBLISHERS_QUERY_REPOSITORY,
+    PUBLISHERS_COMMAND_REPOSITORY,
+    PUBLISHER_EXISTS_CHECKER,
+  ],
 })
 export class PublishersModule {}

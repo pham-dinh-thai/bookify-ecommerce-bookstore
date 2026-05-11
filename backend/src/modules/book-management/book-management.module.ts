@@ -21,6 +21,14 @@ import { TypeormBookAuthorsCommandRepository } from './infrastructure/repositori
 import { BOOK_GENRES_COMMAND_REPOSITORY } from './domain/book-aggregate/entities/book-genre/repositories/book-genres-command.repository.interface';
 import { TypeormBookGenresCommandRepository } from './infrastructure/repositories/book-genres/typeorm-book-genres-command.repository';
 import { UpdateBookUseCase } from './application/book-use-cases/update-book/update-book.use-case';
+import { AuthorsModule } from '../catalog-management/authors.module';
+import { GenresModule } from '../catalog-management/genres.module';
+import { BOOK_EXISTS_CHECKER } from './domain/book-aggregate/services/book-exists-checker.service';
+import { BookExistsChecker } from './infrastructure/services/books/book-exists-checker.service';
+import { PublishersModule } from '../catalog-management/publishers.module';
+import { LanguagesModule } from '../catalog-management/languages.module';
+import { BOOK_VALIDATION } from './domain/book-aggregate/services/book-validation.service';
+import { BookValidation } from './infrastructure/services/books/book-validation.service';
 
 @Module({
   controllers: [BooksController],
@@ -31,6 +39,10 @@ import { UpdateBookUseCase } from './application/book-use-cases/update-book/upda
     AuditLogModule,
     UnitOfWorkModule,
     AuthenticationModule,
+    AuthorsModule,
+    GenresModule,
+    PublishersModule,
+    LanguagesModule,
   ],
   providers: [
     FindBooksUseCase,
@@ -54,7 +66,15 @@ import { UpdateBookUseCase } from './application/book-use-cases/update-book/upda
       provide: BOOK_GENRES_COMMAND_REPOSITORY,
       useClass: TypeormBookGenresCommandRepository,
     },
+    {
+      provide: BOOK_EXISTS_CHECKER,
+      useClass: BookExistsChecker,
+    },
+    {
+      provide: BOOK_VALIDATION,
+      useClass: BookValidation,
+    },
   ],
-  exports: [BOOKS_QUERY_REPOSITORY],
+  exports: [BOOKS_QUERY_REPOSITORY, BOOK_EXISTS_CHECKER, BOOK_VALIDATION],
 })
 export class BookManagementModule {}
