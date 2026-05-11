@@ -17,6 +17,8 @@ import { AuthenticationModule } from '../authentication/authentication.module';
 import { RenameAuthorUseCase } from './application/author-use-cases/rename-author/rename-author.use-case';
 import { DeleteAuthorUseCase } from './application/author-use-cases/delete-author/delete-author.use-case';
 import { FindTotalAuthorUseCase } from './application/author-use-cases/find-total-author/find-total-author.use-case';
+import { AUTHOR_EXISTS_CHECKER } from './domain/author-aggregate/services/author-exists-checker.service';
+import { AuthorExistsChecker } from './infrastructure/services/authors/author-exists-checker.service';
 
 @Module({
   imports: [
@@ -42,8 +44,16 @@ import { FindTotalAuthorUseCase } from './application/author-use-cases/find-tota
       provide: AUTHORS_COMMAND_REPOSITORY,
       useClass: TypeOrmAuthorsCommandRepository,
     },
+    {
+      provide: AUTHOR_EXISTS_CHECKER,
+      useClass: AuthorExistsChecker,
+    },
   ],
-  exports: [AUTHORS_QUERY_REPOSITORY, AUTHORS_COMMAND_REPOSITORY],
+  exports: [
+    AUTHORS_QUERY_REPOSITORY,
+    AUTHORS_COMMAND_REPOSITORY,
+    AUTHOR_EXISTS_CHECKER,
+  ],
   controllers: [AuthorsController],
 })
 export class AuthorsModule {}

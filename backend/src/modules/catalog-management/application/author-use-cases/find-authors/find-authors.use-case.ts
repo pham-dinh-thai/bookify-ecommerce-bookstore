@@ -3,7 +3,6 @@ import {
   AUTHORS_QUERY_REPOSITORY,
   type IAuthorsQueryRepository,
 } from '../../../domain/author-aggregate/repositories/authors-query.repository.interface';
-import { AuthorReadModel } from '../../../domain/author-aggregate/read-models/author.read-model';
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,

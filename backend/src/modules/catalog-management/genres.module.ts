@@ -18,6 +18,8 @@ import { RenameGenreUseCase } from './application/genre-use-cases/rename-genre/r
 import { DeleteGenreUseCase } from './application/genre-use-cases/delete-genre/delete-genre.use-case';
 import { FindTotalGenreUseCase } from './application/genre-use-cases/find-total-genre/find-total-genre.use-case';
 import { SharedCacheModule } from '../../shared/cache/cache.module';
+import { GENRE_EXISTS_CHECKER } from './domain/genre-aggregate/services/genre-exists-checker.service';
+import { GenreExistsChecker } from './infrastructure/services/genres/genre-exists-checker.service';
 
 @Module({
   imports: [
@@ -45,7 +47,15 @@ import { SharedCacheModule } from '../../shared/cache/cache.module';
       provide: GENRES_COMMAND_REPOSITORY,
       useClass: TypeOrmGenresCommandRepository,
     },
+    {
+      provide: GENRE_EXISTS_CHECKER,
+      useClass: GenreExistsChecker,
+    },
   ],
-  exports: [GENRES_QUERY_REPOSITORY, GENRES_COMMAND_REPOSITORY],
+  exports: [
+    GENRES_QUERY_REPOSITORY,
+    GENRES_COMMAND_REPOSITORY,
+    GENRE_EXISTS_CHECKER,
+  ],
 })
 export class GenresModule {}

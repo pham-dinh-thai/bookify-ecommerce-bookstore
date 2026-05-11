@@ -22,6 +22,15 @@ import {
   AUDIT_LOG_COMMAND_REPOSITORY,
   type IAuditLogCommandRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
+import {
+  BOOK_EXISTS_CHECKER,
+  type IBookExistsChecker,
+} from '../../../domain/book-aggregate/services/book-exists-checker.service';
+import { BookNotFoundException } from '../../../domain/book-aggregate/exceptions/book-not-found.exception';
+import {
+  BOOK_VALIDATION,
+  type IBookValidation,
+} from '../../../domain/book-aggregate/services/book-validation.service';
 
 @Injectable()
 export class UpdateBookUseCase {
@@ -40,6 +49,12 @@ export class UpdateBookUseCase {
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
+
+    @Inject(BOOK_EXISTS_CHECKER)
+    private readonly bookExistsChecker: IBookExistsChecker,
+
+    @Inject(BOOK_VALIDATION)
+    private readonly bookValidation: IBookValidation,
   ) {}
 
   public async execute(
@@ -47,6 +62,18 @@ export class UpdateBookUseCase {
     request: IUpdateBookRequest,
     performedBy: string,
   ): Promise<void> {
+    const isBookExists = await this.bookExistsChecker.isExists(id);
+    if (!isBookExists) {
+      throw new BookNotFoundException();
+    }
+
+    await this.bookValidation.validateBookRelations({
+      authorIds: request.authorIds,
+      publisherId: request.publisherId,
+      genreIds: request.genreIds,
+      languageId: request.languageId,
+    });
+
     const book = await this.booksCommandRepository.findOne(id);
 
     book.updateDetails({
