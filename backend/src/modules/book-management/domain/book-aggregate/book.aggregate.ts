@@ -1,8 +1,9 @@
 import { AggregateRoot } from '../../../../shared/domain/aggregate-root';
 import { BookCover } from './entities/book-cover/book-cover.entity';
 import { BookCoverDisplayOrderDuplicateException } from './entities/book-cover/exceptions/book-cover-display-order-duplicate.exception';
+import { BookCoverNotFoundException } from './entities/book-cover/exceptions/book-cover-not-found.exception';
 import { BookCoverPrimaryDuplicateException } from './entities/book-cover/exceptions/book-cover-primary-duplicate.exception';
-import { BookAuthorEmptyException } from './exceptions/book-author-empty.exception';
+import { BookAuthorEmptyException } from './entities/book-author/exceptions/book-author-empty.exception';
 import { BookDescriptionEmptyException } from './exceptions/book-description-empty.exception';
 import { BookGenreEmptyException } from './exceptions/book-genre-empty.exception';
 import { BookIdEmptyException } from './exceptions/book-id-empty.exception';
@@ -13,6 +14,18 @@ import { BookProps, updateBookProps } from './types';
 import { BookPrice } from './value-objects/book-price.value-object';
 import { BookQuantity } from './value-objects/book-quantity.value-object';
 
+/**
+ * Book aggregate root.
+ *
+ * Rules:
+ * - Must have at least one author and one genre
+ * - Title, ISBN, and description cannot be empty
+ * - Page count must be greater than zero
+ * - Cannot have more than one primary cover
+ * - Cannot have duplicate display orders across covers
+ * - First cover added is automatically set as primary
+ * - Quantity cannot be negative
+ */
 export class Book extends AggregateRoot {
   private constructor(
     private readonly id: string,
@@ -76,6 +89,9 @@ export class Book extends AggregateRoot {
     );
   }
 
+  /**
+   * Reconstructs a Book from persisted data.
+   */
   public static fromPersistent(params: BookProps): Book {
     return new Book(
       params.id,
@@ -93,6 +109,10 @@ export class Book extends AggregateRoot {
     );
   }
 
+  /**
+   * Replaces all mutable book details except price and quantity,
+   * which have dedicated methods for auditability.
+   */
   public updateDetails(params: updateBookProps): void {
     if (!params.isbn || params.isbn.trim() === '') {
       throw new BookIsbnEmptyException();
@@ -128,27 +148,58 @@ export class Book extends AggregateRoot {
     this.pageCount = params.pageCount;
   }
 
-  public addCover(cover: BookCover): void {
-    if (
-      cover.getIsPrimary() &&
-      this.bookCovers.some((existing) => existing.getIsPrimary())
-    ) {
+  /**
+   * Adds a cover. Automatically promotes to primary if no covers exist.
+   */
+  public addCover(params: {
+    id: string;
+    url: string;
+    displayOrder: number;
+  }): BookCover {
+    const cover = BookCover.create(params);
+
+    const primaryCoverExists = this.bookCovers.some((existing) =>
+      existing.getIsPrimary(),
+    );
+    if (cover.getIsPrimary() && primaryCoverExists) {
       throw new BookCoverPrimaryDuplicateException();
     }
 
-    if (
-      this.bookCovers.some(
-        (existing) => existing.getDisplayOrder() === cover.getDisplayOrder(),
-      )
-    ) {
+    const isDisplayOrderDuplicate = this.bookCovers.some(
+      (existing) => existing.getDisplayOrder() === cover.getDisplayOrder(),
+    );
+    if (isDisplayOrderDuplicate) {
       throw new BookCoverDisplayOrderDuplicateException();
     }
 
-    if (this.bookCovers.length === 0) {
+    const isBookCoverEmpty = this.bookCovers.length === 0;
+    if (isBookCoverEmpty) {
       cover.markAsPrimary();
     }
 
     this.bookCovers.push(cover);
+
+    return cover;
+  }
+
+  /**
+   * Removes a cover by ID. Throws if cover not found or if it's the primary cover.
+   */
+  public removeCover(coverId: string): BookCover {
+    const removedCover = this.bookCovers.find(
+      (cover) => cover.getId() === coverId,
+    );
+    if (!removedCover) {
+      throw new BookCoverNotFoundException();
+    }
+
+    removedCover.ensureCanBeRemoved();
+
+    this.bookCovers = this.bookCovers.filter(
+      (cover) => cover.getId() !== coverId,
+    );
+
+    return removedCover;
   }
 
   public updatePrice(newPrice: number): void {

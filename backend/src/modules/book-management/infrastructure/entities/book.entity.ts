@@ -49,8 +49,11 @@ export class BookTypeOrm {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @OneToMany(() => BookCoverTypeOrm, (cover) => cover.book)
-  covers!: BookCoverTypeOrm[] | null;
+  @OneToMany(() => BookCoverTypeOrm, (cover) => cover.book, {
+    cascade: true,
+    orphanedRowAction: 'delete',
+  })
+  covers!: BookCoverTypeOrm[];
 
   @ManyToOne(() => LanguageTypeOrm)
   @JoinColumn({ name: 'languageId' })
@@ -60,9 +63,15 @@ export class BookTypeOrm {
   @JoinColumn({ name: 'publisherId' })
   publisher!: PublisherTypeOrm;
 
-  @OneToMany(() => BookAuthorTypeOrm, (bookAuthor) => bookAuthor.book)
+  @OneToMany(() => BookAuthorTypeOrm, (bookAuthor) => bookAuthor.book, {
+    cascade: true,
+    orphanedRowAction: 'delete',
+  })
   bookAuthors!: BookAuthorTypeOrm[];
 
-  @OneToMany(() => BookGenreTypeOrm, (bookGenre) => bookGenre.book)
+  @OneToMany(() => BookGenreTypeOrm, (bookGenre) => bookGenre.book, {
+    cascade: true,
+    orphanedRowAction: 'delete',
+  })
   bookGenres!: BookGenreTypeOrm[];
 }

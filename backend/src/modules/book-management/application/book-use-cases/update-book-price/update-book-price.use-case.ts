@@ -53,7 +53,10 @@ export class UpdateBookPriceUseCase {
     book.updatePrice(request.price);
 
     await this.unitOfWork.execute(async () => {
-      await this.booksCommandRepository.save(book);
+      await this.booksCommandRepository.updatePrice(
+        book.getId(),
+        book.getOriginalPrice(),
+      );
 
       await this.auditLogCommandRepository.write(
         'UPDATE_BOOK_PRICE',

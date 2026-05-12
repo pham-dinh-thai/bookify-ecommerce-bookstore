@@ -42,6 +42,10 @@ export class CreateBookRequest implements ICreateBookRequest {
 
   @IsString()
   @IsNotEmpty()
+  coverUrl!: string;
+
+  @IsString()
+  @IsNotEmpty()
   languageId!: string;
 
   @IsNumber()

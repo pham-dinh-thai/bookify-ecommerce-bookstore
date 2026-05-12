@@ -54,7 +54,10 @@ export class AdjustBookStockUseCase {
     book.adjustQuantity(request.quantity);
 
     await this.unitOfWork.execute(async () => {
-      await this.booksCommandRepository.save(book);
+      await this.booksCommandRepository.updateQuantity(
+        book.getId(),
+        book.getQuantity(),
+      );
 
       await this.auditLogCommandRepository.write(
         'ADJUST_BOOK_STOCK',

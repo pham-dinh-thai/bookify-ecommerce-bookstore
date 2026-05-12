@@ -7,6 +7,7 @@ export interface ICreateBookRequest {
   description: string;
   originalPrice: number;
   quantity: number;
+  coverUrl: string;
   languageId: string;
   pageCount: number;
 }
