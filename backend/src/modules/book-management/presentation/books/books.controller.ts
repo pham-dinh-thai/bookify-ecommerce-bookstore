@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Put,
   UseGuards,
@@ -24,6 +25,8 @@ import { UpdateBookRequest } from './requests/update-book.request';
 import { AddBookCoverRequest } from './requests/add-book-cover.request';
 import { AddBookCoverUseCase } from '../../application/book-use-cases/add-book-cover/add-book-cover.use-case';
 import { RemoveBookCoverUseCase } from '../../application/book-use-cases/remove-book-cover/remove-book-cover.use-case';
+import { UpdateBookPriceRequest } from './requests/update-book-price.request';
+import { UpdateBookPriceUseCase } from '../../application/book-use-cases/update-book-price/update-book-price.use-case';
 
 @Controller('books')
 export class BooksController {
@@ -35,6 +38,7 @@ export class BooksController {
     private readonly updateBookUseCase: UpdateBookUseCase,
     private readonly addBookCoverUseCase: AddBookCoverUseCase,
     private readonly removeBookCoverUseCase: RemoveBookCoverUseCase,
+    private readonly updateBookPriceUseCase: UpdateBookPriceUseCase,
   ) {}
 
   @Get()
@@ -94,5 +98,16 @@ export class BooksController {
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
     await this.removeBookCoverUseCase.execute(bookId, id, actorId);
+  }
+
+  @Patch(':id/price')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles('admin', 'staff')
+  public async updatePrice(
+    @Param('id') id: string,
+    @Body() request: UpdateBookPriceRequest,
+    @CurrentUser('userId') actorId: string,
+  ): Promise<void> {
+    await this.updateBookPriceUseCase.execute(id, request, actorId);
   }
 }
