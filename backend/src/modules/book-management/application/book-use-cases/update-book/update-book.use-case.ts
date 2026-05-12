@@ -32,6 +32,16 @@ import {
   type IBookValidation,
 } from '../../../domain/book-aggregate/services/book-validation.service';
 
+/**
+ * Updates an existing book's details.
+ *
+ * Business logic: All related entities (authors, publisher, genres, language)
+ * are validated to exist before updating. Author and genre associations
+ * are replaced entirely (delete all, re-insert) rather than diffed,
+ * keeping the logic simple at the cost of extra queries.
+ *
+ * Every update is recorded in the audit log for traceability.
+ */
 @Injectable()
 export class UpdateBookUseCase {
   public constructor(

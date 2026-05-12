@@ -22,6 +22,15 @@ import {
   type IAuditLogCommandRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
 
+/**
+ * Adds a new cover image to an existing book.
+ *
+ * Business logic: If the book has no covers yet, the first cover
+ * is automatically set as primary. Duplicate primary covers and
+ * duplicate display orders are rejected by the domain.
+ *
+ * Every addition is recorded in the audit log for traceability.
+ */
 export class AddBookCoverUseCase {
   public constructor(
     @Inject(BOOKS_COMMAND_REPOSITORY)
@@ -47,14 +56,9 @@ export class AddBookCoverUseCase {
   ): Promise<void> {
     const book = await this.booksCommandRepository.findOne(bookId);
 
-    const hasPrimaryCover = book
-      .getBookCovers()
-      .some((cover) => cover.getIsPrimary());
-
     const bookCover = BookCover.create({
       id: this.uuidGenerator.generate(),
       url: request.url,
-      isPrimary: hasPrimaryCover ? false : true,
       displayOrder: request.displayOrder,
     });
 

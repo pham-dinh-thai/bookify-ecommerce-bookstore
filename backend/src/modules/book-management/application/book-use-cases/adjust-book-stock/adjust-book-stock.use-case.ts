@@ -1,9 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IUpdateBookPriceRequest } from './update-book-price.request';
-import {
-  BOOKS_COMMAND_REPOSITORY,
-  type IBooksCommandRepository,
-} from '../../../domain/book-aggregate/repositories/books-command.repository.interface';
 import {
   type IUnitOfWork,
   UNIT_OF_WORK,
@@ -12,18 +7,24 @@ import {
   AUDIT_LOG_COMMAND_REPOSITORY,
   type IAuditLogCommandRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
+import {
+  BOOKS_COMMAND_REPOSITORY,
+  type IBooksCommandRepository,
+} from '../../../domain/book-aggregate/repositories/books-command.repository.interface';
+import { IAdjustBookStockRequest } from './adjust-book-stock.request';
 
 /**
- * Updates the price of an existing book.
+ * Adjusts book inventory to a specific quantity.
  *
- * Business logic: Price is managed separately from other book details
- * as it changes more frequently and may require different authorization.
- * Price must be a positive value, enforced by the BookPrice value object.
+ * Business Logic: Administrators or Warehouse Staffs use this use case after a physical stocktake
+ * when the actual count does not match the system records (due to damaged goods,
+ * loss, or data entry errors). Unlike import stock use-case (which adds 'n' units),
+ * this use case sets the inventory directly to the actual counted figure.
  *
- * Every price change is recorded in the audit log for traceability.
+ * Every adjustment is recorded in the audit log for traceability.
  */
 @Injectable()
-export class UpdateBookPriceUseCase {
+export class AdjustBookStockUseCase {
   public constructor(
     @Inject(BOOKS_COMMAND_REPOSITORY)
     private readonly booksCommandRepository: IBooksCommandRepository,
@@ -37,22 +38,23 @@ export class UpdateBookPriceUseCase {
 
   public async execute(
     id: string,
-    request: IUpdateBookPriceRequest,
+    request: IAdjustBookStockRequest,
     performedBy: string,
   ): Promise<void> {
     const book = await this.booksCommandRepository.findOne(id);
 
-    book.updatePrice(request.price);
+    book.adjustQuantity(request.quantity);
 
     await this.unitOfWork.execute(async () => {
       await this.booksCommandRepository.save(book);
 
       await this.auditLogCommandRepository.write(
-        'UPDATE_BOOK_PRICE',
+        'ADJUST_BOOK_STOCK',
         performedBy,
         'book-management',
         'books',
         {
+          adjustQuantity: request.quantity,
           book,
         },
       );

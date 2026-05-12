@@ -32,6 +32,15 @@ import {
   type IBookValidation,
 } from '../../../domain/book-aggregate/services/book-validation.service';
 
+/**
+ * Creates a new book in the system.
+ *
+ * Business logic: Before creation, all related entities (authors, publisher,
+ * genres, language) are validated to exist. The book is then persisted
+ * along with its author and genre associations in a single transaction.
+ *
+ * Every creation is recorded in the audit log for traceability.
+ */
 @Injectable()
 export class CreateBookUseCase {
   public constructor(

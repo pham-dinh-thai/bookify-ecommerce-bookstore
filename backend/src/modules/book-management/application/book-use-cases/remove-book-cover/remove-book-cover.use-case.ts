@@ -16,6 +16,15 @@ import {
   UNIT_OF_WORK,
 } from '../../../../../shared/unit-of-work/application/unit-of-work';
 
+/**
+ * Removes a cover image from a book.
+ *
+ * Business logic: Primary covers cannot be removed to ensure
+ * every book always has a displayable cover. To remove the primary cover,
+ * another cover must be promoted to primary first.
+ *
+ * Every removal is recorded in the audit log for traceability.
+ */
 @Injectable()
 export class RemoveBookCoverUseCase {
   public constructor(

@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IUpdateBookPriceRequest } from './update-book-price.request';
 import {
   BOOKS_COMMAND_REPOSITORY,
   type IBooksCommandRepository,
@@ -14,16 +13,15 @@ import {
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
 
 /**
- * Updates the price of an existing book.
+ * Deletes a book from the system.
  *
- * Business logic: Price is managed separately from other book details
- * as it changes more frequently and may require different authorization.
- * Price must be a positive value, enforced by the BookPrice value object.
- *
- * Every price change is recorded in the audit log for traceability.
+ * Business logic: Deleting a book also removes all associated covers,
+ * authors, and genre associations automatically via database cascade.
+ * The book data is captured before deletion and recorded in the audit log
+ * for traceability.
  */
 @Injectable()
-export class UpdateBookPriceUseCase {
+export class DeleteBookUseCase {
   public constructor(
     @Inject(BOOKS_COMMAND_REPOSITORY)
     private readonly booksCommandRepository: IBooksCommandRepository,
@@ -35,20 +33,14 @@ export class UpdateBookPriceUseCase {
     private readonly unitOfWork: IUnitOfWork,
   ) {}
 
-  public async execute(
-    id: string,
-    request: IUpdateBookPriceRequest,
-    performedBy: string,
-  ): Promise<void> {
+  public async execute(id: string, performedBy: string): Promise<void> {
     const book = await this.booksCommandRepository.findOne(id);
 
-    book.updatePrice(request.price);
-
     await this.unitOfWork.execute(async () => {
-      await this.booksCommandRepository.save(book);
+      await this.booksCommandRepository.delete(id);
 
       await this.auditLogCommandRepository.write(
-        'UPDATE_BOOK_PRICE',
+        'DELETE_BOOK',
         performedBy,
         'book-management',
         'books',
