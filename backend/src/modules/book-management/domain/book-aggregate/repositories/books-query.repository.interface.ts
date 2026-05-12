@@ -1,7 +1,11 @@
 import { BookReadModel } from '../read-models/book.read-model';
 
 export interface IBooksQueryRepository {
-  findAll(): Promise<BookReadModel[]>;
+  findAll(
+    page: number,
+    limit: number,
+    search?: string,
+  ): Promise<BookReadModel[]>;
 
   findOne(id: string): Promise<BookReadModel | null>;
 

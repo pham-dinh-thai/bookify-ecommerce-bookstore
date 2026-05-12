@@ -11,7 +11,7 @@ export class FindBooksUseCase {
     private readonly booksQueryRepository: IBooksQueryRepository,
   ) {}
 
-  public async execute() {
-    return this.booksQueryRepository.findAll();
+  public async execute(page: number, limit: number, search?: string) {
+    return this.booksQueryRepository.findAll(page, limit, search);
   }
 }

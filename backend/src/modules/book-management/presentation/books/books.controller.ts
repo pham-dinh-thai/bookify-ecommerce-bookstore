@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { FindBooksUseCase } from '../../application/book-use-cases/find-books/find-books.use-case';
@@ -50,8 +51,16 @@ export class BooksController {
   ) {}
 
   @Get()
-  public async findAll() {
-    return await this.findBooksUseCase.execute();
+  public async findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+    @Query('search') search?: string,
+  ) {
+    return await this.findBooksUseCase.execute(
+      parseInt(page, 10),
+      parseInt(limit, 10),
+      search,
+    );
   }
 
   @Get('total')
