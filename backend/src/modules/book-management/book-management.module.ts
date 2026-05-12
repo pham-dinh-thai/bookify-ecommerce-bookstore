@@ -33,6 +33,8 @@ import { BOOK_COVERS_COMMAND_REPOSITORY } from './domain/book-aggregate/entities
 import { TypeOrmBookCoversCommandRepository } from './infrastructure/repositories/book-covers/typeorm-book-covers-command.repository';
 import { AddBookCoverUseCase } from './application/book-use-cases/add-book-cover/add-book-cover.use-case';
 import { RemoveBookCoverUseCase } from './application/book-use-cases/remove-book-cover/remove-book-cover.use-case';
+import { UpdateBookPriceUseCase } from './application/book-use-cases/update-book-price/update-book-price.use-case';
+import { ImportBookStockUseCase } from './application/book-use-cases/import-book-stock/import-book-stock.use-case';
 
 @Module({
   controllers: [BooksController],
@@ -56,6 +58,8 @@ import { RemoveBookCoverUseCase } from './application/book-use-cases/remove-book
     UpdateBookUseCase,
     AddBookCoverUseCase,
     RemoveBookCoverUseCase,
+    UpdateBookPriceUseCase,
+    ImportBookStockUseCase,
     {
       provide: BOOKS_QUERY_REPOSITORY,
       useClass: TypeormBooksQueryRepository,

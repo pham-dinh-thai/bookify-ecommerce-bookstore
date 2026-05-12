@@ -154,12 +154,12 @@ export class Book extends AggregateRoot {
     this.originalPrice = this.originalPrice.updatePrice(newPrice);
   }
 
-  public increaseQuantity(amount: number): void {
-    this.quantity = this.quantity.increase(amount);
+  public increaseQuantity(quantity: number): void {
+    this.quantity = this.quantity.increase(quantity);
   }
 
-  public descreaseQuantity(amount: number): void {
-    this.quantity = this.quantity.decrease(amount);
+  public decreaseQuantity(quantity: number): void {
+    this.quantity = this.quantity.decrease(quantity);
   }
 
   public isInStock(): boolean {

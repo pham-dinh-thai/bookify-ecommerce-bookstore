@@ -11,12 +11,24 @@ export default function AuditLog() {
   const pageSize = 10;
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const [selectedMetadata, setSelectedMetadata] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { auditLogs, total, loading, errors, refetch } = useAuditLogs(
     page,
     pageSize,
     search,
   );
+
+  const handleViewMetadata = (metadata: any) => {
+    setSelectedMetadata(metadata);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedMetadata(null);
+  };
 
   const columns = [
     {
@@ -30,9 +42,24 @@ export default function AuditLog() {
       label: 'Metadata',
       className: 'text-[#4f6553]',
       render: (item: any) => (
-        <span className="text-xs font-mono text-[#6d7f72]">
-          {JSON.stringify(item.metadata)}
-        </span>
+        <button
+          onClick={() => handleViewMetadata(item.metadata)}
+          title="View metadata"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#335b48]/10 text-[#335b48] text-xs font-medium rounded-full border border-[#335b48]/20 hover:bg-[#335b48] hover:text-white transition-all duration-200"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-3.5 h-3.5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+          View
+        </button>
       ),
     },
     { key: 'createdAt', label: 'Created At', className: 'text-[#4f6553]' },
@@ -68,6 +95,34 @@ export default function AuditLog() {
           />
         </div>
       </div>
+
+      {/* Metadata Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 backdrop-blur-sm bg-black/20 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-[#2b352f]">Metadata</h3>
+              <button
+                onClick={closeModal}
+                className="text-gray-500 hover:text-gray-700 text-xl"
+              >
+                ×
+              </button>
+            </div>
+            <pre className="bg-gray-100 p-4 rounded text-sm font-mono text-[#4f6553] overflow-auto">
+              {JSON.stringify(selectedMetadata, null, 2)}
+            </pre>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 bg-[#335b48] text-white rounded hover:bg-[#2b352f] transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
