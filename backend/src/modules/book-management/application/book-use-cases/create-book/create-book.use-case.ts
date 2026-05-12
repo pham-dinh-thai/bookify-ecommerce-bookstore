@@ -84,14 +84,16 @@ export class CreateBookUseCase {
       pageCount: request.pageCount,
     });
 
-    book.addCover({
+    const addedCover = book.addCover({
       id: this.uuidGenerator.generate(),
       url: request.coverUrl,
       displayOrder: 1,
     });
 
     await this.unitOfWork.execute(async () => {
-      await this.booksCommandRepository.save(book);
+      await this.booksCommandRepository.insert(book);
+
+      await this.booksCommandRepository.insertCover(book.getId(), addedCover);
 
       await this.auditLogCommandRepository.write(
         'CREATE_BOOK',

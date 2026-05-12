@@ -43,33 +43,6 @@ export class BooksMapper {
     bookTypeOrm.languageId = book.getLanguageId();
     bookTypeOrm.pageCount = book.getPageCount();
 
-    bookTypeOrm.covers = book.getBookCovers().map((cover) => {
-      const coverTypeOrm = new BookCoverTypeOrm();
-      coverTypeOrm.id = cover.getId();
-      coverTypeOrm.bookId = book.getId();
-      coverTypeOrm.url = cover.getUrl();
-      coverTypeOrm.isPrimary = cover.getIsPrimary();
-      coverTypeOrm.displayOrder = cover.getDisplayOrder();
-      coverTypeOrm.book = bookTypeOrm;
-      return coverTypeOrm;
-    });
-
-    bookTypeOrm.bookAuthors = book.getAuthorIds().map((authorId) => {
-      const bookAuthorTypeOrm = new BookAuthorTypeOrm();
-      bookAuthorTypeOrm.bookId = book.getId();
-      bookAuthorTypeOrm.authorId = authorId;
-      bookAuthorTypeOrm.book = bookTypeOrm;
-      return bookAuthorTypeOrm;
-    });
-
-    bookTypeOrm.bookGenres = book.getGenreIds().map((genreId) => {
-      const bookGenreTypeOrm = new BookGenreTypeOrm();
-      bookGenreTypeOrm.bookId = book.getId();
-      bookGenreTypeOrm.genreId = genreId;
-      bookGenreTypeOrm.book = bookTypeOrm;
-      return bookGenreTypeOrm;
-    });
-
     return bookTypeOrm;
   }
 

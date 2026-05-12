@@ -3,7 +3,7 @@ import { BookCover } from './entities/book-cover/book-cover.entity';
 import { BookCoverDisplayOrderDuplicateException } from './entities/book-cover/exceptions/book-cover-display-order-duplicate.exception';
 import { BookCoverNotFoundException } from './entities/book-cover/exceptions/book-cover-not-found.exception';
 import { BookCoverPrimaryDuplicateException } from './entities/book-cover/exceptions/book-cover-primary-duplicate.exception';
-import { BookAuthorEmptyException } from './exceptions/book-author-empty.exception';
+import { BookAuthorEmptyException } from './entities/book-author/exceptions/book-author-empty.exception';
 import { BookDescriptionEmptyException } from './exceptions/book-description-empty.exception';
 import { BookGenreEmptyException } from './exceptions/book-genre-empty.exception';
 import { BookIdEmptyException } from './exceptions/book-id-empty.exception';
@@ -186,16 +186,20 @@ export class Book extends AggregateRoot {
    * Removes a cover by ID. Throws if cover not found or if it's the primary cover.
    */
   public removeCover(coverId: string): BookCover {
-    const cover = this.bookCovers.find((c) => c.getId() === coverId);
-    if (!cover) {
+    const removedCover = this.bookCovers.find(
+      (cover) => cover.getId() === coverId,
+    );
+    if (!removedCover) {
       throw new BookCoverNotFoundException();
     }
 
-    cover.ensureCanBeRemoved();
+    removedCover.ensureCanBeRemoved();
 
-    this.bookCovers = this.bookCovers.filter((c) => c.getId() !== coverId);
+    this.bookCovers = this.bookCovers.filter(
+      (cover) => cover.getId() !== coverId,
+    );
 
-    return cover;
+    return removedCover;
   }
 
   public updatePrice(newPrice: number): void {

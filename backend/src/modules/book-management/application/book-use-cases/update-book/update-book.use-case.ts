@@ -90,7 +90,7 @@ export class UpdateBookUseCase {
     });
 
     await this.unitOfWork.execute(async () => {
-      await this.booksCommandRepository.save(book);
+      await this.booksCommandRepository.update(book);
 
       await this.auditLogCommandRepository.write(
         'UPDATE_BOOK',

@@ -49,10 +49,13 @@ export class RemoveBookCoverUseCase {
   ): Promise<void> {
     const book = await this.booksCommandRepository.findOne(bookId);
 
-    book.removeCover(id);
+    const removedCover = book.removeCover(id);
 
     await this.unitOfWork.execute(async () => {
-      await this.booksCommandRepository.save(book);
+      await this.booksCommandRepository.removeCover(
+        bookId,
+        removedCover.getId(),
+      );
 
       await this.auditLogCommandRepository.write(
         'REMOVE_COVER',
@@ -61,6 +64,7 @@ export class RemoveBookCoverUseCase {
         'bookCovers',
         {
           book,
+          removedCover,
         },
       );
     });

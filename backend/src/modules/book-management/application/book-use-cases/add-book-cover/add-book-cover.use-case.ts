@@ -56,14 +56,14 @@ export class AddBookCoverUseCase {
   ): Promise<void> {
     const book = await this.booksCommandRepository.findOne(bookId);
 
-    book.addCover({
+    const addedCover = book.addCover({
       id: this.uuidGenerator.generate(),
       url: request.url,
       displayOrder: request.displayOrder,
     });
 
     await this.unitOfWork.execute(async () => {
-      await this.booksCommandRepository.save(book);
+      await this.booksCommandRepository.insertCover(book.getId(), addedCover);
 
       await this.auditLogCommandRepository.write(
         'ADD_COVER',
