@@ -12,6 +12,10 @@ import {
   UNIT_OF_WORK,
 } from '../../../../../shared/unit-of-work/application/unit-of-work';
 import { IImportBookStockRequest } from './import-book-stock.request';
+import {
+  CACHE_REPOSITORY,
+  type ICacheRepository,
+} from '../../../../../shared/cache/domain/cache.repository.interface';
 
 /**
  * Increases book inventory when new stock arrives.
@@ -21,6 +25,7 @@ import { IImportBookStockRequest } from './import-book-stock.request';
  * the received quantity on top of the current inventory.
  *
  * Every import is recorded in the audit log for traceability.
+ * Book cache is invalidated after a successful addition to ensure clients see the latest data.
  */
 @Injectable()
 export class ImportBookStockUseCase {
@@ -30,6 +35,9 @@ export class ImportBookStockUseCase {
 
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogCommandRepository: IAuditLogCommandRepository,
+
+    @Inject(CACHE_REPOSITORY)
+    private readonly cacheRepository: ICacheRepository,
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
@@ -58,5 +66,7 @@ export class ImportBookStockUseCase {
         },
       );
     });
+
+    await this.cacheRepository.delByPattern('books:*');
   }
 }
