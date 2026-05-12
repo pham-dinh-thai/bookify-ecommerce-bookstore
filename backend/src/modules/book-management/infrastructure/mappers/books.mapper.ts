@@ -48,6 +48,7 @@ export class BooksMapper {
       coverTypeOrm.url = cover.getUrl();
       coverTypeOrm.isPrimary = cover.getIsPrimary();
       coverTypeOrm.displayOrder = cover.getDisplayOrder();
+      coverTypeOrm.book = bookTypeOrm;
       return coverTypeOrm;
     });
 

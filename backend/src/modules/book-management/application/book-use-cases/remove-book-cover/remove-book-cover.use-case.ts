@@ -4,10 +4,6 @@ import {
   type IBooksCommandRepository,
 } from '../../../domain/book-aggregate/repositories/books-command.repository.interface';
 import {
-  BOOK_COVERS_COMMAND_REPOSITORY,
-  type IBookCoversCommandRepository,
-} from '../../../domain/book-aggregate/entities/book-cover/repositories/book-covers-command.repository.interface';
-import {
   AUDIT_LOG_COMMAND_REPOSITORY,
   type IAuditLogCommandRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
@@ -36,9 +32,6 @@ export class RemoveBookCoverUseCase {
     @Inject(BOOKS_COMMAND_REPOSITORY)
     private readonly booksCommandRepository: IBooksCommandRepository,
 
-    @Inject(BOOK_COVERS_COMMAND_REPOSITORY)
-    private readonly bookCoversCommandRepository: IBookCoversCommandRepository,
-
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogCommandRepository: IAuditLogCommandRepository,
 
@@ -56,12 +49,10 @@ export class RemoveBookCoverUseCase {
   ): Promise<void> {
     const book = await this.booksCommandRepository.findOne(bookId);
 
-    const bookCover = await this.bookCoversCommandRepository.findOne(id);
-
-    bookCover.ensureCanBeRemoved();
+    book.removeCover(id);
 
     await this.unitOfWork.execute(async () => {
-      await this.bookCoversCommandRepository.delete(bookCover.getId());
+      await this.booksCommandRepository.save(book);
 
       await this.auditLogCommandRepository.write(
         'REMOVE_COVER',
@@ -69,8 +60,7 @@ export class RemoveBookCoverUseCase {
         'book-management',
         'bookCovers',
         {
-          bookId: book.getId(),
-          bookCover,
+          book,
         },
       );
     });

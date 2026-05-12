@@ -51,6 +51,7 @@ export class BookTypeOrm {
 
   @OneToMany(() => BookCoverTypeOrm, (cover) => cover.book, {
     cascade: true,
+    orphanedRowAction: 'delete',
   })
   covers!: BookCoverTypeOrm[];
 
