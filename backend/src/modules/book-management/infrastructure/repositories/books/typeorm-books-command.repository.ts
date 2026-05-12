@@ -6,6 +6,8 @@ import { IBooksCommandRepository } from '../../../domain/book-aggregate/reposito
 import { BookTypeOrm } from '../../entities/book.entity';
 import { BookCoverTypeOrm } from '../../entities/book-cover.entity';
 import { BooksMapper } from '../../mappers/books.mapper';
+import { BookAuthorTypeOrm } from '../../entities/book-author.entity';
+import { BookGenreTypeOrm } from '../../entities/book-genre.entity';
 
 @Injectable()
 export class TypeormBooksCommandRepository implements IBooksCommandRepository {
@@ -31,32 +33,38 @@ export class TypeormBooksCommandRepository implements IBooksCommandRepository {
   }
 
   public async save(book: Book): Promise<void> {
-    // Load existing covers to identify orphaned ones (removed from aggregate)
-    const existingBook = await this.unitOfWork
-      .getManager()
-      .findOne(BookTypeOrm, {
-        where: { id: book.getId() },
-        relations: { covers: true },
-      });
+    const manager = this.unitOfWork.getManager();
+
+    const existingBook = await manager.findOne(BookTypeOrm, {
+      where: { id: book.getId() },
+      relations: { covers: true },
+    });
 
     if (existingBook) {
       const existingCoverIds = existingBook.covers.map((c) => c.id);
+
       const newCoverIds = book.getBookCovers().map((c) => c.getId());
+
       const orphanedCoverIds = existingCoverIds.filter(
         (id) => !newCoverIds.includes(id),
       );
 
-      // Delete orphaned covers
       if (orphanedCoverIds.length > 0) {
-        await this.unitOfWork
-          .getManager()
-          .delete(BookCoverTypeOrm, { id: In(orphanedCoverIds) });
+        await manager.delete(BookCoverTypeOrm, {
+          id: In(orphanedCoverIds),
+        });
       }
     }
 
-    await this.unitOfWork
-      .getManager()
-      .save(BookTypeOrm, BooksMapper.toTypeOrm(book));
+    await manager.delete(BookAuthorTypeOrm, {
+      bookId: book.getId(),
+    });
+
+    await manager.delete(BookGenreTypeOrm, {
+      bookId: book.getId(),
+    });
+
+    await manager.save(BookTypeOrm, BooksMapper.toTypeOrm(book));
   }
 
   public async delete(id: string): Promise<void> {

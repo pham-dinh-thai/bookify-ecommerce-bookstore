@@ -9,16 +9,6 @@ import {
   UNIT_OF_WORK,
 } from '../../../../../shared/unit-of-work/application/unit-of-work';
 import {
-  BOOK_AUTHORS_COMMAND_REPOSITORY,
-  type IBookAuthorsCommandRepository,
-} from '../../../domain/book-aggregate/entities/book-author/repositories/book-authors-command.repository.interface';
-import {
-  BOOK_GENRES_COMMAND_REPOSITORY,
-  type IBookGenresCommandRepository,
-} from '../../../domain/book-aggregate/entities/book-genre/repositories/book-genres-command.repository.interface';
-import { BookAuthor } from '../../../domain/book-aggregate/entities/book-author/book-author.entity';
-import { BookGenre } from '../../../domain/book-aggregate/entities/book-genre/book-genre.entity';
-import {
   AUDIT_LOG_COMMAND_REPOSITORY,
   type IAuditLogCommandRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
@@ -52,12 +42,6 @@ export class UpdateBookUseCase {
   public constructor(
     @Inject(BOOKS_COMMAND_REPOSITORY)
     private readonly booksCommandRepository: IBooksCommandRepository,
-
-    @Inject(BOOK_AUTHORS_COMMAND_REPOSITORY)
-    private readonly bookAuthorsCommandRepository: IBookAuthorsCommandRepository,
-
-    @Inject(BOOK_GENRES_COMMAND_REPOSITORY)
-    private readonly bookGenresCommandRepository: IBookGenresCommandRepository,
 
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogCommandRepository: IAuditLogCommandRepository,
@@ -108,20 +92,6 @@ export class UpdateBookUseCase {
     await this.unitOfWork.execute(async () => {
       await this.booksCommandRepository.save(book);
 
-      await this.bookAuthorsCommandRepository.deleteByBookId(book.getId());
-      await Promise.all(
-        book
-          .getAuthorIds()
-          .map((authorId) => this.addBookAuthor(book.getId(), authorId)),
-      );
-
-      await this.bookGenresCommandRepository.deleteByBookId(book.getId());
-      await Promise.all(
-        book
-          .getGenreIds()
-          .map((genreId) => this.addBookGenre(book.getId(), genreId)),
-      );
-
       await this.auditLogCommandRepository.write(
         'UPDATE_BOOK',
         performedBy,
@@ -132,23 +102,5 @@ export class UpdateBookUseCase {
     });
 
     await this.cacheRepository.delByPattern('books:*');
-  }
-
-  private async addBookAuthor(bookId: string, authorId: string): Promise<void> {
-    await this.bookAuthorsCommandRepository.save(
-      BookAuthor.create({
-        bookId,
-        authorId,
-      }),
-    );
-  }
-
-  private async addBookGenre(bookId: string, genreId: string): Promise<void> {
-    await this.bookGenresCommandRepository.save(
-      BookGenre.create({
-        bookId,
-        genreId,
-      }),
-    );
   }
 }

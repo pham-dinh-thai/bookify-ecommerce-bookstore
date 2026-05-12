@@ -2,6 +2,8 @@ import { Book } from '../../domain/book-aggregate/book.aggregate';
 import { BookReadModel } from '../../domain/book-aggregate/read-models/book.read-model';
 import { BookTypeOrm } from '../entities/book.entity';
 import { BookCoverTypeOrm } from '../entities/book-cover.entity';
+import { BookAuthorTypeOrm } from '../entities/book-author.entity';
+import { BookGenreTypeOrm } from '../entities/book-genre.entity';
 
 export class BooksMapper {
   public static toDomain(bookTypeOrm: BookTypeOrm): Book {
@@ -50,6 +52,22 @@ export class BooksMapper {
       coverTypeOrm.displayOrder = cover.getDisplayOrder();
       coverTypeOrm.book = bookTypeOrm;
       return coverTypeOrm;
+    });
+
+    bookTypeOrm.bookAuthors = book.getAuthorIds().map((authorId) => {
+      const bookAuthorTypeOrm = new BookAuthorTypeOrm();
+      bookAuthorTypeOrm.bookId = book.getId();
+      bookAuthorTypeOrm.authorId = authorId;
+      bookAuthorTypeOrm.book = bookTypeOrm;
+      return bookAuthorTypeOrm;
+    });
+
+    bookTypeOrm.bookGenres = book.getGenreIds().map((genreId) => {
+      const bookGenreTypeOrm = new BookGenreTypeOrm();
+      bookGenreTypeOrm.bookId = book.getId();
+      bookGenreTypeOrm.genreId = genreId;
+      bookGenreTypeOrm.book = bookTypeOrm;
+      return bookGenreTypeOrm;
     });
 
     return bookTypeOrm;
