@@ -1,4 +1,4 @@
-import { BookCoverProps } from './entities/book-cover/book-cover.entity';
+import { BookCoverProps } from './entities/book-cover/types';
 
 export type BookProps = {
   id: string;

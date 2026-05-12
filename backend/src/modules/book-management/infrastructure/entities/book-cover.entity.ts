@@ -30,7 +30,9 @@ export class BookCoverTypeOrm {
   @CreateDateColumn()
   createdAt!: Date;
 
-  @ManyToOne(() => BookTypeOrm, (book) => book.covers)
+  @ManyToOne(() => BookTypeOrm, (book) => book.covers, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'bookId' })
   book!: BookTypeOrm;
 }
