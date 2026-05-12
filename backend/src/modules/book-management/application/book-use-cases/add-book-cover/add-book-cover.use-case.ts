@@ -4,7 +4,6 @@ import {
   BOOKS_COMMAND_REPOSITORY,
   type IBooksCommandRepository,
 } from '../../../domain/book-aggregate/repositories/books-command.repository.interface';
-import { BookCover } from '../../../domain/book-aggregate/entities/book-cover/book-cover.entity';
 import {
   type IUuidGenerator,
   UUID_GENERATOR,
@@ -64,23 +63,21 @@ export class AddBookCoverUseCase {
   ): Promise<void> {
     const book = await this.booksCommandRepository.findOne(bookId);
 
-    const bookCover = BookCover.create({
+    const addedCover = book.addCover({
       id: this.uuidGenerator.generate(),
       url: request.url,
       displayOrder: request.displayOrder,
     });
 
-    book.addCover(bookCover);
-
     await this.unitOfWork.execute(async () => {
-      await this.bookCoversCommandRepository.save(book.getId(), bookCover);
+      await this.bookCoversCommandRepository.save(book.getId(), addedCover);
 
       await this.auditLogCommandRepository.write(
         'ADD_COVER',
         performedBy,
         'book-management',
         'bookCovers',
-        { bookId: book.getId(), bookCover },
+        { bookId: book.getId(), addedCover },
       );
     });
 
