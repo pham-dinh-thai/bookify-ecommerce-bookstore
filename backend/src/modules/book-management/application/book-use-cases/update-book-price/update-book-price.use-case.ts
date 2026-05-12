@@ -12,6 +12,10 @@ import {
   AUDIT_LOG_COMMAND_REPOSITORY,
   type IAuditLogCommandRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
+import {
+  CACHE_REPOSITORY,
+  type ICacheRepository,
+} from '../../../../../shared/cache/domain/cache.repository.interface';
 
 /**
  * Updates the price of an existing book.
@@ -21,6 +25,7 @@ import {
  * Price must be a positive value, enforced by the BookPrice value object.
  *
  * Every price change is recorded in the audit log for traceability.
+ * Book cache is invalidated after a successful price update to ensure clients see the latest data.
  */
 @Injectable()
 export class UpdateBookPriceUseCase {
@@ -30,6 +35,9 @@ export class UpdateBookPriceUseCase {
 
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogCommandRepository: IAuditLogCommandRepository,
+
+    @Inject(CACHE_REPOSITORY)
+    private readonly cacheRepository: ICacheRepository,
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
@@ -57,5 +65,7 @@ export class UpdateBookPriceUseCase {
         },
       );
     });
+
+    await this.cacheRepository.delByPattern('books:*');
   }
 }
