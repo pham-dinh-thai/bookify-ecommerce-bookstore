@@ -13,6 +13,15 @@ import {
   type IAuditLogCommandRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
 
+/**
+ * Updates the price of an existing book.
+ *
+ * Business logic: Price is managed separately from other book details
+ * as it changes more frequently and may require different authorization.
+ * Price must be a positive value, enforced by the BookPrice value object.
+ *
+ * Every price change is recorded in the audit log for traceability.
+ */
 @Injectable()
 export class UpdateBookPriceUseCase {
   public constructor(
