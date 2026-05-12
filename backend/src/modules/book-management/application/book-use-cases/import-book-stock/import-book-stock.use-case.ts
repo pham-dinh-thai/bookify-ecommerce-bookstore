@@ -13,6 +13,15 @@ import {
 } from '../../../../../shared/unit-of-work/application/unit-of-work';
 import { IImportBookStockRequest } from './import-book-stock.request';
 
+/**
+ * Increases book inventory when new stock arrives.
+ *
+ * Business logic: Used when a shipment of books is received.
+ * Unlike stock adjustment (which sets an exact figure), this adds
+ * the received quantity on top of the current inventory.
+ *
+ * Every import is recorded in the audit log for traceability.
+ */
 @Injectable()
 export class ImportBookStockUseCase {
   public constructor(
