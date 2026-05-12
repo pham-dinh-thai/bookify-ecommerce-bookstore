@@ -40,3 +40,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# .gitattributes
+pnpm-lock.yaml linguist-generated=true
+package-lock.json linguist-generated=true

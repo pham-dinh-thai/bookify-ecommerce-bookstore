@@ -54,3 +54,7 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# .gitattributes
+pnpm-lock.yaml linguist-generated=true
+package-lock.json linguist-generated=true
