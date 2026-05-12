@@ -31,6 +31,10 @@ import {
   BOOK_VALIDATION,
   type IBookValidation,
 } from '../../../domain/book-aggregate/services/book-validation.service';
+import {
+  CACHE_REPOSITORY,
+  type ICacheRepository,
+} from '../../../../../shared/cache/domain/cache.repository.interface';
 
 /**
  * Creates a new book in the system.
@@ -40,6 +44,7 @@ import {
  * along with its author and genre associations in a single transaction.
  *
  * Every creation is recorded in the audit log for traceability.
+ * Book cache is invalidated after a successful addition to ensure clients see the latest data.
  */
 @Injectable()
 export class CreateBookUseCase {
@@ -55,6 +60,9 @@ export class CreateBookUseCase {
 
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogCommandRepository: IAuditLogCommandRepository,
+
+    @Inject(CACHE_REPOSITORY)
+    private readonly cacheRepository: ICacheRepository,
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
@@ -117,6 +125,8 @@ export class CreateBookUseCase {
         },
       );
     });
+
+    await this.cacheRepository.delByPattern('books:*');
   }
 
   private async addBookAuthor(bookId: string, authorId: string): Promise<void> {
