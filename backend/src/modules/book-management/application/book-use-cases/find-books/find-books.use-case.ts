@@ -10,6 +10,12 @@ import {
 import { FindBooksResponse } from './find-books.response';
 import { BOOK_CACHE_KEYS, BOOK_CACHE_TTL } from '../book-cache.constants';
 
+/**
+ * Retrieves a paginated list of books with optional search by title or author.
+ *
+ * Results are cached to reduce database load. Cache is keyed by page,
+ * limit, and search term, and is invalidated whenever books are modified.
+ */
 @Injectable()
 export class FindBooksUseCase {
   public constructor(
