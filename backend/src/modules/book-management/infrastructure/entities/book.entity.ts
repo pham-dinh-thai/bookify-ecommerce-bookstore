@@ -5,7 +5,6 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -53,7 +52,7 @@ export class BookTypeOrm {
   @OneToMany(() => BookCoverTypeOrm, (cover) => cover.book)
   covers!: BookCoverTypeOrm[] | null;
 
-  @OneToOne(() => LanguageTypeOrm)
+  @ManyToOne(() => LanguageTypeOrm)
   @JoinColumn({ name: 'languageId' })
   language!: LanguageTypeOrm;
 

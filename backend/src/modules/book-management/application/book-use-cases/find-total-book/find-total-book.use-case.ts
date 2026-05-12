@@ -4,6 +4,11 @@ import {
   type IBooksQueryRepository,
 } from '../../../domain/book-aggregate/repositories/books-query.repository.interface';
 
+/**
+ * Returns the total number of books in the system.
+ *
+ * Used for dashboard statistics.
+ */
 @Injectable()
 export class FindTotalBookUseCase {
   public constructor(
@@ -12,7 +17,8 @@ export class FindTotalBookUseCase {
   ) {}
 
   public async execute(): Promise<number> {
-    // TODO: Implement the logic to find the total number of books
-    return 1;
+    const total = await this.booksQueryRepository.count();
+
+    return total;
   }
 }

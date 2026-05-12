@@ -11,14 +11,19 @@ import {
   AUDIT_LOG_COMMAND_REPOSITORY,
   type IAuditLogCommandRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
+import {
+  CACHE_REPOSITORY,
+  type ICacheRepository,
+} from '../../../../../shared/cache/domain/cache.repository.interface';
 
 /**
  * Deletes a book from the system.
  *
  * Business logic: Deleting a book also removes all associated covers,
  * authors, and genre associations automatically via database cascade.
- * The book data is captured before deletion and recorded in the audit log
- * for traceability.
+ *
+ * The book data is captured before deletion and recorded in the audit log for traceability.
+ * Book cache is invalidated after a successful addition to ensure clients see the latest data.
  */
 @Injectable()
 export class DeleteBookUseCase {
@@ -28,6 +33,9 @@ export class DeleteBookUseCase {
 
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogCommandRepository: IAuditLogCommandRepository,
+
+    @Inject(CACHE_REPOSITORY)
+    private readonly cacheRepository: ICacheRepository,
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
@@ -49,5 +57,7 @@ export class DeleteBookUseCase {
         },
       );
     });
+
+    await this.cacheRepository.delByPattern('books:*');
   }
 }

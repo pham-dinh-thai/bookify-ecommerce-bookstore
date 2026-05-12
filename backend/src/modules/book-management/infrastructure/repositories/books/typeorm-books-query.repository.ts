@@ -13,24 +13,37 @@ export class TypeormBooksQueryRepository implements IBooksQueryRepository {
     private readonly repository: Repository<BookTypeOrm>,
   ) {}
 
-  public async findAll(): Promise<BookReadModel[]> {
-    const books = await this.repository.find({
-      relations: [
-        'language',
-        'publisher',
-        'bookAuthors',
-        'bookAuthors.author',
-        'bookGenres',
-        'bookGenres.genre',
-        'covers',
-      ],
-    });
+  public async findAll(
+    page: number,
+    limit: number,
+    search?: string,
+  ): Promise<BookReadModel[]> {
+    const query = this.repository
+      .createQueryBuilder('book')
+      .leftJoinAndSelect('book.language', 'language')
+      .leftJoinAndSelect('book.publisher', 'publisher')
+      .leftJoinAndSelect('book.bookAuthors', 'bookAuthors')
+      .leftJoinAndSelect('bookAuthors.author', 'author')
+      .leftJoinAndSelect('book.bookGenres', 'bookGenres')
+      .leftJoinAndSelect('bookGenres.genre', 'genre')
+      .leftJoinAndSelect('book.covers', 'covers');
 
-    return books.map((book) => BooksMapper.toReadModel(book));
+    if (search) {
+      query.where('book.title LIKE :search OR author.name LIKE :search', {
+        search: `%${search}%`,
+      });
+    }
+
+    const booksTypeOrm = await query
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getMany();
+
+    return booksTypeOrm.map((book) => BooksMapper.toReadModel(book));
   }
 
   public async findOne(id: string): Promise<BookReadModel | null> {
-    const book = await this.repository.findOne({
+    const bookTypeOrm = await this.repository.findOne({
       where: { id },
       relations: [
         'language',
@@ -43,7 +56,7 @@ export class TypeormBooksQueryRepository implements IBooksQueryRepository {
       ],
     });
 
-    return book ? BooksMapper.toReadModel(book) : null;
+    return bookTypeOrm ? BooksMapper.toReadModel(bookTypeOrm) : null;
   }
 
   public async count(search?: string): Promise<number> {

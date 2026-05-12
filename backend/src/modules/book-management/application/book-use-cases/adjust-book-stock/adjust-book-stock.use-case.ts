@@ -12,6 +12,10 @@ import {
   type IBooksCommandRepository,
 } from '../../../domain/book-aggregate/repositories/books-command.repository.interface';
 import { IAdjustBookStockRequest } from './adjust-book-stock.request';
+import {
+  CACHE_REPOSITORY,
+  type ICacheRepository,
+} from '../../../../../shared/cache/domain/cache.repository.interface';
 
 /**
  * Adjusts book inventory to a specific quantity.
@@ -22,6 +26,7 @@ import { IAdjustBookStockRequest } from './adjust-book-stock.request';
  * this use case sets the inventory directly to the actual counted figure.
  *
  * Every adjustment is recorded in the audit log for traceability.
+ * Book cache is invalidated after a successful addition to ensure clients see the latest data.
  */
 @Injectable()
 export class AdjustBookStockUseCase {
@@ -31,6 +36,9 @@ export class AdjustBookStockUseCase {
 
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogCommandRepository: IAuditLogCommandRepository,
+
+    @Inject(CACHE_REPOSITORY)
+    private readonly cacheRepository: ICacheRepository,
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
@@ -59,5 +67,7 @@ export class AdjustBookStockUseCase {
         },
       );
     });
+
+    await this.cacheRepository.delByPattern('books:*');
   }
 }

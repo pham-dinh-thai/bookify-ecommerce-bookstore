@@ -21,6 +21,10 @@ import {
   AUDIT_LOG_COMMAND_REPOSITORY,
   type IAuditLogCommandRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
+import {
+  CACHE_REPOSITORY,
+  type ICacheRepository,
+} from '../../../../../shared/cache/domain/cache.repository.interface';
 
 /**
  * Adds a new cover image to an existing book.
@@ -30,6 +34,7 @@ import {
  * duplicate display orders are rejected by the domain.
  *
  * Every addition is recorded in the audit log for traceability.
+ * Book cache is invalidated after a successful addition to ensure clients see the latest data.
  */
 export class AddBookCoverUseCase {
   public constructor(
@@ -41,6 +46,9 @@ export class AddBookCoverUseCase {
 
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogCommandRepository: IAuditLogCommandRepository,
+
+    @Inject(CACHE_REPOSITORY)
+    private readonly cacheRepository: ICacheRepository,
 
     @Inject(UUID_GENERATOR)
     private readonly uuidGenerator: IUuidGenerator,
@@ -75,5 +83,7 @@ export class AddBookCoverUseCase {
         { bookId: book.getId(), bookCover },
       );
     });
+
+    await this.cacheRepository.delByPattern('books:*');
   }
 }
