@@ -1,8 +1,5 @@
 import { AggregateRoot } from '../../../../shared/domain/aggregate-root';
-import {
-  BookCover,
-  BookCoverProps,
-} from './entities/book-cover/book-cover.entity';
+import { BookCover } from './entities/book-cover/book-cover.entity';
 import { BookCoverDisplayOrderDuplicateException } from './entities/book-cover/exceptions/book-cover-display-order-duplicate.exception';
 import { BookCoverPrimaryDuplicateException } from './entities/book-cover/exceptions/book-cover-primary-duplicate.exception';
 import { BookAuthorEmptyException } from './exceptions/book-author-empty.exception';
@@ -145,6 +142,10 @@ export class Book extends AggregateRoot {
       )
     ) {
       throw new BookCoverDisplayOrderDuplicateException();
+    }
+
+    if (this.bookCovers.length === 0) {
+      cover.markAsPrimary();
     }
 
     this.bookCovers.push(cover);

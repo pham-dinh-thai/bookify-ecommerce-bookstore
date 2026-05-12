@@ -2,20 +2,14 @@ import { BookCoverCanNotBeRemovedException } from './exceptions/book-cover-can-n
 import { BookCoverDisplayOrderNegativeException } from './exceptions/book-cover-display-order-negative.exception';
 import { BookCoverIdEmptyException } from './exceptions/book-cover-id-empty.exception';
 import { BookCoverUrlEmptyException } from './exceptions/book-cover-url-empty.exception';
-
-export type BookCoverProps = {
-  id: string;
-  url: string;
-  isPrimary: boolean;
-  displayOrder: number;
-};
+import { BookCoverProps, CreateBookCoverProps } from './types';
 
 export class BookCover {
   private constructor(
-    public readonly id: string,
-    public url: string,
-    public isPrimary: boolean,
-    public displayOrder: number,
+    private readonly id: string,
+    private url: string,
+    private isPrimary: boolean,
+    private displayOrder: number,
   ) {
     if (!id) {
       throw new BookCoverIdEmptyException();
@@ -30,13 +24,8 @@ export class BookCover {
     }
   }
 
-  public static create(params: BookCoverProps): BookCover {
-    return new BookCover(
-      params.id,
-      params.url,
-      params.isPrimary,
-      params.displayOrder,
-    );
+  public static create(params: CreateBookCoverProps): BookCover {
+    return new BookCover(params.id, params.url, false, params.displayOrder);
   }
 
   public static fromPersistent(params: BookCoverProps): BookCover {
@@ -52,6 +41,10 @@ export class BookCover {
     if (this.isPrimary) {
       throw new BookCoverCanNotBeRemovedException();
     }
+  }
+
+  public markAsPrimary(): void {
+    this.isPrimary = true;
   }
 
   public getId(): string {
