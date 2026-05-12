@@ -15,6 +15,10 @@ import {
   type IUnitOfWork,
   UNIT_OF_WORK,
 } from '../../../../../shared/unit-of-work/application/unit-of-work';
+import {
+  CACHE_REPOSITORY,
+  type ICacheRepository,
+} from '../../../../../shared/cache/domain/cache.repository.interface';
 
 /**
  * Removes a cover image from a book.
@@ -24,6 +28,7 @@ import {
  * another cover must be promoted to primary first.
  *
  * Every removal is recorded in the audit log for traceability.
+ * Book cache is invalidated after a successful removal to ensure clients see the latest data.
  */
 @Injectable()
 export class RemoveBookCoverUseCase {
@@ -36,6 +41,9 @@ export class RemoveBookCoverUseCase {
 
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogCommandRepository: IAuditLogCommandRepository,
+
+    @Inject(CACHE_REPOSITORY)
+    private readonly cacheRepository: ICacheRepository,
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
@@ -61,10 +69,12 @@ export class RemoveBookCoverUseCase {
         'book-management',
         'bookCovers',
         {
-          bookId,
+          bookId: book.getId(),
           bookCover,
         },
       );
     });
+
+    await this.cacheRepository.delByPattern('books:*');
   }
 }
