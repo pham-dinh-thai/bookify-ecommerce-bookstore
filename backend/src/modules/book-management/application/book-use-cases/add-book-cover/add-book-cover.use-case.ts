@@ -9,10 +9,6 @@ import {
   UUID_GENERATOR,
 } from '../../../../../shared/uuid/domain/uuid-generator.interface';
 import {
-  BOOK_COVERS_COMMAND_REPOSITORY,
-  type IBookCoversCommandRepository,
-} from '../../../domain/book-aggregate/entities/book-cover/repositories/book-covers-command.repository.interface';
-import {
   type IUnitOfWork,
   UNIT_OF_WORK,
 } from '../../../../../shared/unit-of-work/application/unit-of-work';
@@ -40,9 +36,6 @@ export class AddBookCoverUseCase {
     @Inject(BOOKS_COMMAND_REPOSITORY)
     private readonly booksCommandRepository: IBooksCommandRepository,
 
-    @Inject(BOOK_COVERS_COMMAND_REPOSITORY)
-    private readonly bookCoversCommandRepository: IBookCoversCommandRepository,
-
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogCommandRepository: IAuditLogCommandRepository,
 
@@ -63,21 +56,21 @@ export class AddBookCoverUseCase {
   ): Promise<void> {
     const book = await this.booksCommandRepository.findOne(bookId);
 
-    const addedCover = book.addCover({
+    book.addCover({
       id: this.uuidGenerator.generate(),
       url: request.url,
       displayOrder: request.displayOrder,
     });
 
     await this.unitOfWork.execute(async () => {
-      await this.bookCoversCommandRepository.save(book.getId(), addedCover);
+      await this.booksCommandRepository.save(book);
 
       await this.auditLogCommandRepository.write(
         'ADD_COVER',
         performedBy,
         'book-management',
         'bookCovers',
-        { bookId: book.getId(), addedCover },
+        { book },
       );
     });
 

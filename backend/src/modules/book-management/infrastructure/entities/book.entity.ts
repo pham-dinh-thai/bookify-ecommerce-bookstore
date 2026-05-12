@@ -49,8 +49,10 @@ export class BookTypeOrm {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @OneToMany(() => BookCoverTypeOrm, (cover) => cover.book)
-  covers!: BookCoverTypeOrm[] | null;
+  @OneToMany(() => BookCoverTypeOrm, (cover) => cover.book, {
+    cascade: true,
+  })
+  covers!: BookCoverTypeOrm[];
 
   @ManyToOne(() => LanguageTypeOrm)
   @JoinColumn({ name: 'languageId' })

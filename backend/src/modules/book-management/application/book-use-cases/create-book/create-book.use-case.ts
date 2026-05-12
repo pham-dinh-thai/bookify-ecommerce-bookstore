@@ -100,6 +100,12 @@ export class CreateBookUseCase {
       pageCount: request.pageCount,
     });
 
+    book.addCover({
+      id: this.uuidGenerator.generate(),
+      url: request.coverUrl,
+      displayOrder: 1,
+    });
+
     await this.unitOfWork.execute(async () => {
       await this.booksCommandRepository.save(book);
 

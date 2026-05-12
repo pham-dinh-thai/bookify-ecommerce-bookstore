@@ -1,7 +1,7 @@
-import { url } from 'inspector';
 import { Book } from '../../domain/book-aggregate/book.aggregate';
 import { BookReadModel } from '../../domain/book-aggregate/read-models/book.read-model';
 import { BookTypeOrm } from '../entities/book.entity';
+import { BookCoverTypeOrm } from '../entities/book-cover.entity';
 
 export class BooksMapper {
   public static toDomain(bookTypeOrm: BookTypeOrm): Book {
@@ -40,6 +40,16 @@ export class BooksMapper {
     bookTypeOrm.quantity = book.getQuantity();
     bookTypeOrm.languageId = book.getLanguageId();
     bookTypeOrm.pageCount = book.getPageCount();
+
+    bookTypeOrm.covers = book.getBookCovers().map((cover) => {
+      const coverTypeOrm = new BookCoverTypeOrm();
+      coverTypeOrm.id = cover.getId();
+      coverTypeOrm.bookId = book.getId();
+      coverTypeOrm.url = cover.getUrl();
+      coverTypeOrm.isPrimary = cover.getIsPrimary();
+      coverTypeOrm.displayOrder = cover.getDisplayOrder();
+      return coverTypeOrm;
+    });
 
     return bookTypeOrm;
   }
