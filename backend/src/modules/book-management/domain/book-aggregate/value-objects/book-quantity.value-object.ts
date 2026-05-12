@@ -17,6 +17,10 @@ export class BookQuantity {
     return new BookQuantity(quantity);
   }
 
+  public update(quantity: number): BookQuantity {
+    return new BookQuantity(quantity);
+  }
+
   public increase(amount: number): BookQuantity {
     return new BookQuantity(this.value + amount);
   }
