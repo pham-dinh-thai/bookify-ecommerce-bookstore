@@ -31,6 +31,7 @@ import { ImportBookStockRequest } from './requests/import-book-stock.request';
 import { ImportBookStockUseCase } from '../../application/book-use-cases/import-book-stock/import-book-stock.use-case';
 import { AdjustBookStockRequest } from './requests/adjust-book-stock.request';
 import { AdjustBookStockUseCase } from '../../application/book-use-cases/adjust-book-stock/adjust-book-stock.use-case';
+import { DeleteBookUseCase } from '../../application/book-use-cases/delete-book/delete-book.use-case';
 
 @Controller('books')
 export class BooksController {
@@ -45,6 +46,7 @@ export class BooksController {
     private readonly updateBookPriceUseCase: UpdateBookPriceUseCase,
     private readonly importBookStockUseCase: ImportBookStockUseCase,
     private readonly adjustBookStockUseCase: AdjustBookStockUseCase,
+    private readonly deleteBookUseCase: DeleteBookUseCase,
   ) {}
 
   @Get()
@@ -137,5 +139,16 @@ export class BooksController {
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
     await this.adjustBookStockUseCase.execute(id, request, actorId);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles('admin', 'staff')
+  public async delete(
+    @Param('id') id: string,
+    @CurrentUser('userId') actorId: string,
+  ): Promise<void> {
+    await this.deleteBookUseCase.execute(id, actorId);
   }
 }

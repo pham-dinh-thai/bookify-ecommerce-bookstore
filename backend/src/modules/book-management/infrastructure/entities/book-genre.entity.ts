@@ -10,7 +10,9 @@ export class BookGenreTypeOrm {
   @PrimaryColumn({ type: 'uuid' })
   genreId!: string;
 
-  @ManyToOne(() => BookTypeOrm)
+  @ManyToOne(() => BookTypeOrm, (book) => book.bookGenres, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'bookId' })
   book!: BookTypeOrm;
 
