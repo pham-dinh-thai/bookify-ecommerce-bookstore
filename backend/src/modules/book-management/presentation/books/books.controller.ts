@@ -33,6 +33,7 @@ import { ImportBookStockUseCase } from '../../application/book-use-cases/import-
 import { AdjustBookStockRequest } from './requests/adjust-book-stock.request';
 import { AdjustBookStockUseCase } from '../../application/book-use-cases/adjust-book-stock/adjust-book-stock.use-case';
 import { DeleteBookUseCase } from '../../application/book-use-cases/delete-book/delete-book.use-case';
+import { FindBooksResponse } from '../../application/book-use-cases/find-books/find-books.response';
 
 @Controller('books')
 export class BooksController {
@@ -55,12 +56,14 @@ export class BooksController {
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '10',
     @Query('search') search?: string,
-  ) {
-    return await this.findBooksUseCase.execute(
+  ): Promise<FindBooksResponse> {
+    const response = await this.findBooksUseCase.execute(
       parseInt(page, 10),
       parseInt(limit, 10),
       search,
     );
+
+    return response;
   }
 
   @Get('total')
