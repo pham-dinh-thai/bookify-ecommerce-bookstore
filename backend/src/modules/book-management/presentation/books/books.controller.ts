@@ -27,6 +27,8 @@ import { AddBookCoverUseCase } from '../../application/book-use-cases/add-book-c
 import { RemoveBookCoverUseCase } from '../../application/book-use-cases/remove-book-cover/remove-book-cover.use-case';
 import { UpdateBookPriceRequest } from './requests/update-book-price.request';
 import { UpdateBookPriceUseCase } from '../../application/book-use-cases/update-book-price/update-book-price.use-case';
+import { ImportBookStockRequest } from './requests/import-book-stock.request';
+import { ImportBookStockUseCase } from '../../application/book-use-cases/import-book-stock/import-book-stock.use-case';
 
 @Controller('books')
 export class BooksController {
@@ -39,6 +41,7 @@ export class BooksController {
     private readonly addBookCoverUseCase: AddBookCoverUseCase,
     private readonly removeBookCoverUseCase: RemoveBookCoverUseCase,
     private readonly updateBookPriceUseCase: UpdateBookPriceUseCase,
+    private readonly importBookStockUseCase: ImportBookStockUseCase,
   ) {}
 
   @Get()
@@ -109,5 +112,16 @@ export class BooksController {
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
     await this.updateBookPriceUseCase.execute(id, request, actorId);
+  }
+
+  @Patch(':id/stock')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles('admin', 'staff')
+  public async updateStock(
+    @Param('id') id: string,
+    @Body() request: ImportBookStockRequest,
+    @CurrentUser('userId') actorId: string,
+  ): Promise<void> {
+    await this.importBookStockUseCase.execute(id, request, actorId);
   }
 }
