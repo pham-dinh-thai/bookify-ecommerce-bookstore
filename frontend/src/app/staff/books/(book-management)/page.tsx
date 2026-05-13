@@ -56,7 +56,13 @@ export default function BookManagementPage() {
       label: 'Original Price',
       className: 'text-[#4f6553]',
       render: (item: Book) => (
-        <span>{item.originalPrice.toLocaleString('vi-VN')} VNĐ</span>
+        <span>
+          {Number(item.originalPrice).toLocaleString('vi-VN', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}{' '}
+          VNĐ
+        </span>
       ),
     },
   ];
