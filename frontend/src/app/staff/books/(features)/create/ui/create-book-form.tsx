@@ -158,7 +158,7 @@ export default function CreateBookForm() {
 
       await createBookService({
         ...formData,
-        coverUrl: '', // thay bằng URL sau khi upload
+        coverUrl: 'sigma.jpg', // thay bằng URL sau khi upload
       } as CreateBook);
 
       addToast('Book created successfully', 'success');
