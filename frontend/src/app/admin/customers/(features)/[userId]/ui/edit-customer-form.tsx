@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { useToast } from '@/app/admin/components/toast/toast';
+import { useToast } from '@/shared/common/toast/toast';
 import { formStyles } from '@/shared/common/form/form-styles';
 import useEditUser from '@/app/admin/users/(features)/[id]/hooks/use-edit-user';
 import { validateUserForm } from '@/app/admin/users/(features)/[id]/services/update-user-validate';

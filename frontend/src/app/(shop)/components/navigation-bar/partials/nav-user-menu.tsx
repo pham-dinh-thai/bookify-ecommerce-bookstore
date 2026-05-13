@@ -69,7 +69,17 @@ export default function NavUserMenu({}: NavUserMenuProps) {
                 </Link>
                 {auth.roleId === 'admin' && (
                   <Link
-                    href="/admin/users"
+                    href="/admin/system-overview"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={dropdown.close}
+                  >
+                    Dashboard
+                  </Link>
+                )}
+
+                {auth.roleId === 'staff' && (
+                  <Link
+                    href="/staff/books"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     onClick={dropdown.close}
                   >

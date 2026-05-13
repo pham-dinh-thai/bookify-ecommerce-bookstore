@@ -1,16 +1,16 @@
 'use client';
 
-import { useToast } from '@/app/admin/components/toast/toast';
+import { useToast } from '@/shared/common/toast/toast';
 import Table from '@/shared/common/components/table/table';
 import { Pencil, Trash2, Plus, Check, X } from 'lucide-react';
 import { useState } from 'react';
 import Paginate from '@/shared/common/components/pagination/paginate';
-import AdminSearchBar from '../../users/(features)/(user-management)/ui/search-bar';
 import usePublishers from './hooks/use-publishers';
 import PublisherManagementHeader from './ui/publisher-management-header';
 import { createPublisherService } from './services/create-publisher.service';
 import { deletePublisherService } from './services/delete-publisher.service';
 import { updatePublisherService } from './services/update-publisher.service';
+import ToolBar from '@/shared/common/components/tool-bar/tool-bar';
 
 export default function PublisherManagement() {
   const pageSize = 10;
@@ -204,7 +204,7 @@ export default function PublisherManagement() {
 
           <div className="col-span-4">
             <div className="mb-4">
-              <AdminSearchBar
+              <ToolBar
                 value={search}
                 onChange={(value) => {
                   setSearch(value);

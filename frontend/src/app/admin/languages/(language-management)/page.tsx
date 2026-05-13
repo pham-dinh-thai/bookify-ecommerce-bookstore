@@ -1,16 +1,16 @@
 'use client';
 
-import { useToast } from '@/app/admin/components/toast/toast';
+import { useToast } from '@/shared/common/toast/toast';
 import Table from '@/shared/common/components/table/table';
 import { Pencil, Trash2, Plus, Check, X } from 'lucide-react';
 import { useState } from 'react';
 import Paginate from '@/shared/common/components/pagination/paginate';
-import AdminSearchBar from '../../users/(features)/(user-management)/ui/search-bar';
 import LanguageManagementHeader from './ui/language-management-header';
 import { createLanguageService } from './services/create-language.service';
 import { deleteLanguageService } from './services/delete-language.service';
 import { updateLanguageService } from './services/update-language.service';
 import useLanguages from './hooks/use-languages';
+import ToolBar from '@/shared/common/components/tool-bar/tool-bar';
 
 export default function LanguageManagement() {
   const pageSize = 10;
@@ -227,7 +227,7 @@ export default function LanguageManagement() {
 
           <div className="col-span-4">
             <div className="mb-4">
-              <AdminSearchBar
+              <ToolBar
                 value={search}
                 onChange={(value) => {
                   setSearch(value);

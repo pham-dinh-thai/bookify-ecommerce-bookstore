@@ -1,7 +1,6 @@
 'use client';
 
-import { useToast } from '@/app/admin/components/toast/toast';
-import AdminSearchBar from '@/app/admin/users/(features)/(user-management)/ui/search-bar';
+import { useToast } from '@/shared/common/toast/toast';
 import Paginate from '@/shared/common/components/pagination/paginate';
 import Table from '@/shared/common/components/table/table';
 import { CircleCheck, CircleOff, Funnel, Pencil } from 'lucide-react';
@@ -11,6 +10,7 @@ import useCustomers from './hooks/use-customers';
 import { deactivateUserService } from '@/app/admin/users/(features)/(user-management)/services/deactivate-user.service';
 import { activateUserService } from '@/app/admin/users/(features)/(user-management)/services/activate-user.service';
 import FilterDropdown from './components/filter-dropdown';
+import ToolBar from '@/shared/common/components/tool-bar/tool-bar';
 
 export default function CustomerManagement() {
   const [search, setSearch] = useState('');
@@ -103,7 +103,7 @@ export default function CustomerManagement() {
         </div>
 
         <div className="mb-4">
-          <AdminSearchBar
+          <ToolBar
             value={search}
             onChange={(value) => {
               setSearch(value);
