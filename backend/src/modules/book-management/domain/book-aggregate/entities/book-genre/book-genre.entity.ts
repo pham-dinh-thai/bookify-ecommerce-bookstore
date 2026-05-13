@@ -1,7 +1,4 @@
-export type BookGenreProps = {
-  bookId: string;
-  genreId: string;
-};
+import { BookGenreProps } from './types';
 
 export class BookGenre {
   private constructor(
@@ -9,12 +6,12 @@ export class BookGenre {
     private readonly genreId: string,
   ) {}
 
-  public static create(params: BookGenreProps): BookGenre {
-    return new BookGenre(params.bookId, params.genreId);
+  public static create(props: BookGenreProps): BookGenre {
+    return new BookGenre(props.bookId, props.genreId);
   }
 
-  public static fromPersistent(params: BookGenreProps): BookGenre {
-    return new BookGenre(params.bookId, params.genreId);
+  public static fromPersistent(props: BookGenreProps): BookGenre {
+    return new BookGenre(props.bookId, props.genreId);
   }
 
   public getBookId(): string {
