@@ -5,7 +5,7 @@ import { Eye, EyeOff, ChevronDown, X } from 'lucide-react';
 import CreateUserAction from './create-user-action';
 import { createUserService } from '../services/create-user-service';
 import { useRouter } from 'next/navigation';
-import { useToast } from '@/app/admin/components/toast/toast';
+import { useToast } from '@/shared/common/toast/toast';
 import { formStyles } from '@/shared/common/form/form-styles';
 import { validateUserForm } from '../services/use-user-validate';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useToast } from '@/app/admin/components/toast/toast';
+import { useToast } from '@/shared/common/toast/toast';
 import Table from '@/shared/common/components/table/table';
 import { Pencil, Trash2, Plus, Check, X } from 'lucide-react';
 import { useState } from 'react';

@@ -1,8 +1,8 @@
 import SessionRestore from '@/shared/auth/components/session-restore';
-import AdminSidebar from './components/sidebar/admin-sidebar';
-import { ToastProvider } from '../../shared/common/toast/toast';
+import StaffSidebar from './components/sidebar/staff-sidebar';
+import { ToastProvider } from '@/shared/common/toast/toast';
 
-export default function AdminLayout({
+export default function StaffLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -11,7 +11,7 @@ export default function AdminLayout({
     <div className="min-h-screen bg-[#f7faf5] flex">
       <SessionRestore />
 
-      <AdminSidebar />
+      <StaffSidebar />
 
       <main className="flex-1">
         <ToastProvider>{children}</ToastProvider>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useToast } from '@/app/admin/components/toast/toast';
+import { useToast } from '@/shared/common/toast/toast';
 import AdminSearchBar from '@/app/admin/users/(features)/(user-management)/ui/search-bar';
 import Paginate from '@/shared/common/components/pagination/paginate';
 import Table from '@/shared/common/components/table/table';
