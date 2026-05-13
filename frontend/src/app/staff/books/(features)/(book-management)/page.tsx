@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { Book as BookIcon, ExternalLink, Trash2 } from 'lucide-react';
 import Table from '@/shared/common/components/table/table';
 import Paginate from '@/shared/common/components/pagination/paginate';
-import { Book } from '../types';
+import { Book } from '../../types';
 import ToolBar from '@/shared/common/components/tool-bar/tool-bar';
 
 export default function BookManagementPage() {
@@ -99,7 +99,7 @@ export default function BookManagementPage() {
             actions={
               <>
                 <Link
-                  href="/admin/books/create"
+                  href="/staff/books/create"
                   className="inline-flex items-center gap-2 h-12 rounded-full bg-[#2d6a4f] px-4 py-2 text-sm font-semibold text-white hover:bg-[#166244] transition-colors"
                 >
                   <BookIcon className="w-4" /> Create Book
