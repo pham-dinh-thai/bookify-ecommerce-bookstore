@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { ChevronDown, Search, X } from 'lucide-react';
+import { ChevronDown, X } from 'lucide-react';
 
 export interface SelectOption {
   id: string;
@@ -25,7 +25,6 @@ export default function SearchSelect({
   placeholder = 'Select...',
   inputClassName = '',
   inputStyle,
-  error,
 }: SearchSelectProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -38,7 +37,6 @@ export default function SearchSelect({
     ? options.filter((o) => o.name.toLowerCase().includes(query.toLowerCase()))
     : options;
 
-  // Close on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (
@@ -49,13 +47,14 @@ export default function SearchSelect({
         setQuery('');
       }
     };
+
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   const handleOpen = () => {
     setOpen(true);
-    setQuery('');
+    setQuery(selected?.name ?? '');
     setTimeout(() => inputRef.current?.focus(), 0);
   };
 
@@ -68,73 +67,73 @@ export default function SearchSelect({
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
     onChange('');
+    setQuery('');
+    setOpen(true);
+    setTimeout(() => inputRef.current?.focus(), 0);
   };
 
   return (
     <div ref={containerRef} className="relative">
-      {/* Trigger */}
-      <button
-        type="button"
-        onClick={
-          open
-            ? () => {
-                setOpen(false);
-                setQuery('');
-              }
-            : handleOpen
-        }
-        className={`${inputClassName} w-full text-left flex items-center justify-between pr-10`}
-        style={inputStyle}
-      >
-        <span style={{ color: selected ? undefined : '#9ca3af' }}>
-          {selected ? selected.name : placeholder}
-        </span>
+      <div className="relative">
+        <input
+          ref={inputRef}
+          value={open ? query : selected?.name ?? ''}
+          onFocus={() => {
+            if (!open) {
+              handleOpen();
+            }
+          }}
+          onChange={(e) => {
+            if (!open) {
+              setOpen(true);
+            }
+            setQuery(e.target.value);
+          }}
+          placeholder={placeholder}
+          className={`${inputClassName} w-full pr-14`}
+          style={inputStyle}
+        />
+
         <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
           {selected && (
-            <span
-              role="button"
+            <button
+              type="button"
               onClick={handleClear}
-              className="p-0.5 rounded hover:bg-black/10 transition-colors cursor-pointer"
+              className="p-0.5 rounded hover:bg-black/10 transition-colors"
             >
               <X className="w-3.5 h-3.5" style={{ color: '#58615b' }} />
-            </span>
+            </button>
           )}
-          <ChevronDown
-            className={`w-4 h-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
-            style={{ color: '#58615b' }}
-          />
+          <button
+            type="button"
+            onClick={() => {
+              if (open) {
+                setOpen(false);
+                setQuery('');
+                inputRef.current?.blur();
+              } else {
+                handleOpen();
+              }
+            }}
+            className="p-0.5 rounded hover:bg-black/10 transition-colors"
+          >
+            <ChevronDown
+              className={`w-4 h-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+              style={{ color: '#58615b' }}
+            />
+          </button>
         </div>
-      </button>
+      </div>
 
-      {/* Dropdown */}
       {open && (
         <div
           className="absolute z-50 w-full mt-1 rounded-xl overflow-hidden shadow-lg border"
           style={{
             background: (inputStyle?.background as string) ?? 'white',
             borderColor: 'rgba(0,0,0,0.1)',
-            ...inputStyle,
             padding: 0,
-            // reset padding from inputStyle
           }}
         >
-          {/* Search input */}
-          <div
-            className="flex items-center gap-2 px-3 py-2 border-b"
-            style={{ borderColor: 'rgba(0,0,0,0.08)' }}
-          >
-            <Search className="w-4 h-4 shrink-0" style={{ color: '#9ca3af' }} />
-            <input
-              ref={inputRef}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search..."
-              className="flex-1 bg-transparent outline-none text-sm"
-              style={{ color: inputStyle?.color as string }}
-            />
-          </div>
-
-          {/* Options list */}
           <ul className="max-h-48 overflow-y-auto py-1">
             {filtered.length === 0 ? (
               <li
@@ -147,6 +146,7 @@ export default function SearchSelect({
               filtered.map((option) => (
                 <li
                   key={option.id}
+                  onMouseDown={(e) => e.preventDefault()}
                   onClick={() => handleSelect(option)}
                   className="px-4 py-2.5 text-sm cursor-pointer transition-colors hover:bg-black/5"
                   style={{
