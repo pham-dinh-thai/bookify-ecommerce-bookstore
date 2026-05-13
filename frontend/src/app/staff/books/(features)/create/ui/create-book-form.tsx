@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CreateBookAction from './create-book-action';
 import { createBookService } from '../services/create-book-service';
 import { useRouter } from 'next/navigation';
@@ -15,6 +15,13 @@ import TagPicker from '@/shared/common/components/input-select/tag-picker';
 import ImageUpload from '@/shared/common/components/image-upload/image-upload';
 import SearchSelect from '@/shared/common/components/input-select/search-select';
 
+import { allAuthorService } from '@/app/admin/authors/(author-management)/services/all-author.service';
+import { allGenreService } from '@/app/admin/genres/(genre-management)/services/all-genre.service';
+import { allPublisherService } from '@/app/admin/publishers/(publisher-management)/services/all-publisher.service';
+import { allLanguageService } from '@/app/admin/languages/(language-management)/services/all-language.service';
+import { getAccessToken } from '@/shared/auth/lib/token-storage';
+import { refreshAccessToken } from '@/shared/auth/lib/refresh';
+
 // Thay coverUrl string → File | null trong form state
 type CreateBookFormState = Omit<CreateBook, 'coverUrl'> & {
   coverFile: File | null;
@@ -24,18 +31,11 @@ type CreateBookFormErrorsExtended = Omit<CreateBookFormErrors, 'coverUrl'> & {
   coverFile?: string;
 };
 
-const PUBLISHERS = [
-  { id: 'pub-1', name: 'Publisher 1' },
-  { id: 'pub-2', name: 'Publisher 2' },
-  { id: 'pub-3', name: 'Publisher 3' },
-];
+type SelectOption = {
+  id: string;
+  name: string;
+};
 
-const LANGUAGES = [
-  { id: 'en', name: 'English' },
-  { id: 'vi', name: 'Vietnamese' },
-  { id: 'fr', name: 'French' },
-  { id: 'ja', name: 'Japanese' },
-];
 
 export default function CreateBookForm() {
   const router = useRouter();
@@ -56,6 +56,10 @@ export default function CreateBookForm() {
   const [errors, setErrors] = useState<CreateBookFormErrorsExtended>({});
   const { addToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [authorOptions, setAuthorOptions] = useState<SelectOption[]>([]);
+  const [genreOptions, setGenreOptions] = useState<SelectOption[]>([]);
+  const [publisherOptions, setPublisherOptions] = useState<SelectOption[]>([]);
+  const [languageOptions, setLanguageOptions] = useState<SelectOption[]>([]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -75,6 +79,55 @@ export default function CreateBookForm() {
     }
   };
 
+
+  useEffect(() => {
+    const fetchFilterOptions = async () => {
+      try {
+        if (!getAccessToken()) {
+          await refreshAccessToken();
+        }
+
+        const [authorsRes, genresRes, publishersRes, languagesRes] =
+          await Promise.all([
+            allAuthorService(1, 1000, ''),
+            allGenreService(1, 1000, ''),
+            allPublisherService(1, 1000, ''),
+            allLanguageService(1, 1000, ''),
+          ]);
+
+        setAuthorOptions(
+          (authorsRes?.authors || []).map((item: SelectOption) => ({
+            id: item.id,
+            name: item.name,
+          })),
+        );
+        setGenreOptions(
+          (genresRes?.genres || []).map((item: SelectOption) => ({
+            id: item.id,
+            name: item.name,
+          })),
+        );
+        setPublisherOptions(
+          (publishersRes?.publishers || []).map((item: SelectOption) => ({
+            id: item.id,
+            name: item.name,
+          })),
+        );
+        setLanguageOptions(
+          (languagesRes?.languages || []).map((item: SelectOption) => ({
+            id: item.id,
+            name: item.name,
+          })),
+        );
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Failed to load form options';
+        addToast(message, 'error');
+      }
+    };
+
+    fetchFilterOptions();
+  }, [addToast]);
+
   const { fieldStyle, inputClass, labelClass, labelStyle } = formStyles();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -86,7 +139,7 @@ export default function CreateBookForm() {
       coverUrl: formData.coverFile ? 'filled' : '', // tạm để pass validator cũ
     }) as CreateBookFormErrorsExtended;
 
-    delete (newErrors as any).coverUrl;
+    delete (newErrors as CreateBookFormErrorsExtended & { coverUrl?: string }).coverUrl;
     if (!formData.coverFile) {
       newErrors.coverFile = 'Cover image is required';
     }
@@ -115,7 +168,7 @@ export default function CreateBookForm() {
       if (err instanceof Error) {
         message = err.message;
       } else if (typeof err === 'object' && err !== null && 'message' in err) {
-        message = String((err as any).message);
+        message = String((err as { message: unknown }).message);
       }
       addToast(message, 'error');
     } finally {
@@ -191,15 +244,7 @@ export default function CreateBookForm() {
           Author
         </label>
         <TagPicker
-          options={[
-            { id: 'author-1', name: 'Author 1' },
-            { id: 'author-2', name: 'Author 2' },
-            { id: 'author-3', name: 'Author 3' },
-            { id: 'author-4', name: 'Author 4' },
-            { id: 'author-5', name: 'Author 5' },
-            { id: 'author-6', name: 'Author 6' },
-            { id: 'author-7', name: 'Author 7' },
-          ]}
+          options={authorOptions}
           selected={formData.authorIds}
           onChange={(ids) =>
             setFormData((prev) => ({ ...prev, authorIds: ids }))
@@ -216,10 +261,7 @@ export default function CreateBookForm() {
           Genre
         </label>
         <TagPicker
-          options={[
-            { id: 'genre-1', name: 'Fiction' },
-            { id: 'genre-2', name: 'Non-Fiction' },
-          ]}
+          options={genreOptions}
           selected={formData.genreIds}
           onChange={(ids) =>
             setFormData((prev) => ({ ...prev, genreIds: ids }))
@@ -236,7 +278,7 @@ export default function CreateBookForm() {
           Publisher
         </label>
         <SearchSelect
-          options={PUBLISHERS}
+          options={publisherOptions}
           value={formData.publisherId}
           onChange={(id) => {
             setFormData((prev) => ({ ...prev, publisherId: id }));
@@ -258,7 +300,7 @@ export default function CreateBookForm() {
           Language
         </label>
         <SearchSelect
-          options={LANGUAGES}
+          options={languageOptions}
           value={formData.languageId}
           onChange={(id) => {
             setFormData((prev) => ({ ...prev, languageId: id }));
@@ -348,8 +390,8 @@ export default function CreateBookForm() {
       </div>
 
       <CreateBookAction
-        setErrors={setErrors as any}
-        setFormData={setFormData as any}
+        setErrors={setErrors}
+        setFormData={setFormData}
         isLoading={isLoading}
       />
     </form>
