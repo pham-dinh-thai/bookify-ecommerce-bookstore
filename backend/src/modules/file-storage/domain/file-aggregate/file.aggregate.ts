@@ -1,12 +1,14 @@
 import { AggregateRoot } from '../../../../shared/domain/aggregate-root';
+import { FileMimeType } from './value-objects/file-mime-type';
+import { FileSize } from './value-objects/file-size';
 
 export class File extends AggregateRoot {
   private constructor(
     private readonly id: string,
     private url: string,
     private filename: string,
-    private mimetype: string,
-    private size: number,
+    private mimetype: FileMimeType,
+    private size: FileSize,
   ) {
     super();
 
@@ -21,13 +23,13 @@ export class File extends AggregateRoot {
     if (!filename) {
       throw new Error('File name cannot be empty');
     }
+  }
 
-    if (!mimetype) {
-      throw new Error('File MIME type cannot be empty');
-    }
+  public getMimeType(): string {
+    return this.mimetype.getValue();
+  }
 
-    if (size <= 0) {
-      throw new Error('File size must be greater than zero');
-    }
+  public getSize(): number {
+    return this.size.getValue();
   }
 }
