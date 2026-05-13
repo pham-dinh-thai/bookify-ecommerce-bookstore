@@ -1,6 +1,6 @@
 import { BookCoverProps } from './entities/book-cover/types';
 
-export type BookProps = {
+export type CreateBookProps = {
   id: string;
   isbn: string;
   title: string;
@@ -10,12 +10,15 @@ export type BookProps = {
   description: string;
   originalPrice: number;
   quantity: number;
-  bookCovers?: BookCoverProps[];
   languageId: string;
   pageCount: number;
 };
 
-export type updateBookProps = {
+export type FromPersistentBookProps = CreateBookProps & {
+  bookCovers?: BookCoverProps[];
+};
+
+export type UpdateBookProps = {
   isbn: string;
   title: string;
   authorIds: string[];

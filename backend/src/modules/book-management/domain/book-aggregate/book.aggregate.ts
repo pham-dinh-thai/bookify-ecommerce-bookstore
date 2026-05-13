@@ -10,9 +10,14 @@ import { BookIdEmptyException } from './exceptions/book-id-empty.exception';
 import { BookIsbnEmptyException } from './exceptions/book-isbn-empty.exception';
 import { BookPageCountInvalidException } from './exceptions/book-page-count-invalid.exception';
 import { BookTitleEmptyException } from './exceptions/book-title-empty.exception';
-import { BookProps, updateBookProps } from './types';
+import {
+  CreateBookProps,
+  FromPersistentBookProps,
+  UpdateBookProps,
+} from './types';
 import { BookPrice } from './value-objects/book-price.value-object';
 import { BookQuantity } from './value-objects/book-quantity.value-object';
+import { CreateBookCoverProps } from './entities/book-cover/types';
 
 /**
  * Book aggregate root.
@@ -72,40 +77,40 @@ export class Book extends AggregateRoot {
     }
   }
 
-  public static create(params: BookProps): Book {
+  public static create(props: CreateBookProps): Book {
     return new Book(
-      params.id,
-      params.isbn,
-      params.title,
-      params.authorIds,
-      params.publisherId,
-      params.genreIds,
-      params.description,
-      BookPrice.create(params.originalPrice),
-      BookQuantity.create(params.quantity),
+      props.id,
+      props.isbn,
+      props.title,
+      props.authorIds,
+      props.publisherId,
+      props.genreIds,
+      props.description,
+      BookPrice.create(props.originalPrice),
+      BookQuantity.create(props.quantity),
       [],
-      params.languageId,
-      params.pageCount,
+      props.languageId,
+      props.pageCount,
     );
   }
 
   /**
    * Reconstructs a Book from persisted data.
    */
-  public static fromPersistent(params: BookProps): Book {
+  public static fromPersistent(props: FromPersistentBookProps): Book {
     return new Book(
-      params.id,
-      params.isbn,
-      params.title,
-      params.authorIds,
-      params.publisherId,
-      params.genreIds,
-      params.description,
-      BookPrice.create(params.originalPrice),
-      BookQuantity.create(params.quantity),
-      (params.bookCovers ?? []).map((cover) => BookCover.fromPersistent(cover)),
-      params.languageId,
-      params.pageCount,
+      props.id,
+      props.isbn,
+      props.title,
+      props.authorIds,
+      props.publisherId,
+      props.genreIds,
+      props.description,
+      BookPrice.create(props.originalPrice),
+      BookQuantity.create(props.quantity),
+      (props.bookCovers ?? []).map((cover) => BookCover.fromPersistent(cover)),
+      props.languageId,
+      props.pageCount,
     );
   }
 
@@ -113,50 +118,46 @@ export class Book extends AggregateRoot {
    * Replaces all mutable book details except price and quantity,
    * which have dedicated methods for auditability.
    */
-  public updateDetails(params: updateBookProps): void {
-    if (!params.isbn || params.isbn.trim() === '') {
+  public updateDetails(props: UpdateBookProps): void {
+    if (!props.isbn || props.isbn.trim() === '') {
       throw new BookIsbnEmptyException();
     }
 
-    if (!params.title || params.title.trim() === '') {
+    if (!props.title || props.title.trim() === '') {
       throw new BookTitleEmptyException();
     }
 
-    if (!params.authorIds || params.authorIds.length === 0) {
+    if (!props.authorIds || props.authorIds.length === 0) {
       throw new BookAuthorEmptyException();
     }
 
-    if (!params.genreIds || params.genreIds.length === 0) {
+    if (!props.genreIds || props.genreIds.length === 0) {
       throw new BookGenreEmptyException();
     }
 
-    if (!params.description || params.description.trim() === '') {
+    if (!props.description || props.description.trim() === '') {
       throw new BookDescriptionEmptyException();
     }
 
-    if (params.pageCount <= 0) {
+    if (props.pageCount <= 0) {
       throw new BookPageCountInvalidException();
     }
 
-    this.isbn = params.isbn;
-    this.title = params.title;
-    this.authorIds = params.authorIds;
-    this.publisherId = params.publisherId;
-    this.genreIds = params.genreIds;
-    this.description = params.description;
-    this.languageId = params.languageId;
-    this.pageCount = params.pageCount;
+    this.isbn = props.isbn;
+    this.title = props.title;
+    this.authorIds = props.authorIds;
+    this.publisherId = props.publisherId;
+    this.genreIds = props.genreIds;
+    this.description = props.description;
+    this.languageId = props.languageId;
+    this.pageCount = props.pageCount;
   }
 
   /**
    * Adds a cover. Automatically promotes to primary if no covers exist.
    */
-  public addCover(params: {
-    id: string;
-    url: string;
-    displayOrder: number;
-  }): BookCover {
-    const cover = BookCover.create(params);
+  public addCover(props: CreateBookCoverProps): BookCover {
+    const cover = BookCover.create(props);
 
     const primaryCoverExists = this.bookCovers.some((existing) =>
       existing.getIsPrimary(),

@@ -24,16 +24,16 @@ export class BookCover {
     }
   }
 
-  public static create(params: CreateBookCoverProps): BookCover {
-    return new BookCover(params.id, params.url, false, params.displayOrder);
+  public static create(props: CreateBookCoverProps): BookCover {
+    return new BookCover(props.id, props.url, false, props.displayOrder);
   }
 
-  public static fromPersistent(params: BookCoverProps): BookCover {
+  public static fromPersistent(props: BookCoverProps): BookCover {
     return new BookCover(
-      params.id,
-      params.url,
-      params.isPrimary,
-      params.displayOrder,
+      props.id,
+      props.url,
+      props.isPrimary,
+      props.displayOrder,
     );
   }
 

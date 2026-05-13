@@ -79,7 +79,6 @@ export class CreateBookUseCase {
       description: request.description,
       originalPrice: request.originalPrice,
       quantity: request.quantity,
-      bookCovers: [],
       languageId: request.languageId,
       pageCount: request.pageCount,
     });
