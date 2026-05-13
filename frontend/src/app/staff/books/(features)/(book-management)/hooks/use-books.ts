@@ -1,7 +1,7 @@
 import { refreshAccessToken } from '@/shared/auth/lib/refresh';
 import { getAccessToken } from '@/shared/auth/lib/token-storage';
 import { useEffect, useState } from 'react';
-import { Book } from '../../types';
+import { Book } from '../../../types';
 import { allBookService } from '../services/all-book.service';
 
 export default function useBooks(page: number, limit: number, search: string) {

@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { Book as BookIcon, ExternalLink, Trash2 } from 'lucide-react';
 import Table from '@/shared/common/components/table/table';
 import Paginate from '@/shared/common/components/pagination/paginate';
-import { Book } from '../types';
+import { Book } from '../../types';
 import ToolBar from '@/shared/common/components/tool-bar/tool-bar';
 
 export default function BookManagementPage() {
@@ -24,9 +24,22 @@ export default function BookManagementPage() {
 
   const columns = [
     {
-      key: 'title',
-      label: 'Title',
+      key: 'book',
+      label: 'Book',
       className: 'text-[#4f6553]',
+      render: (item: Book) => (
+        <div className="flex items-center gap-3">
+          <img
+            src={
+              item.bookCovers?.[0]?.url ??
+              'https://tse1.mm.bing.net/th/id/OIP.dI055T7RdiMDYUAVQbp88AHaLX?o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3'
+            }
+            alt={item.title}
+            className="w-12 h-16 object-cover rounded-lg flex-shrink-0"
+          />
+          <span className="font-medium">{item.title}</span>
+        </div>
+      ),
     },
     {
       key: 'publisher',
@@ -86,7 +99,7 @@ export default function BookManagementPage() {
             actions={
               <>
                 <Link
-                  href="/admin/books/create"
+                  href="/staff/books/create"
                   className="inline-flex items-center gap-2 h-12 rounded-full bg-[#2d6a4f] px-4 py-2 text-sm font-semibold text-white hover:bg-[#166244] transition-colors"
                 >
                   <BookIcon className="w-4" /> Create Book
