@@ -10,7 +10,6 @@ import {
 } from 'lucide-react';
 import useUsers from './hooks/use-users';
 import Link from 'next/link';
-import AdminSearchBar from './ui/search-bar';
 import Table from '@/shared/common/components/table/table';
 import Paginate from '@/shared/common/components/pagination/paginate';
 import { useToast } from '@/shared/common/toast/toast';
@@ -18,6 +17,7 @@ import { deactivateUserService } from './services/deactivate-user.service';
 import { activateUserService } from './services/activate-user.service';
 import { useEffect, useRef, useState } from 'react';
 import FilterDropdown from './components/filter-dropdown';
+import ToolBar from '@/shared/common/components/tool-bar/tool-bar';
 
 export default function UserManagement() {
   const [search, setSearch] = useState('');
@@ -113,7 +113,7 @@ export default function UserManagement() {
         </div>
 
         <div className="mb-4">
-          <AdminSearchBar
+          <ToolBar
             value={search}
             onChange={(value) => {
               setSearch(value);

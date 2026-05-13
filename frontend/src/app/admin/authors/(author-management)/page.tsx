@@ -5,12 +5,12 @@ import Table from '@/shared/common/components/table/table';
 import { Pencil, Trash2, Plus, Check, X } from 'lucide-react';
 import { useState } from 'react';
 import Paginate from '@/shared/common/components/pagination/paginate';
-import AdminSearchBar from '../../users/(features)/(user-management)/ui/search-bar';
 import useAuthors from './hooks/use-authors';
 import AuthorManagementHeader from './ui/author-management-header';
 import { updateAuthorService } from './services/update-author.service';
 import { deleteAuthorService } from './services/delete-author.service';
 import { createAuthorService } from './services/create-author.service';
+import ToolBar from '@/shared/common/components/tool-bar/tool-bar';
 
 export default function AuthorManagement() {
   const pageSize = 10;
@@ -209,7 +209,7 @@ export default function AuthorManagement() {
 
           <div className="col-span-4">
             <div className="mb-4">
-              <AdminSearchBar
+              <ToolBar
                 value={search}
                 onChange={(value) => {
                   setSearch(value);

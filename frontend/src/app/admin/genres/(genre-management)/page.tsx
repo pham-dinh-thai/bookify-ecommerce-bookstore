@@ -9,8 +9,8 @@ import { updateGenreService } from './services/update-genre.service';
 import { deleteGenreService } from './services/delete-genre.service';
 import { createGenreService } from './services/create-genre.service';
 import Paginate from '@/shared/common/components/pagination/paginate';
-import AdminSearchBar from '../../users/(features)/(user-management)/ui/search-bar';
 import GenreManagementHeader from './ui/genre-management-header';
+import ToolBar from '@/shared/common/components/tool-bar/tool-bar';
 
 export default function GenreManagement() {
   const pageSize = 10;
@@ -209,7 +209,7 @@ export default function GenreManagement() {
 
           <div className="col-span-4">
             <div className="mb-4">
-              <AdminSearchBar
+              <ToolBar
                 value={search}
                 onChange={(value) => {
                   setSearch(value);

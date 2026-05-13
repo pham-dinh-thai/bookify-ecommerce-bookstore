@@ -8,15 +8,9 @@ export type BookCover = {
 
 export type Book = {
   id: string;
-  isbn: string;
   title: string;
-  authorIds: string[];
-  publisherId: string;
-  genreIds: string[];
-  description: string;
+  authors: string[];
+  publisher: string;
   originalPrice: number;
-  quantity: number;
   bookCovers: BookCover[];
-  languageId: string;
-  pageCount: number;
 };

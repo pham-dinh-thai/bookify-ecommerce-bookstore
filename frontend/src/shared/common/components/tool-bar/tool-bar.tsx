@@ -1,18 +1,20 @@
 import { Search } from 'lucide-react';
 
-type AdminSearchBarProps = {
+type ToolBarProps = {
   value: string;
   onChange?: (value: string) => void;
   actions?: React.ReactNode;
+  placeHolder?: string;
   variant?: 'default' | 'minimal';
 };
 
-export default function AdminSearchBar({
+export default function ToolBar({
   value,
   onChange,
   actions,
+  placeHolder = 'Search....',
   variant = 'default',
-}: AdminSearchBarProps) {
+}: ToolBarProps) {
   const containerClass =
     variant === 'minimal'
       ? 'flex flex-col rounded-2xl md:flex-row md:items-center gap-3 justify-between'
@@ -26,7 +28,7 @@ export default function AdminSearchBar({
           type="text"
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
-          placeholder="Search...."
+          placeholder={placeHolder}
           className="w-full bg-transparent border-none outline-none text-sm text-[#2b352f] placeholder:text-[#8c9b8d] ml-3"
         />
       </div>
