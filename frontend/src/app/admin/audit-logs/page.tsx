@@ -99,7 +99,7 @@ export default function AuditLog() {
       {/* Metadata Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 backdrop-blur-sm bg-black/20 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-auto">
+          <div className="bg-white rounded-3xl p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-auto">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-[#2b352f]">Metadata</h3>
               <button
@@ -109,13 +109,13 @@ export default function AuditLog() {
                 ×
               </button>
             </div>
-            <pre className="bg-gray-100 p-4 rounded text-sm font-mono text-[#4f6553] overflow-auto">
+            <pre className="bg-gray-100 p-4 rounded-2xl text-sm font-mono text-[#4f6553] overflow-auto">
               {JSON.stringify(selectedMetadata, null, 2)}
             </pre>
             <div className="mt-4 flex justify-end">
               <button
                 onClick={closeModal}
-                className="px-4 py-2 bg-[#335b48] text-white rounded hover:bg-[#2b352f] transition-colors"
+                className="px-4 py-2 bg-[#335b48] text-white rounded-2xl hover:bg-[#2b352f] transition-colors"
               >
                 Close
               </button>
