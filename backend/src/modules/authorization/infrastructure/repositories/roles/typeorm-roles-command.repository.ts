@@ -4,7 +4,7 @@ import { RoleTypeOrm } from '../../entities/role.entity';
 import { Role } from '../../../domain/role-aggregate/role.aggregate';
 import { RoleNotFoundException } from '../../../domain/role-aggregate/exceptions/role-not-found.exception';
 import { RoleMappers } from '../../mappers/roles.mapper';
-import { TypeOrmUnitOfWork } from '../../../../../shared/unit-of-work/infrastructure/typeorm-unit-of-work';
+import { TypeOrmUnitOfWork } from '../../../../../shared/modules/unit-of-work/infrastructure/typeorm-unit-of-work';
 
 @Injectable({ scope: Scope.REQUEST })
 export class TypeOrmRolesCommandRepository implements IRolesCommandRepository {

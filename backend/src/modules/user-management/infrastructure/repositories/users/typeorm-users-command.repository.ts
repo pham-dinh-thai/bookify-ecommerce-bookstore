@@ -1,6 +1,6 @@
 import { Inject, Injectable, Scope } from '@nestjs/common';
 import { IUsersCommandRepository } from '../../../domain/user-aggregate/repositories/users-command.repository.interface';
-import { TypeOrmUnitOfWork } from '../../../../../shared/unit-of-work/infrastructure/typeorm-unit-of-work';
+import { TypeOrmUnitOfWork } from '../../../../../shared/modules/unit-of-work/infrastructure/typeorm-unit-of-work';
 import { User } from '../../../domain/user-aggregate/user.aggregate';
 import { UserTypeOrm } from '../../entities/user.entity';
 import { UsersMapper } from '../../mappers/users/users.mapper';

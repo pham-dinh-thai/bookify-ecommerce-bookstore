@@ -6,7 +6,7 @@ import {
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
-} from '../../../../../shared/cache/domain/cache.repository.interface';
+} from '../../../../../shared/modules/cache/domain/cache.repository.interface';
 import { FindAuditLogsResponse } from './find-audit-logs.response';
 import {
   AUDIT_LOG_CACHE_KEYS,

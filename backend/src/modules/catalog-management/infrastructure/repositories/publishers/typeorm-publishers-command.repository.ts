@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IPublishersCommandRepository } from '../../../domain/publisher-aggregate/repositories/publishers-command.repository.inerface';
-import { TypeOrmUnitOfWork } from '../../../../../shared/unit-of-work/infrastructure/typeorm-unit-of-work';
+import { TypeOrmUnitOfWork } from '../../../../../shared/modules/unit-of-work/infrastructure/typeorm-unit-of-work';
 import { Publisher } from '../../../domain/publisher-aggregate/publisher.aggregate';
 import { PublisherTypeOrm } from '../../entities/publisher.entity';
 import { PublishersMapper } from '../../mappers/publishers.mapper';

@@ -1,27 +1,27 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserTypeOrm } from '../user-management/infrastructure/entities/user.entity';
-import { UnitOfWorkModule } from '../../shared/unit-of-work/unit-of-work.module';
+import { UnitOfWorkModule } from '../../shared/modules/unit-of-work/unit-of-work.module';
 import { AUTHENTICABLE_USER_QUERY_REPOSITORY } from './domain/authenticable-user-aggregate/repositories/authenticable-user-query.repository.interface';
 import { TypeOrmAuthenticableUserQueryRepository } from './infrastructure/repositories/typeorm-authenticable-user-query.repository';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoginUseCase } from './application/use-cases/login/login.use-case';
-import { UuidModule } from '../../shared/uuid/uuid.module';
+import { UuidModule } from '../../shared/modules/uuid/uuid.module';
 import { AuthController } from './presentation/auth.controller';
-import { SharedCacheModule } from '../../shared/cache/cache.module';
+import { SharedCacheModule } from '../../shared/modules/cache/cache.module';
 import { SIGN_TOKEN_SERVICE } from './domain/authenticable-user-aggregate/services/sign-token.service';
 import { JwtSignTokenService } from './infrastructure/services/jwt-sign-token.service';
 import { REFRESH_TOKEN_HASHER } from './domain/authenticable-user-aggregate/services/refresh-token-hasher.service';
 import { CryptoRefreshTokenHasherService } from './infrastructure/services/crypto-refresh-token-hasher.service';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from '../../shared/strategies/jwt.strategy';
+import { JwtStrategy } from '../../shared/http/strategies/jwt.strategy';
 import { AUTHENTICABLE_USER_COMMAND_REPOSITORY } from './domain/authenticable-user-aggregate/repositories/authenticable-user-command.repository.interface';
 import { TypeOrmAuthenticableUserCommandRepository } from './infrastructure/repositories/typeorm-authenticable-user-command.repository';
 import { RegisterUseCase } from './application/use-cases/register/register.use-case';
 import { LogoutUseCase } from './application/use-cases/logout/logout.use-case';
 import { RefreshTokenUseCase } from './application/use-cases/refresh-token/refresh-token.use-case';
-import { SharedJwtModule } from '../../shared/jwt/shared-jwt.module';
+import { SharedJwtModule } from '../../shared/modules/jwt/shared-jwt.module';
 
 @Module({
   imports: [

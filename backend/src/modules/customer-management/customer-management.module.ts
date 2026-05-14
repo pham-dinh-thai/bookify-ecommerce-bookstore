@@ -5,11 +5,11 @@ import { TypeOrmCustomersQueryRepository } from './infrastructure/repositories/c
 import { CompleteInformationUseCase } from './application/customer-use-cases/complete-information/complete-information.use-case';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomerTypeOrm } from './infrastructure/entities/customer.entity';
-import { UnitOfWorkModule } from '../../shared/unit-of-work/unit-of-work.module';
+import { UnitOfWorkModule } from '../../shared/modules/unit-of-work/unit-of-work.module';
 import { AuditLogModule } from '../audit-log/audit-log.module';
 import { UserTypeOrm } from '../user-management/infrastructure/entities/user.entity';
-import { UuidModule } from '../../shared/uuid/uuid.module';
-import { SharedCacheModule } from '../../shared/cache/cache.module';
+import { UuidModule } from '../../shared/modules/uuid/uuid.module';
+import { SharedCacheModule } from '../../shared/modules/cache/cache.module';
 import { CUSTOMERS_COMMAND_REPOSITORY } from './domain/customer-aggregate/repositories/customers-command.repository.interface';
 import { TypeOrmCustomersCommandRepository } from './infrastructure/repositories/customers/typeorm-customers-command.repository';
 import { AddressTypeOrm } from './infrastructure/entities/address.entity';
@@ -19,7 +19,7 @@ import { CUSTOMER_MODULE_USERS_COMMAND_REPOSITORY } from './domain/customer-aggr
 import { TypeOrmUsersCommandRepository } from './infrastructure/repositories/users/typeorm-users-command.repository';
 import { PHONE_NUMBER_EXISTS_CHECKER } from './domain/customer-aggregate/services/phone-number-exists-checker.service';
 import { PhoneNumberExistsCheckerService } from './infrastructure/services/phone-number-exists-checker.service';
-import { SharedJwtModule } from '../../shared/jwt/shared-jwt.module';
+import { SharedJwtModule } from '../../shared/modules/jwt/shared-jwt.module';
 import { FindCustomersUseCase } from './application/customer-use-cases/find-customers/find-customers.use-case';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { FindTotalCustomerUseCase } from './application/customer-use-cases/find-total-customer/find-total-customer.use-case';

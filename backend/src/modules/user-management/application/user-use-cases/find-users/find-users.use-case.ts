@@ -7,7 +7,7 @@ import { FindUsersResponse } from './find-users.response';
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
-} from '../../../../../shared/cache/domain/cache.repository.interface';
+} from '../../../../../shared/modules/cache/domain/cache.repository.interface';
 import { UserFilter } from '../../../domain/user-aggregate/user-filter';
 import { USER_CACHE_KEYS, USER_CACHE_TTL } from '../user-cache.constants';
 

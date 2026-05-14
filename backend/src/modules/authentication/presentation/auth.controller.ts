@@ -3,7 +3,7 @@ import { LoginUseCase } from '../application/use-cases/login/login.use-case';
 import { LoginRequest } from './requests/login.request';
 import { RegisterUseCase } from '../application/use-cases/register/register.use-case';
 import { RegisterRequest } from './requests/register.request';
-import { JwtAuthGuard } from '../../../shared/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../../shared/http/guards/jwt-auth.guard';
 import { LogoutUseCase } from '../application/use-cases/logout/logout.use-case';
 import { response, type Request, type Response } from 'express';
 import { RefreshTokenUseCase } from '../application/use-cases/refresh-token/refresh-token.use-case';

@@ -22,10 +22,10 @@ import { GrantPermissionRequest } from './requests/grant-permission.request';
 import { GrantPermissionUseCase } from '../../application/role-use-cases/grant-permission/grant-permission.use-case';
 import { RevokePermissionUseCase } from '../../application/role-use-cases/revoke-permission/revoke-permission.use-case';
 import { DeleteRoleUseCase } from '../../application/role-use-cases/delete-role/delete-role.use-case';
-import { JwtAuthGuard } from '../../../../shared/guards/jwt-auth.guard';
-import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
-import { Roles } from '../../../../shared/decorators/roles.decorator';
-import { RoleGuard } from '../../../../shared/guards/role.guard';
+import { JwtAuthGuard } from '../../../../shared/http/guards/jwt-auth.guard';
+import { CurrentUser } from '../../../../shared/http/decorators/current-user.decorator';
+import { Roles } from '../../../../shared/http/decorators/roles.decorator';
+import { RoleGuard } from '../../../../shared/http/guards/role.guard';
 
 @Controller('roles')
 @UseGuards(JwtAuthGuard, RoleGuard)

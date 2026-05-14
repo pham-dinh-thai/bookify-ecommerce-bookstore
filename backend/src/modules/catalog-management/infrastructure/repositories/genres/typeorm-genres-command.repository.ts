@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IGenresCommandRepository } from '../../../domain/genre-aggregate/repositories/genres-command.repository.interface';
 import { Genre } from '../../../domain/genre-aggregate/genre.aggregate';
-import { TypeOrmUnitOfWork } from '../../../../../shared/unit-of-work/infrastructure/typeorm-unit-of-work';
+import { TypeOrmUnitOfWork } from '../../../../../shared/modules/unit-of-work/infrastructure/typeorm-unit-of-work';
 import { GenreTypeOrm } from '../../entities/genre.entity';
 import { GenreNotFoundException } from '../../../domain/genre-aggregate/exceptions/genre-not-found.exception';
 import { GenresMapper } from '../../mappers/genres.mapper';

@@ -6,7 +6,7 @@ import {
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
-} from '../../../../../shared/cache/domain/cache.repository.interface';
+} from '../../../../../shared/modules/cache/domain/cache.repository.interface';
 import { FindBooksResponse } from './find-books.response';
 import { BOOK_CACHE_KEYS, BOOK_CACHE_TTL } from '../book-cache.constants';
 
