@@ -17,6 +17,7 @@ services:
     volumes:
       - ./backend:/app
       - backend_node_modules:/app/node_modules
+      - ./storage/uploads:/storage/uploads
     depends_on:
       - mysql_db
       - redis_cache
@@ -46,6 +47,7 @@ services:
       - "80:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./storage/uploads:/storage/uploads:ro
     depends_on:
       - backend_app
       - frontend_app

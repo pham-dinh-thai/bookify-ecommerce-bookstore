@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import CreateBookAction from './create-book-action';
-import { createBookService } from '../services/create-book-service';
+import {
+  createBookService,
+  uploadBookCoverService,
+} from '../services/create-book-service';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/common/toast/toast';
 import { formStyles } from '@/shared/common/form/form-styles';
@@ -42,13 +45,13 @@ export default function CreateBookForm() {
     isbn: '',
     title: '',
     description: '',
-    originalPrice: 0,
-    quantity: 0,
+    originalPrice: '' as unknown as number,
+    quantity: '' as unknown as number,
     authorIds: [],
     publisherId: '',
     genreIds: [],
     languageId: '',
-    pageCount: 0,
+    pageCount: '' as unknown as number,
     coverFile: null,
   });
 
@@ -66,13 +69,26 @@ export default function CreateBookForm() {
     >,
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]:
-        name === 'originalPrice' || name === 'quantity' || name === 'pageCount'
-          ? Number(value)
-          : value,
-    }));
+
+    if (
+      name === 'originalPrice' ||
+      name === 'quantity' ||
+      name === 'pageCount'
+    ) {
+      const cleaned = value.replace(/[^0-9.]/g, '');
+
+      const parts = cleaned.split('.');
+      const normalized =
+        parts.length > 2 ? parts[0] + '.' + parts.slice(1).join('') : cleaned;
+
+      const intPart = normalized.split('.')[0];
+      if (intPart.length > 10) return;
+
+      setFormData((prev) => ({ ...prev, [name]: normalized }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+
     if (errors[name as keyof CreateBookFormErrorsExtended]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
@@ -152,13 +168,14 @@ export default function CreateBookForm() {
     try {
       setIsLoading(true);
 
-      // Upload file → lấy URL trước (hoặc gửi kèm FormData tuỳ API)
-      // Ví dụ: const coverUrl = await uploadCoverFile(formData.coverFile!);
-      // Rồi: await createBookService({ ...formData, coverUrl });
+      const coverUrl = await uploadBookCoverService(formData.coverFile!);
 
       await createBookService({
         ...formData,
-        coverUrl: 'sigma.jpg', // thay bằng URL sau khi upload
+        coverUrl,
+        originalPrice: Number(formData.originalPrice),
+        quantity: Number(formData.quantity),
+        pageCount: Number(formData.pageCount),
       } as CreateBook);
 
       addToast('Book created successfully', 'success');

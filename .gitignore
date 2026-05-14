@@ -30,3 +30,5 @@
 # temp directory
 .temp
 .tmp
+
+storage/uploads/*

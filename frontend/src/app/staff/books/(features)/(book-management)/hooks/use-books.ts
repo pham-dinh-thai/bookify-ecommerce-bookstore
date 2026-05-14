@@ -19,7 +19,12 @@ export default function useBooks(page: number, limit: number, search: string) {
 
       const data = await allBookService(page, limit, search);
 
-      setBooks(data.books);
+      const normalizedBooks = data.books.map((book: Book) => ({
+        ...book,
+        status: book.isInStock ? 'In Stock' : 'Out of Stock',
+      }));
+
+      setBooks(normalizedBooks);
       setTotal(data.total);
     } catch (err: any) {
       setErrors(err);

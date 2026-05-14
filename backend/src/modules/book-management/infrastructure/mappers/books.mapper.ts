@@ -55,7 +55,7 @@ export class BooksMapper {
       bookTypeOrm.originalPrice,
       bookTypeOrm.quantity,
       bookTypeOrm.pageCount,
-      true,
+      bookTypeOrm.quantity > 0,
       bookTypeOrm.language.name,
       bookTypeOrm.publisher.name,
       bookTypeOrm.bookAuthors.map(
