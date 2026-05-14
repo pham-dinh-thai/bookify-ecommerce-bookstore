@@ -4,19 +4,17 @@ import { UuidModule } from '../../shared/modules/uuid/uuid.module';
 import { STORAGE_PROVIDER } from './domain/file-aggregate/storage/storage-provider.interface';
 import { LocalStorageProvider } from './infrastructure/storage/local-storage.provider';
 import { UploadFileUseCase } from './application/file-use-cases/upload-file/upload-file.use-case';
-import { DeleteFileUseCase } from './application/file-use-cases/delete-file/delete-file.use-case';
-import { AuthenticationModule } from '../authentication/authentication.module';
 
 @Module({
   controllers: [FilesController],
-  imports: [UuidModule, AuthenticationModule],
+  imports: [UuidModule],
   providers: [
     UploadFileUseCase,
-    DeleteFileUseCase,
     {
       provide: STORAGE_PROVIDER,
       useClass: LocalStorageProvider,
     },
   ],
+  exports: [STORAGE_PROVIDER],
 })
 export class FileStorageModule {}

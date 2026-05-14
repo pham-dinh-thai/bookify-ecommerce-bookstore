@@ -15,6 +15,10 @@ import {
   CACHE_REPOSITORY,
   type ICacheRepository,
 } from '../../../../../shared/modules/cache/domain/cache.repository.interface';
+import {
+  type IStorageProvider,
+  STORAGE_PROVIDER,
+} from '../../../../file-storage/domain/file-aggregate/storage/storage-provider.interface';
 
 /**
  * Removes a cover image from a book.
@@ -40,6 +44,9 @@ export class RemoveBookCoverUseCase {
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
+
+    @Inject(STORAGE_PROVIDER)
+    private readonly storageProvider: IStorageProvider,
   ) {}
 
   public async execute(
@@ -67,6 +74,8 @@ export class RemoveBookCoverUseCase {
           removedCover,
         },
       );
+
+      await this.storageProvider.delete(removedCover.getUrl());
     });
 
     await this.cacheRepository.delByPattern('books:*');

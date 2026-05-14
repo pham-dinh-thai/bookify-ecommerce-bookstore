@@ -1,4 +1,3 @@
-import { AggregateRoot } from '../../../../shared/domain/aggregate-root';
 import { BookCover } from './entities/book-cover/book-cover.entity';
 import { BookCoverDisplayOrderDuplicateException } from './entities/book-cover/exceptions/book-cover-display-order-duplicate.exception';
 import { BookCoverNotFoundException } from './entities/book-cover/exceptions/book-cover-not-found.exception';
@@ -31,7 +30,7 @@ import { CreateBookCoverProps } from './entities/book-cover/types';
  * - First cover added is automatically set as primary
  * - Quantity cannot be negative
  */
-export class Book extends AggregateRoot {
+export class Book {
   private constructor(
     private readonly id: string,
     private isbn: string,
@@ -46,8 +45,6 @@ export class Book extends AggregateRoot {
     private languageId: string,
     private pageCount: number,
   ) {
-    super();
-
     if (!id) {
       throw new BookIdEmptyException();
     }
