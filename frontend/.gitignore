@@ -9,6 +9,8 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+.pnpm-store/
+/.pnpm-store/
 
 # testing
 /coverage
@@ -43,4 +45,4 @@ next-env.d.ts
 
 # .gitattributes
 pnpm-lock.yaml linguist-generated=true
-package-lock.json linguist-generated=true
+package-lock.json linguist-generated=true.pnpm-store/
