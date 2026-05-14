@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import CreateBookAction from './create-book-action';
-import { createBookService } from '../services/create-book-service';
+import { createBookService, uploadBookCoverService } from '../services/create-book-service';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/common/toast/toast';
 import { formStyles } from '@/shared/common/form/form-styles';
@@ -152,13 +152,11 @@ export default function CreateBookForm() {
     try {
       setIsLoading(true);
 
-      // Upload file → lấy URL trước (hoặc gửi kèm FormData tuỳ API)
-      // Ví dụ: const coverUrl = await uploadCoverFile(formData.coverFile!);
-      // Rồi: await createBookService({ ...formData, coverUrl });
+      const coverUrl = await uploadBookCoverService(formData.coverFile!);
 
       await createBookService({
         ...formData,
-        coverUrl: 'sigma.jpg', // thay bằng URL sau khi upload
+        coverUrl,
       } as CreateBook);
 
       addToast('Book created successfully', 'success');
