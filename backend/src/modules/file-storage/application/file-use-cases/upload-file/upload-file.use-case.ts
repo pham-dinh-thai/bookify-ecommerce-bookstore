@@ -3,7 +3,7 @@ import { File } from '../../../domain/file-aggregate/file.aggregate';
 import {
   type IStorageProvider,
   STORAGE_PROVIDER,
-} from '../ports/storage-provider.interface';
+} from '../../../domain/file-aggregate/storage/storage-provider.interface';
 import { UploadFileRequest } from './upload-file.request';
 import {
   type IUuidGenerator,

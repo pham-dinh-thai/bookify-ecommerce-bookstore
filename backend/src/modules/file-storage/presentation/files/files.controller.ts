@@ -1,5 +1,9 @@
 import {
+  Body,
   Controller,
+  Delete,
+  HttpCode,
+  HttpStatus,
   Post,
   UploadedFile,
   UseInterceptors,
@@ -8,10 +12,15 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadFileUseCase } from '../../application/file-use-cases/upload-file/upload-file.use-case';
 import { UploadFileRequest } from '../../application/file-use-cases/upload-file/upload-file.request';
 import { UploadFileResponse } from '../../application/file-use-cases/upload-file/upload-file.response';
+import { DeleteFileRequest } from './requests/delete-file.request';
+import { DeleteFileUseCase } from '../../application/file-use-cases/delete-file/delete-file.use-case';
 
 @Controller('files')
 export class FilesController {
-  public constructor(private readonly uploadFileUseCase: UploadFileUseCase) {}
+  public constructor(
+    private readonly uploadFileUseCase: UploadFileUseCase,
+    private readonly deleteFileUseCase: DeleteFileUseCase,
+  ) {}
 
   @Post('upload')
   @UseInterceptors(
@@ -29,5 +38,11 @@ export class FilesController {
     );
 
     return response;
+  }
+
+  @Delete()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async deleteFile(@Body() request: DeleteFileRequest): Promise<void> {
+    await this.deleteFileUseCase.execute(request);
   }
 }
