@@ -31,6 +31,7 @@ import { UpdateBookPriceUseCase } from './application/book-use-cases/update-book
 import { ImportBookStockUseCase } from './application/book-use-cases/import-book-stock/import-book-stock.use-case';
 import { AdjustBookStockUseCase } from './application/book-use-cases/adjust-book-stock/adjust-book-stock.use-case';
 import { DeleteBookUseCase } from './application/book-use-cases/delete-book/delete-book.use-case';
+import { FileStorageModule } from '../file-storage/file-storage.module';
 
 @Module({
   controllers: [BooksController],
@@ -45,6 +46,7 @@ import { DeleteBookUseCase } from './application/book-use-cases/delete-book/dele
     GenresModule,
     PublishersModule,
     LanguagesModule,
+    FileStorageModule,
   ],
   providers: [
     FindBooksUseCase,

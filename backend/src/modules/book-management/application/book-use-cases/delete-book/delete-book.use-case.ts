@@ -15,6 +15,10 @@ import {
   CACHE_REPOSITORY,
   type ICacheRepository,
 } from '../../../../../shared/modules/cache/domain/cache.repository.interface';
+import {
+  type IStorageProvider,
+  STORAGE_PROVIDER,
+} from '../../../../file-storage/domain/file-aggregate/storage/storage-provider.interface';
 
 /**
  * Deletes a book from the system.
@@ -39,6 +43,9 @@ export class DeleteBookUseCase {
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
+
+    @Inject(STORAGE_PROVIDER)
+    private readonly storageProvider: IStorageProvider,
   ) {}
 
   public async execute(id: string, performedBy: string): Promise<void> {
@@ -55,6 +62,12 @@ export class DeleteBookUseCase {
         {
           book,
         },
+      );
+
+      await Promise.all(
+        book
+          .getBookCovers()
+          .map((cover) => this.storageProvider.delete(cover.getUrl())),
       );
     });
 
