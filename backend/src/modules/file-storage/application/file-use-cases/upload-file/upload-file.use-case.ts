@@ -42,7 +42,7 @@ export class UploadFileUseCase {
 
     const safeOriginalName = path
       .basename(request.file.originalname)
-      .replace(/[^a-zA-Z0-9._-]/g, '_');
+      .replace(/[^a-zA-Z0-9._-]/g, '_'); // Replace unsafe characters with underscores
 
     const file = File.create({
       filename: `${this.uuidGenerator.generate()}-${safeOriginalName}`,
