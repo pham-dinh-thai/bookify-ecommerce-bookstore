@@ -3,7 +3,7 @@ import * as path from 'path';
 import { IStorageProvider } from '../../application/file-use-cases/ports/storage-provider.interface';
 
 export class LocalStorageProvider implements IStorageProvider {
-  private readonly uploadDir = path.join(process.cwd(), 'uploads');
+  private readonly uploadDir = '/storage/uploads';
 
   public async upload(
     buffer: Buffer,

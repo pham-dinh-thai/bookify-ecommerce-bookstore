@@ -11,7 +11,20 @@ import {
 } from '../../../../../shared/uuid/domain/uuid-generator.interface';
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
 import { UploadFileResponse } from './upload-file.response';
+import { fileTypeFromBuffer } from 'file-type';
+import * as path from 'path';
 
+/**
+ * Handles file upload to storage.
+ *
+ * Security measures applied:
+ * - Magic bytes detection to verify actual file type (prevents mimetype spoofing)
+ * - Filename sanitization to prevent path traversal attacks
+ * - MIME type validation via FileMimeType value object (allowlist)
+ * - File size validation via FileSize value object (max 5MB)
+ *
+ * @returns URL of the uploaded file
+ */
 @Injectable()
 export class UploadFileUseCase {
   public constructor(
@@ -25,9 +38,15 @@ export class UploadFileUseCase {
   public async execute(
     request: UploadFileRequest,
   ): Promise<UploadFileResponse> {
+    const detected = await fileTypeFromBuffer(request.file.buffer);
+
+    const safeOriginalName = path
+      .basename(request.file.originalname)
+      .replace(/[^a-zA-Z0-9._-]/g, '_');
+
     const file = File.create({
-      filename: `${this.uuidGenerator.generate()}-${request.file.originalname}`,
-      mimetype: request.file.mimetype,
+      filename: `${this.uuidGenerator.generate()}-${safeOriginalName}`,
+      mimetype: detected?.mime ?? request.file.mimetype,
       size: request.file.size,
     });
 

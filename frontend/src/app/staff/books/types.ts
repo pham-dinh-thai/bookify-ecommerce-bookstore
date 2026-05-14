@@ -12,7 +12,9 @@ export type Book = {
   authors: string[];
   publisher: string;
   originalPrice: number;
-  bookCovers: BookCover[];
+  covers: BookCover[];
+  isInStock: boolean;
+  status: string;
 };
 
 export type CreateBookForm = {

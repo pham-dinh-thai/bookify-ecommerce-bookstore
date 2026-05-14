@@ -15,6 +15,9 @@ export default function BookManagementPage() {
   const pageSize = 10;
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const [expandedAuthors, setExpandedAuthors] = useState<Set<string>>(
+    new Set(),
+  );
 
   const { books, total, loading, errors, refetch } = useBooks(
     page,
@@ -22,20 +25,22 @@ export default function BookManagementPage() {
     search,
   );
 
+  console.log('Books:', books);
+
   const columns = [
     {
       key: 'book',
-      label: 'Book',
-      className: 'text-[#4f6553]',
+      label: 'Book Title',
+      className: 'text-[#4f6553] w-64',
       render: (item: Book) => (
         <div className="flex items-center gap-3">
           <img
             src={
-              item.bookCovers?.[0]?.url ??
+              item.covers?.[0]?.url ??
               'https://tse1.mm.bing.net/th/id/OIP.dI055T7RdiMDYUAVQbp88AHaLX?o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3'
             }
             alt={item.title}
-            className="w-12 h-16 object-cover rounded-lg flex-shrink-0"
+            className="w-18 h-24 object-cover flex-shrink-0"
           />
           <span className="font-medium">{item.title}</span>
         </div>
@@ -44,30 +49,58 @@ export default function BookManagementPage() {
     {
       key: 'publisher',
       label: 'Publisher',
-      className: 'text-[#4f6553]',
+      className: 'text-[#4f6553] w-36',
     },
     {
       key: 'authors',
-      label: 'Authors',
-      className: 'text-[#4f6553]',
+      label: 'Author',
+      className: 'text-[#4f6553] w-72',
       render: (item: Book) => {
         const authors = item.authors ?? [];
-        const visible = authors.slice(0, 2);
+        const isExpanded = expandedAuthors.has(item.id);
+        const visible = isExpanded ? authors : authors.slice(0, 2);
         const hidden = authors.length - 2;
+
         return (
-          <span>
-            {visible.join(', ')}
-            {hidden > 0 && (
-              <span className="ml-1 text-xs text-[#888]">+{hidden} more</span>
+          <div className="flex flex-wrap gap-1">
+            {visible.map((author, i) => (
+              <span key={i}>
+                {author}
+                {i < visible.length - 1 ? ',' : ''}
+              </span>
+            ))}
+            {!isExpanded && hidden > 0 && (
+              <button
+                onClick={() =>
+                  setExpandedAuthors((prev) => new Set(prev).add(item.id))
+                }
+                className="text-xs text-[#2d6a4f] hover:underline ml-1"
+              >
+                +{hidden} more
+              </button>
             )}
-          </span>
+            {isExpanded && (
+              <button
+                onClick={() =>
+                  setExpandedAuthors((prev) => {
+                    const next = new Set(prev);
+                    next.delete(item.id);
+                    return next;
+                  })
+                }
+                className="text-xs text-[#888] hover:underline ml-1"
+              >
+                less
+              </button>
+            )}
+          </div>
         );
       },
     },
     {
       key: 'originalPrice',
       label: 'Original Price',
-      className: 'text-[#4f6553]',
+      className: 'text-[#4f6553] w-46',
       render: (item: Book) => (
         <span>
           {Number(item.originalPrice).toLocaleString('vi-VN', {
@@ -75,6 +108,22 @@ export default function BookManagementPage() {
             maximumFractionDigits: 2,
           })}{' '}
           VNĐ
+        </span>
+      ),
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      className: 'text-[#4f6553] w-36',
+      render: (item: Book) => (
+        <span
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            item.status === 'In Stock'
+              ? 'bg-green-100 text-green-800'
+              : 'bg-red-100 text-red-800'
+          }`}
+        >
+          {item.status === 'In Stock' ? 'In Stock' : 'Out of Stock'}
         </span>
       ),
     },

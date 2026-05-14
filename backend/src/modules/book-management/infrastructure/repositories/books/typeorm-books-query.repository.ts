@@ -35,6 +35,7 @@ export class TypeormBooksQueryRepository implements IBooksQueryRepository {
     }
 
     const booksTypeOrm = await query
+      .orderBy('book.createdAt', 'DESC')
       .skip((page - 1) * limit)
       .take(limit)
       .getMany();

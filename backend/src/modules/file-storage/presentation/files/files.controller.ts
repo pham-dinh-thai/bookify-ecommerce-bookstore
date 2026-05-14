@@ -14,7 +14,13 @@ export class FilesController {
   public constructor(private readonly uploadFileUseCase: UploadFileUseCase) {}
 
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB
+      },
+    }),
+  )
   public async uploadFile(
     @UploadedFile() file: Express.Multer.File,
   ): Promise<UploadFileResponse> {
