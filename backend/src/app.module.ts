@@ -15,6 +15,7 @@ import { BookManagementModule } from './modules/book-management/book-management.
 import Keyv from 'keyv';
 import KeyvRedis from '@keyv/redis';
 import { CatalogManagementModule } from './modules/catalog-management/catalog-management.module';
+import { FileStorageModule } from './modules/file-storage/file-storage.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { CatalogManagementModule } from './modules/catalog-management/catalog-ma
     CustomerManagementModule,
     BookManagementModule,
     CatalogManagementModule,
+    FileStorageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
