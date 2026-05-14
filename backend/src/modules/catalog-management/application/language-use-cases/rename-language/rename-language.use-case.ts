@@ -10,11 +10,11 @@ import {
 import {
   type IUnitOfWork,
   UNIT_OF_WORK,
-} from '../../../../../shared/unit-of-work/application/unit-of-work';
+} from '../../../../../shared/modules/unit-of-work/application/unit-of-work';
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
-} from '../../../../../shared/cache/domain/cache.repository.interface';
+} from '../../../../../shared/modules/cache/domain/cache.repository.interface';
 import { IRenameLanguageRequest } from './rename-language.request';
 
 @Injectable()

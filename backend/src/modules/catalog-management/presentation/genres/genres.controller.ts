@@ -16,10 +16,10 @@ import { FindOneGenreUseCase } from '../../application/genre-use-cases/find-one-
 import { CreateGenreUseCase } from '../../application/genre-use-cases/create-genre/create-genre.use-case';
 import { CreateGenreRequest } from './requests/create-genre.request';
 import { GenreReadModel } from '../../domain/genre-aggregate/read-models/genre.read-model';
-import { JwtAuthGuard } from '../../../../shared/guards/jwt-auth.guard';
-import { RoleGuard } from '../../../../shared/guards/role.guard';
-import { Roles } from '../../../../shared/decorators/roles.decorator';
-import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../../../../shared/http/guards/jwt-auth.guard';
+import { RoleGuard } from '../../../../shared/http/guards/role.guard';
+import { Roles } from '../../../../shared/http/decorators/roles.decorator';
+import { CurrentUser } from '../../../../shared/http/decorators/current-user.decorator';
 import { RenameGenreRequest } from './requests/rename-genre.request';
 import { RenameGenreUseCase } from '../../application/genre-use-cases/rename-genre/rename-genre.use-case';
 import { DeleteGenreUseCase } from '../../application/genre-use-cases/delete-genre/delete-genre.use-case';

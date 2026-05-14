@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ILanguagesCommandRepository } from '../../../domain/language-aggregate/repositories/languages-command.repository.interface';
-import { TypeOrmUnitOfWork } from '../../../../../shared/unit-of-work/infrastructure/typeorm-unit-of-work';
+import { TypeOrmUnitOfWork } from '../../../../../shared/modules/unit-of-work/infrastructure/typeorm-unit-of-work';
 import { Language } from '../../../domain/language-aggregate/language.aggregate';
 import { LanguagesMapper } from '../../mappers/languages.mapper';
 import { LanguageTypeOrm } from '../../entities/language.entity';

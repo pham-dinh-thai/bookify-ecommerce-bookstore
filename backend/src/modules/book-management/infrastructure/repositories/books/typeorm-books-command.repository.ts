@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EntityManager, In } from 'typeorm';
-import { TypeOrmUnitOfWork } from '../../../../../shared/unit-of-work/infrastructure/typeorm-unit-of-work';
+import { TypeOrmUnitOfWork } from '../../../../../shared/modules/unit-of-work/infrastructure/typeorm-unit-of-work';
 import { Book } from '../../../domain/book-aggregate/book.aggregate';
 import { IBooksCommandRepository } from '../../../domain/book-aggregate/repositories/books-command.repository.interface';
 import { BookTypeOrm } from '../../entities/book.entity';

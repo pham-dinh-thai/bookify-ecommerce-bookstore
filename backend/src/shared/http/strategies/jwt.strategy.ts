@@ -4,8 +4,8 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
-} from '../cache/domain/cache.repository.interface';
-import { UnauthorizedDomainException } from '../domain/exception/domain.exception';
+} from '../../modules/cache/domain/cache.repository.interface';
+import { UnauthorizedDomainException } from '../../domain/exception/domain.exception';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

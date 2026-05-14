@@ -15,10 +15,10 @@ import { FindOnePermissionUseCase } from '../../application/permission-use-cases
 import { CreatePermissionRequest } from './requests/create-permission.request';
 import { CreatePermissionUseCase } from '../../application/permission-use-cases/create-permission/create-permission.use-case';
 import { DeletePermissionUseCase } from '../../application/permission-use-cases/delete-permission/delete-permission.use-case';
-import { JwtAuthGuard } from '../../../../shared/guards/jwt-auth.guard';
-import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
-import { RoleGuard } from '../../../../shared/guards/role.guard';
-import { Roles } from '../../../../shared/decorators/roles.decorator';
+import { JwtAuthGuard } from '../../../../shared/http/guards/jwt-auth.guard';
+import { CurrentUser } from '../../../../shared/http/decorators/current-user.decorator';
+import { RoleGuard } from '../../../../shared/http/guards/role.guard';
+import { Roles } from '../../../../shared/http/decorators/roles.decorator';
 
 @Controller('permissions')
 @UseGuards(JwtAuthGuard, RoleGuard)

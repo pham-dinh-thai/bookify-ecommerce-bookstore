@@ -17,7 +17,7 @@ import { RolePermissionTypeOrm } from './infrastructure/entities/role-permission
 import { RevokePermissionUseCase } from './application/role-use-cases/revoke-permission/revoke-permission.use-case';
 import { DeleteRoleUseCase } from './application/role-use-cases/delete-role/delete-role.use-case';
 import { AuditLogModule } from '../audit-log/audit-log.module';
-import { UnitOfWorkModule } from '../../shared/unit-of-work/unit-of-work.module';
+import { UnitOfWorkModule } from '../../shared/modules/unit-of-work/unit-of-work.module';
 import { RolePermissionModule } from './role-permission.module';
 import { PermissionsModule } from './permissions.module';
 import { AuthenticationModule } from '../authentication/authentication.module';

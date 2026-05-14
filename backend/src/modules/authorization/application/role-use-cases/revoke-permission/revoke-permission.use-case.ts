@@ -11,7 +11,7 @@ import { PermissionNotFoundException } from '../../../domain/permission-aggregat
 import {
   type IUnitOfWork,
   UNIT_OF_WORK,
-} from '../../../../../shared/unit-of-work/application/unit-of-work';
+} from '../../../../../shared/modules/unit-of-work/application/unit-of-work';
 import { PermissionRevoked } from '../../../domain/role-aggregate/events/permission-revoked.event';
 import {
   type IRolePermissionCommandRepository,

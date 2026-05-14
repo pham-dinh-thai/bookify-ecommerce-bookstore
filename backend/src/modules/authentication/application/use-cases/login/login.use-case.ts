@@ -8,11 +8,11 @@ import { Password } from '../../../../../shared/domain/value-objects/password/pa
 import {
   type IUuidGenerator,
   UUID_GENERATOR,
-} from '../../../../../shared/uuid/domain/uuid-generator.interface';
+} from '../../../../../shared/modules/uuid/domain/uuid-generator.interface';
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
-} from '../../../../../shared/cache/domain/cache.repository.interface';
+} from '../../../../../shared/modules/cache/domain/cache.repository.interface';
 import {
   SIGN_TOKEN_SERVICE,
   type ISignTokenService,
@@ -45,9 +45,7 @@ export class LoginUseCase {
     private readonly refreshTokenHasher: IRefreshTokenHasherService,
   ) {}
 
-  public async execute(
-    request: ILoginRequest,
-  ): Promise<{
+  public async execute(request: ILoginRequest): Promise<{
     accessToken: string;
     refreshToken: string;
     roleId: string;

@@ -15,10 +15,10 @@ import { FindUsersResponse } from '../../application/user-use-cases/find-users/f
 import { FindOneUserResponse } from '../../application/user-use-cases/find-one-users/find-one-user.response';
 import { CreateUserRequest } from './requests/create-user.request';
 import { CreateUserUseCase } from '../../application/user-use-cases/create-user/create-user.use-case';
-import { JwtAuthGuard } from '../../../../shared/guards/jwt-auth.guard';
-import { RoleGuard } from '../../../../shared/guards/role.guard';
-import { Roles } from '../../../../shared/decorators/roles.decorator';
-import { CurrentUser } from '../../../../shared/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../../../../shared/http/guards/jwt-auth.guard';
+import { RoleGuard } from '../../../../shared/http/guards/role.guard';
+import { Roles } from '../../../../shared/http/decorators/roles.decorator';
+import { CurrentUser } from '../../../../shared/http/decorators/current-user.decorator';
 import { UpdateUserRequest } from './requests/update-user.request';
 import { UpdateUserUseCase } from '../../application/user-use-cases/update-user/update-user.use-case';
 import { DeactivateUserUseCase } from '../../application/user-use-cases/deactivate-user/deactivate-user.use-case';

@@ -8,7 +8,7 @@ import { UploadFileRequest } from './upload-file.request';
 import {
   type IUuidGenerator,
   UUID_GENERATOR,
-} from '../../../../../shared/uuid/domain/uuid-generator.interface';
+} from '../../../../../shared/modules/uuid/domain/uuid-generator.interface';
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
 import { UploadFileResponse } from './upload-file.response';
 import { fileTypeFromBuffer } from 'file-type';

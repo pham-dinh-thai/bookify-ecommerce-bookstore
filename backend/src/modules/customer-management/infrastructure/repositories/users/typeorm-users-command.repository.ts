@@ -1,5 +1,5 @@
 import { Injectable, Scope } from '@nestjs/common';
-import { TypeOrmUnitOfWork } from '../../../../../shared/unit-of-work/infrastructure/typeorm-unit-of-work';
+import { TypeOrmUnitOfWork } from '../../../../../shared/modules/unit-of-work/infrastructure/typeorm-unit-of-work';
 import { UserTypeOrm } from '../../../../user-management/infrastructure/entities/user.entity';
 import { IUsersCommandRepository } from '../../../domain/customer-aggregate/repositories/users-command.repository.interface';
 

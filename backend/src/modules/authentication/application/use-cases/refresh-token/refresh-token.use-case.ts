@@ -6,7 +6,7 @@ import {
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
-} from '../../../../../shared/cache/domain/cache.repository.interface';
+} from '../../../../../shared/modules/cache/domain/cache.repository.interface';
 import {
   type IRefreshTokenHasherService,
   REFRESH_TOKEN_HASHER,
@@ -14,11 +14,11 @@ import {
 import {
   type IUuidGenerator,
   UUID_GENERATOR,
-} from '../../../../../shared/uuid/domain/uuid-generator.interface';
+} from '../../../../../shared/modules/uuid/domain/uuid-generator.interface';
 import {
   JWt_SERVICE,
   type IJwtService,
-} from '../../../../../shared/jwt/domain/jwt.service';
+} from '../../../../../shared/modules/jwt/domain/jwt.service';
 import { RefreshTokenNotFoundOrExpiredException } from '../../../domain/authenticable-user-aggregate/exceptions/refresh-token-not-found-or-expired.exception';
 import { RefreshTokenInvalidException } from '../../../domain/authenticable-user-aggregate/exceptions/refresh-token-invalid.exception';
 

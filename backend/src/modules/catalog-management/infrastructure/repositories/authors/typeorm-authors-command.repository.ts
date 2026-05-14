@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IAuthorsCommandRepository } from '../../../domain/author-aggregate/repositories/authors-command.repository.interface';
-import { TypeOrmUnitOfWork } from '../../../../../shared/unit-of-work/infrastructure/typeorm-unit-of-work';
+import { TypeOrmUnitOfWork } from '../../../../../shared/modules/unit-of-work/infrastructure/typeorm-unit-of-work';
 import { Author } from '../../../domain/author-aggregate/author.aggregate';
 import { AuthorTypeOrm } from '../../entities/author.entity';
 import { AuthorsMapper } from '../../mappers/authors.mapper';

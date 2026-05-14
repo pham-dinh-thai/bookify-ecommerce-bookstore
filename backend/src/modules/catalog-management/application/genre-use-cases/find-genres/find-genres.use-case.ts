@@ -7,7 +7,7 @@ import { GenreReadModel } from '../../../domain/genre-aggregate/read-models/genr
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
-} from '../../../../../shared/cache/domain/cache.repository.interface';
+} from '../../../../../shared/modules/cache/domain/cache.repository.interface';
 import { GENRE_CACHE_KEYS, GENRE_CACHE_TTL } from '../genre-cache.constants';
 import { FindGenresResponse } from './find-genres.response';
 

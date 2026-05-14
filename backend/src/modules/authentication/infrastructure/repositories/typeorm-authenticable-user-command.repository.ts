@@ -1,5 +1,5 @@
 import { Injectable, Scope } from '@nestjs/common';
-import { TypeOrmUnitOfWork } from '../../../../shared/unit-of-work/infrastructure/typeorm-unit-of-work';
+import { TypeOrmUnitOfWork } from '../../../../shared/modules/unit-of-work/infrastructure/typeorm-unit-of-work';
 import { UserTypeOrm } from '../../../user-management/infrastructure/entities/user.entity';
 import { AuthenticableUser } from '../../domain/authenticable-user-aggregate/authenticable-user.aggregate';
 import { IAuthenticableUserCommandRepository } from '../../domain/authenticable-user-aggregate/repositories/authenticable-user-command.repository.interface';

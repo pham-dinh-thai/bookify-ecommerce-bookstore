@@ -6,7 +6,7 @@ import {
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
-} from '../../../../../shared/cache/domain/cache.repository.interface';
+} from '../../../../../shared/modules/cache/domain/cache.repository.interface';
 import { LanguageReadModel } from '../../../domain/language-aggregate/read-models/language.read-model';
 import {
   LANGUAGE_CACHE_KEYS,

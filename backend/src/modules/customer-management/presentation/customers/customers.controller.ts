@@ -3,9 +3,9 @@ import { CompleteInformationRequest } from './requests/complete-information.requ
 import { CompleteInformationUseCase } from '../../application/customer-use-cases/complete-information/complete-information.use-case';
 import { FindCustomersUseCase } from '../../application/customer-use-cases/find-customers/find-customers.use-case';
 import { FindCustomersResponse } from '../../application/customer-use-cases/find-customers/find-customers.response';
-import { JwtAuthGuard } from '../../../../shared/guards/jwt-auth.guard';
-import { RoleGuard } from '../../../../shared/guards/role.guard';
-import { Roles } from '../../../../shared/decorators/roles.decorator';
+import { JwtAuthGuard } from '../../../../shared/http/guards/jwt-auth.guard';
+import { RoleGuard } from '../../../../shared/http/guards/role.guard';
+import { Roles } from '../../../../shared/http/decorators/roles.decorator';
 import { FindTotalCustomerUseCase } from '../../application/customer-use-cases/find-total-customer/find-total-customer.use-case';
 import { CustomerFilter } from '../../domain/customer-aggregate/customer.filter';
 

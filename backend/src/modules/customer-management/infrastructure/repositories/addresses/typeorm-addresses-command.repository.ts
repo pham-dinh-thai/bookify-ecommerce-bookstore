@@ -1,6 +1,6 @@
 import { Injectable, Scope } from '@nestjs/common';
 import { IAddressesCommandRepository } from '../../../domain/customer-aggregate/entities/repositories/addresses-command.repository.interface';
-import { TypeOrmUnitOfWork } from '../../../../../shared/unit-of-work/infrastructure/typeorm-unit-of-work';
+import { TypeOrmUnitOfWork } from '../../../../../shared/modules/unit-of-work/infrastructure/typeorm-unit-of-work';
 import { AddressTypeOrm } from '../../entities/address.entity';
 import { Address } from '../../../domain/customer-aggregate/entities/address.entity';
 import { AddressesMapper } from '../../mappers/addresses.mapper';

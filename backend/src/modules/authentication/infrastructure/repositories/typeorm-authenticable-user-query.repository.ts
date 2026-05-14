@@ -1,7 +1,7 @@
 import { Injectable, Scope } from '@nestjs/common';
 import { IAuthenticableUserQueryRepository } from '../../domain/authenticable-user-aggregate/repositories/authenticable-user-query.repository.interface';
 import { AuthenticableUserReadModel } from '../../domain/authenticable-user-aggregate/read-models/authenticable-user.read-model';
-import { TypeOrmUnitOfWork } from '../../../../shared/unit-of-work/infrastructure/typeorm-unit-of-work';
+import { TypeOrmUnitOfWork } from '../../../../shared/modules/unit-of-work/infrastructure/typeorm-unit-of-work';
 import { UserTypeOrm } from '../../../user-management/infrastructure/entities/user.entity';
 
 @Injectable({ scope: Scope.REQUEST })

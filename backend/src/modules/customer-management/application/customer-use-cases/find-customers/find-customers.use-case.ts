@@ -7,7 +7,7 @@ import { CustomerReadModel } from '../../../domain/customer-aggregate/read-model
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
-} from '../../../../../shared/cache/domain/cache.repository.interface';
+} from '../../../../../shared/modules/cache/domain/cache.repository.interface';
 import { CustomerFilter } from '../../../domain/customer-aggregate/customer.filter';
 import { FindCustomersResponse } from './find-customers.response';
 import {

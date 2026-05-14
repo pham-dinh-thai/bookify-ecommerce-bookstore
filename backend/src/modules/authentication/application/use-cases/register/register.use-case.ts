@@ -8,7 +8,7 @@ import { AuthenticableUser } from '../../../domain/authenticable-user-aggregate/
 import {
   type IUuidGenerator,
   UUID_GENERATOR,
-} from '../../../../../shared/uuid/domain/uuid-generator.interface';
+} from '../../../../../shared/modules/uuid/domain/uuid-generator.interface';
 import {
   AUTHENTICABLE_USER_QUERY_REPOSITORY,
   type IAuthenticableUserQueryRepository,
@@ -17,7 +17,7 @@ import { EmailHasBeenUseException } from '../../../domain/authenticable-user-agg
 import {
   type IUnitOfWork,
   UNIT_OF_WORK,
-} from '../../../../../shared/unit-of-work/application/unit-of-work';
+} from '../../../../../shared/modules/unit-of-work/application/unit-of-work';
 import {
   type ISignTokenService,
   SIGN_TOKEN_SERVICE,

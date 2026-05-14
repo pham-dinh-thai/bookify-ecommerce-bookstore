@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { TypeOrmUnitOfWork } from '../../../../../shared/unit-of-work/infrastructure/typeorm-unit-of-work';
+import { TypeOrmUnitOfWork } from '../../../../../shared/modules/unit-of-work/infrastructure/typeorm-unit-of-work';
 import { AuditLogTypeOrm } from '../../entities/typeorm-auditlog.entity';
 import { IAuditLogCommandRepository } from '../../../domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
-} from '../../../../../shared/cache/domain/cache.repository.interface';
+} from '../../../../../shared/modules/cache/domain/cache.repository.interface';
 
 @Injectable()
 export class TypeOrmAuditLogCommandRepository implements IAuditLogCommandRepository {

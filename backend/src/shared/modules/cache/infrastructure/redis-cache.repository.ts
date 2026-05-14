@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { type Cache } from 'cache-manager';
-import { ICacheRepository } from '../../cache/domain/cache.repository.interface';
+import { ICacheRepository } from '../domain/cache.repository.interface';
 import Redis from 'ioredis';
 
 @Injectable()

@@ -6,7 +6,7 @@ import {
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
-} from '../../../../../shared/cache/domain/cache.repository.interface';
+} from '../../../../../shared/modules/cache/domain/cache.repository.interface';
 import { AUTHOR_CACHE_KEYS, AUTHOR_CACHE_TTL } from '../author-cache.constants';
 import { FindAuthorsResponse } from './find-authors.response';
 

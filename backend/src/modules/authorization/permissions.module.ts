@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PermissionTypeOrm } from './infrastructure/entities/permission.entity';
-import { SharedCacheModule } from '../../shared/cache/cache.module';
+import { SharedCacheModule } from '../../shared/modules/cache/cache.module';
 import { PermissionsController } from './presentation/permissions/permissions.controller';
 import { PERMISSIONS_QUERY_REPOSITORY } from './domain/permission-aggregate/repositories/permission-query.repository.interface';
 import { TypeOrmPermissionsQueryRepository } from './infrastructure/repositories/permission/typeorm-permissions-query.repository';
@@ -13,7 +13,7 @@ import { CreatePermissionUseCase } from './application/permission-use-cases/crea
 import { PERMISSION_EXISTS_CHECKER } from './domain/permission-aggregate/services/permission-exists-checker.service.interface';
 import { PermissionExistsChecker } from './infrastructure/services/permissions/permission-exists-checker.service';
 import { DeletePermissionUseCase } from './application/permission-use-cases/delete-permission/delete-permission.use-case';
-import { UnitOfWorkModule } from '../../shared/unit-of-work/unit-of-work.module';
+import { UnitOfWorkModule } from '../../shared/modules/unit-of-work/unit-of-work.module';
 import { AuditLogModule } from '../audit-log/audit-log.module';
 import { RolePermissionTypeOrm } from './infrastructure/entities/role-permission.entity';
 import { RolePermissionModule } from './role-permission.module';

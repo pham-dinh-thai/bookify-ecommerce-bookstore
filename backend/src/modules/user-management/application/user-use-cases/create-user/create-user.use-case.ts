@@ -7,12 +7,12 @@ import { ICreateUserRequest } from './create-user.request';
 import {
   type IUnitOfWork,
   UNIT_OF_WORK,
-} from '../../../../../shared/unit-of-work/application/unit-of-work';
+} from '../../../../../shared/modules/unit-of-work/application/unit-of-work';
 import { User } from '../../../domain/user-aggregate/user.aggregate';
 import {
   type IUuidGenerator,
   UUID_GENERATOR,
-} from '../../../../../shared/uuid/domain/uuid-generator.interface';
+} from '../../../../../shared/modules/uuid/domain/uuid-generator.interface';
 import {
   AUDIT_LOG_COMMAND_REPOSITORY,
   type IAuditLogCommandRepository,
@@ -29,7 +29,7 @@ import { EmailHasBeenUseException } from '../../../domain/user-aggregate/excepti
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
-} from '../../../../../shared/cache/domain/cache.repository.interface';
+} from '../../../../../shared/modules/cache/domain/cache.repository.interface';
 
 @Injectable()
 export class CreateUserUseCase {

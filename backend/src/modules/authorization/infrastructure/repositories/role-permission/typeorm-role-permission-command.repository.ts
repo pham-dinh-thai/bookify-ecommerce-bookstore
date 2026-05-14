@@ -1,5 +1,5 @@
 import { IRolePermissionCommandRepository } from '../../../domain/role-aggregate/repositories/role-permission-command.repository.interface';
-import { TypeOrmUnitOfWork } from '../../../../../shared/unit-of-work/infrastructure/typeorm-unit-of-work';
+import { TypeOrmUnitOfWork } from '../../../../../shared/modules/unit-of-work/infrastructure/typeorm-unit-of-work';
 import { RolePermissionTypeOrm } from '../../entities/role-permission.entity';
 import { Injectable, Scope } from '@nestjs/common';
 

@@ -4,11 +4,11 @@ import { Customer } from '../../../domain/customer-aggregate/customer.aggregate'
 import {
   type IUuidGenerator,
   UUID_GENERATOR,
-} from '../../../../../shared/uuid/domain/uuid-generator.interface';
+} from '../../../../../shared/modules/uuid/domain/uuid-generator.interface';
 import {
   type IUnitOfWork,
   UNIT_OF_WORK,
-} from '../../../../../shared/unit-of-work/application/unit-of-work';
+} from '../../../../../shared/modules/unit-of-work/application/unit-of-work';
 import {
   CUSTOMERS_COMMAND_REPOSITORY,
   type ICustomersCommandRepository,
@@ -30,12 +30,12 @@ import {
   PHONE_NUMBER_EXISTS_CHECKER,
 } from '../../../domain/customer-aggregate/services/phone-number-exists-checker.service';
 import { PhoneNumberAlreadyBeenUseException } from '../../../domain/customer-aggregate/exceptions/phone-number-already-been-use.exception';
-import { JWt_SERVICE } from '../../../../../shared/jwt/domain/jwt.service';
-import { SharedJwtService } from '../../../../../shared/jwt/infrastructure/shared-jwt.service';
+import { JWt_SERVICE } from '../../../../../shared/modules/jwt/domain/jwt.service';
+import { SharedJwtService } from '../../../../../shared/modules/jwt/infrastructure/shared-jwt.service';
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
-} from '../../../../../shared/cache/domain/cache.repository.interface';
+} from '../../../../../shared/modules/cache/domain/cache.repository.interface';
 
 @Injectable()
 export class CompleteInformationUseCase {

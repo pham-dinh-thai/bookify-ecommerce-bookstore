@@ -3,7 +3,7 @@ import { IPermissionsCommandRepository } from '../../../domain/permission-aggreg
 import { Permission } from '../../../domain/permission-aggregate/permission.aggregate';
 import { PermissionNotFoundException } from '../../../domain/permission-aggregate/exceptions/permission-not-found.exception';
 import { PermissionsMapper } from '../../mappers/permissions.mapper';
-import { TypeOrmUnitOfWork } from '../../../../../shared/unit-of-work/infrastructure/typeorm-unit-of-work';
+import { TypeOrmUnitOfWork } from '../../../../../shared/modules/unit-of-work/infrastructure/typeorm-unit-of-work';
 import { PermissionTypeOrm } from '../../entities/permission.entity';
 
 @Injectable({ scope: Scope.REQUEST })

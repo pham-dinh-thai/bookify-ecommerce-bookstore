@@ -6,7 +6,7 @@ import {
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
-} from '../../../../../shared/cache/domain/cache.repository.interface';
+} from '../../../../../shared/modules/cache/domain/cache.repository.interface';
 import { PublisherReadModel } from '../../../domain/publisher-aggregate/read-models/publisher.read-model';
 import {
   PUBLISHER_CACHE_KEYS,
