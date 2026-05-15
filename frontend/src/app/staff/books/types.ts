@@ -31,4 +31,25 @@ export type CreateBookForm = {
   coverUrl: string;
 };
 
+export type BookDetail = {
+  id: string;
+  isbn: string;
+  title: string;
+  description: string;
+  originalPrice: number;
+  quantity: number;
+  pageCount: number;
+  isInStock: boolean;
+  language: string;
+  publisher: string;
+  authors: string[];
+  genres: string[];
+  covers?: {
+    id: string;
+    url: string;
+    isPrimary: boolean;
+    displayOrder: number;
+  }[];
+};
+
 export type CreateBookFormErrors = Record<string, string | undefined>;
