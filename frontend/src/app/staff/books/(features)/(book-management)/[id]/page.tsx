@@ -14,7 +14,7 @@ export default function ViewBookDetail({
 }) {
   const { id } = use(params);
 
-  const { book, loading, errors } = useBookDetail(id);
+  const { book, loading, errors, refetch } = useBookDetail(id);
   const statusLabel = useMemo(() => {
     if (!book) return 'Unknown';
     return book.isInStock ? 'In stock' : 'Out of stock';
@@ -106,7 +106,7 @@ export default function ViewBookDetail({
         </div>
 
         <div className="col-span-12 lg:col-span-8 flex flex-col gap-8">
-          <BasicInformation book={book} />
+          <BasicInformation book={book} onUpdated={refetch} />
 
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="rounded-3xl bg-[#f7faf5] p-8 shadow-sm border-l-4 border-[#3f6754]">
