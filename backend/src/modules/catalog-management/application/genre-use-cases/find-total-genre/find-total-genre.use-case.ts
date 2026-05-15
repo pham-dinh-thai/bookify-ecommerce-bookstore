@@ -4,6 +4,9 @@ import {
   type IGenresQueryRepository,
 } from '../../../domain/genre-aggregate/repositories/genres-query.repository.interface';
 
+/**
+ * Returns the total number of genres in the system.
+ */
 @Injectable()
 export class FindTotalGenreUseCase {
   public constructor(

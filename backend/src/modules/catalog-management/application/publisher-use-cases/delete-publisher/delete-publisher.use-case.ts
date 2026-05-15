@@ -16,6 +16,13 @@ import {
   UNIT_OF_WORK,
 } from '../../../../../shared/modules/unit-of-work/application/unit-of-work';
 
+/**
+ * Deletes an existing publisher from the system.
+ *
+ * The publisher must exist before deletion; a non-existent ID is treated as an error.
+ * Every deletion is recorded in the audit log for traceability.
+ * Cache is invalidated after a successful commit to ensure consistency.
+ */
 @Injectable()
 export class DeletePublisherUseCase {
   public constructor(

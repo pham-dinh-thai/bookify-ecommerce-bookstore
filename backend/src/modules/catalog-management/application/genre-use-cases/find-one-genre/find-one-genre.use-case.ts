@@ -5,6 +5,9 @@ import {
 } from '../../../domain/genre-aggregate/repositories/genres-query.repository.interface';
 import { GenreReadModel } from '../../../domain/genre-aggregate/read-models/genre.read-model';
 
+/**
+ * Retrieves a single genre by ID, or null if not found.
+ */
 @Injectable()
 export class FindOneGenreUseCase {
   public constructor(

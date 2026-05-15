@@ -16,8 +16,14 @@ import {
   CACHE_REPOSITORY,
   type ICacheRepository,
 } from '../../../../../shared/modules/cache/domain/cache.repository.interface';
-import { AUTHOR_CACHE_KEYS } from '../author-cache.constants';
 
+/**
+ * Renames an existing author.
+ *
+ * If the new name is identical to the current one, the operation is skipped entirely.
+ * Every rename is recorded in the audit log with both the old and new name for traceability.
+ * Cache is invalidated after a successful commit to ensure consistency.
+ */
 @Injectable()
 export class RenameAuthorUseCase {
   public constructor(

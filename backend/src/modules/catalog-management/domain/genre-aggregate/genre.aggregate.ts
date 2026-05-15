@@ -1,15 +1,22 @@
-import { AggregateRoot } from '../../../../shared/domain/aggregate-root';
 import { EmptyGenreIdException } from './exceptions/empty-genre-id.exception';
 import { EmptyGenreNameException } from './exceptions/empty-genre-name.exception';
 
-export class Genre extends AggregateRoot {
+/**
+ * Genre aggregate root.
+ *
+ * Rules:
+ * - Name cannot be empty
+ * - Id cannot be empty
+ */
+export class Genre {
   public constructor(
     private readonly id: string,
     private name: string,
-  ) {
-    super();
-  }
+  ) {}
 
+  /**
+   * Creates a new Genre instance with the provided id and name, enforcing validation rules.
+   */
   public static create(id: string, name: string): Genre {
     if (!id) {
       throw new EmptyGenreIdException();
@@ -22,10 +29,16 @@ export class Genre extends AggregateRoot {
     return new Genre(id, name);
   }
 
+  /**
+   * Reconstructs a Genre from persistent data.
+   */
   public static fromPersistent(id: string, name: string): Genre {
     return new Genre(id, name);
   }
 
+  /**
+   * Renames the genre, ensuring the new name is not empty and different from the current name.
+   */
   public rename(name: string): { oldName: string; newName: string } {
     const oldName = this.name;
     if (oldName !== name) {

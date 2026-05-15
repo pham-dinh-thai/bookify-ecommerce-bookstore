@@ -5,6 +5,9 @@ import {
 } from '../../../domain/language-aggregate/repositories/languages-query.repository.interface';
 import { LanguageReadModel } from '../../../domain/language-aggregate/read-models/language.read-model';
 
+/**
+ * Retrieves a single language by ID, or null if not found.
+ */
 @Injectable()
 export class FindOneLanguageUseCase {
   public constructor(

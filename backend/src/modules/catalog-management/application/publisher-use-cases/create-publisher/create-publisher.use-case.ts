@@ -22,6 +22,12 @@ import {
 import { ICreatePublisherRequest } from './create-publisher.request';
 import { Publisher } from '../../../domain/publisher-aggregate/publisher.aggregate';
 
+/**
+ * Creates a new publisher.
+ *
+ * Every creation is recorded in the audit log for traceability.
+ * Cache is invalidated after a successful commit to ensure consistency.
+ */
 @Injectable()
 export class CreatePublisherUseCase {
   public constructor(

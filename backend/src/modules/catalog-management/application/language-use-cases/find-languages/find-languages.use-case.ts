@@ -7,13 +7,18 @@ import {
   CACHE_REPOSITORY,
   type ICacheRepository,
 } from '../../../../../shared/modules/cache/domain/cache.repository.interface';
-import { LanguageReadModel } from '../../../domain/language-aggregate/read-models/language.read-model';
 import {
   LANGUAGE_CACHE_KEYS,
   LANGUAGE_CACHE_TTL,
 } from '../language-cache.constants';
 import { FindLanguagesResponse } from './find-languages.response';
 
+/**
+ * Retrieves a paginated list of languages, with optional name search.
+ *
+ * Results are cached per unique combination of page, limit, and search term
+ * to reduce database load on repeated queries.
+ */
 @Injectable()
 export class FindLanguagesUseCase {
   public constructor(

@@ -1,15 +1,22 @@
-import { AggregateRoot } from '../../../../shared/domain/aggregate-root';
 import { PublisherIdEmptyException } from './exceptions/publisher-id-empty.exception';
 import { PublisherNameEmptyException } from './exceptions/publisher-name.empty.exception';
 
-export class Publisher extends AggregateRoot {
+/**
+ * Publisher aggregate root.
+ *
+ * Rules:
+ * - Name cannot be empty
+ * - Id cannot be empty
+ */
+export class Publisher {
   private constructor(
     private readonly id: string,
     private name: string,
-  ) {
-    super();
-  }
+  ) {}
 
+  /**
+   * Creates a new Publisher instance with the provided id and name, enforcing validation rules.
+   */
   public static create(id: string, name: string): Publisher {
     if (!id) {
       throw new PublisherIdEmptyException();
@@ -22,10 +29,16 @@ export class Publisher extends AggregateRoot {
     return new Publisher(id, name);
   }
 
+  /**
+   * Reconstructs a Publisher from persistent data.
+   */
   public static fromPersistent(id: string, name: string): Publisher {
     return new Publisher(id, name);
   }
 
+  /**
+   * Renames the publisher, ensuring the new name is not empty and different from the current name.
+   */
   public rename(name: string): { oldName: string; newName: string } {
     const oldName = this.name;
 

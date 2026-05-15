@@ -4,6 +4,9 @@ import {
   LANGUAGES_QUERY_REPOSITORY,
 } from '../../../domain/language-aggregate/repositories/languages-query.repository.interface';
 
+/**
+ * Returns the total number of languages in the system.
+ */
 @Injectable()
 export class FindTotalLanguageUseCase {
   public constructor(

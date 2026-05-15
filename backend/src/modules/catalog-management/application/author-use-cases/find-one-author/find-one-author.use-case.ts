@@ -5,6 +5,9 @@ import {
 } from '../../../domain/author-aggregate/repositories/authors-query.repository.interface';
 import { AuthorReadModel } from '../../../domain/author-aggregate/read-models/author.read-model';
 
+/**
+ * Retrieves a single author by ID, or null if not found.
+ */
 @Injectable()
 export class FindOneAuthorUseCase {
   public constructor(
