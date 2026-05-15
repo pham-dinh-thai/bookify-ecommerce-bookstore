@@ -1,13 +1,31 @@
+'use client';
+
 import NavigationBarPresenter from './navigation-bar.presenter';
+import { useEffect, useState } from 'react';
+import { allGenreService } from '@/app/admin/genres/(genre-management)/services/all-genre.service';
 
 export default function NavigationBarContainer() {
-  const genres = [
-    { label: 'Fiction', path: '/genres/fiction' },
-    { label: 'Fantasy', path: '/genres/fantasy' },
-    { label: 'Romance', path: '/genres/romance' },
-    { label: 'Mystery', path: '/genres/mystery' },
-    { label: 'History', path: '/genres/history' },
-  ];
+  const [genres, setGenres] = useState<GenreLink[]>([]);
+
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const response = await allGenreService(1, 1000, '');
+        const genreLinks = (response?.genres || []).map(
+          (genre: { name: string }) => ({
+            label: genre.name,
+            path: `/genres/${genre.name.toLowerCase().replace(/\s+/g, '-')}`,
+          }),
+        );
+
+        setGenres(genreLinks);
+      } catch (error) {
+        console.error('Failed to fetch genres for navbar:', error);
+      }
+    };
+
+    fetchGenres();
+  }, []);
 
   const navLinks = [
     { label: 'Best Seller', path: '/best-seller' },

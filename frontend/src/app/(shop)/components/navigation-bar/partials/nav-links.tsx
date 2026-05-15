@@ -1,3 +1,4 @@
+import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 
 type NavLinksProps = {
@@ -11,10 +12,10 @@ export default function NavLinks({ navLinks, genres }: NavLinksProps) {
       <li className="relative group">
         <button
           type="button"
-          className="text-[13.5px] font-medium text-[#047857B3] hover:text-[#2b352f] transition-colors inline-flex items-center gap-1"
+          className="text-[13.5px] font-medium text-[#047857B3] hover:text-[#2b352f] transition-colors inline-flex items-center"
         >
           Genre
-          <span className="text-[10px]">▾</span>
+          <ChevronDown className="w-3.5 h-3.5" />
         </button>
 
         <div className="absolute left-0 top-full z-20 hidden min-w-[190px] pt-2 group-hover:block">
