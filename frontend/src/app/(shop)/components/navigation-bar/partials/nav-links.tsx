@@ -29,15 +29,15 @@ export default function NavLinks({ navLinks }: NavLinksProps) {
               <button
                 type="button"
                 onClick={() => openCategoryModal(link.children)}
-                className="inline-flex items-center gap-1 text-[13.5px] font-medium text-[#047857B3] hover:text-[#2b352f] transition-colors"
+                className="inline-flex items-center gap-1 rounded-full px-3 py-2 text-[13.5px] font-medium uppercase tracking-[0.05em] text-[#3f6754] transition-all hover:bg-[#eff5ef] hover:text-[#2b352f]"
               >
                 {link.label}
-                <ChevronDown className="w-3.5 h-3.5" />
+                <ChevronDown className="h-3.5 w-3.5" />
               </button>
             ) : (
               <Link
                 href={link.path || '#'}
-                className="text-[13.5px] font-medium text-[#047857B3] hover:text-[#2b352f] transition-colors"
+                className="rounded-full px-3 py-2 text-[13.5px] font-medium uppercase tracking-[0.05em] text-[#3f6754] transition-all hover:bg-[#eff5ef] hover:text-[#2b352f]"
               >
                 {link.label}
               </Link>
