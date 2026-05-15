@@ -62,57 +62,46 @@ export default function BasicInformation({ book }: { book: BookDetail }) {
           />
         </div>
         <div className="col-span-1 lg:col-span-2 flex flex-col gap-3">
-          <label className="text-xs font-bold uppercase tracking-[0.18em] text-[#58615b]">
+          <label className={labelClass} style={labelStyle}>
             Genre
           </label>
-          <div className="flex flex-wrap gap-2 rounded-3xl bg-white p-4 ring-1 ring-[#c1ecd4]">
-            {book.genres.length > 0 ? (
-              book.genres.map((genre) => (
-                <span
-                  key={genre}
-                  className="inline-flex items-center gap-2 rounded-full bg-[#3f6754] px-4 py-2 text-xs font-bold text-[#e6ffef]"
-                >
-                  {genre}
-                </span>
-              ))
-            ) : (
-              <span className="text-sm text-[#58615b]">
-                No genres available
-              </span>
-            )}
-          </div>
+          <input
+            readOnly
+            value={
+              book.genres.length > 0
+                ? book.genres.join(', ')
+                : 'No genres available'
+            }
+            className={inputClass}
+            style={fieldStyle}
+          />
         </div>
 
         <div className="col-span-1 lg:col-span-2 flex flex-col gap-3">
-          <label className="text-xs font-bold uppercase tracking-[0.18em] text-[#58615b]">
+          <label className={labelClass} style={labelStyle}>
             Author
           </label>
-          <div className="flex flex-wrap gap-2 rounded-3xl bg-white p-4 ring-1 ring-[#c1ecd4]">
-            {book.authors.length > 0 ? (
-              book.authors.map((author) => (
-                <span
-                  key={author}
-                  className="inline-flex items-center gap-2 rounded-full bg-[#3f6754] px-4 py-2 text-xs font-bold text-[#e6ffef]"
-                >
-                  {author}
-                </span>
-              ))
-            ) : (
-              <span className="text-sm text-[#58615b]">
-                No authors available
-              </span>
-            )}
-          </div>
+          <input
+            readOnly
+            value={
+              book.authors.length > 0
+                ? book.authors.join(', ')
+                : 'No authors available'
+            }
+            className={inputClass}
+            style={fieldStyle}
+          />
         </div>
 
-        <div className="flex flex-wrap gap-2 col-span-2 rounded-3xl bg-white p-4 ring-1 ring-[#c1ecd4]">
-          <h2 className="text-2xl font-bold text-[#2b352f] mb-6">
+        <div className="col-span-2 flex flex-col gap-3">
+          <label className={labelClass} style={labelStyle}>
             Description
-          </h2>
+          </label>
           <textarea
             readOnly
             value={book.description}
-            className="h-48 w-full resize-none rounded-3xl bg-white p-6 text-sm leading-relaxed text-[#58615b] ring-1 ring-[#c1ecd4] focus:outline-none"
+            className={`${inputClass} h-48 resize-none leading-relaxed`}
+            style={fieldStyle}
           />
         </div>
       </div>
