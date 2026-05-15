@@ -6,12 +6,14 @@ import NavWrapper from './partials/nav-wrapper';
 
 type NavigationBarPresenterProps = {
   navLinks: NavLink[];
+  genres: GenreLink[];
   appName: string;
 };
 
 export default function NavigationBarPresenter({
   navLinks,
   appName,
+  genres,
 }: NavigationBarPresenterProps) {
   return (
     <NavWrapper>
@@ -26,7 +28,7 @@ export default function NavigationBarPresenter({
       >
         <NavLogo appName={appName} />
 
-        <NavLinks navLinks={navLinks} />
+        <NavLinks navLinks={navLinks} genres={genres} />
 
         <NavSearch />
 
