@@ -168,7 +168,7 @@ export default function BookManagementPage() {
             <div className="flex items-center justify-end gap-2">
               <Link
                 title="View Detail"
-                href={`/admin/books/${item.id}`}
+                href={`/staff/books/${item.id}`}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#eef6ff] text-[#204877] hover:bg-[#dbe9ff]"
               >
                 <ExternalLink className="w-4" />
