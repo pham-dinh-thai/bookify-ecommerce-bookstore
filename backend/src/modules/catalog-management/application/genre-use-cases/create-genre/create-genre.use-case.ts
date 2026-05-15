@@ -22,6 +22,12 @@ import {
   type ICacheRepository,
 } from '../../../../../shared/modules/cache/domain/cache.repository.interface';
 
+/**
+ * Creates a new genre.
+ *
+ * Every creation is recorded in the audit log for traceability.
+ * Cache is invalidated after a successful commit to ensure consistency.
+ */
 @Injectable()
 export class CreateGenreUseCase {
   public constructor(

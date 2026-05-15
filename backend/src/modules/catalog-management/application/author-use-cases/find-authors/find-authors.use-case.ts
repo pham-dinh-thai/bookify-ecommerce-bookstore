@@ -10,6 +10,12 @@ import {
 import { AUTHOR_CACHE_KEYS, AUTHOR_CACHE_TTL } from '../author-cache.constants';
 import { FindAuthorsResponse } from './find-authors.response';
 
+/**
+ * Retrieves a paginated list of authors, with optional name search.
+ *
+ * Results are cached per unique combination of page, limit, and search term
+ * to reduce database load on repeated queries.
+ */
 @Injectable()
 export class FindAuthorsUseCase {
   public constructor(

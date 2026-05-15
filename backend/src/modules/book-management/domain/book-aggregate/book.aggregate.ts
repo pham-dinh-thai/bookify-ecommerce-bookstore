@@ -74,6 +74,9 @@ export class Book {
     }
   }
 
+  /**
+   * Creates a new Book with the given properties. Covers are added separately after creation.
+   */
   public static create(props: CreateBookProps): Book {
     return new Book(
       props.id,

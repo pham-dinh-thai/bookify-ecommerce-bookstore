@@ -4,6 +4,9 @@ import {
   type IAuthorsQueryRepository,
 } from '../../../domain/author-aggregate/repositories/authors-query.repository.interface';
 
+/**
+ * Returns the total number of authors in the system.
+ */
 @Injectable()
 export class FindTotalAuthorUseCase {
   public constructor(

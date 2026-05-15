@@ -17,6 +17,13 @@ import {
 } from '../../../../../shared/modules/unit-of-work/application/unit-of-work';
 import { IRenamePublisherRequest } from './rename-publisher.request';
 
+/**
+ * Renames an existing publisher.
+ *
+ * If the new name is identical to the current one, the operation is skipped entirely.
+ * Every rename is recorded in the audit log with both the old and new name for traceability.
+ * Cache is invalidated after a successful commit to ensure consistency.
+ */
 @Injectable()
 export class RenamePublisherUseCase {
   public constructor(

@@ -23,6 +23,12 @@ import {
 } from '../../../domain/language-aggregate/services/language-exists-checker.service';
 import { LanguageIdDuplicateException } from '../../../domain/language-aggregate/exceptions/language-id-duplicate.exception';
 
+/**
+ * Creates a new language.
+ *
+ * Every creation is recorded in the audit log for traceability.
+ * Cache is invalidated after a successful commit to ensure consistency.
+ */
 @Injectable()
 export class CreateLanguageUseCase {
   public constructor(

@@ -3,7 +3,6 @@ import {
   GENRES_QUERY_REPOSITORY,
   type IGenresQueryRepository,
 } from '../../../domain/genre-aggregate/repositories/genres-query.repository.interface';
-import { GenreReadModel } from '../../../domain/genre-aggregate/read-models/genre.read-model';
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
@@ -11,6 +10,12 @@ import {
 import { GENRE_CACHE_KEYS, GENRE_CACHE_TTL } from '../genre-cache.constants';
 import { FindGenresResponse } from './find-genres.response';
 
+/**
+ * Retrieves a paginated list of genres, with optional name search.
+ *
+ * Results are cached per unique combination of page, limit, and search term
+ * to reduce database load on repeated queries.
+ */
 @Injectable()
 export class FindGenresUseCase {
   public constructor(

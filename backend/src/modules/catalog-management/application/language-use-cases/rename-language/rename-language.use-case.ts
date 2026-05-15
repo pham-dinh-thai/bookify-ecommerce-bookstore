@@ -17,6 +17,13 @@ import {
 } from '../../../../../shared/modules/cache/domain/cache.repository.interface';
 import { IRenameLanguageRequest } from './rename-language.request';
 
+/**
+ * Renames an existing language.
+ *
+ * If the new name is identical to the current one, the operation is skipped entirely.
+ * Every rename is recorded in the audit log with both the old and new name for traceability.
+ * Cache is invalidated after a successful commit to ensure consistency.
+ */
 @Injectable()
 export class RenameLanguageUseCase {
   public constructor(

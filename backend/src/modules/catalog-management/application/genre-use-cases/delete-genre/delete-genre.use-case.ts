@@ -16,6 +16,13 @@ import {
   type ICacheRepository,
 } from '../../../../../shared/modules/cache/domain/cache.repository.interface';
 
+/**
+ * Deletes an existing genre from the system.
+ *
+ * The genre must exist before deletion; a non-existent ID is treated as an error.
+ * Every deletion is recorded in the audit log for traceability.
+ * Cache is invalidated after a successful commit to ensure consistency.
+ */
 @Injectable()
 export class DeleteGenreUseCase {
   public constructor(

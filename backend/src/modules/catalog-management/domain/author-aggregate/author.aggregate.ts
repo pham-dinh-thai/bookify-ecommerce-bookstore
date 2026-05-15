@@ -1,15 +1,22 @@
-import { AggregateRoot } from '../../../../shared/domain/aggregate-root';
 import { AuthorIdEmptyException } from './exceptions/author-id-empty.exception';
 import { AuthorNameEmptyException } from './exceptions/author-name-empty.exception';
 
-export class Author extends AggregateRoot {
+/**
+ * Author aggregate root.
+ *
+ * Rules:
+ * - Name cannot be empty
+ * - Id cannot be empty
+ */
+export class Author {
   private constructor(
     private readonly id: string,
     private name: string,
-  ) {
-    super();
-  }
+  ) {}
 
+  /**
+   * Creates a new Author instance with the provided id and name, enforcing validation rules.
+   */
   public static create(id: string, name: string): Author {
     if (!id) {
       throw new AuthorIdEmptyException();
@@ -22,10 +29,16 @@ export class Author extends AggregateRoot {
     return new Author(id, name);
   }
 
+  /**
+   * Reconstructs an Author from persistent data.
+   */
   public static fromPersistent(id: string, name: string): Author {
     return new Author(id, name);
   }
 
+  /**
+   * Rename an author, ensuring the new name is not empty and different from the current name.
+   */
   public rename(name: string): { oldName: string; newName: string } {
     const oldName = this.name;
 

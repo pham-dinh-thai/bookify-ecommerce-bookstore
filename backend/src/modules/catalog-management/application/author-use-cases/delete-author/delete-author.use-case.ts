@@ -15,8 +15,14 @@ import {
   CACHE_REPOSITORY,
   type ICacheRepository,
 } from '../../../../../shared/modules/cache/domain/cache.repository.interface';
-import { AUTHOR_CACHE_KEYS } from '../author-cache.constants';
 
+/**
+ * Deletes an existing author from the system.
+ *
+ * The author must exist before deletion; a non-existent ID is treated as an error.
+ * Every deletion is recorded in the audit log for traceability.
+ * Cache is invalidated after a successful commit to ensure consistency.
+ */
 @Injectable()
 export class DeleteAuthorUseCase {
   public constructor(

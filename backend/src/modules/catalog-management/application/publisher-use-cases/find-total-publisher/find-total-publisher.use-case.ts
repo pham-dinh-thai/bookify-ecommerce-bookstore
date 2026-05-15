@@ -4,6 +4,9 @@ import {
   PUBLISHERS_QUERY_REPOSITORY,
 } from '../../../domain/publisher-aggregate/repositories/publishers-query.repository.interface';
 
+/**
+ * Returns the total number of publishers in the system.
+ */
 @Injectable()
 export class FindTotalPublisherUseCase {
   public constructor(

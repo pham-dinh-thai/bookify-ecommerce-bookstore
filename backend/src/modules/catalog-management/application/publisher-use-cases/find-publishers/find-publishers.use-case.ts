@@ -7,13 +7,18 @@ import {
   CACHE_REPOSITORY,
   type ICacheRepository,
 } from '../../../../../shared/modules/cache/domain/cache.repository.interface';
-import { PublisherReadModel } from '../../../domain/publisher-aggregate/read-models/publisher.read-model';
 import {
   PUBLISHER_CACHE_KEYS,
   PUBLISHER_CACHE_TTL,
 } from '../publisher-cache.constants';
 import { FindPublishersResponse } from './find-publishers.response';
 
+/**
+ * Retrieves a paginated list of publishers, with optional name search.
+ *
+ * Results are cached per unique combination of page, limit, and search term
+ * to reduce database load on repeated queries.
+ */
 @Injectable()
 export class FindPublishersUseCase {
   public constructor(

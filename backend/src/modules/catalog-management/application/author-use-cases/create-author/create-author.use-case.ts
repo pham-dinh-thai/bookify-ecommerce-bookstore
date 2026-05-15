@@ -22,6 +22,12 @@ import {
   UUID_GENERATOR,
 } from '../../../../../shared/modules/uuid/domain/uuid-generator.interface';
 
+/**
+ * Creates a new Author.
+ *
+ * Every creation is recorded in the audit log for traceability.
+ * Cache is invalidated after a successful commit to ensure consistency.
+ */
 @Injectable()
 export class CreateAuthorUseCase {
   public constructor(
