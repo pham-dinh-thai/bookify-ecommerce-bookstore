@@ -129,36 +129,69 @@ export default function BasicInformation({ book }: { book: BookDetail }) {
           )}
         </div>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="flex flex-col gap-3">
-          <label className="text-xs font-bold uppercase tracking-[0.18em] text-[#58615b]">ISBN</label>
-          <input value={formData.isbn} onChange={(event) => setFormData((prev) => ({ ...prev, isbn: event.target.value }))} className={inputClass} style={fieldStyle} />
+      {isEditing ? (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="flex flex-col gap-3">
+            <label className="text-xs font-bold uppercase tracking-[0.18em] text-[#58615b]">ISBN</label>
+            <input value={formData.isbn} onChange={(event) => setFormData((prev) => ({ ...prev, isbn: event.target.value }))} className={inputClass} style={fieldStyle} />
+          </div>
+          <div className="flex flex-col gap-3">
+            <label className="text-xs font-bold uppercase tracking-[0.18em] text-[#58615b]">Page count</label>
+            <input value={formData.pageCount} onChange={(event) => setFormData((prev) => ({ ...prev, pageCount: event.target.value }))} className={inputClass} style={fieldStyle} />
+          </div>
+          <div className="col-span-1 lg:col-span-2 flex flex-col gap-3">
+            <label className={labelClass} style={labelStyle}>Publisher</label>
+            <SearchSelect options={publisherOptions} value={formData.publisherId} onChange={(id) => setFormData((prev) => ({ ...prev, publisherId: id }))} placeholder="Select a publisher" inputClassName={inputClass} inputStyle={fieldStyle} />
+          </div>
+          <div className="col-span-1 lg:col-span-2 flex flex-col gap-3">
+            <label className={labelClass} style={labelStyle}>Language</label>
+            <SearchSelect options={languageOptions} value={formData.languageId} onChange={(id) => setFormData((prev) => ({ ...prev, languageId: id }))} placeholder="Select a language" inputClassName={inputClass} inputStyle={fieldStyle} />
+          </div>
+          <div className="col-span-1 lg:col-span-2 flex flex-col gap-3">
+            <label className={labelClass} style={labelStyle}>Genre</label>
+            <TagPicker options={genreOptions} selected={formData.genreIds} onChange={(ids) => setFormData((prev) => ({ ...prev, genreIds: ids }))} placeholder="Search genres..." inputClassName={inputClass} inputStyle={fieldStyle} />
+          </div>
+          <div className="col-span-1 lg:col-span-2 flex flex-col gap-3">
+            <label className={labelClass} style={labelStyle}>Author</label>
+            <TagPicker options={authorOptions} selected={formData.authorIds} onChange={(ids) => setFormData((prev) => ({ ...prev, authorIds: ids }))} placeholder="Search authors..." inputClassName={inputClass} inputStyle={fieldStyle} />
+          </div>
+          <div className="col-span-2 flex flex-col gap-3">
+            <label className={labelClass} style={labelStyle}>Description</label>
+            <textarea value={formData.description} onChange={(event) => setFormData((prev) => ({ ...prev, description: event.target.value }))} className={`${inputClass} h-48 resize-none leading-relaxed`} style={fieldStyle} />
+          </div>
         </div>
-        <div className="flex flex-col gap-3">
-          <label className="text-xs font-bold uppercase tracking-[0.18em] text-[#58615b]">Page count</label>
-          <input value={formData.pageCount} onChange={(event) => setFormData((prev) => ({ ...prev, pageCount: event.target.value }))} className={inputClass} style={fieldStyle} />
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="flex flex-col gap-3">
+            <label className="text-xs font-bold uppercase tracking-[0.18em] text-[#58615b]">ISBN</label>
+            <input readOnly value={book.isbn} className={inputClass} style={fieldStyle} />
+          </div>
+          <div className="flex flex-col gap-3">
+            <label className="text-xs font-bold uppercase tracking-[0.18em] text-[#58615b]">Publisher</label>
+            <input readOnly value={book.publisher} className={inputClass} style={fieldStyle} />
+          </div>
+          <div className="flex flex-col gap-3">
+            <label className="text-xs font-bold uppercase tracking-[0.18em] text-[#58615b]">Page count</label>
+            <input readOnly value={book.pageCount} className={inputClass} style={fieldStyle} />
+          </div>
+          <div className="flex flex-col gap-3">
+            <label className="text-xs font-bold uppercase tracking-[0.18em] text-[#58615b]">Language</label>
+            <input readOnly value={book.language} className={inputClass} style={fieldStyle} />
+          </div>
+          <div className="col-span-1 lg:col-span-2 flex flex-col gap-3">
+            <label className={labelClass} style={labelStyle}>Genre</label>
+            <input readOnly value={book.genres.length > 0 ? book.genres.join(', ') : 'No genres available'} className={inputClass} style={fieldStyle} />
+          </div>
+          <div className="col-span-1 lg:col-span-2 flex flex-col gap-3">
+            <label className={labelClass} style={labelStyle}>Author</label>
+            <input readOnly value={book.authors.length > 0 ? book.authors.join(', ') : 'No authors available'} className={inputClass} style={fieldStyle} />
+          </div>
+          <div className="col-span-2 flex flex-col gap-3">
+            <label className={labelClass} style={labelStyle}>Description</label>
+            <textarea readOnly value={book.description} className={`${inputClass} h-48 resize-none leading-relaxed`} style={fieldStyle} />
+          </div>
         </div>
-        <div className="col-span-1 lg:col-span-2 flex flex-col gap-3">
-          <label className={labelClass} style={labelStyle}>Publisher</label>
-          <SearchSelect options={publisherOptions} value={formData.publisherId} onChange={(id) => setFormData((prev) => ({ ...prev, publisherId: id }))} placeholder="Select a publisher" inputClassName={inputClass} inputStyle={fieldStyle} />
-        </div>
-        <div className="col-span-1 lg:col-span-2 flex flex-col gap-3">
-          <label className={labelClass} style={labelStyle}>Language</label>
-          <SearchSelect options={languageOptions} value={formData.languageId} onChange={(id) => setFormData((prev) => ({ ...prev, languageId: id }))} placeholder="Select a language" inputClassName={inputClass} inputStyle={fieldStyle} />
-        </div>
-        <div className="col-span-1 lg:col-span-2 flex flex-col gap-3">
-          <label className={labelClass} style={labelStyle}>Genre</label>
-          <TagPicker options={genreOptions} selected={formData.genreIds} onChange={(ids) => setFormData((prev) => ({ ...prev, genreIds: ids }))} placeholder="Search genres..." inputClassName={inputClass} inputStyle={fieldStyle} />
-        </div>
-        <div className="col-span-1 lg:col-span-2 flex flex-col gap-3">
-          <label className={labelClass} style={labelStyle}>Author</label>
-          <TagPicker options={authorOptions} selected={formData.authorIds} onChange={(ids) => setFormData((prev) => ({ ...prev, authorIds: ids }))} placeholder="Search authors..." inputClassName={inputClass} inputStyle={fieldStyle} />
-        </div>
-        <div className="col-span-2 flex flex-col gap-3">
-          <label className={labelClass} style={labelStyle}>Description</label>
-          <textarea value={formData.description} onChange={(event) => setFormData((prev) => ({ ...prev, description: event.target.value }))} className={`${inputClass} h-48 resize-none leading-relaxed`} style={fieldStyle} />
-        </div>
-      </div>
+      )}
     </section>
   );
 }
