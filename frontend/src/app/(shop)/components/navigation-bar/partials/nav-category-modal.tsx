@@ -84,20 +84,20 @@ export default function NavCategoryModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center p-6">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+    <div className="fixed inset-0 z-50 flex items-start justify-center p-6 pt-24">
+      <div className="absolute inset-0 bg-[#2b352f]/20 backdrop-blur-sm" onClick={onClose} />
 
       <div
         ref={dropdown.ref}
-        className="relative z-10 w-full max-w-6xl rounded-3xl bg-white shadow-lg overflow-hidden"
+        className="relative z-10 w-full max-w-6xl overflow-hidden rounded-[2rem] bg-white/80 shadow-[0px_20px_40px_rgba(43,53,47,0.06)] backdrop-blur-[24px]"
         style={{ minHeight: 420 }}
       >
         <div className="flex">
-          <div className="w-1/4 border-r border-[#eef2f7] p-6 bg-white">
-            <h3 className="text-sm font-semibold text-[#334155] mb-4">
+          <div className="w-1/4 bg-[#eff5ef] p-8">
+            <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.05em] text-[#58615b]">
               Catalog
             </h3>
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-col gap-3">
               {categories.map((cat) => {
                 const key = cat.path.replace(/\//g, '') || cat.label;
                 const active = selected === key;
@@ -105,7 +105,11 @@ export default function NavCategoryModal({
                   <li key={cat.label}>
                     <button
                       onClick={() => setSelected(key)}
-                      className={`w-full text-left px-4 py-3 rounded-lg ${active ? 'bg-[#f1fdf7] font-semibold text-[#065f46]' : 'text-[#475569] hover:bg-[#f8fafc]'}`}
+                      className={`w-full rounded-xl px-4 py-3 text-left transition-colors ${
+                        active
+                          ? 'bg-white text-[#2b352f]'
+                          : 'text-[#58615b] hover:bg-white/70 hover:text-[#2b352f]'
+                      }`}
                     >
                       {cat.label}
                     </button>
@@ -115,28 +119,31 @@ export default function NavCategoryModal({
             </ul>
           </div>
 
-          <div className="w-3/4 p-6 bg-white">
-            <div className="flex items-center justify-between mb-4">
-              <h4 className="text-2xl font-bold text-[#111827]">
+          <div className="w-3/4 bg-[#f7faf5] p-8">
+            <div className="mb-6 flex items-center justify-between">
+              <h4 className="text-2xl font-semibold tracking-[-0.02em] text-[#2b352f]">
                 {selected.charAt(0).toUpperCase() + selected.slice(1)}
               </h4>
-              <button onClick={onClose} className="text-sm text-[#6b7280]">
+              <button
+                onClick={onClose}
+                className="rounded-full px-3 py-2 text-xs uppercase tracking-[0.05em] text-[#58615b] hover:bg-white"
+              >
                 Close
               </button>
             </div>
 
             {loading ? (
-              <div>Loading...</div>
+              <div className="text-sm text-[#58615b]">Loading...</div>
             ) : (
               <div className="grid grid-cols-4 gap-6">
                 {columns.map((col, idx) => (
                   <div key={idx}>
-                    <ul className="flex flex-col gap-2">
+                    <ul className="flex flex-col gap-4">
                       {col.map((it) => (
                         <li key={it.id}>
                           <Link
                             href={`/${selected}?id=${it.id}`}
-                            className="text-sm text-[#0f172a] hover:text-[#064e3b]"
+                            className="text-sm leading-7 text-[#58615b] transition-colors hover:text-[#3f6754]"
                             onClick={onClose}
                           >
                             {it.name}
