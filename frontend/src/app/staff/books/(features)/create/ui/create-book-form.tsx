@@ -25,7 +25,6 @@ import { allLanguageService } from '@/app/admin/languages/(language-management)/
 import { getAccessToken } from '@/shared/auth/lib/token-storage';
 import { refreshAccessToken } from '@/shared/auth/lib/refresh';
 
-// Thay coverUrl string → File | null trong form state
 type CreateBookFormState = Omit<CreateBook, 'coverUrl'> & {
   coverFile: File | null;
 };
