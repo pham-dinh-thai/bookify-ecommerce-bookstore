@@ -3,7 +3,6 @@
 import { use, useMemo } from 'react';
 import Link from 'next/link';
 import useBookDetail from '../hooks/use-book-detail';
-import { useToast } from '@/shared/common/toast/toast';
 import BookFormNavigate from '../../../components/book-form-navigate';
 
 export default function ViewBookDetail({
@@ -14,11 +13,9 @@ export default function ViewBookDetail({
   const { id } = use(params);
 
   const { book, loading, errors } = useBookDetail(id);
-  const { addToast } = useToast();
-
   const statusLabel = useMemo(() => {
     if (!book) return 'Unknown';
-    return book.isInStock ? 'Đang kinh doanh' : 'Hết hàng';
+    return book.isInStock ? 'In stock' : 'Out of stock';
   }, [book]);
 
   if (loading) {
@@ -34,13 +31,13 @@ export default function ViewBookDetail({
       <div className="p-12 max-w-7xl mx-auto">
         <div className="rounded-3xl bg-white p-12 shadow-sm border border-slate-200">
           <p className="text-base text-red-600">
-            Không thể tải thông tin sách. Vui lòng thử lại.
+            Unable to load book details. Please try again.
           </p>
           <Link
             href="/staff/books"
             className="mt-4 inline-flex items-center rounded-full bg-[#2d6a4f] px-4 py-3 text-sm font-semibold text-white hover:bg-[#23543f] transition-colors"
           >
-            Quay lại danh sách sách
+            Back to book list
           </Link>
         </div>
       </div>
@@ -89,17 +86,17 @@ export default function ViewBookDetail({
             </div>
             <div className="flex flex-col gap-3">
               <button className="w-full rounded-xl bg-[#c1ecd4] py-3 text-sm font-bold text-[#325947] hover:bg-[#b3dec6] transition-colors">
-                Cập nhật bìa sách
+                Update cover image
               </button>
               <button className="w-full rounded-xl border border-[#fa746f]/20 bg-white py-3 text-sm font-semibold text-[#a83836] hover:bg-[#fff0f0] transition-colors">
-                Xóa bìa hiện tại
+                Remove current cover
               </button>
             </div>
           </div>
 
           <div className="rounded-3xl bg-[#f7faf5] p-6 shadow-sm border border-[#dbe5dd]">
             <h2 className="text-xs font-bold uppercase tracking-[0.22em] text-[#58615b] mb-4">
-              Trạng thái lưu trữ
+              Inventory status
             </h2>
             <div className="flex items-center justify-between rounded-3xl border border-[#aab4ad]/15 bg-white p-4">
               <div className="flex items-center gap-3">
@@ -117,13 +114,35 @@ export default function ViewBookDetail({
 
         <div className="col-span-12 lg:col-span-8 flex flex-col gap-8">
           <section className="rounded-3xl bg-[#f7faf5] p-10 shadow-sm border border-[#dbe5dd]">
-            <h2 className="text-2xl font-bold text-[#2b352f] mb-8">
-              Thông tin cơ bản
+            <h2 className="text-2xl font-bold text-[#2b352f] mb-6">
+              Description
             </h2>
+            <textarea
+              readOnly
+              value={book.description}
+              className="h-48 w-full resize-none rounded-3xl bg-white p-6 text-sm leading-relaxed text-[#58615b] ring-1 ring-[#c1ecd4] focus:outline-none"
+            />
+          </section>
+
+          <section className="rounded-3xl bg-[#f7faf5] p-10 shadow-sm border border-[#dbe5dd]">
+            <div className="mb-8 flex items-center justify-between gap-3">
+              <h2 className="text-2xl font-bold text-[#2b352f]">
+                Basic Information
+              </h2>
+              <Link
+                href={`/staff/books/${id}/edit`}
+                className="inline-flex items-center gap-2 rounded-xl bg-[#3f6754] px-5 py-2.5 text-sm font-bold text-[#e6ffef] transition-colors hover:bg-[#335b48]"
+              >
+                <span className="material-symbols-outlined text-[18px]">
+                  edit
+                </span>
+                Edit
+              </Link>
+            </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="flex flex-col gap-3">
                 <label className="text-xs font-bold uppercase tracking-[0.18em] text-[#58615b]">
-                  Mã ISBN-13
+                  ISBN-13
                 </label>
                 <input
                   readOnly
@@ -133,7 +152,7 @@ export default function ViewBookDetail({
               </div>
               <div className="flex flex-col gap-3">
                 <label className="text-xs font-bold uppercase tracking-[0.18em] text-[#58615b]">
-                  Nhà xuất bản
+                  Publisher
                 </label>
                 <input
                   readOnly
@@ -143,7 +162,7 @@ export default function ViewBookDetail({
               </div>
               <div className="flex flex-col gap-3">
                 <label className="text-xs font-bold uppercase tracking-[0.18em] text-[#58615b]">
-                  Số trang
+                  Page count
                 </label>
                 <input
                   readOnly
@@ -153,7 +172,7 @@ export default function ViewBookDetail({
               </div>
               <div className="flex flex-col gap-3">
                 <label className="text-xs font-bold uppercase tracking-[0.18em] text-[#58615b]">
-                  Ngôn ngữ
+                  Language
                 </label>
                 <input
                   readOnly
@@ -163,7 +182,7 @@ export default function ViewBookDetail({
               </div>
               <div className="col-span-1 lg:col-span-2 flex flex-col gap-3">
                 <label className="text-xs font-bold uppercase tracking-[0.18em] text-[#58615b]">
-                  Thể loại
+                  Genres
                 </label>
                 <div className="flex flex-wrap gap-2 rounded-3xl bg-white p-4 ring-1 ring-[#c1ecd4]">
                   {book.genres.length > 0 ? (
@@ -177,7 +196,7 @@ export default function ViewBookDetail({
                     ))
                   ) : (
                     <span className="text-sm text-[#58615b]">
-                      Chưa có thể loại
+                      No genres available
                     </span>
                   )}
                 </div>
@@ -188,7 +207,7 @@ export default function ViewBookDetail({
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="rounded-3xl bg-[#f7faf5] p-8 shadow-sm border-l-4 border-[#3f6754]">
               <h3 className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#58615b] mb-6">
-                Đơn giá (VND)
+                Unit price (VND)
               </h3>
               <div className="flex items-center gap-4">
                 <div className="relative flex-1">
@@ -211,13 +230,13 @@ export default function ViewBookDetail({
                 </button>
               </div>
               <p className="mt-4 text-[10px] italic text-[#58615b]">
-                Giá hiện tại có thể thay đổi tùy chiến dịch.
+                Current price may change depending on active campaigns.
               </p>
             </div>
 
             <div className="rounded-3xl bg-[#f7faf5] p-8 shadow-sm border-l-4 border-[#3c6091]">
               <h3 className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#58615b] mb-6">
-                Số lượng tồn kho
+                Stock quantity
               </h3>
               <div className="flex items-center gap-4">
                 <div className="flex h-14 flex-1 items-center justify-between overflow-hidden rounded-3xl bg-white ring-1 ring-[#c1ecd4]">
@@ -247,25 +266,14 @@ export default function ViewBookDetail({
                 </div>
               </div>
               <p className="mt-4 text-[10px] italic text-[#58615b]">
-                Mức tồn kho:{' '}
+                Stock level:{' '}
                 {book.quantity > 50
-                  ? 'Cao'
+                  ? 'High'
                   : book.quantity > 10
-                    ? 'Trung bình'
-                    : 'Thấp'}
+                    ? 'Medium'
+                    : 'Low'}
               </p>
             </div>
-          </section>
-
-          <section className="rounded-3xl bg-[#f7faf5] p-10 shadow-sm border border-[#dbe5dd]">
-            <h2 className="text-2xl font-bold text-[#2b352f] mb-6">
-              Mô tả tác phẩm
-            </h2>
-            <textarea
-              readOnly
-              value={book.description}
-              className="h-48 w-full resize-none rounded-3xl bg-white p-6 text-sm leading-relaxed text-[#58615b] ring-1 ring-[#c1ecd4] focus:outline-none"
-            />
           </section>
         </div>
       </div>
