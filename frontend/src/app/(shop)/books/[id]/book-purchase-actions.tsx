@@ -1,5 +1,6 @@
 'use client';
 
+import { ShoppingCart } from 'lucide-react';
 import { useMemo, useState, createContext, useContext } from 'react';
 
 type PurchaseCtx = {
@@ -89,20 +90,21 @@ export function PurchaseButtons() {
   const { quantity, canBuy } = usePurchase();
 
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-wrap items-center gap-2">
       <button
         type="button"
         disabled={!canBuy}
-        className="flex-1 rounded-xl bg-[#2d6a4f] px-4 py-2.5 text-sm font-bold text-[#e6ffef] transition-all enabled:hover:bg-[#245740] enabled:active:scale-95 disabled:cursor-not-allowed disabled:bg-[#a7b9ad]"
+        className="rounded-xl bg-[#2d6a4f] px-5 py-2.5 text-sm font-bold text-[#e6ffef] transition-all enabled:hover:bg-[#245740] enabled:active:scale-95 disabled:cursor-not-allowed disabled:bg-[#a7b9ad]"
       >
         Buy now
       </button>
       <button
         type="button"
         disabled={!canBuy}
-        className="flex-1 rounded-xl bg-[#3f6754] px-4 py-2.5 text-sm font-bold text-[#e6ffef] transition-all enabled:hover:bg-[#335b48] enabled:active:scale-95 disabled:cursor-not-allowed disabled:bg-[#a7b9ad]"
+        aria-label={`Add ${quantity} item${quantity > 1 ? 's' : ''} to cart`}
+        className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#3f6754] text-[#e6ffef] transition-all enabled:hover:bg-[#335b48] enabled:active:scale-95 disabled:cursor-not-allowed disabled:bg-[#a7b9ad]"
       >
-        Add to cart ({quantity})
+        <ShoppingCart size={18} strokeWidth={2} />
       </button>
     </div>
   );
