@@ -7,91 +7,68 @@ import Category from './ui/category';
 import { BookSectionHorizontal } from './ui/book-section-horizontal';
 import { BookSectionHighlight } from './ui/book-section-featured';
 
-const newArrivals = [
-  {
-    id: 1,
-    title: 'Crime and punishment',
-    author: 'Matt Haig',
-    price: '180.000 VND',
-    cover:
-      'https://tse1.mm.bing.net/th/id/OIP.dI055T7RdiMDYUAVQbp88AHaLX?o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3',
-  },
-  {
-    id: 2,
-    title: 'Klara and the Sun',
-    author: 'Kazuo Ishiguro',
-    price: '210.000 VND',
-    cover: 'https://m.media-amazon.com/images/I/91pSaVjfShL._SL1500_.jpg',
-  },
-  {
-    id: 3,
-    title: 'The Vegetarian',
-    author: 'Han Kang',
-    price: '165.000 VND',
-    cover: 'https://m.media-amazon.com/images/I/71rQZuITMKL._SL1500_.jpg',
-  },
-  {
-    id: 4,
-    title: 'Normal People',
-    author: 'Sally Rooney',
-    price: '195.000 VND',
-    cover:
-      'https://m.media-amazon.com/images/I/411B+9Nj91L._SY445_SX342_QL70_FMwebp_.jpg',
-  },
-  {
-    id: 5,
-    title: 'Normal People',
-    author: 'Sally Rooney',
-    price: '195.000 VND',
-    cover: 'https://m.media-amazon.com/images/I/71j7bZTiYAL._SL1500_.jpg',
-  },
-  {
-    id: 6,
-    title: 'Crime and punishment',
-    author: 'Matt Haig',
-    price: '180.000 VND',
-    cover: 'https://m.media-amazon.com/images/I/811iBn28JdL._SY466_.jpg',
-  },
-  {
-    id: 7,
-    title: 'Klara and the Sun',
-    author: 'Kazuo Ishiguro',
-    price: '210.000 VND',
-    cover:
-      'https://m.media-amazon.com/images/I/512dLJWJGIL._SY445_SX342_FMwebp_.jpg',
-  },
-  {
-    id: 8,
-    title: 'The Vegetarian',
-    author: 'Han Kang',
-    price: '165.000 VND',
-    cover:
-      'https://m.media-amazon.com/images/I/41YRs-HV0SL._SY445_SX342_FMwebp_.jpg',
-  },
-  {
-    id: 9,
-    title: 'Normal People',
-    author: 'Sally Rooney',
-    price: '195.000 VND',
-    cover: 'https://m.media-amazon.com/images/I/71wSz6VVk6L._SL1500_.jpg',
-  },
-  {
-    id: 10,
-    title: 'Normal People',
-    author: 'Sally Rooney',
-    price: '195.000 VND',
-    cover:
-      'https://m.media-amazon.com/images/I/41HlG+jCHDL._SY445_SX342_FMwebp_.jpg',
-  },
-];
+type ApiBook = {
+  id: string;
+  title: string;
+  originalPrice: number;
+  authors?: string[];
+  covers?: { url: string; isPrimary: boolean }[];
+  publisher?: string;
+  description?: string;
+};
 
-export default function Homepage() {
+type HomepageBook = {
+  id: number;
+  title: string;
+  author: string;
+  price: string;
+  cover: string;
+  publisher?: string;
+  description?: string;
+};
+
+async function getHomepageBooks(): Promise<HomepageBook[]> {
+  try {
+    const response = await fetch('http://localhost/api/books?page=1&limit=10', {
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const data = await response.json();
+    const books: ApiBook[] = Array.isArray(data?.books) ? data.books : [];
+
+    return books.map((book, index) => {
+      const primaryCover = book.covers?.find((cover) => cover.isPrimary)?.url;
+      const fallbackCover = book.covers?.[0]?.url;
+
+      return {
+        id: index + 1,
+        title: book.title,
+        author: book.authors?.join(', ') || 'Unknown author',
+        price: `${book.originalPrice.toLocaleString('vi-VN')} VND`,
+        cover:
+          primaryCover ||
+          fallbackCover ||
+          'https://via.placeholder.com/300x450?text=No+Cover',
+        publisher: book.publisher,
+        description: book.description,
+      };
+    });
+  } catch {
+    return [];
+  }
+}
+
+export default async function Homepage() {
+  const books = await getHomepageBooks();
+
   return (
     <>
-      {/* Hero section */}
       <section className="min-h-screen bg-[#f7faf5] flex items-center px-8 md:px-16 lg:px-24">
         <div className="max-w-8xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center py-20">
-          {/* Left content */}
           <div className="flex flex-col gap-6">
             <h1 className="text-5xl md:text-6xl font-bold text-[#1a3d2b] leading-tight tracking-tight">
               Literature without{' '}
@@ -121,7 +98,6 @@ export default function Homepage() {
             </div>
           </div>
 
-          {/* Right image */}
           <div className="relative flex justify-center items-center">
             <div className="relative w-full max-w-2lg">
               <div className="rounded-3xl overflow-hidden shadow-2xl rotate-2">
@@ -149,17 +125,21 @@ export default function Homepage() {
 
       <Category />
 
-      <BookSectionHighlight
-        label="Crowd Favorites"
-        title="CURRENT BEST SELLER"
-        books={newArrivals}
-      />
-      <BookSectionHorizontal
-        label="Just In"
-        title="NEW ARRIVALS"
-        books={newArrivals}
-      />
-      <BookSection label="Limited Time" title="ON SALES" books={newArrivals} />
+      {books.length > 0 && (
+        <>
+          <BookSectionHighlight
+            label="Crowd Favorites"
+            title="CURRENT BEST SELLER"
+            books={books}
+          />
+          <BookSectionHorizontal
+            label="Just In"
+            title="NEW ARRIVALS"
+            books={books}
+          />
+          <BookSection label="Limited Time" title="ON SALES" books={books} />
+        </>
+      )}
 
       <br />
       <br />
