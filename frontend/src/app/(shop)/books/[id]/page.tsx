@@ -108,6 +108,12 @@ export default async function BookDetailPage({
 }) {
   const { id } = await params;
   const book = await getBookDetail(id);
+  const genreList = book?.genres
+    ? book.genres
+        .split(',')
+        .map((genre) => genre.trim())
+        .filter(Boolean)
+    : [];
 
   if (!book) {
     return (
