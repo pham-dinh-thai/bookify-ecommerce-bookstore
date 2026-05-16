@@ -52,7 +52,9 @@ function formatVnd(value: number) {
 async function getBookDetail(id: string): Promise<BookDetail | null> {
   try {
     const apiBase = getApiBaseUrl();
-    const response = await fetch(`${apiBase}/books/${id}`, { cache: 'no-store' });
+    const response = await fetch(`${apiBase}/books/${id}`, {
+      cache: 'no-store',
+    });
 
     if (!response.ok) return null;
 
@@ -102,8 +104,12 @@ export default async function BookDetailPage({
     return (
       <section className="flex min-h-screen items-center justify-center bg-[#f7faf5] px-8 md:px-16 lg:px-24">
         <div className="rounded-3xl bg-white p-12 text-center shadow-xl">
-          <h1 className="mb-4 text-3xl font-bold text-[#1a3d2b]">Book not found</h1>
-          <p className="mb-8 text-[#58615b]">We couldn&apos;t find the book you&apos;re looking for.</p>
+          <h1 className="mb-4 text-3xl font-bold text-[#1a3d2b]">
+            Book not found
+          </h1>
+          <p className="mb-8 text-[#58615b]">
+            We couldn&apos;t find the book you&apos;re looking for.
+          </p>
           <Link
             href="/books"
             className="inline-flex items-center justify-center rounded-full bg-[#2d6a4f] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#1a3d2b]"
@@ -120,22 +126,47 @@ export default async function BookDetailPage({
       <div className="mx-auto max-w-7xl space-y-16">
         <div className="grid grid-cols-1 items-start gap-16 lg:grid-cols-12 lg:gap-24">
           <div className="space-y-8 lg:col-span-5 lg:sticky lg:top-24">
-            <div className="aspect-[3/4] overflow-hidden rounded-xl bg-[#eff5ef] p-8">
-              <div className="h-full w-full overflow-hidden rounded-lg shadow-[0px_20px_40px_rgba(43,53,47,0.06)]">
-                <img
-                  src={book.cover}
-                  alt={book.title}
-                  className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
-                />
+            <div className="h-full w-full overflow-hidden shadow-[0px_20px_40px_rgba(43,53,47,0.06)]">
+              <img
+                src={book.cover}
+                alt={book.title}
+                className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+              />
+            </div>
+            <BookPurchaseActions
+              stock={book.quantity}
+              isInStock={book.isInStock}
+            />
+
+            <div className="grid gap-4 rounded-xl border border-[#aab4ad]/30 bg-[#e8f0e9] p-6 sm:grid-cols-2">
+              <div>
+                <p className="text-sm font-bold text-[#2b352f]">
+                  Shipping Information
+                </p>
+                <p className="text-xs leading-snug text-[#58615b]">
+                  Standard delivery: 3-5 business days.
+                </p>
+                <p className="text-xs font-semibold text-[#3f6754]">
+                  Free for orders over 500.000 VNĐ
+                </p>
+              </div>
+              <div className="border-t border-[#aab4ad]/30 pt-4 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
+                <p className="text-sm font-bold text-[#2b352f]">
+                  Collector&apos;s Guarantee
+                </p>
+                <p className="text-xs leading-snug text-[#58615b]">
+                  Archival-grade packaging. Authenticity certificate included.
+                </p>
               </div>
             </div>
-            <BookPurchaseActions stock={book.quantity} isInStock={book.isInStock} />
           </div>
 
           <div className="space-y-10 lg:col-span-7">
             <header className="space-y-6">
               <div className="space-y-3">
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#3f6754]">Rare Limited Collection</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#3f6754]">
+                  Rare Limited Collection
+                </span>
                 <h1 className="max-w-2xl text-5xl font-extrabold leading-[1.08] tracking-tight text-[#2b352f] md:text-6xl">
                   {book.title}
                 </h1>
@@ -147,29 +178,25 @@ export default async function BookDetailPage({
                     {book.price}
                   </div>
                   <div className="text-sm font-medium text-[#58615b]">
-                    <span className="font-bold text-[#3f6754]">{book.quantity}</span> copies available in archive
-                  </div>
-                </div>
-
-                <div className="grid gap-4 rounded-xl border border-[#aab4ad]/30 bg-[#e8f0e9] p-6 sm:grid-cols-2">
-                  <div>
-                    <p className="text-sm font-bold text-[#2b352f]">Shipping Information</p>
-                    <p className="text-xs leading-snug text-[#58615b]">Standard delivery: 3-5 business days.</p>
-                    <p className="text-xs font-semibold text-[#3f6754]">Free for orders over 500.000 VNĐ</p>
-                  </div>
-                  <div className="border-t border-[#aab4ad]/30 pt-4 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
-                    <p className="text-sm font-bold text-[#2b352f]">Collector&apos;s Guarantee</p>
-                    <p className="text-xs leading-snug text-[#58615b]">Archival-grade packaging. Authenticity certificate included.</p>
+                    <span className="font-bold text-[#3f6754]">
+                      {book.quantity}
+                    </span>{' '}
+                    copies available in archive
                   </div>
                 </div>
               </div>
             </header>
 
             <section className="rounded-xl bg-[#eff5ef] p-8">
-              <h3 className="mb-6 text-[10px] font-bold uppercase tracking-[0.15em] text-[#737d76]">Technical Specifications</h3>
+              <h3 className="mb-6 text-[10px] font-bold uppercase tracking-[0.15em] text-[#737d76]">
+                Technical Specifications
+              </h3>
               <div className="grid grid-cols-1 gap-x-12 gap-y-7 sm:grid-cols-2">
                 <Meta label="Author" value={book.authors} />
-                <Meta label="Publisher" value={book.publisher || 'Unknown publisher'} />
+                <Meta
+                  label="Publisher"
+                  value={book.publisher || 'Unknown publisher'}
+                />
                 <Meta label="Genre" value={book.genres} />
                 <Meta label="Language" value={book.language} />
                 <Meta label="ISBN" value={book.isbn} />
@@ -177,9 +204,15 @@ export default async function BookDetailPage({
               </div>
             </section>
 
+            <section className="space-y-4"></section>
+
             <section className="space-y-4">
-              <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#737d76]">The Narrative</h3>
-              <p className="text-lg font-medium leading-relaxed text-[#58615b]">{book.description}</p>
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#737d76]">
+                The Narrative
+              </h3>
+              <p className="text-lg font-medium leading-relaxed text-[#58615b]">
+                {book.description}
+              </p>
             </section>
           </div>
         </div>
@@ -191,7 +224,9 @@ export default async function BookDetailPage({
 function Meta({ label, value }: { label: string; value: string }) {
   return (
     <div className="space-y-1">
-      <span className="block text-[10px] font-bold uppercase tracking-[0.1em] text-[#8b948f]">{label}</span>
+      <span className="block text-[10px] font-bold uppercase tracking-[0.1em] text-[#8b948f]">
+        {label}
+      </span>
       <p className="text-base font-semibold text-[#2b352f]">{value}</p>
     </div>
   );

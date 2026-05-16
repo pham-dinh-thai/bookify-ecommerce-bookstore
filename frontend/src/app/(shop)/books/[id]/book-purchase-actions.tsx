@@ -68,15 +68,6 @@ export default function BookPurchaseActions({
           Add to cart ({quantity})
         </button>
       </div>
-
-      <div className="flex flex-wrap gap-4">
-        <Link
-          href="/books"
-          className="inline-flex rounded-xl bg-[#e2eae3] px-8 py-4 text-lg font-bold text-[#2b352f] transition-all hover:bg-[#dbe5dd] active:scale-95"
-        >
-          Back to Books
-        </Link>
-      </div>
     </div>
   );
 }
