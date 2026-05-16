@@ -131,10 +131,10 @@ export default async function BookDetailPage({
   }
 
   return (
-    <section className="bg-[#f7faf5] px-6 pb-24 pt-20 md:px-10 lg:px-16">
+    <section className="min-h-screen bg-[#f7faf5] px-6 pb-24 pt-14 md:px-10 lg:px-16">
       <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 items-start gap-16 lg:grid-cols-12">
-          <div className="lg:col-span-5 lg:self-start lg:sticky lg:top-32">
+          <div className="lg:col-span-5 lg:sticky lg:top-28">
             <div className="aspect-[3/4] overflow-hidden rounded-2xl bg-[#eff5ef] p-10 shadow-[0px_20px_40px_rgba(43,53,47,0.06)]">
               <img
                 src={book.cover}
@@ -160,9 +160,6 @@ export default async function BookDetailPage({
               <p className="text-xl font-medium italic text-[#3f6754]">
                 by {book.authors}
               </p>
-              <p className="text-sm font-semibold uppercase tracking-[0.08em] text-[#58615b]">
-                Genre: {book.genres}
-              </p>
             </header>
 
             <div className="flex items-baseline gap-4">
@@ -172,42 +169,19 @@ export default async function BookDetailPage({
             </div>
 
             <div className="flex flex-col gap-6">
-              <div className="flex flex-col gap-4 pt-2">
-                <div className="flex flex-wrap items-end gap-4">
-                  <label className="flex flex-col gap-2">
-                    <span className="text-xs font-bold uppercase tracking-[0.05em] text-[#58615b]">
-                      Quantity
-                    </span>
-                    <select
-                      defaultValue="1"
-                      className="rounded-xl border border-[#aab4ad]/40 bg-white px-4 py-3 font-semibold text-[#2b352f] outline-none ring-0 focus:border-[#3f6754]"
-                    >
-                      {[1, 2, 3, 4, 5].map((item) => (
-                        <option key={item} value={item}>
-                          {item}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <p className="pb-3 text-sm text-[#58615b]">
-                    Available: {book.quantity}
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap gap-4">
-                  <button className="rounded-xl bg-[#2e5484] px-8 py-4 text-lg font-bold text-white transition-all hover:bg-[#274a76] active:scale-95">
-                    Buy Now
-                  </button>
-                  <button className="rounded-xl bg-[#3f6754] px-8 py-4 text-lg font-bold text-[#e6ffef] transition-all hover:bg-[#335b48] active:scale-95">
-                    Add to Cart
-                  </button>
-                  <Link
-                    href="/books"
-                    className="rounded-xl bg-[#e2eae3] px-8 py-4 text-lg font-bold text-[#2b352f] transition-all hover:bg-[#dbe5dd] active:scale-95"
-                  >
-                    Back to Books
-                  </Link>
-                </div>
+              <p className="max-w-2xl text-lg leading-relaxed text-[#58615b]">
+                {book.description}
+              </p>
+              <div className="flex flex-wrap gap-4 pt-2">
+                <button className="rounded-xl bg-[#3f6754] px-8 py-4 text-lg font-bold text-[#e6ffef] transition-all hover:bg-[#335b48] active:scale-95">
+                  Add to Cart
+                </button>
+                <Link
+                  href="/books"
+                  className="rounded-xl bg-[#e2eae3] px-8 py-4 text-lg font-bold text-[#2b352f] transition-all hover:bg-[#dbe5dd] active:scale-95"
+                >
+                  Back to Books
+                </Link>
               </div>
             </div>
 
@@ -247,20 +221,6 @@ export default async function BookDetailPage({
             </section>
           </div>
         </div>
-
-        <section className="mt-16 rounded-2xl border border-[#aab4ad]/20 bg-white p-8 md:p-10">
-          <h2 className="mb-5 text-3xl font-bold tracking-tight text-[#2b352f]">
-            Book Description
-          </h2>
-          <div className="space-y-4 text-base leading-relaxed text-[#58615b]">
-            {book.description
-              ?.split(/\n{2,}/)
-              .filter((paragraph) => paragraph.trim().length > 0)
-              .map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
-          </div>
-        </section>
 
         <section className="mt-24 grid grid-cols-1 gap-14 lg:grid-cols-3">
           <div>
