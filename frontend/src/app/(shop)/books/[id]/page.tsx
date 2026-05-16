@@ -14,6 +14,7 @@ type ApiBookDetail = {
   isInStock?: boolean;
   covers?: { url: string; isPrimary: boolean }[];
   genres?: string[];
+  language?: string;
 };
 
 type BookDetail = {
@@ -29,6 +30,7 @@ type BookDetail = {
   isInStock: boolean;
   cover: string;
   genres: string;
+  language: string;
 };
 
 function getApiBaseUrl(): string {
@@ -91,6 +93,7 @@ async function getBookDetail(id: string): Promise<BookDetail | null> {
       pageCount: data.pageCount ?? 0,
       isInStock: data.isInStock ?? false,
       genres: data.genres?.join(', ') || 'Updating',
+      language: data.language || 'Unknown language',
       cover:
         primaryCover ||
         fallbackCover ||
@@ -109,13 +112,6 @@ export default async function BookDetailPage({
 }) {
   const { id } = await params;
   const book = await getBookDetail(id);
-  const genreList = book?.genres
-    ? book.genres
-        .split(',')
-        .map((genre) => genre.trim())
-        .filter(Boolean)
-    : [];
-
   if (!book) {
     return (
       <section className="min-h-screen bg-[#f7faf5] flex items-center justify-center px-8 md:px-16 lg:px-24">
@@ -141,7 +137,7 @@ export default async function BookDetailPage({
     <section className="min-h-screen bg-[#f7faf5] px-6 pb-24 pt-14 md:px-10 lg:px-16">
       <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 items-start gap-16 lg:grid-cols-12">
-          <div className="lg:col-span-5">
+          <div className="flex flex-col gap-6 lg:col-span-5">
             <div className="aspect-[3/4] overflow-hidden rounded-2xl bg-[#eff5ef] p-10 shadow-[0px_20px_40px_rgba(43,53,47,0.06)]">
               <img
                 src={book.cover}
@@ -149,37 +145,35 @@ export default async function BookDetailPage({
                 className="h-full w-full object-contain shadow-2xl transition-transform duration-500 hover:scale-105"
               />
             </div>
+            <BookPurchaseActions stock={book.quantity} isInStock={book.isInStock} />
           </div>
 
-          <div className="flex flex-col gap-10 lg:col-span-7">
+          <div className="flex flex-col gap-8 lg:col-span-7">
             <header className="flex flex-col gap-4">
-              <div className="flex flex-wrap gap-2">
-                <span className="rounded-full bg-[#c1ecd4] px-3 py-1 text-xs font-bold uppercase tracking-[0.05em] text-[#325947]">
-                  New Arrival
-                </span>
-                <span className="rounded-full bg-[#e8f0e9] px-3 py-1 text-xs font-bold uppercase tracking-[0.05em] text-[#58615b]">
-                  {book.publisher}
-                </span>
-              </div>
               <h1 className="text-4xl font-extrabold leading-tight tracking-[-0.02em] text-[#2b352f] md:text-5xl lg:text-6xl">
                 {book.title}
               </h1>
-              <p className="text-xl font-medium italic text-[#3f6754]">
-                by {book.authors}
-              </p>
+              <div className="space-y-2 text-base text-[#3f4e45] md:text-lg">
+                <p>
+                  <span className="font-semibold text-[#2b352f]">Author:</span> {book.authors}
+                </p>
+                <p>
+                  <span className="font-semibold text-[#2b352f]">Genre:</span> {book.genres}
+                </p>
+                <p>
+                  <span className="font-semibold text-[#2b352f]">Publisher:</span> {book.publisher}
+                </p>
+                <p>
+                  <span className="font-semibold text-[#2b352f]">Language:</span> {book.language}
+                </p>
+              </div>
             </header>
 
-            <div className="flex items-baseline gap-4">
-              <span className="text-3xl font-bold text-[#2b352f]">
-                {book.price}
-              </span>
-            </div>
-
-            <div className="flex flex-col gap-6">
-              <BookPurchaseActions
-                stock={book.quantity}
-                isInStock={book.isInStock}
-              />
+            <div className="rounded-2xl border border-[#f2cc8f] bg-[#fff8ec] p-5">
+              <p className="text-4xl font-extrabold text-[#b05a00] md:text-5xl">{book.price}</p>
+              <p className="mt-2 text-sm font-semibold text-[#6d4c28]">
+                {book.quantity} items available on the website
+              </p>
             </div>
 
             <section className="mt-2 grid grid-cols-2 gap-4 md:grid-cols-4">
