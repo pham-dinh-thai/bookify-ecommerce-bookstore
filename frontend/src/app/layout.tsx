@@ -12,7 +12,6 @@ export const metadata: Metadata = {
     default: 'Bookify',
     template: '%s | Bookify',
   },
-  description: 'Bookify storefront',
 };
 
 export default function RootLayout({

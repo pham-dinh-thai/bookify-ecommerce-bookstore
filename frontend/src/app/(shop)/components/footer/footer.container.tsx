@@ -7,14 +7,14 @@ export default function FooterContainer() {
   ];
 
   const connectLinks = [
-    { label: 'Terms Of Service', path: '/terms-of-service' },
+    { label: 'Terms of Service', path: '/terms-of-service' },
     { label: 'Contact Us', path: '/contact-us' },
   ];
 
   return (
     <FooterPresenter
       appName="Bookify"
-      description="Crafting a bridge between cultures through the timeless medium of the printed page. Visit our book store in Hoan Kiem - Hanoi or browse our digital archives."
+      description="Crafting a bridge between cultures through the timeless medium of printed pages. Visit our bookstore in Hoan Kiem, Hanoi, or browse our digital archives."
       information="Information"
       infoLinks={infoLinks}
       connect="Connect"
