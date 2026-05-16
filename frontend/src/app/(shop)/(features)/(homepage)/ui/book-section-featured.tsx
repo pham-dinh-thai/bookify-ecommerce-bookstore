@@ -4,7 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 type Book = {
-  id: number;
+  id: string;
   title: string;
   author: string;
   price: string;
@@ -57,7 +57,10 @@ export function BookSectionHighlight({
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Large Feature Highlight */}
-        <div className="lg:col-span-7 bg-[#eff5ef] rounded-[2.5rem] p-10 flex flex-col md:flex-row gap-10 items-center group cursor-pointer hover:bg-[#e8f0e9] transition-colors duration-500">
+        <Link
+          href={`/books/${featured.id}`}
+          className="lg:col-span-7 bg-[#eff5ef] rounded-[2.5rem] p-10 flex flex-col md:flex-row gap-10 items-center group cursor-pointer hover:bg-[#e8f0e9] transition-colors duration-500"
+        >
           <div className="w-full md:w-1/2 aspect-[2/3] overflow-hidden shadow-2xl transition-transform">
             <img
               src={featured.cover}
@@ -97,18 +100,19 @@ export function BookSectionHighlight({
               <span className="text-2xl font-bold text-[#2d6a4f]">
                 {featured.price}
               </span>
-              <button className="bg-[#2d6a4f] text-white px-6 py-2 rounded-full text-sm font-bold hover:bg-[#1a3d2b] transition-colors">
-                Add to Cart
-              </button>
+              <span className="bg-[#2d6a4f] text-white px-6 py-2 rounded-full text-sm font-bold transition-colors">
+                View Details
+              </span>
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* Vertical List */}
         <div className="lg:col-span-5 space-y-2 flex flex-col justify-center">
           {rest.map((book) => (
-            <div
+            <Link
               key={book.id}
+              href={`/books/${book.id}`}
               className="flex gap-6 p-4 rounded-3xl hover:bg-[#eff5ef] transition-colors group cursor-pointer"
             >
               <div className="w-20 aspect-[2/3]  overflow-hidden shadow-md shrink-0">
@@ -148,7 +152,7 @@ export function BookSectionHighlight({
                   {book.price}
                 </span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

@@ -1,9 +1,10 @@
 'use client';
 
 import { ShoppingCart } from 'lucide-react';
+import Link from 'next/link';
 
 type Book = {
-  id: number;
+  id: string;
   title: string;
   author: string;
   price: string;
@@ -26,6 +27,10 @@ export function BookSectionBestSeller({
 }: Props) {
   const [first, ...rest] = books;
 
+  if (!first) {
+    return null;
+  }
+
   return (
     <section className="max-w-8xl mx-auto px-8 md:px-16 lg:px-24 py-20 mb-8">
       <div className="text-center mb-16">
@@ -42,7 +47,10 @@ export function BookSectionBestSeller({
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
         {/* Rank #1 */}
-        <div className="md:col-span-6 lg:col-span-5 group cursor-pointer relative">
+        <Link
+          href={`/books/${first.id}`}
+          className="md:col-span-6 lg:col-span-5 group cursor-pointer relative"
+        >
           <div className="absolute -top-6 -left-6 w-20 h-20 bg-[#2d6a4f] text-white rounded-full flex items-center justify-center font-black text-3xl shadow-xl z-20 border-4 border-[#f7faf5]">
             1
           </div>
@@ -77,12 +85,16 @@ export function BookSectionBestSeller({
               </div>
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* Ranks #2–5 */}
         <div className="md:col-span-6 lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
           {rest.slice(0, 4).map((book, i) => (
-            <div key={book.id} className="group cursor-pointer relative pt-4">
+            <Link
+              key={book.id}
+              href={`/books/${book.id}`}
+              className="group cursor-pointer relative pt-4"
+            >
               <div className="absolute -top-2 -left-2 w-12 h-12 bg-[#dbe5dd] rounded-full flex items-center justify-center font-black text-xl shadow-md z-20 border-2 border-[#f7faf5] text-[#1a3d2b]">
                 {i + 2}
               </div>
@@ -106,7 +118,7 @@ export function BookSectionBestSeller({
                   </p>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
