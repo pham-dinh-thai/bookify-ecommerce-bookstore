@@ -176,18 +176,10 @@ export default async function BookDetailPage({
             </div>
 
             <div className="flex flex-col gap-6">
-              <p className="max-w-2xl text-lg leading-relaxed text-[#58615b]">
-                {book.description}
-              </p>
-              <BookPurchaseActions stock={book.quantity} isInStock={book.isInStock} />
-              <div className="pt-1">
-                <Link
-                  href="/books"
-                  className="inline-flex rounded-xl bg-[#e2eae3] px-8 py-4 text-lg font-bold text-[#2b352f] transition-all hover:bg-[#dbe5dd] active:scale-95"
-                >
-                  Back to Books
-                </Link>
-              </div>
+              <BookPurchaseActions
+                stock={book.quantity}
+                isInStock={book.isInStock}
+              />
             </div>
 
             <section className="mt-2 grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -238,7 +230,6 @@ export default async function BookDetailPage({
           </div>
         </section>
 
-
         <section className="mt-24 grid grid-cols-1 gap-14 lg:grid-cols-3">
           <div>
             <h2 className="mb-5 text-3xl font-bold tracking-tight text-[#2b352f]">
@@ -246,10 +237,13 @@ export default async function BookDetailPage({
             </h2>
             <p className="mb-6 leading-relaxed text-[#58615b]">
               A curated edition for readers who value both content and
-              aesthetics. This detail view focuses on readability, core metadata,
-              and a premium presentation inspired by modern editorial storefronts.
+              aesthetics. This detail view focuses on readability, core
+              metadata, and a premium presentation inspired by modern editorial
+              storefronts.
             </p>
-            <p className="font-semibold text-[#3f6754]">✓ Carefully curated title</p>
+            <p className="font-semibold text-[#3f6754]">
+              ✓ Carefully curated title
+            </p>
           </div>
           <div className="lg:col-span-2">
             <div className="rounded-xl border border-[#aab4ad]/20 bg-white p-8">
@@ -258,7 +252,9 @@ export default async function BookDetailPage({
               </h3>
               <ul className="space-y-4 text-[#58615b]">
                 <li>• Packed securely to avoid bent corners.</li>
-                <li>• Delivery time depends on your location and stock status.</li>
+                <li>
+                  • Delivery time depends on your location and stock status.
+                </li>
                 <li>• Keep books in dry spaces away from direct sunlight.</li>
               </ul>
             </div>
