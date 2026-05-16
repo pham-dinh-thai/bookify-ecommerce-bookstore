@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import BookPurchaseActions from './book-purchase-actions';
 
 type ApiBookDetail = {
   id: string;
@@ -140,7 +141,7 @@ export default async function BookDetailPage({
     <section className="min-h-screen bg-[#f7faf5] px-6 pb-24 pt-14 md:px-10 lg:px-16">
       <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 items-start gap-16 lg:grid-cols-12">
-          <div className="lg:col-span-5 lg:sticky lg:top-28">
+          <div className="lg:col-span-5">
             <div className="aspect-[3/4] overflow-hidden rounded-2xl bg-[#eff5ef] p-10 shadow-[0px_20px_40px_rgba(43,53,47,0.06)]">
               <img
                 src={book.cover}
@@ -175,16 +176,11 @@ export default async function BookDetailPage({
             </div>
 
             <div className="flex flex-col gap-6">
-              <p className="max-w-2xl text-lg leading-relaxed text-[#58615b]">
-                {book.description}
-              </p>
-              <div className="flex flex-wrap gap-4 pt-2">
-                <button className="rounded-xl bg-[#3f6754] px-8 py-4 text-lg font-bold text-[#e6ffef] transition-all hover:bg-[#335b48] active:scale-95">
-                  Add to Cart
-                </button>
+              <BookPurchaseActions stock={book.quantity} isInStock={book.isInStock} />
+              <div className="pt-1">
                 <Link
                   href="/books"
-                  className="rounded-xl bg-[#e2eae3] px-8 py-4 text-lg font-bold text-[#2b352f] transition-all hover:bg-[#dbe5dd] active:scale-95"
+                  className="inline-flex rounded-xl bg-[#e2eae3] px-8 py-4 text-lg font-bold text-[#2b352f] transition-all hover:bg-[#dbe5dd] active:scale-95"
                 >
                   Back to Books
                 </Link>
@@ -227,6 +223,18 @@ export default async function BookDetailPage({
             </section>
           </div>
         </div>
+
+        <section className="mt-16">
+          <div className="rounded-2xl border border-[#aab4ad]/20 bg-white p-6 md:p-8">
+            <h2 className="mb-3 text-2xl font-bold tracking-tight text-[#2b352f]">
+              Description
+            </h2>
+            <p className="max-w-4xl leading-relaxed text-[#58615b]">
+              {book.description}
+            </p>
+          </div>
+        </section>
+
 
         <section className="mt-24 grid grid-cols-1 gap-14 lg:grid-cols-3">
           <div>
