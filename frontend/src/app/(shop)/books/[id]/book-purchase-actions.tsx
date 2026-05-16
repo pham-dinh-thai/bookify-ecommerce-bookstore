@@ -13,8 +13,8 @@ export default function BookPurchaseActions({ stock, isInStock }: BookPurchaseAc
 
   const canBuy = isInStock && stock > 0;
   const helperText = useMemo(() => {
-    if (!canBuy) return 'Out of stock';
-    return `${stock} copies available`;
+    if (!canBuy) return 'Sách đang hết hàng';
+    return `Còn ${stock} quyển trong kho`;
   }, [canBuy, stock]);
 
   const decrease = () => setQuantity((prev) => Math.max(1, prev - 1));
@@ -23,7 +23,7 @@ export default function BookPurchaseActions({ stock, isInStock }: BookPurchaseAc
   return (
     <div className="flex flex-col gap-4 pt-2">
       <div className="flex items-center gap-3">
-        <span className="text-sm font-semibold text-[#58615b]">Quantity</span>
+        <span className="text-sm font-semibold text-[#58615b]">Số lượng</span>
         <div className="inline-flex items-center overflow-hidden rounded-xl border border-[#cad6cc] bg-white">
           <button
             type="button"
@@ -54,14 +54,14 @@ export default function BookPurchaseActions({ stock, isInStock }: BookPurchaseAc
           disabled={!canBuy}
           className="rounded-xl bg-[#2d6a4f] px-8 py-4 text-lg font-bold text-[#e6ffef] transition-all enabled:hover:bg-[#245740] enabled:active:scale-95 disabled:cursor-not-allowed disabled:bg-[#a7b9ad]"
         >
-          Buy Now
+          Mua ngay
         </button>
         <button
           type="button"
           disabled={!canBuy}
           className="rounded-xl bg-[#3f6754] px-8 py-4 text-lg font-bold text-[#e6ffef] transition-all enabled:hover:bg-[#335b48] enabled:active:scale-95 disabled:cursor-not-allowed disabled:bg-[#a7b9ad]"
         >
-          Add to Cart ({quantity})
+          Thêm vào giỏ ({quantity})
         </button>
       </div>
     </div>

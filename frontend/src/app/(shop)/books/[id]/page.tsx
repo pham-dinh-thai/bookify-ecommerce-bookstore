@@ -176,6 +176,9 @@ export default async function BookDetailPage({
             </div>
 
             <div className="flex flex-col gap-6">
+              <p className="max-w-2xl text-lg leading-relaxed text-[#58615b]">
+                {book.description}
+              </p>
               <BookPurchaseActions stock={book.quantity} isInStock={book.isInStock} />
               <div className="pt-1">
                 <Link
