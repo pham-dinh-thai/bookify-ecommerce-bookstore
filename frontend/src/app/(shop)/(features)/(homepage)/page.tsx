@@ -27,13 +27,32 @@ type HomepageBook = {
   description?: string;
 };
 
+function getApiBaseUrl(): string {
+  const internalUrl = process.env.API_INTERNAL_URL;
+  const publicUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  if (internalUrl) {
+    return internalUrl.replace(/\/$/, '');
+  }
+
+  if (publicUrl) {
+    return publicUrl.replace(/\/$/, '');
+  }
+
+  return '/api';
+}
+
 async function getHomepageBooks(): Promise<HomepageBook[]> {
   try {
-    const response = await fetch('http://localhost/api/books?page=1&limit=10', {
-      cache: 'no-store',
-    });
+    const apiBase = getApiBaseUrl();
+    const response = await fetch(`${apiBase}/books?page=1&limit=10`);
 
     if (!response.ok) {
+      console.error(
+        'Homepage books request failed:',
+        response.status,
+        response.statusText,
+      );
       return [];
     }
 
@@ -48,7 +67,10 @@ async function getHomepageBooks(): Promise<HomepageBook[]> {
         id: index + 1,
         title: book.title,
         author: book.authors?.join(', ') || 'Unknown author',
-        price: `${book.originalPrice.toLocaleString('vi-VN')} VND`,
+        price: `${Number(book.originalPrice).toLocaleString('vi-VN', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })} VNĐ`,
         cover:
           primaryCover ||
           fallbackCover ||
@@ -64,6 +86,8 @@ async function getHomepageBooks(): Promise<HomepageBook[]> {
 
 export default async function Homepage() {
   const books = await getHomepageBooks();
+
+  console.log('Fetched books for homepage:', books);
 
   return (
     <>

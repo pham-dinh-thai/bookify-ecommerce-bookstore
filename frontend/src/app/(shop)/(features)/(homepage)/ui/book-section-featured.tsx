@@ -79,11 +79,11 @@ export function BookSectionHighlight({
               {featured.title}
             </h3>
             {featured.description ? (
-              <p className="text-[#58615b] leading-relaxed mb-8 text-sm">
+              <p className="text-[#58615b] leading-relaxed mb-8 text-sm line-clamp-3 ">
                 {featured.description}
               </p>
             ) : (
-              <p className="text-[#58615b] leading-relaxed mb-8 text-sm">
+              <p className="text-[#58615b] leading-relaxed mb-8 text-sm line-clamp-3 ">
                 Lorem, ipsum dolor sit amet consectetur adipisicing elit.
                 Voluptate sed magni quaerat minima, hic reiciendis nemo
                 reprehenderit animi voluptatem ad qui iusto quas magnam rem iste
