@@ -227,6 +227,18 @@ export default async function BookDetailPage({
           </div>
         </div>
 
+        <section className="mt-16">
+          <div className="rounded-2xl border border-[#aab4ad]/20 bg-white p-6 md:p-8">
+            <h2 className="mb-3 text-2xl font-bold tracking-tight text-[#2b352f]">
+              Description
+            </h2>
+            <p className="max-w-4xl leading-relaxed text-[#58615b]">
+              {book.description}
+            </p>
+          </div>
+        </section>
+
+
         <section className="mt-24 grid grid-cols-1 gap-14 lg:grid-cols-3">
           <div>
             <h2 className="mb-5 text-3xl font-bold tracking-tight text-[#2b352f]">
