@@ -102,11 +102,7 @@ export function BookSection({
                         'linear-gradient(to top, rgba(26,61,43,0.85) 0%, transparent 50%)',
                       opacity: hoveredId === book.id ? 1 : 0,
                     }}
-                  >
-                    <span className="w-full py-2.5 rounded-xl bg-white text-[#1a3d2b] font-bold text-xs tracking-wide hover:bg-[#c1ecd4] transition-colors text-center block">
-                      View Details
-                    </span>
-                  </div>
+                  ></div>
 
                   {/* Edition badge */}
                   {book.edition && (

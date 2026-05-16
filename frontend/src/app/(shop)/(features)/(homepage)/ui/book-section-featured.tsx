@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 
 type Book = {
@@ -99,9 +99,6 @@ export function BookSectionHighlight({
             <div className="flex items-center gap-4">
               <span className="text-2xl font-bold text-[#2d6a4f]">
                 {featured.price}
-              </span>
-              <span className="bg-[#2d6a4f] text-white px-6 py-2 rounded-full text-sm font-bold transition-colors">
-                View Details
               </span>
             </div>
           </div>

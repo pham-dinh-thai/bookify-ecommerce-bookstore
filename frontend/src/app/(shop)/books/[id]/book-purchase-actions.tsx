@@ -94,7 +94,7 @@ export function PurchaseButtons() {
       <button
         type="button"
         disabled={!canBuy}
-        className="rounded-xl bg-[#2d6a4f] px-5 py-2.5 text-sm font-bold text-[#e6ffef] transition-all enabled:hover:bg-[#245740] enabled:active:scale-95 disabled:cursor-not-allowed disabled:bg-[#a7b9ad]"
+        className="rounded-xl bg-[#2d6a4f] px-6 py-2.5 text-sm font-bold text-[#e6ffef] transition-all enabled:hover:bg-[#245740] enabled:active:scale-95 disabled:cursor-not-allowed disabled:bg-[#a7b9ad]"
       >
         Buy now
       </button>
@@ -102,9 +102,9 @@ export function PurchaseButtons() {
         type="button"
         disabled={!canBuy}
         aria-label={`Add ${quantity} item${quantity > 1 ? 's' : ''} to cart`}
-        className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#3f6754] text-[#e6ffef] transition-all enabled:hover:bg-[#335b48] enabled:active:scale-95 disabled:cursor-not-allowed disabled:bg-[#a7b9ad]"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-xl"
       >
-        <ShoppingCart size={18} strokeWidth={2} />
+        <ShoppingCart size={20} strokeWidth={2} />
       </button>
     </div>
   );
