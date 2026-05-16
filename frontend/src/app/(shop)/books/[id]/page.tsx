@@ -37,14 +37,8 @@ function getApiBaseUrl(): string {
   const internalUrl = process.env.API_INTERNAL_URL;
   const publicUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  if (internalUrl) {
-    return internalUrl.replace(/\/$/, '');
-  }
-
-  if (publicUrl) {
-    return publicUrl.replace(/\/$/, '');
-  }
-
+  if (internalUrl) return internalUrl.replace(/\/$/, '');
+  if (publicUrl) return publicUrl.replace(/\/$/, '');
   return '/api';
 }
 
@@ -58,25 +52,16 @@ function formatVnd(value: number) {
 async function getBookDetail(id: string): Promise<BookDetail | null> {
   try {
     const apiBase = getApiBaseUrl();
-    const response = await fetch(`${apiBase}/books/${id}`, {
-      cache: 'no-store',
-    });
+    const response = await fetch(`${apiBase}/books/${id}`, { cache: 'no-store' });
 
-    if (!response.ok) {
-      return null;
-    }
+    if (!response.ok) return null;
 
     const responseBody = await response.text();
-    if (!responseBody.trim()) {
-      return null;
-    }
+    if (!responseBody.trim()) return null;
 
     const rawData = JSON.parse(responseBody);
     const data: ApiBookDetail = rawData?.book ?? rawData;
-
-    if (!data || !data.id) {
-      return null;
-    }
+    if (!data || !data.id) return null;
 
     const primaryCover = data.covers?.find((cover) => cover.isPrimary)?.url;
     const fallbackCover = data.covers?.[0]?.url;
@@ -112,19 +97,16 @@ export default async function BookDetailPage({
 }) {
   const { id } = await params;
   const book = await getBookDetail(id);
+
   if (!book) {
     return (
-      <section className="min-h-screen bg-[#f7faf5] flex items-center justify-center px-8 md:px-16 lg:px-24">
-        <div className="rounded-3xl bg-white p-12 shadow-xl text-center">
-          <h1 className="text-3xl font-bold text-[#1a3d2b] mb-4">
-            Book not found
-          </h1>
-          <p className="text-[#58615b] mb-8">
-            We couldn&apos;t find the book you&apos;re looking for.
-          </p>
+      <section className="flex min-h-screen items-center justify-center bg-[#f7faf5] px-8 md:px-16 lg:px-24">
+        <div className="rounded-3xl bg-white p-12 text-center shadow-xl">
+          <h1 className="mb-4 text-3xl font-bold text-[#1a3d2b]">Book not found</h1>
+          <p className="mb-8 text-[#58615b]">We couldn&apos;t find the book you&apos;re looking for.</p>
           <Link
             href="/books"
-            className="inline-flex items-center justify-center rounded-full bg-[#2d6a4f] px-6 py-3 text-sm font-semibold text-white hover:bg-[#1a3d2b] transition-colors"
+            className="inline-flex items-center justify-center rounded-full bg-[#2d6a4f] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#1a3d2b]"
           >
             Back to books
           </Link>
@@ -134,140 +116,83 @@ export default async function BookDetailPage({
   }
 
   return (
-    <section className="min-h-screen bg-[#f7faf5] px-6 pb-24 pt-14 md:px-10 lg:px-16">
-      <div className="mx-auto max-w-7xl">
-        <div className="grid grid-cols-1 items-start gap-16 lg:grid-cols-12">
-          <div className="flex flex-col gap-6 lg:col-span-5">
-            <div className="aspect-[3/4] overflow-hidden rounded-2xl bg-[#eff5ef] p-10 shadow-[0px_20px_40px_rgba(43,53,47,0.06)]">
-              <img
-                src={book.cover}
-                alt={book.title}
-                className="h-full w-full object-contain shadow-2xl transition-transform duration-500 hover:scale-105"
-              />
+    <section className="min-h-screen bg-[#f7faf5] px-6 pb-24 pt-12 md:px-12">
+      <div className="mx-auto max-w-7xl space-y-16">
+        <div className="grid grid-cols-1 items-start gap-16 lg:grid-cols-12 lg:gap-24">
+          <div className="space-y-8 lg:col-span-5 lg:sticky lg:top-24">
+            <div className="aspect-[3/4] overflow-hidden rounded-xl bg-[#eff5ef] p-8">
+              <div className="h-full w-full overflow-hidden rounded-lg shadow-[0px_20px_40px_rgba(43,53,47,0.06)]">
+                <img
+                  src={book.cover}
+                  alt={book.title}
+                  className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+                />
+              </div>
             </div>
             <BookPurchaseActions stock={book.quantity} isInStock={book.isInStock} />
           </div>
 
-          <div className="flex flex-col gap-8 lg:col-span-7">
-            <header className="flex flex-col gap-4">
-              <h1 className="text-4xl font-extrabold leading-tight tracking-[-0.02em] text-[#2b352f] md:text-5xl lg:text-6xl">
-                {book.title}
-              </h1>
-              <div className="space-y-2 text-base text-[#3f4e45] md:text-lg">
-                <p>
-                  <span className="font-semibold text-[#2b352f]">Author:</span> {book.authors}
-                </p>
-                <p>
-                  <span className="font-semibold text-[#2b352f]">Genre:</span> {book.genres}
-                </p>
-                <p>
-                  <span className="font-semibold text-[#2b352f]">Publisher:</span> {book.publisher}
-                </p>
-                <p>
-                  <span className="font-semibold text-[#2b352f]">Language:</span> {book.language}
-                </p>
+          <div className="space-y-10 lg:col-span-7">
+            <header className="space-y-6">
+              <div className="space-y-3">
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#3f6754]">Rare Limited Collection</span>
+                <h1 className="max-w-2xl text-5xl font-extrabold leading-[1.08] tracking-tight text-[#2b352f] md:text-6xl">
+                  {book.title}
+                </h1>
+              </div>
+
+              <div className="space-y-5">
+                <div className="flex flex-wrap items-center gap-4">
+                  <div className="rounded-xl border border-[#c1ecd4]/50 bg-[#c1ecd4]/30 px-6 py-3 text-4xl font-extrabold tracking-tight text-[#1B4332]">
+                    {book.price}
+                  </div>
+                  <div className="text-sm font-medium text-[#58615b]">
+                    <span className="font-bold text-[#3f6754]">{book.quantity}</span> copies available in archive
+                  </div>
+                </div>
+
+                <div className="grid gap-4 rounded-xl border border-[#aab4ad]/30 bg-[#e8f0e9] p-6 sm:grid-cols-2">
+                  <div>
+                    <p className="text-sm font-bold text-[#2b352f]">Shipping Information</p>
+                    <p className="text-xs leading-snug text-[#58615b]">Standard delivery: 3-5 business days.</p>
+                    <p className="text-xs font-semibold text-[#3f6754]">Free for orders over 500.000 VNĐ</p>
+                  </div>
+                  <div className="border-t border-[#aab4ad]/30 pt-4 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
+                    <p className="text-sm font-bold text-[#2b352f]">Collector&apos;s Guarantee</p>
+                    <p className="text-xs leading-snug text-[#58615b]">Archival-grade packaging. Authenticity certificate included.</p>
+                  </div>
+                </div>
               </div>
             </header>
 
-            <div className="rounded-2xl border border-[#f2cc8f] bg-[#fff8ec] p-5">
-              <p className="text-4xl font-extrabold text-[#b05a00] md:text-5xl">{book.price}</p>
-              <p className="mt-2 text-sm font-semibold text-[#6d4c28]">
-                {book.quantity} items available on the website
-              </p>
-            </div>
+            <section className="rounded-xl bg-[#eff5ef] p-8">
+              <h3 className="mb-6 text-[10px] font-bold uppercase tracking-[0.15em] text-[#737d76]">Technical Specifications</h3>
+              <div className="grid grid-cols-1 gap-x-12 gap-y-7 sm:grid-cols-2">
+                <Meta label="Author" value={book.authors} />
+                <Meta label="Publisher" value={book.publisher || 'Unknown publisher'} />
+                <Meta label="Genre" value={book.genres} />
+                <Meta label="Language" value={book.language} />
+                <Meta label="ISBN" value={book.isbn} />
+                <Meta label="Pages" value={String(book.pageCount)} />
+              </div>
+            </section>
 
-            <section className="mt-2 grid grid-cols-2 gap-4 md:grid-cols-4">
-              <div className="flex flex-col gap-1 rounded-xl bg-[#eff5ef] p-5">
-                <span className="text-[10px] font-bold uppercase tracking-[0.05em] text-[#58615b]">
-                  ISBN-13
-                </span>
-                <span className="text-sm font-semibold text-[#2b352f]">
-                  {book.isbn}
-                </span>
-              </div>
-              <div className="flex flex-col gap-1 rounded-xl bg-[#eff5ef] p-5">
-                <span className="text-[10px] font-bold uppercase tracking-[0.05em] text-[#58615b]">
-                  Pages
-                </span>
-                <span className="text-sm font-semibold text-[#2b352f]">
-                  {book.pageCount}
-                </span>
-              </div>
-              <div className="flex flex-col gap-1 rounded-xl bg-[#eff5ef] p-5">
-                <span className="text-[10px] font-bold uppercase tracking-[0.05em] text-[#58615b]">
-                  Quantity
-                </span>
-                <span className="text-sm font-semibold text-[#2b352f]">
-                  {book.quantity}
-                </span>
-              </div>
-              <div className="flex flex-col gap-1 rounded-xl bg-[#eff5ef] p-5">
-                <span className="text-[10px] font-bold uppercase tracking-[0.05em] text-[#58615b]">
-                  Stock
-                </span>
-                <span className="text-sm font-semibold text-[#2b352f]">
-                  {book.isInStock ? 'In stock' : 'Out of stock'}
-                </span>
-              </div>
+            <section className="space-y-4">
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#737d76]">The Narrative</h3>
+              <p className="text-lg font-medium leading-relaxed text-[#58615b]">{book.description}</p>
             </section>
           </div>
         </div>
-
-        <section className="mt-16">
-          <div className="rounded-2xl border border-[#aab4ad]/20 bg-white p-6 md:p-8">
-            <h2 className="mb-3 text-2xl font-bold tracking-tight text-[#2b352f]">
-              Description
-            </h2>
-            <p className="max-w-4xl leading-relaxed text-[#58615b]">
-              {book.description}
-            </p>
-          </div>
-        </section>
-
-        <section className="mt-24 grid grid-cols-1 gap-14 lg:grid-cols-3">
-          <div>
-            <h2 className="mb-5 text-3xl font-bold tracking-tight text-[#2b352f]">
-              Book Overview
-            </h2>
-            <p className="mb-6 leading-relaxed text-[#58615b]">
-              A curated edition for readers who value both content and
-              aesthetics. This detail view focuses on readability, core
-              metadata, and a premium presentation inspired by modern editorial
-              storefronts.
-            </p>
-            <p className="font-semibold text-[#3f6754]">
-              ✓ Carefully curated title
-            </p>
-          </div>
-          <div className="lg:col-span-2">
-            <div className="rounded-xl border border-[#aab4ad]/20 bg-white p-8">
-              <h3 className="mb-5 text-xl font-bold text-[#2b352f]">
-                Shipping &amp; Care
-              </h3>
-              <ul className="space-y-4 text-[#58615b]">
-                <li>• Packed securely to avoid bent corners.</li>
-                <li>
-                  • Delivery time depends on your location and stock status.
-                </li>
-                <li>• Keep books in dry spaces away from direct sunlight.</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-24">
-          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <h2 className="text-4xl font-extrabold tracking-tight text-[#2b352f]">
-                Reader Reflections
-              </h2>
-              <p className="mt-2 font-semibold text-[#3f6754]">
-                ★★★★★ 4.9 / 5.0
-              </p>
-            </div>
-          </div>
-        </section>
       </div>
     </section>
+  );
+}
+
+function Meta({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="space-y-1">
+      <span className="block text-[10px] font-bold uppercase tracking-[0.1em] text-[#8b948f]">{label}</span>
+      <p className="text-base font-semibold text-[#2b352f]">{value}</p>
+    </div>
   );
 }
