@@ -12,6 +12,7 @@ type ApiBookDetail = {
   pageCount?: number;
   isInStock?: boolean;
   covers?: { url: string; isPrimary: boolean }[];
+  genres?: string[];
 };
 
 type BookDetail = {
@@ -26,6 +27,7 @@ type BookDetail = {
   pageCount: number;
   isInStock: boolean;
   cover: string;
+  genres: string;
 };
 
 function getApiBaseUrl(): string {
@@ -87,6 +89,7 @@ async function getBookDetail(id: string): Promise<BookDetail | null> {
       quantity: data.quantity ?? 0,
       pageCount: data.pageCount ?? 0,
       isInStock: data.isInStock ?? false,
+      genres: data.genres?.join(', ') || 'Updating',
       cover:
         primaryCover ||
         fallbackCover ||
