@@ -8,7 +8,8 @@ import { BookSectionHorizontal } from './ui/book-section-horizontal';
 import { BookSectionHighlight } from './ui/book-section-featured';
 
 type ApiBook = {
-  id: string;
+  id?: string;
+  _id?: string;
   title: string;
   originalPrice: number;
   authors?: string[];
@@ -18,7 +19,7 @@ type ApiBook = {
 };
 
 type HomepageBook = {
-  id: number;
+  id: string;
   title: string;
   author: string;
   price: string;
@@ -59,26 +60,28 @@ async function getHomepageBooks(): Promise<HomepageBook[]> {
     const data = await response.json();
     const books: ApiBook[] = Array.isArray(data?.books) ? data.books : [];
 
-    return books.map((book, index) => {
-      const primaryCover = book.covers?.find((cover) => cover.isPrimary)?.url;
-      const fallbackCover = book.covers?.[0]?.url;
+    return books
+      .filter((book) => Boolean(book.id || book._id))
+      .map((book) => {
+        const primaryCover = book.covers?.find((cover) => cover.isPrimary)?.url;
+        const fallbackCover = book.covers?.[0]?.url;
 
-      return {
-        id: index + 1,
-        title: book.title,
-        author: book.authors?.join(', ') || 'Unknown author',
-        price: `${Number(book.originalPrice).toLocaleString('vi-VN', {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })} VNĐ`,
-        cover:
-          primaryCover ||
-          fallbackCover ||
-          'https://via.placeholder.com/300x450?text=No+Cover',
-        publisher: book.publisher,
-        description: book.description,
-      };
-    });
+        return {
+          id: book.id || book._id || '',
+          title: book.title,
+          author: book.authors?.join(', ') || 'Unknown author',
+          price: `${Number(book.originalPrice).toLocaleString('vi-VN', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })} VNĐ`,
+          cover:
+            primaryCover ||
+            fallbackCover ||
+            'https://via.placeholder.com/300x450?text=No+Cover',
+          publisher: book.publisher,
+          description: book.description,
+        };
+      });
   } catch {
     return [];
   }
@@ -161,7 +164,12 @@ export default async function Homepage() {
             title="NEW ARRIVALS"
             books={books}
           />
-          <BookSection label="Limited Time" title="ON SALES" books={books} />
+          <BookSection
+            label="Limited Time"
+            title="ON SALES"
+            books={books}
+            visible={10}
+          />
         </>
       )}
 
