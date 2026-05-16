@@ -106,7 +106,9 @@ export function BookSectionHorizontal({
               <h3 className="text-sm font-bold text-white line-clamp-1 mb-0.5">
                 {book.title}
               </h3>
-              <p className="text-xs text-[#c1ecd4]/70 mb-1">{book.author}</p>
+              <p className="text-xs text-[#c1ecd4]/70 mb-1 line-clamp-1">
+                {book.author}
+              </p>
               <h3 className="text-md font-black text-[#c1ecd4]">
                 {book.price}
               </h3>
