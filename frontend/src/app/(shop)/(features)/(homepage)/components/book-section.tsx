@@ -18,6 +18,7 @@ type BookSectionProps = {
   label?: string;
   title: string;
   books: Book[];
+  visible: number;
   viewAllHref?: string;
 };
 
@@ -25,11 +26,11 @@ export function BookSection({
   label,
   title,
   books,
+  visible,
   viewAllHref = '/books',
 }: BookSectionProps) {
   const [start, setStart] = useState(0);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const visible = 10;
 
   const prev = () => setStart((s) => Math.max(0, s - 1));
   const next = () => setStart((s) => Math.min(books.length - visible, s + 1));

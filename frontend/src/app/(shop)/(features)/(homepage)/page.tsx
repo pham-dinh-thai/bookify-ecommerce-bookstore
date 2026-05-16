@@ -164,7 +164,12 @@ export default async function Homepage() {
             title="NEW ARRIVALS"
             books={books}
           />
-          <BookSection label="Limited Time" title="ON SALES" books={books} />
+          <BookSection
+            label="Limited Time"
+            title="ON SALES"
+            books={books}
+            visible={10}
+          />
         </>
       )}
 
