@@ -16,11 +16,16 @@ import {
   Boxes,
 } from 'lucide-react';
 import useBookPriceUpdate from '../hooks/use-book-price-update';
+import useBookStockAdjust from '../hooks/use-book-stock-adjust';
 
 export default function BookDetailScreen({ id }: { id: string }) {
   const { book, loading, errors, refetch } = useBookDetail(id);
   const { updatingPrice, priceInput, setPriceInput, handleUpdatePrice } =
     useBookPriceUpdate({ book, bookId: id, refetch });
+  const { adjustingStock, handleAdjustStock } = useBookStockAdjust({
+    bookId: id,
+    refetch,
+  });
 
   const statusLabel = useMemo(() => {
     if (!book) return 'Unknown';
@@ -144,7 +149,12 @@ export default function BookDetailScreen({ id }: { id: string }) {
               </h3>
               <div className="flex items-center gap-4">
                 <div className="flex h-14 flex-1 items-center justify-between overflow-hidden rounded-3xl bg-white ring-1 ring-[#c1ecd4]">
-                  <button className="h-full w-14 transition-colors hover:bg-[#f1f1f1]">
+                  <button
+                    type="button"
+                    onClick={() => handleAdjustStock(-1)}
+                    disabled={adjustingStock}
+                    className="h-full w-14 transition-colors hover:bg-[#f1f1f1] disabled:cursor-not-allowed disabled:opacity-60"
+                  >
                     <Minus size={18} className="text-[#2b352f]" />
                   </button>
                   <input
@@ -152,7 +162,12 @@ export default function BookDetailScreen({ id }: { id: string }) {
                     value={book.quantity}
                     className="w-full border-none bg-transparent text-center text-xl font-black text-[#2b352f] focus:outline-none"
                   />
-                  <button className="h-full w-14 transition-colors hover:bg-[#f1f1f1]">
+                  <button
+                    type="button"
+                    onClick={() => handleAdjustStock(1)}
+                    disabled={adjustingStock}
+                    className="h-full w-14 transition-colors hover:bg-[#f1f1f1] disabled:cursor-not-allowed disabled:opacity-60"
+                  >
                     <Plus size={18} className="text-[#2b352f]" />
                   </button>
                 </div>
