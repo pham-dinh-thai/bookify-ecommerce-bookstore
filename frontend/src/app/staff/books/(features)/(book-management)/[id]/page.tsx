@@ -1,11 +1,12 @@
 'use client';
 
-import { use, useMemo } from 'react';
+import { use, useMemo, useState } from 'react';
 import Link from 'next/link';
 import useBookDetail from '../hooks/use-book-detail';
 import BookFormNavigate from '../../../components/book-form-navigate';
 import BookDetailHeader from './ui/book-detail-header';
 import BasicInformation from './ui/basic-information';
+import { Edit3, Plus, Minus, RefreshCcw, TrendingUp, Trash2, Boxes } from 'lucide-react';
 
 export default function ViewBookDetail({
   params,
@@ -15,10 +16,52 @@ export default function ViewBookDetail({
   const { id } = use(params);
 
   const { book, loading, errors, refetch } = useBookDetail(id);
+  const [updatingPrice, setUpdatingPrice] = useState(false);
   const statusLabel = useMemo(() => {
     if (!book) return 'Unknown';
     return book.isInStock ? 'In stock' : 'Out of stock';
   }, [book]);
+
+  const handleUpdatePrice = async () => {
+    if (!book || updatingPrice) return;
+
+    const rawValue = window.prompt('Enter new unit price (VND)', String(book.originalPrice));
+    if (rawValue === null) return;
+
+    const nextPrice = Number(rawValue.replace(/[,\s]/g, ''));
+    if (!Number.isFinite(nextPrice) || nextPrice <= 0) {
+      window.alert('Please enter a valid price greater than 0.');
+      return;
+    }
+
+    try {
+      setUpdatingPrice(true);
+      const res = await fetch(`/api/books/${id}/price`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ originalPrice: nextPrice }),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || 'Failed to update price');
+      }
+
+      await refetch();
+    } catch (error) {
+      window.alert(
+        error instanceof Error
+          ? error.message
+          : 'Failed to update price. Please try again.',
+      );
+    } finally {
+      setUpdatingPrice(false);
+    }
+  };
+
 
   if (loading) {
     return (
@@ -70,10 +113,10 @@ export default function ViewBookDetail({
               />
               <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-sm">
                 <button className="w-12 h-12 rounded-full bg-white text-[#335b48] shadow-lg hover:scale-110 transition-transform flex items-center justify-center">
-                  <span className="material-symbols-outlined">edit</span>
+                  <Edit3 size={20} />
                 </button>
                 <button className="w-12 h-12 rounded-full bg-white text-[#a83836] shadow-lg hover:scale-110 transition-transform flex items-center justify-center">
-                  <span className="material-symbols-outlined">delete</span>
+                  <Trash2 size={20} />
                 </button>
               </div>
             </div>
@@ -98,9 +141,7 @@ export default function ViewBookDetail({
                   {statusLabel}
                 </span>
               </div>
-              <span className="material-symbols-outlined text-[#58615b]">
-                sync
-              </span>
+              <RefreshCcw size={18} className="text-[#58615b]" />
             </div>
           </div>
         </div>
@@ -124,13 +165,13 @@ export default function ViewBookDetail({
                     className="w-full rounded-3xl bg-white p-4 pl-10 text-xl font-black text-[#2b352f] ring-1 ring-[#c1ecd4] focus:outline-none"
                   />
                 </div>
-                <button className="h-14 w-14 rounded-3xl bg-[#c1ecd4] text-[#325947] transition-colors hover:bg-[#b3dec6] flex items-center justify-center">
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontVariationSettings: "'FILL' 1" }}
-                  >
-                    trending_up
-                  </span>
+                <button
+                  type="button"
+                  onClick={handleUpdatePrice}
+                  disabled={updatingPrice}
+                  className="h-14 w-14 rounded-3xl bg-[#c1ecd4] text-[#325947] transition-colors hover:bg-[#b3dec6] disabled:cursor-not-allowed disabled:opacity-70 flex items-center justify-center"
+                >
+                  <TrendingUp size={20} />
                 </button>
               </div>
               <p className="mt-4 text-[10px] italic text-[#58615b]">
@@ -145,9 +186,7 @@ export default function ViewBookDetail({
               <div className="flex items-center gap-4">
                 <div className="flex h-14 flex-1 items-center justify-between overflow-hidden rounded-3xl bg-white ring-1 ring-[#c1ecd4]">
                   <button className="h-full w-14 transition-colors hover:bg-[#f1f1f1]">
-                    <span className="material-symbols-outlined text-[#2b352f]">
-                      remove
-                    </span>
+                    <Minus size={18} className="text-[#2b352f]" />
                   </button>
                   <input
                     readOnly
@@ -155,18 +194,11 @@ export default function ViewBookDetail({
                     className="w-full border-none bg-transparent text-center text-xl font-black text-[#2b352f] focus:outline-none"
                   />
                   <button className="h-full w-14 transition-colors hover:bg-[#f1f1f1]">
-                    <span className="material-symbols-outlined text-[#2b352f]">
-                      add
-                    </span>
+                    <Plus size={18} className="text-[#2b352f]" />
                   </button>
                 </div>
                 <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-[#d4e3ff] text-[#2d5383]">
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontVariationSettings: "'FILL' 1" }}
-                  >
-                    inventory
-                  </span>
+                  <Boxes size={20} />
                 </div>
               </div>
               <p className="mt-4 text-[10px] italic text-[#58615b]">
