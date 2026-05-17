@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { ChevronDown } from 'lucide-react';
 
 type ApiBook = {
   id?: string;
@@ -139,6 +140,21 @@ export default async function CollectionPage({
                 Showing <span className="text-on-surface font-bold">{displayBooks.length}</span> of{' '}
                 <span className="text-on-surface font-bold">{books.length}</span> volumes
               </p>
+              <div className="flex items-center gap-6">
+                <button
+                  type="button"
+                  className="flex items-center gap-2 group cursor-pointer"
+                  aria-label="Sort books by newest"
+                >
+                  <span className="text-xs font-bold tracking-widest uppercase text-on-surface-variant group-hover:text-primary transition-colors">
+                    Sort: Newest
+                  </span>
+                  <ChevronDown
+                    size={16}
+                    className="text-on-surface-variant group-hover:text-primary transition-colors"
+                  />
+                </button>
+              </div>
             </div>
 
             {displayBooks.length === 0 ? (
