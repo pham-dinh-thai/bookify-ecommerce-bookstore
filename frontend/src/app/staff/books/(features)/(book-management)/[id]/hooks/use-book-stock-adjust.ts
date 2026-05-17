@@ -14,12 +14,12 @@ export default function useBookStockAdjust({
   const { addToast } = useToast();
   const [adjustingStock, setAdjustingStock] = useState(false);
 
-  const handleAdjustStock = async (quantityDelta: number) => {
+  const handleAdjustStock = async (nextQuantity: number) => {
     if (adjustingStock) return;
 
     try {
       setAdjustingStock(true);
-      await adjustBookStockService(bookId, { quantity: quantityDelta });
+      await adjustBookStockService(bookId, { quantity: nextQuantity });
       await refetch();
       addToast('Book stock updated successfully.', 'success');
     } catch (error) {
