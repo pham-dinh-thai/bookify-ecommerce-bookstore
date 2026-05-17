@@ -128,12 +128,23 @@ export default function BookDetailScreen({ id }: { id: string }) {
             </h2>
             <div className="flex items-center justify-between rounded-3xl border border-[#aab4ad]/15 bg-white p-4">
               <div className="flex items-center gap-3">
-                <span className="h-3 w-3 rounded-full bg-[#3f6754] animate-pulse" />
+                <span
+                  className={`h-3 w-3 rounded-full animate-pulse ${
+                    book.isInStock ? 'bg-[#3f6754]' : 'bg-[#dc2626]'
+                  }`}
+                />
                 <span className="font-semibold text-[#2b352f]">
                   {statusLabel}
                 </span>
               </div>
-              <RefreshCcw size={18} className="text-[#58615b]" />
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="rounded-full p-1 text-[#58615b] transition-colors hover:bg-[#f2f5f3]"
+                title="Reload page"
+              >
+                <RefreshCcw size={18} className="text-[#58615b]" />
+              </button>
             </div>
           </div>
         </div>
