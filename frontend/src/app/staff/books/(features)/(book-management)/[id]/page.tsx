@@ -160,8 +160,9 @@ export default function ViewBookDetail({
                     ₫
                   </span>
                   <input
-                    readOnly
-                    value={book.originalPrice.toLocaleString('vi-VN')}
+                    value={priceInput}
+                    onChange={(event) => setPriceInput(event.target.value)}
+                    inputMode="numeric"
                     className="w-full rounded-3xl bg-white p-4 pl-10 text-xl font-black text-[#2b352f] ring-1 ring-[#c1ecd4] focus:outline-none"
                   />
                 </div>
