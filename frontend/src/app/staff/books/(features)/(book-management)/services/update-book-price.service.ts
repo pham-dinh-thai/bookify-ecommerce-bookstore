@@ -1,7 +1,7 @@
 import { getAccessToken } from '@/shared/auth/lib/token-storage';
 
 export interface IUpdateBookPriceRequest {
-  originalPrice: number;
+  price: number;
 }
 
 export const updateBookPriceService = async (
