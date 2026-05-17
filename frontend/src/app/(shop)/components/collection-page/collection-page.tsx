@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ChevronDown } from 'lucide-react';
+import CollectionPagePagination from './collection-page-pagination';
 
 type ApiBook = {
   id?: string;
@@ -41,7 +42,10 @@ function formatCurrency(amount: number): string {
   return `${Number(amount || 0).toLocaleString('vi-VN')} VNĐ`;
 }
 
-async function getBooks(type: CollectionType, genreSlug?: string): Promise<ApiBook[]> {
+async function getBooks(
+  type: CollectionType,
+  genreSlug?: string,
+): Promise<ApiBook[]> {
   try {
     const apiBase = getApiBaseUrl();
     const response = await fetch(`${apiBase}/books?page=1&limit=50`, {
@@ -54,7 +58,9 @@ async function getBooks(type: CollectionType, genreSlug?: string): Promise<ApiBo
     const books: ApiBook[] = Array.isArray(data?.books) ? data.books : [];
 
     if (type === 'on-sales') {
-      const onSaleBooks = books.filter((book) => book.isOnSale || Number(book.salePrice) > 0);
+      const onSaleBooks = books.filter(
+        (book) => book.isOnSale || Number(book.salePrice) > 0,
+      );
       return onSaleBooks.length > 0 ? onSaleBooks : books;
     }
 
@@ -82,7 +88,8 @@ export default async function CollectionPage({
   genreSlug,
 }: CollectionPageProps) {
   const books = await getBooks(type, genreSlug);
-  const displayBooks = books.slice(0, 20);
+  const pageSize = 20;
+  const displayBooks = books.slice(0, pageSize);
 
   return (
     <section className="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container">
@@ -91,7 +98,9 @@ export default async function CollectionPage({
           <h1 className="text-5xl font-extrabold tracking-tighter text-on-surface mb-4 leading-tight">
             {heading}
           </h1>
-          <p className="text-on-surface-variant max-w-2xl text-lg leading-relaxed">{description}</p>
+          <p className="text-on-surface-variant max-w-2xl text-lg leading-relaxed">
+            {description}
+          </p>
         </header>
 
         <div className="flex flex-col md:flex-row gap-12">
@@ -101,19 +110,30 @@ export default async function CollectionPage({
                 Collection
               </h3>
               <ul className="space-y-4">
-                <li className="text-sm font-medium text-on-surface-variant">All books</li>
-                <li className="text-sm font-medium text-on-surface-variant">Best sellers</li>
-                <li className="text-sm font-semibold text-primary">Curated picks</li>
+                <li className="text-sm font-medium text-on-surface-variant">
+                  All books
+                </li>
+                <li className="text-sm font-medium text-on-surface-variant">
+                  Best sellers
+                </li>
+                <li className="text-sm font-semibold text-primary">
+                  Curated picks
+                </li>
               </ul>
             </section>
 
             <section>
-              <h3 className="text-xs font-bold tracking-[0.05em] uppercase text-on-surface mb-6">Genre</h3>
+              <h3 className="text-xs font-bold tracking-[0.05em] uppercase text-on-surface mb-6">
+                Genre
+              </h3>
               <ul className="space-y-4">
                 {Array.from(new Set(books.flatMap((book) => book.genres || [])))
                   .slice(0, 5)
                   .map((genre) => (
-                    <li key={genre} className="text-sm font-medium text-on-surface-variant">
+                    <li
+                      key={genre}
+                      className="text-sm font-medium text-on-surface-variant"
+                    >
                       {genre}
                     </li>
                   ))}
@@ -121,12 +141,19 @@ export default async function CollectionPage({
             </section>
 
             <section>
-              <h3 className="text-xs font-bold tracking-[0.05em] uppercase text-on-surface mb-6">Author</h3>
+              <h3 className="text-xs font-bold tracking-[0.05em] uppercase text-on-surface mb-6">
+                Author
+              </h3>
               <ul className="space-y-4">
-                {Array.from(new Set(books.flatMap((book) => book.authors || [])))
+                {Array.from(
+                  new Set(books.flatMap((book) => book.authors || [])),
+                )
                   .slice(0, 5)
                   .map((author) => (
-                    <li key={author} className="text-sm font-medium text-on-surface-variant">
+                    <li
+                      key={author}
+                      className="text-sm font-medium text-on-surface-variant"
+                    >
                       {author}
                     </li>
                   ))}
@@ -137,8 +164,15 @@ export default async function CollectionPage({
           <div className="flex-1">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4 border-b border-outline-variant/10 pb-6">
               <p className="text-sm font-medium text-on-surface-variant">
-                Showing <span className="text-on-surface font-bold">{displayBooks.length}</span> of{' '}
-                <span className="text-on-surface font-bold">{books.length}</span> volumes
+                Showing{' '}
+                <span className="text-on-surface font-bold">
+                  {displayBooks.length}
+                </span>{' '}
+                of{' '}
+                <span className="text-on-surface font-bold">
+                  {books.length}
+                </span>{' '}
+                volumes
               </p>
               <div className="flex items-center gap-6">
                 <button
@@ -159,22 +193,32 @@ export default async function CollectionPage({
 
             {displayBooks.length === 0 ? (
               <div className="rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-10 text-center">
-                <p className="text-on-surface-variant">No books found for this collection.</p>
+                <p className="text-on-surface-variant">
+                  No books found for this collection.
+                </p>
               </div>
             ) : (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
                   {displayBooks.map((book) => {
-                    const primaryCover = book.covers?.find((cover) => cover.isPrimary)?.url;
+                    const primaryCover = book.covers?.find(
+                      (cover) => cover.isPrimary,
+                    )?.url;
                     const fallbackCover = book.covers?.[0]?.url;
                     const bookId = book.id || book._id;
                     const displayPrice =
-                      type === 'on-sales' && book.salePrice ? book.salePrice : book.originalPrice;
+                      type === 'on-sales' && book.salePrice
+                        ? book.salePrice
+                        : book.originalPrice;
 
                     if (!bookId) return null;
 
                     return (
-                      <Link key={bookId} href={`/books/${bookId}`} className="group">
+                      <Link
+                        key={bookId}
+                        href={`/books/${bookId}`}
+                        className="group"
+                      >
                         <div className="bg-surface-container-lowest transition-all duration-500 group-hover:-translate-y-2 shadow-[0px_20px_40px_rgba(43,53,47,0.04)] overflow-hidden relative aspect-[3/4]">
                           <img
                             alt={`${book.title} cover`}
@@ -207,25 +251,11 @@ export default async function CollectionPage({
                 </div>
 
                 <div className="mt-20 flex justify-center items-center gap-4">
-                  <button className="w-12 h-12 rounded-full border border-outline-variant/20 flex items-center justify-center text-on-surface-variant hover:border-primary hover:text-primary transition-all">
-                    <span className="material-symbols-outlined">chevron_left</span>
-                  </button>
-                  <div className="flex items-center gap-2">
-                    <button className="w-12 h-12 rounded-full bg-primary text-on-primary font-bold">1</button>
-                    <button className="w-12 h-12 rounded-full hover:bg-surface-container-high transition-colors font-medium">
-                      2
-                    </button>
-                    <button className="w-12 h-12 rounded-full hover:bg-surface-container-high transition-colors font-medium">
-                      3
-                    </button>
-                    <span className="px-2">...</span>
-                    <button className="w-12 h-12 rounded-full hover:bg-surface-container-high transition-colors font-medium">
-                      8
-                    </button>
-                  </div>
-                  <button className="w-12 h-12 rounded-full border border-outline-variant/20 flex items-center justify-center text-on-surface-variant hover:border-primary hover:text-primary transition-all">
-                    <span className="material-symbols-outlined">chevron_right</span>
-                  </button>
+                  <CollectionPagePagination
+                    pageSize={pageSize}
+                    total={books.length}
+                    showTotal={false}
+                  />
                 </div>
               </>
             )}
