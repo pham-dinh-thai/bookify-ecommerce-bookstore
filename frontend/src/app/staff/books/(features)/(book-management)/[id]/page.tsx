@@ -1,12 +1,21 @@
 'use client';
 
-import { use, useMemo, useState } from 'react';
+import { use, useMemo, useState, useEffect } from 'react';
 import Link from 'next/link';
 import useBookDetail from '../hooks/use-book-detail';
 import BookFormNavigate from '../../../components/book-form-navigate';
 import BookDetailHeader from './ui/book-detail-header';
 import BasicInformation from './ui/basic-information';
-import { Edit3, Plus, Minus, RefreshCcw, TrendingUp, Trash2, Boxes } from 'lucide-react';
+import {
+  Edit3,
+  Plus,
+  Minus,
+  RefreshCcw,
+  TrendingUp,
+  Trash2,
+  Boxes,
+} from 'lucide-react';
+import { updateBookPriceService } from '../services/update-book-price.service';
 
 export default function ViewBookDetail({
   params,
@@ -17,6 +26,13 @@ export default function ViewBookDetail({
 
   const { book, loading, errors, refetch } = useBookDetail(id);
   const [updatingPrice, setUpdatingPrice] = useState(false);
+  const [priceInput, setPriceInput] = useState('');
+
+  useEffect(() => {
+    if (book) {
+      setPriceInput(String(book.originalPrice ?? ''));
+    }
+  }, [book]);
   const statusLabel = useMemo(() => {
     if (!book) return 'Unknown';
     return book.isInStock ? 'In stock' : 'Out of stock';
@@ -25,10 +41,9 @@ export default function ViewBookDetail({
   const handleUpdatePrice = async () => {
     if (!book || updatingPrice) return;
 
-    const rawValue = window.prompt('Enter new unit price (VND)', String(book.originalPrice));
-    if (rawValue === null) return;
+    const raw = (priceInput || '').trim();
+    const nextPrice = Number(raw.replace(/[,\s]/g, ''));
 
-    const nextPrice = Number(rawValue.replace(/[,\s]/g, ''));
     if (!Number.isFinite(nextPrice) || nextPrice <= 0) {
       window.alert('Please enter a valid price greater than 0.');
       return;
@@ -36,20 +51,7 @@ export default function ViewBookDetail({
 
     try {
       setUpdatingPrice(true);
-      const res = await fetch(`/api/books/${id}/price`, {
-        method: 'PUT',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ originalPrice: nextPrice }),
-      });
-
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || 'Failed to update price');
-      }
-
+      await updateBookPriceService(id, { originalPrice: nextPrice });
       await refetch();
     } catch (error) {
       window.alert(
@@ -61,7 +63,6 @@ export default function ViewBookDetail({
       setUpdatingPrice(false);
     }
   };
-
 
   if (loading) {
     return (
