@@ -22,6 +22,7 @@ type CollectionPageProps = {
   heading: string;
   description: string;
   genreSlug?: string;
+  searchQuery?: string;
 };
 
 function getApiBaseUrl(): string {
@@ -45,6 +46,7 @@ function formatCurrency(amount: number): string {
 async function getBooks(
   type: CollectionType,
   genreSlug?: string,
+  searchQuery?: string,
 ): Promise<ApiBook[]> {
   try {
     const apiBase = getApiBaseUrl();
@@ -69,13 +71,31 @@ async function getBooks(
       return newArrivalBooks.length > 0 ? newArrivalBooks : books;
     }
 
+    let filteredBooks = books;
+
     if (genreSlug) {
-      return books.filter((book) =>
+      filteredBooks = books.filter((book) =>
         (book.genres || []).some((genre) => normalize(genre) === genreSlug),
       );
     }
 
-    return books;
+    const normalizedSearchQuery = searchQuery?.trim().toLowerCase();
+
+    if (!normalizedSearchQuery) {
+      return filteredBooks;
+    }
+
+    return filteredBooks.filter((book) => {
+      const title = book.title?.toLowerCase() || '';
+      const authors = (book.authors || []).join(' ').toLowerCase();
+      const genres = (book.genres || []).join(' ').toLowerCase();
+
+      return (
+        title.includes(normalizedSearchQuery) ||
+        authors.includes(normalizedSearchQuery) ||
+        genres.includes(normalizedSearchQuery)
+      );
+    });
   } catch {
     return [];
   }
@@ -86,8 +106,9 @@ export default async function CollectionPage({
   heading,
   description,
   genreSlug,
+  searchQuery,
 }: CollectionPageProps) {
-  const books = await getBooks(type, genreSlug);
+  const books = await getBooks(type, genreSlug, searchQuery);
   const pageSize = 20;
   const displayBooks = books.slice(0, pageSize);
 
