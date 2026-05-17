@@ -37,7 +37,7 @@ function normalize(text: string): string {
 }
 
 function formatCurrency(amount: number): string {
-  return `$${Number(amount || 0).toFixed(2)}`;
+  return `${Number(amount || 0).toLocaleString('vi-VN')} VNĐ`;
 }
 
 async function getBooks(type: CollectionType, genreSlug?: string): Promise<ApiBook[]> {
@@ -53,11 +53,13 @@ async function getBooks(type: CollectionType, genreSlug?: string): Promise<ApiBo
     const books: ApiBook[] = Array.isArray(data?.books) ? data.books : [];
 
     if (type === 'on-sales') {
-      return books.filter((book) => book.isOnSale || Number(book.salePrice) > 0);
+      const onSaleBooks = books.filter((book) => book.isOnSale || Number(book.salePrice) > 0);
+      return onSaleBooks.length > 0 ? onSaleBooks : books;
     }
 
     if (type === 'new-arrivals') {
-      return books.filter((book) => book.isNewArrival);
+      const newArrivalBooks = books.filter((book) => book.isNewArrival);
+      return newArrivalBooks.length > 0 ? newArrivalBooks : books;
     }
 
     if (genreSlug) {
