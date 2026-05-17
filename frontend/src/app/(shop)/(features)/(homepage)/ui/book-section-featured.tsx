@@ -24,7 +24,7 @@ export function BookSectionHighlight({
   label,
   title,
   books,
-  viewAllHref = '/books',
+  viewAllHref = '/best-seller',
 }: Props) {
   const featured = books[0];
   const rest = books.slice(1, 4);
