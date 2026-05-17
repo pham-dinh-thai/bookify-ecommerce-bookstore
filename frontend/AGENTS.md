@@ -10,7 +10,8 @@ Keep the frontend architecture separated by responsibility, and **do not put all
    - avoid direct API calls and heavy business logic.
 2. Split each module/feature into the following parts when applicable:
    - `hooks/`: state management, side effects, data-fetch orchestration.
-   - `components/`: UI components (presentational or thin container components).
+   - `components/`: reusable components.
+   - `ui/`: smaller UI sections inside larger interfaces (feature-specific UI building blocks).
    - `services/`: API clients, request/response mapping, domain actions.
    - `types.ts` or `types.tsx`: shared feature-level type definitions.
 3. Do not place complex fetching functions, large data transforms, or long business/form workflows directly in `page.tsx`.
