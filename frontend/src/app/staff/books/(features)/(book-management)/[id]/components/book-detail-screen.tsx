@@ -98,7 +98,7 @@ export default function BookDetailScreen({ id }: { id: string }) {
         <div className="col-span-12 lg:col-span-4 flex flex-col gap-8">
           {/* ... */}
           <div className="rounded-3xl bg-[#f7faf5] p-6 shadow-sm border border-[#dbe5dd] group">
-            <div className="relative aspect-[2/3] rounded-[1.5rem] overflow-hidden bg-[#e8f0e9] mb-6">
+            <div className="relative aspect-[2/3] overflow-hidden bg-[#e8f0e9] mb-6">
               <img
                 src={coverUrl}
                 alt={book.title}
