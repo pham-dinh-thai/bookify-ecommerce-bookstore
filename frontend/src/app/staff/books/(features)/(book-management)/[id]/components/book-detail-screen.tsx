@@ -27,8 +27,28 @@ export default function BookDetailScreen({ id }: { id: string }) {
     return book.isInStock ? 'In stock' : 'Out of stock';
   }, [book]);
 
-  if (loading) return <div className="p-12 max-w-7xl mx-auto"><div className="rounded-3xl bg-white p-12 shadow-sm border border-slate-200 animate-pulse h-[600px]" /></div>;
-  if (errors || !book) return <div className="p-12 max-w-7xl mx-auto"><div className="rounded-3xl bg-white p-12 shadow-sm border border-slate-200"><p className="text-base text-red-600">Unable to load book details. Please try again.</p><Link href="/staff/books" className="mt-4 inline-flex items-center rounded-full bg-[#2d6a4f] px-4 py-3 text-sm font-semibold text-white hover:bg-[#23543f] transition-colors">Back to book list</Link></div></div>;
+  if (loading)
+    return (
+      <div className="p-12 max-w-7xl mx-auto">
+        <div className="rounded-3xl bg-white p-12 shadow-sm border border-slate-200 animate-pulse h-[600px]" />
+      </div>
+    );
+  if (errors || !book)
+    return (
+      <div className="p-12 max-w-7xl mx-auto">
+        <div className="rounded-3xl bg-white p-12 shadow-sm border border-slate-200">
+          <p className="text-base text-red-600">
+            Unable to load book details. Please try again.
+          </p>
+          <Link
+            href="/staff/books"
+            className="mt-4 inline-flex items-center rounded-full bg-[#2d6a4f] px-4 py-3 text-sm font-semibold text-white hover:bg-[#23543f] transition-colors"
+          >
+            Back to book list
+          </Link>
+        </div>
+      </div>
+    );
 
   const coverUrl =
     book.covers && book.covers.length > 0
@@ -36,17 +56,119 @@ export default function BookDetailScreen({ id }: { id: string }) {
       : 'https://tse1.mm.bing.net/th/id/OIP.dI055T7RdiMDYUAVQbp88AHaLX?o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3';
 
   return (
-    <div className="p-12 max-w-7xl mx-auto">{/* unchanged UI */}
-      <div className="flex flex-col gap-6 mb-12"><BookFormNavigate label="Book Detail" /><BookDetailHeader book={book} /></div>
+    <div className="p-12 max-w-7xl mx-auto">
+      {/* unchanged UI */}
+      <div className="flex flex-col gap-6 mb-12">
+        <BookFormNavigate label="Book Detail" />
+        <BookDetailHeader book={book} />
+      </div>
       <div className="grid grid-cols-12 gap-8">
-        <div className="col-span-12 lg:col-span-4 flex flex-col gap-8">{/* ... */}
-          <div className="rounded-3xl bg-[#f7faf5] p-6 shadow-sm border border-[#dbe5dd] group"><div className="relative aspect-[2/3] rounded-[1.5rem] overflow-hidden bg-[#e8f0e9] mb-6"><img src={coverUrl} alt={book.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" /><div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-sm"><button className="w-12 h-12 rounded-full bg-white text-[#335b48] shadow-lg hover:scale-110 transition-transform flex items-center justify-center"><Edit3 size={20} /></button><button className="w-12 h-12 rounded-full bg-white text-[#a83836] shadow-lg hover:scale-110 transition-transform flex items-center justify-center"><Trash2 size={20} /></button></div></div><div className="flex flex-col gap-3"><button className="w-full rounded-xl bg-[#c1ecd4] py-3 text-sm font-bold text-[#325947] hover:bg-[#b3dec6] transition-colors">Update cover image</button><button className="w-full rounded-xl border border-[#fa746f]/20 bg-white py-3 text-sm font-semibold text-[#a83836] hover:bg-[#fff0f0] transition-colors">Remove current cover</button></div></div>
-          <div className="rounded-3xl bg-[#f7faf5] p-6 shadow-sm border border-[#dbe5dd]"><h2 className="text-xs font-bold uppercase tracking-[0.22em] text-[#58615b] mb-4">Inventory status</h2><div className="flex items-center justify-between rounded-3xl border border-[#aab4ad]/15 bg-white p-4"><div className="flex items-center gap-3"><span className="h-3 w-3 rounded-full bg-[#3f6754] animate-pulse" /><span className="font-semibold text-[#2b352f]">{statusLabel}</span></div><RefreshCcw size={18} className="text-[#58615b]" /></div></div>
+        <div className="col-span-12 lg:col-span-4 flex flex-col gap-8">
+          {/* ... */}
+          <div className="rounded-3xl bg-[#f7faf5] p-6 shadow-sm border border-[#dbe5dd] group">
+            <div className="relative aspect-[2/3] rounded-[1.5rem] overflow-hidden bg-[#e8f0e9] mb-6">
+              <img
+                src={coverUrl}
+                alt={book.title}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-sm">
+                <button className="w-12 h-12 rounded-full bg-white text-[#335b48] shadow-lg hover:scale-110 transition-transform flex items-center justify-center">
+                  <Edit3 size={20} />
+                </button>
+                <button className="w-12 h-12 rounded-full bg-white text-[#a83836] shadow-lg hover:scale-110 transition-transform flex items-center justify-center">
+                  <Trash2 size={20} />
+                </button>
+              </div>
+            </div>
+            <div className="flex flex-col gap-3">
+              <button className="w-full rounded-xl bg-[#c1ecd4] py-3 text-sm font-bold text-[#325947] hover:bg-[#b3dec6] transition-colors">
+                Update cover image
+              </button>
+              <button className="w-full rounded-xl border border-[#fa746f]/20 bg-white py-3 text-sm font-semibold text-[#a83836] hover:bg-[#fff0f0] transition-colors">
+                Remove current cover
+              </button>
+            </div>
+          </div>
+          <div className="rounded-3xl bg-[#f7faf5] p-6 shadow-sm border border-[#dbe5dd]">
+            <h2 className="text-xs font-bold uppercase tracking-[0.22em] text-[#58615b] mb-4">
+              Inventory status
+            </h2>
+            <div className="flex items-center justify-between rounded-3xl border border-[#aab4ad]/15 bg-white p-4">
+              <div className="flex items-center gap-3">
+                <span className="h-3 w-3 rounded-full bg-[#3f6754] animate-pulse" />
+                <span className="font-semibold text-[#2b352f]">
+                  {statusLabel}
+                </span>
+              </div>
+              <RefreshCcw size={18} className="text-[#58615b]" />
+            </div>
+          </div>
         </div>
-        <div className="col-span-12 lg:col-span-8 flex flex-col gap-8"><BasicInformation book={book} onUpdated={refetch} />
+        <div className="col-span-12 lg:col-span-8 flex flex-col gap-8">
+          <BasicInformation book={book} onUpdated={refetch} />
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="rounded-3xl bg-[#f7faf5] p-8 shadow-sm border-l-4 border-[#3f6754]"><h3 className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#58615b] mb-6">Unit price (VND)</h3><div className="flex items-center gap-4"><div className="relative flex-1"><span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-[#58615b]">₫</span><input value={priceInput} onChange={(event) => setPriceInput(event.target.value)} inputMode="numeric" className="w-full rounded-3xl bg-white p-4 pl-10 text-xl font-black text-[#2b352f] ring-1 ring-[#c1ecd4] focus:outline-none" /></div><button type="button" onClick={handleUpdatePrice} disabled={updatingPrice} className="h-14 w-14 rounded-3xl bg-[#c1ecd4] text-[#325947] transition-colors hover:bg-[#b3dec6] disabled:cursor-not-allowed disabled:opacity-70 flex items-center justify-center"><TrendingUp size={20} /></button></div><p className="mt-4 text-[10px] italic text-[#58615b]">Current price may change depending on active campaigns.</p></div>
-            <div className="rounded-3xl bg-[#f7faf5] p-8 shadow-sm border-l-4 border-[#3c6091]"><h3 className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#58615b] mb-6">Stock quantity</h3><div className="flex items-center gap-4"><div className="flex h-14 flex-1 items-center justify-between overflow-hidden rounded-3xl bg-white ring-1 ring-[#c1ecd4]"><button className="h-full w-14 transition-colors hover:bg-[#f1f1f1]"><Minus size={18} className="text-[#2b352f]" /></button><input readOnly value={book.quantity} className="w-full border-none bg-transparent text-center text-xl font-black text-[#2b352f] focus:outline-none" /><button className="h-full w-14 transition-colors hover:bg-[#f1f1f1]"><Plus size={18} className="text-[#2b352f]" /></button></div><div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-[#d4e3ff] text-[#2d5383]"><Boxes size={20} /></div></div><p className="mt-4 text-[10px] italic text-[#58615b]">Stock level: {book.quantity > 50 ? 'High' : book.quantity > 10 ? 'Medium' : 'Low'}</p></div>
+            <div className="rounded-3xl bg-[#f7faf5] p-8 shadow-sm border-l-4 border-[#3f6754]">
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#58615b] mb-6">
+                Unit price (VND)
+              </h3>
+              <div className="flex items-center gap-4">
+                <div className="relative flex-1">
+                  <input
+                    value={priceInput}
+                    onChange={(event) =>
+                      setPriceInput(event.target.value.replace(/\D/g, ''))
+                    }
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    title="Only numbers are allowed"
+                    className="w-full rounded-3xl bg-white p-4 pl-5 text-xl font-black text-[#2b352f] ring-1 ring-[#c1ecd4] focus:outline-none"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleUpdatePrice}
+                  disabled={updatingPrice}
+                  className="h-14 w-14 rounded-3xl bg-[#c1ecd4] text-[#325947] transition-colors hover:bg-[#b3dec6] disabled:cursor-not-allowed disabled:opacity-70 flex items-center justify-center"
+                >
+                  <TrendingUp size={20} />
+                </button>
+              </div>
+              <p className="mt-4 text-[10px] italic text-[#58615b]">
+                Current price may change depending on active campaigns.
+              </p>
+            </div>
+            <div className="rounded-3xl bg-[#f7faf5] p-8 shadow-sm border-l-4 border-[#3c6091]">
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#58615b] mb-6">
+                Stock quantity
+              </h3>
+              <div className="flex items-center gap-4">
+                <div className="flex h-14 flex-1 items-center justify-between overflow-hidden rounded-3xl bg-white ring-1 ring-[#c1ecd4]">
+                  <button className="h-full w-14 transition-colors hover:bg-[#f1f1f1]">
+                    <Minus size={18} className="text-[#2b352f]" />
+                  </button>
+                  <input
+                    readOnly
+                    value={book.quantity}
+                    className="w-full border-none bg-transparent text-center text-xl font-black text-[#2b352f] focus:outline-none"
+                  />
+                  <button className="h-full w-14 transition-colors hover:bg-[#f1f1f1]">
+                    <Plus size={18} className="text-[#2b352f]" />
+                  </button>
+                </div>
+                <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-[#d4e3ff] text-[#2d5383]">
+                  <Boxes size={20} />
+                </div>
+              </div>
+              <p className="mt-4 text-[10px] italic text-[#58615b]">
+                Stock level:{' '}
+                {book.quantity > 50
+                  ? 'High'
+                  : book.quantity > 10
+                    ? 'Medium'
+                    : 'Low'}
+              </p>
+            </div>
           </section>
         </div>
       </div>
