@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import Link from 'next/link';
 import useBookDetail from '../../hooks/use-book-detail';
 import BookFormNavigate from '../../../../components/book-form-navigate';
@@ -26,11 +26,41 @@ export default function BookDetailScreen({ id }: { id: string }) {
     bookId: id,
     refetch,
   });
+  const [quantityInput, setQuantityInput] = useState<string | null>(null);
+
+  const handleQuantityInputChange = (value: string) => {
+    const numValue = value.replace(/\D/g, '');
+    setQuantityInput(numValue || '0');
+  };
+
+  const handleAdjustQuantity = (delta: number) => {
+    const current = Number(quantityInput ?? book?.quantity ?? 0);
+    const newValue = Math.max(0, current + delta);
+    setQuantityInput(String(newValue));
+  };
+
+  const handleUpdateQuantity = async () => {
+    const newQuantity = Number(quantityInput ?? book?.quantity ?? 0);
+    const currentQuantity = book?.quantity || 0;
+    const difference = newQuantity - currentQuantity;
+
+    if (difference === 0) return;
+
+    await handleAdjustStock(difference);
+  };
 
   const statusLabel = useMemo(() => {
     if (!book) return 'Unknown';
     return book.isInStock ? 'In stock' : 'Out of stock';
   }, [book]);
+
+  useEffect(() => {
+    if (book) {
+      setQuantityInput(String(book.quantity || 0));
+    }
+  }, [book]);
+
+  const displayQuantity = quantityInput ?? String(book?.quantity || 0);
 
   if (loading)
     return (
@@ -151,29 +181,43 @@ export default function BookDetailScreen({ id }: { id: string }) {
                 <div className="flex h-14 flex-1 items-center justify-between overflow-hidden rounded-3xl bg-white ring-1 ring-[#c1ecd4]">
                   <button
                     type="button"
-                    onClick={() => handleAdjustStock(-1)}
+                    onClick={() => handleAdjustQuantity(-1)}
                     disabled={adjustingStock}
                     className="h-full w-14 transition-colors hover:bg-[#f1f1f1] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <Minus size={18} className="text-[#2b352f]" />
                   </button>
                   <input
-                    readOnly
-                    value={book.quantity}
+                    value={displayQuantity}
+                    onChange={(event) =>
+                      handleQuantityInputChange(event.target.value)
+                    }
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    title="Only numbers are allowed"
                     className="w-full border-none bg-transparent text-center text-xl font-black text-[#2b352f] focus:outline-none"
                   />
                   <button
                     type="button"
-                    onClick={() => handleAdjustStock(1)}
+                    onClick={() => handleAdjustQuantity(1)}
                     disabled={adjustingStock}
                     className="h-full w-14 transition-colors hover:bg-[#f1f1f1] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <Plus size={18} className="text-[#2b352f]" />
                   </button>
                 </div>
-                <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-[#d4e3ff] text-[#2d5383]">
+                <button
+                  type="button"
+                  onClick={handleUpdateQuantity}
+                  disabled={
+                    adjustingStock ||
+                    Number(displayQuantity) === (book?.quantity || 0)
+                  }
+                  className="h-14 w-14 rounded-3xl bg-[#d4e3ff] text-[#2d5383] transition-colors hover:bg-[#c5d9ff] disabled:cursor-not-allowed disabled:opacity-60 flex items-center justify-center"
+                  title="Save quantity"
+                >
                   <Boxes size={20} />
-                </div>
+                </button>
               </div>
               <p className="mt-4 text-[10px] italic text-[#58615b]">
                 Stock level:{' '}
