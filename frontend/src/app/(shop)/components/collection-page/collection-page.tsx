@@ -162,7 +162,7 @@ export default async function CollectionPage({
           </aside>
 
           <div className="flex-1">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4 border-b border-outline-variant/10 pb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4 ">
               <p className="text-sm font-medium text-on-surface-variant">
                 Showing{' '}
                 <span className="text-on-surface font-bold">
