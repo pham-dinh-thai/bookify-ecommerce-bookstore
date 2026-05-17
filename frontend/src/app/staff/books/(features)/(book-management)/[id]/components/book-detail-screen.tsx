@@ -43,8 +43,7 @@ export default function BookDetailScreen({ id }: { id: string }) {
     const newQuantity = Number(quantityInput ?? book?.quantity ?? 0);
     if (newQuantity === (book?.quantity || 0)) return;
 
-    const delta = newQuantity - (book?.quantity || 0);
-    await handleAdjustStock(delta);
+    await handleAdjustStock(newQuantity);
   };
 
   const statusLabel = useMemo(() => {
