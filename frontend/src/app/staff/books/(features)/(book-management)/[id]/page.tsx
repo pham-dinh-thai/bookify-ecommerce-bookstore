@@ -1,12 +1,11 @@
 'use client';
 
-import { use, useEffect, useMemo, useState } from 'react';
+import { use, useMemo, useState } from 'react';
 import Link from 'next/link';
 import useBookDetail from '../hooks/use-book-detail';
 import BookFormNavigate from '../../../components/book-form-navigate';
 import BookDetailHeader from './ui/book-detail-header';
 import BasicInformation from './ui/basic-information';
-import { updateBookPriceService } from '../services/update-book-price.service';
 import { Edit3, Plus, Minus, RefreshCcw, TrendingUp, Trash2, Boxes } from 'lucide-react';
 
 export default function ViewBookDetail({
@@ -23,17 +22,13 @@ export default function ViewBookDetail({
     return book.isInStock ? 'In stock' : 'Out of stock';
   }, [book]);
 
-  const [priceInput, setPriceInput] = useState('');
-
-  useEffect(() => {
-    if (!book) return;
-    setPriceInput(String(book.originalPrice));
-  }, [book]);
-
   const handleUpdatePrice = async () => {
     if (!book || updatingPrice) return;
 
-    const nextPrice = Number(priceInput.replace(/[\s,]/g, ''));
+    const rawValue = window.prompt('Enter new unit price (VND)', String(book.originalPrice));
+    if (rawValue === null) return;
+
+    const nextPrice = Number(rawValue.replace(/[,\s]/g, ''));
     if (!Number.isFinite(nextPrice) || nextPrice <= 0) {
       window.alert('Please enter a valid price greater than 0.');
       return;
@@ -41,7 +36,20 @@ export default function ViewBookDetail({
 
     try {
       setUpdatingPrice(true);
-      await updateBookPriceService(id, { originalPrice: nextPrice });
+      const res = await fetch(`/api/books/${id}/price`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ originalPrice: nextPrice }),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || 'Failed to update price');
+      }
+
       await refetch();
     } catch (error) {
       window.alert(
@@ -53,7 +61,6 @@ export default function ViewBookDetail({
       setUpdatingPrice(false);
     }
   };
-
 
 
   if (loading) {
