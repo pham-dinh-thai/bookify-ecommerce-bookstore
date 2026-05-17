@@ -111,7 +111,7 @@ export default async function Homepage() {
 
             <div className="flex items-center gap-6 mt-2">
               <Link
-                href="/books"
+                href="/new-arrivals"
                 className="bg-[#2d6a4f] text-white text-sm font-semibold px-6 py-3 rounded-xl hover:bg-[#1a3d2b] transition-colors"
               >
                 Browse New Arrivals
