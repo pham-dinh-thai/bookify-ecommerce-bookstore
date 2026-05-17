@@ -54,7 +54,7 @@ export default function Paginate({
   const totalEntries = total;
 
   return (
-    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between px-6 py-4 bg-white text-sm text-[#4f6553]">
+    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between px-6 py-4 text-sm text-[#4f6553]">
       {showTotal ? (
         <div>{`Showing ${fromRecord} to ${toRecord} of ${totalEntries} entries`}</div>
       ) : null}
