@@ -20,7 +20,7 @@ const navItems = [
   },
 
   { label: 'Book Management', icon: Book, path: '/staff/books' },
-  { label: 'Stock Management', icon: ArrowUp01, path: '/staff/stock' },
+  { label: 'Import Stock', icon: ArrowUp01, path: '/staff/stock' },
   { label: 'Order Management', icon: ShoppingBag, path: '/staff/orders' },
   {
     label: 'Customer Management',
