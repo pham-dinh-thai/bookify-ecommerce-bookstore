@@ -32,6 +32,7 @@ import { ImportBookStockUseCase } from './application/book-use-cases/import-book
 import { AdjustBookStockUseCase } from './application/book-use-cases/adjust-book-stock/adjust-book-stock.use-case';
 import { DeleteBookUseCase } from './application/book-use-cases/delete-book/delete-book.use-case';
 import { FileStorageModule } from '../file-storage/file-storage.module';
+import { ChangePrimaryBookCoverUseCase } from './application/book-use-cases/change-primary-book-cover/change-primary-book-cover.use-case';
 
 @Module({
   controllers: [BooksController],
@@ -60,6 +61,7 @@ import { FileStorageModule } from '../file-storage/file-storage.module';
     ImportBookStockUseCase,
     AdjustBookStockUseCase,
     DeleteBookUseCase,
+    ChangePrimaryBookCoverUseCase,
     {
       provide: BOOKS_QUERY_REPOSITORY,
       useClass: TypeormBooksQueryRepository,

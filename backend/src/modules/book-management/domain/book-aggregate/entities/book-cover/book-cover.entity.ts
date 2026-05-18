@@ -47,6 +47,10 @@ export class BookCover {
     this.isPrimary = true;
   }
 
+  public unmarkPrimary(): void {
+    this.isPrimary = false;
+  }
+
   public getId(): string {
     return this.id;
   }
