@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useToast } from '@/shared/common/toast/toast';
-import { uploadBookCoverService } from '@/app/staff/books/(features)/create/services/create-book-service';
 import {
   createBookCoverService,
   deleteBookCoverService,
+  uploadBookCoverFileService,
 } from '../../services/book-cover.service';
 
 interface UseBookCoverManagerProps {
@@ -24,7 +24,7 @@ export default function useBookCoverManager({
 
     try {
       setUploadingCover(true);
-      const url = await uploadBookCoverService(file);
+      const url = await uploadBookCoverFileService(file);
 
       await createBookCoverService(bookId, {
         url,
