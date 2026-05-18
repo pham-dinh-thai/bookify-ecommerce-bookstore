@@ -127,6 +127,21 @@ export class TypeormBooksCommandRepository implements IBooksCommandRepository {
     });
   }
 
+  public async promoteCoverToPrimary(
+    bookId: string,
+    coverId: string,
+  ): Promise<void> {
+    const manager = this.unitOfWork.getManager();
+
+    await manager.update(BookCoverTypeOrm, { bookId }, { isPrimary: false });
+
+    await manager.update(
+      BookCoverTypeOrm,
+      { id: coverId, bookId },
+      { isPrimary: true },
+    );
+  }
+
   private async syncAuthors(manager: EntityManager, book: Book): Promise<void> {
     await manager.insert(
       BookAuthorTypeOrm,

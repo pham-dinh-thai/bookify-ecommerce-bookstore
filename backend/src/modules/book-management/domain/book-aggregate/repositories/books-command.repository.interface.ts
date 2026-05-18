@@ -16,6 +16,8 @@ export interface IBooksCommandRepository {
 
   insertCover(bookId: string, cover: BookCover): Promise<void>;
 
+  promoteCoverToPrimary(bookId: string, coverId: string): Promise<void>;
+
   delete(id: string): Promise<void>;
 
   removeCover(bookId: string, coverId: string): Promise<void>;

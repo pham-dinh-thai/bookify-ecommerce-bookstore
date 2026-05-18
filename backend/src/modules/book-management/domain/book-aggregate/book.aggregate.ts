@@ -203,6 +203,29 @@ export class Book {
     return removedCover;
   }
 
+  /**
+   * Changes the primary cover to the given cover ID.
+   * Throws if cover not found or already primary.
+   */
+  public promoteCoverToPrimary(coverId: string): void {
+    const newPrimary = this.bookCovers.find(
+      (cover) => cover.getId() === coverId,
+    );
+    if (!newPrimary) {
+      throw new BookCoverNotFoundException();
+    }
+
+    const currentPrimary = this.bookCovers.find((cover) =>
+      cover.getIsPrimary(),
+    );
+    if (currentPrimary?.getId() === coverId) {
+      return;
+    }
+
+    currentPrimary?.unmarkPrimary();
+    newPrimary.markAsPrimary();
+  }
+
   public updatePrice(newPrice: number): void {
     this.originalPrice = this.originalPrice.updatePrice(newPrice);
   }
