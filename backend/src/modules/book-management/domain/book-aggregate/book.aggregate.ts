@@ -207,7 +207,7 @@ export class Book {
    * Changes the primary cover to the given cover ID.
    * Throws if cover not found or already primary.
    */
-  public changePrimaryCover(coverId: string): void {
+  public promoteCoverToPrimary(coverId: string): void {
     const newPrimary = this.bookCovers.find(
       (cover) => cover.getId() === coverId,
     );

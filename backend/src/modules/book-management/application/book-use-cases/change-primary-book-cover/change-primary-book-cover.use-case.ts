@@ -47,10 +47,13 @@ export class ChangePrimaryBookCoverUseCase {
   ): Promise<void> {
     const book: Book = await this.bookCommandRepository.findOne(id);
 
-    book.changePrimaryCover(coverId);
+    book.promoteCoverToPrimary(coverId);
 
     await this.unitOfWork.execute(async () => {
-      await this.bookCommandRepository.save(book);
+      await this.bookCommandRepository.promoteCoverToPrimary(
+        book.getId(),
+        coverId,
+      );
 
       await this.auditLogCommandRepository.write(
         'CHANGE_PRIMARY_COVER',
