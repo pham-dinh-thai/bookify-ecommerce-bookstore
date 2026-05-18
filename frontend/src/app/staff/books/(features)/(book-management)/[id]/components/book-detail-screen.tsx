@@ -7,7 +7,6 @@ import BookFormNavigate from '../../../../components/book-form-navigate';
 import BookDetailHeader from '../ui/book-detail-header';
 import BasicInformation from '../ui/basic-information';
 import {
-  Edit3,
   Plus,
   Minus,
   RefreshCcw,
@@ -27,6 +26,7 @@ export default function BookDetailScreen({ id }: { id: string }) {
     refetch,
   });
   const [quantityInput, setQuantityInput] = useState<string | null>(null);
+  const [showCoverPanel, setShowCoverPanel] = useState(false);
 
   const handleQuantityInputChange = (value: string) => {
     const numValue = value.replace(/\D/g, '');
@@ -104,23 +104,86 @@ export default function BookDetailScreen({ id }: { id: string }) {
                 alt={book.title}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-sm">
-                <button className="w-12 h-12 rounded-full bg-white text-[#335b48] shadow-lg hover:scale-110 transition-transform flex items-center justify-center">
-                  <Edit3 size={20} />
-                </button>
-                <button className="w-12 h-12 rounded-full bg-white text-[#a83836] shadow-lg hover:scale-110 transition-transform flex items-center justify-center">
-                  <Trash2 size={20} />
-                </button>
-              </div>
             </div>
             <div className="flex flex-col gap-3">
-              <button className="w-full rounded-xl bg-[#c1ecd4] py-3 text-sm font-bold text-[#325947] hover:bg-[#b3dec6] transition-colors">
-                Update cover image
-              </button>
-              <button className="w-full rounded-xl border border-[#fa746f]/20 bg-white py-3 text-sm font-semibold text-[#a83836] hover:bg-[#fff0f0] transition-colors">
-                Remove current cover
+              <button
+                type="button"
+                onClick={() => setShowCoverPanel((prev) => !prev)}
+                className="w-full rounded-xl bg-[#c1ecd4] py-3 text-sm font-bold text-[#325947] hover:bg-[#b3dec6] transition-colors"
+              >
+                Add cover
               </button>
             </div>
+            {showCoverPanel && (
+              <div className="mt-4 rounded-2xl border border-[#dbe5dd] bg-white p-4">
+                <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-[#58615b] mb-3">
+                  Cover list
+                </h3>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full text-left text-sm text-[#2b352f]">
+                    <thead>
+                      <tr className="border-b border-[#dbe5dd] text-xs uppercase tracking-[0.12em] text-[#58615b]">
+                        <th className="px-2 py-2 font-semibold">Cover image</th>
+                        <th className="px-2 py-2 font-semibold">isPrimary</th>
+                        <th className="px-2 py-2 font-semibold text-right">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {book.covers?.length ? (
+                        book.covers.map((cover, index) => (
+                          <tr
+                            key={`${cover.url}-${index}`}
+                            className="border-b border-[#edf2ee] last:border-0"
+                          >
+                            <td className="px-2 py-3">
+                              <a
+                                href={cover.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-[#2d6a4f] underline break-all"
+                              >
+                                {cover.url}
+                              </a>
+                            </td>
+                            <td className="px-2 py-3">
+                              {cover.isPrimary ? 'true' : 'false'}
+                            </td>
+                            <td className="px-2 py-3">
+                              <div className="flex justify-end gap-2">
+                                <button
+                                  type="button"
+                                  className="rounded-lg bg-[#c1ecd4] px-3 py-1.5 text-xs font-semibold text-[#325947] hover:bg-[#b3dec6] transition-colors"
+                                >
+                                  Add
+                                </button>
+                                <button
+                                  type="button"
+                                  className="rounded-lg border border-[#fa746f]/20 bg-white px-3 py-1.5 text-xs font-semibold text-[#a83836] hover:bg-[#fff0f0] transition-colors inline-flex items-center gap-1"
+                                >
+                                  <Trash2 size={14} />
+                                  Delete
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td
+                            colSpan={3}
+                            className="px-2 py-4 text-center text-xs text-[#58615b]"
+                          >
+                            No covers available.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
           <div className="rounded-3xl bg-[#f7faf5] p-6 shadow-sm border border-[#dbe5dd]">
             <h2 className="text-xs font-bold uppercase tracking-[0.22em] text-[#58615b] mb-4">
