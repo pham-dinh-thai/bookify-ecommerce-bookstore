@@ -35,7 +35,7 @@ export const createBookCoverService = async (
 ) => {
   const token = getAccessToken();
 
-  const res = await fetch(`/api/books/${bookId}/covers`, {
+  const res = await fetch(`/api/books/${bookId}/book-cover`, {
     method: 'POST',
     credentials: 'include',
     headers: {
@@ -64,7 +64,7 @@ export const deleteBookCoverService = async (
 ) => {
   const token = getAccessToken();
 
-  const res = await fetch(`/api/books/${bookId}/covers/${coverId}`, {
+  const res = await fetch(`/api/books/${bookId}/book-cover/${coverId}`, {
     method: 'DELETE',
     credentials: 'include',
     headers: {
