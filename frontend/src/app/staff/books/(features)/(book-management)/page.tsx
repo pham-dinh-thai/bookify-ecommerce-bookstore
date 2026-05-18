@@ -11,6 +11,7 @@ import Paginate from '@/shared/common/components/pagination/paginate';
 import { Book } from '../../types';
 import ToolBar from '@/shared/common/components/tool-bar/tool-bar';
 import { deleteBookService } from './services/delete-book.service';
+import ConfirmDeleteModal from './components/confirm-delete-modal';
 
 export default function BookManagementPage() {
   const pageSize = 10;
@@ -132,19 +133,17 @@ export default function BookManagementPage() {
 
   const { addToast } = useToast();
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [bookToDelete, setBookToDelete] = useState<Book | null>(null);
 
-  const handleDeleteBook = async (book: Book) => {
-    const shouldDelete = window.confirm(
-      `Are you sure you want to delete "${book.title}"?`,
-    );
-
-    if (!shouldDelete) return;
+  const handleDeleteBook = async () => {
+    if (!bookToDelete) return;
 
     try {
-      setDeletingId(book.id);
-      await deleteBookService(book.id);
+      setDeletingId(bookToDelete.id);
+      await deleteBookService(bookToDelete.id);
       addToast('Book deleted successfully', 'success');
       await refetch();
+      setBookToDelete(null);
     } catch (error: unknown) {
       const message =
         error instanceof Error ? error.message : 'Failed to delete book';
@@ -198,7 +197,7 @@ export default function BookManagementPage() {
               </Link>
               <button
                 title="Delete Book"
-                onClick={() => handleDeleteBook(item)}
+                onClick={() => setBookToDelete(item)}
                 disabled={deletingId === item.id}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#fff0f0] text-[#a63232] hover:bg-[#ffd9d9]"
               >
@@ -216,6 +215,18 @@ export default function BookManagementPage() {
           }
         />
       </div>
+
+      <ConfirmDeleteModal
+        open={Boolean(bookToDelete)}
+        title={`Delete "${bookToDelete?.title ?? ''}"?`}
+        description="Book will be permanently removed from system. This action cannot be undone."
+        loading={Boolean(bookToDelete) && deletingId === bookToDelete?.id}
+        onClose={() => {
+          if (deletingId) return;
+          setBookToDelete(null);
+        }}
+        onConfirm={handleDeleteBook}
+      />
     </div>
   );
 }
