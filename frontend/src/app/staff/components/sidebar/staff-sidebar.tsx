@@ -23,7 +23,7 @@ const navItems = [
   { label: 'Import Stock', icon: ArrowUp01, path: '/staff/stock' },
   { label: 'Order Management', icon: ShoppingBag, path: '/staff/orders' },
   {
-    label: 'Customer Management',
+    label: 'Customer Directory',
     icon: ShoppingCart,
     path: '/staff/customers',
   },
