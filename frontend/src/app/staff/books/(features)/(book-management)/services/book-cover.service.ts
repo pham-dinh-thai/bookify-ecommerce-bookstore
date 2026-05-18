@@ -1,10 +1,9 @@
 import { getAccessToken } from '@/shared/auth/lib/token-storage';
 
-type BookCoverPayload = {
+export interface IAddBookCoverRequest {
   url: string;
-  isPrimary: boolean;
   displayOrder: number;
-};
+}
 
 export const uploadBookCoverFileService = async (file: File) => {
   const token = getAccessToken();
@@ -34,7 +33,7 @@ export const uploadBookCoverFileService = async (file: File) => {
 
 export const createBookCoverService = async (
   bookId: string,
-  payload: BookCoverPayload,
+  payload: IAddBookCoverRequest,
 ) => {
   const token = getAccessToken();
 

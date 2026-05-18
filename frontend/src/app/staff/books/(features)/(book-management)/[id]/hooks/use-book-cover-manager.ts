@@ -28,7 +28,6 @@ export default function useBookCoverManager({
 
       await createBookCoverService(bookId, {
         url,
-        isPrimary: false,
         displayOrder: nextDisplayOrder,
       });
       await refetch();
