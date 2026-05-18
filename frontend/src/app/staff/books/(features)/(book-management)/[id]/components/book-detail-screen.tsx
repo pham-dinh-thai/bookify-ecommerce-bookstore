@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
+import ImageUpload from '@/shared/common/components/image-upload/image-upload';
 import Link from 'next/link';
 import useBookDetail from '../../hooks/use-book-detail';
 import BookFormNavigate from '../../../../components/book-form-navigate';
@@ -16,6 +17,7 @@ import {
 } from 'lucide-react';
 import useBookPriceUpdate from '../hooks/use-book-price-update';
 import useBookStockAdjust from '../hooks/use-book-stock-adjust';
+import useBookCoverManager from '../hooks/use-book-cover-manager';
 
 export default function BookDetailScreen({ id }: { id: string }) {
   const { book, loading, errors, refetch } = useBookDetail(id);
@@ -26,7 +28,13 @@ export default function BookDetailScreen({ id }: { id: string }) {
     refetch,
   });
   const [quantityInput, setQuantityInput] = useState<string | null>(null);
-  const [showCoverPanel, setShowCoverPanel] = useState(false);
+  const [showCoverModal, setShowCoverModal] = useState(false);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const { uploadingCover, deletingCoverId, handleAddCover, handleDeleteCover } =
+    useBookCoverManager({
+      bookId: id,
+      refetch,
+    });
 
   const handleQuantityInputChange = (value: string) => {
     const numValue = value.replace(/\D/g, '');
@@ -108,79 +116,113 @@ export default function BookDetailScreen({ id }: { id: string }) {
             <div className="flex flex-col gap-3">
               <button
                 type="button"
-                onClick={() => setShowCoverPanel((prev) => !prev)}
+                onClick={() => setShowCoverModal(true)}
                 className="w-full rounded-xl bg-[#c1ecd4] py-3 text-sm font-bold text-[#325947] hover:bg-[#b3dec6] transition-colors"
               >
                 Add cover
               </button>
             </div>
-            {showCoverPanel && (
-              <div className="mt-4 rounded-2xl border border-[#dbe5dd] bg-white p-4">
-                <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-[#58615b] mb-3">
-                  Cover list
-                </h3>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full text-left text-sm text-[#2b352f]">
-                    <thead>
-                      <tr className="border-b border-[#dbe5dd] text-xs uppercase tracking-[0.12em] text-[#58615b]">
-                        <th className="px-2 py-2 font-semibold">Cover image</th>
-                        <th className="px-2 py-2 font-semibold">isPrimary</th>
-                        <th className="px-2 py-2 font-semibold text-right">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {book.covers?.length ? (
-                        book.covers.map((cover, index) => (
-                          <tr
-                            key={`${cover.url}-${index}`}
-                            className="border-b border-[#edf2ee] last:border-0"
-                          >
-                            <td className="px-2 py-3">
-                              <a
-                                href={cover.url}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-[#2d6a4f] underline break-all"
-                              >
-                                {cover.url}
-                              </a>
-                            </td>
-                            <td className="px-2 py-3">
-                              {cover.isPrimary ? 'true' : 'false'}
-                            </td>
-                            <td className="px-2 py-3">
-                              <div className="flex justify-end gap-2">
-                                <button
-                                  type="button"
-                                  className="rounded-lg bg-[#c1ecd4] px-3 py-1.5 text-xs font-semibold text-[#325947] hover:bg-[#b3dec6] transition-colors"
+            {showCoverModal && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4">
+                <div className="w-full max-w-4xl rounded-3xl border border-[#dbe5dd] bg-white p-6 shadow-xl">
+                  <div className="mb-4 flex items-center justify-between">
+                    <h3 className="text-sm font-bold uppercase tracking-[0.12em] text-[#58615b]">
+                      Cover list
+                    </h3>
+                    <button
+                      type="button"
+                      onClick={() => setShowCoverModal(false)}
+                      className="rounded-lg border border-[#dbe5dd] px-3 py-1.5 text-xs font-semibold text-[#58615b] hover:bg-[#f7faf5]"
+                    >
+                      Close
+                    </button>
+                  </div>
+
+                  <div className="mb-6 rounded-2xl border border-[#edf2ee] bg-[#f8fbf9] p-4">
+                    <p className="mb-3 text-xs font-semibold text-[#58615b]">
+                      Upload new cover
+                    </p>
+                    <ImageUpload value={coverFile} onChange={setCoverFile} />
+                    <button
+                      type="button"
+                      disabled={!coverFile || uploadingCover}
+                      onClick={async () => {
+                        if (!coverFile) return;
+                        await handleAddCover(
+                          coverFile,
+                          book.covers?.length ?? 0,
+                        );
+                        setCoverFile(null);
+                      }}
+                      className="mt-3 rounded-xl bg-[#c1ecd4] px-4 py-2 text-xs font-bold text-[#325947] hover:bg-[#b3dec6] disabled:cursor-not-allowed disabled:opacity-70"
+                    >
+                      {uploadingCover ? 'Uploading...' : 'Upload cover'}
+                    </button>
+                  </div>
+
+                  <div className="max-h-[48vh] overflow-x-auto overflow-y-auto">
+                    <table className="min-w-full text-left text-sm text-[#2b352f]">
+                      <thead>
+                        <tr className="border-b border-[#dbe5dd] text-xs uppercase tracking-[0.12em] text-[#58615b]">
+                          <th className="px-2 py-2 font-semibold">
+                            Cover image
+                          </th>
+                          <th className="px-2 py-2 font-semibold">isPrimary</th>
+                          <th className="px-2 py-2 font-semibold text-right">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {book.covers?.length ? (
+                          book.covers.map((cover, index) => (
+                            <tr
+                              key={`${cover.id}-${index}`}
+                              className="border-b border-[#edf2ee] last:border-0"
+                            >
+                              <td className="px-2 py-3">
+                                <a
+                                  href={cover.url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="text-[#2d6a4f] underline break-all"
                                 >
-                                  Add
-                                </button>
-                                <button
-                                  type="button"
-                                  className="rounded-lg border border-[#fa746f]/20 bg-white px-3 py-1.5 text-xs font-semibold text-[#a83836] hover:bg-[#fff0f0] transition-colors inline-flex items-center gap-1"
-                                >
-                                  <Trash2 size={14} />
-                                  Delete
-                                </button>
-                              </div>
+                                  {cover.url}
+                                </a>
+                              </td>
+                              <td className="px-2 py-3">
+                                {cover.isPrimary ? 'true' : 'false'}
+                              </td>
+                              <td className="px-2 py-3">
+                                <div className="flex justify-end gap-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteCover(cover.id)}
+                                    disabled={!!deletingCoverId}
+                                    className="rounded-lg border border-[#fa746f]/20 bg-white px-3 py-1.5 text-xs font-semibold text-[#a83836] hover:bg-[#fff0f0] transition-colors inline-flex items-center gap-1 disabled:cursor-not-allowed disabled:opacity-70"
+                                  >
+                                    <Trash2 size={14} />
+                                    {deletingCoverId === cover.id
+                                      ? 'Deleting...'
+                                      : 'Delete'}
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td
+                              colSpan={3}
+                              className="px-2 py-4 text-center text-xs text-[#58615b]"
+                            >
+                              No covers available.
                             </td>
                           </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td
-                            colSpan={3}
-                            className="px-2 py-4 text-center text-xs text-[#58615b]"
-                          >
-                            No covers available.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             )}
