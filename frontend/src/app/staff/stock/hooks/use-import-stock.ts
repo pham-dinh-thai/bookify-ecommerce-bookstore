@@ -3,6 +3,8 @@ import { useToast } from '@/shared/common/toast/toast';
 import { allBookService } from '../../books/(features)/(book-management)/services/all-book.service';
 import { importBookStockService } from '../services/import-book-stock.service';
 import { Book } from '../../books/types';
+import { findBookService } from '../../books/(features)/(book-management)/services/find-book.service';
+import { BookDetail } from '../../books/types';
 
 export default function useImportStock() {
   const { addToast } = useToast();
@@ -11,6 +13,10 @@ export default function useImportStock() {
   const [quantity, setQuantity] = useState('');
   const [loadingBooks, setLoadingBooks] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [selectedBookDetail, setSelectedBookDetail] = useState<BookDetail | null>(
+    null,
+  );
+  const [loadingBookDetail, setLoadingBookDetail] = useState(false);
 
   const loadBooks = useCallback(async () => {
     setLoadingBooks(true);
@@ -36,6 +42,28 @@ export default function useImportStock() {
   );
 
   const canImport = Boolean(selectedBookId) && Number(quantity) > 0 && !importing;
+
+  const selectBook = useCallback(async (bookId: string) => {
+    setSelectedBookId(bookId);
+
+    if (!bookId) {
+      setSelectedBookDetail(null);
+      return;
+    }
+
+    try {
+      setLoadingBookDetail(true);
+      const detail = await findBookService(bookId);
+      setSelectedBookDetail(detail ?? null);
+    } catch (error: unknown) {
+      setSelectedBookDetail(null);
+      const message =
+        error instanceof Error ? error.message : 'Failed to load book detail';
+      addToast(message, 'error');
+    } finally {
+      setLoadingBookDetail(false);
+    }
+  }, [addToast]);
 
   const importStock = async () => {
     const parsedQuantity = Number(quantity);
@@ -67,10 +95,12 @@ export default function useImportStock() {
   return {
     books,
     selectedBookId,
-    setSelectedBookId,
+    setSelectedBookId: selectBook,
     quantity,
     setQuantity,
     selectedBook,
+    selectedBookDetail,
+    loadingBookDetail,
     loadingBooks,
     importing,
     canImport,
