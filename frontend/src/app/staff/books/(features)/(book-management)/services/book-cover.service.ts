@@ -6,6 +6,32 @@ type BookCoverPayload = {
   displayOrder: number;
 };
 
+export const uploadBookCoverFileService = async (file: File) => {
+  const token = getAccessToken();
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const res = await fetch('/api/files/upload', {
+    method: 'POST',
+    credentials: 'include',
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    body: formData,
+  });
+
+  const text = await res.text();
+  let parsed: { url?: string; message?: string; code?: string } | null = null;
+
+  try {
+    parsed = text ? JSON.parse(text) : null;
+  } catch {}
+
+  if (!res.ok || !parsed?.url) {
+    throw new Error(parsed?.message || text || 'Upload image failed');
+  }
+
+  return parsed.url;
+};
+
 export const createBookCoverService = async (
   bookId: string,
   payload: BookCoverPayload,

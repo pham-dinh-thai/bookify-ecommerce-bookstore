@@ -181,14 +181,13 @@ export default function BookDetailScreen({ id }: { id: string }) {
                               className="border-b border-[#edf2ee] last:border-0"
                             >
                               <td className="px-2 py-3">
-                                <a
-                                  href={cover.url}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="text-[#2d6a4f] underline break-all"
-                                >
-                                  {cover.url}
-                                </a>
+                                <div className="h-24 w-16 overflow-hidden rounded-md border border-[#dbe5dd] bg-[#f7faf5]">
+                                  <img
+                                    src={cover.url}
+                                    alt={`Book cover ${index + 1}`}
+                                    className="h-full w-full object-cover"
+                                  />
+                                </div>
                               </td>
                               <td className="px-2 py-3">
                                 {cover.isPrimary ? 'true' : 'false'}
