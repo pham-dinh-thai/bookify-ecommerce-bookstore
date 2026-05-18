@@ -10,6 +10,7 @@ import Table from '@/shared/common/components/table/table';
 import Paginate from '@/shared/common/components/pagination/paginate';
 import { Book } from '../../types';
 import ToolBar from '@/shared/common/components/tool-bar/tool-bar';
+import { deleteBookService } from './services/delete-book.service';
 
 export default function BookManagementPage() {
   const pageSize = 10;
@@ -130,6 +131,28 @@ export default function BookManagementPage() {
   ];
 
   const { addToast } = useToast();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleDeleteBook = async (book: Book) => {
+    const shouldDelete = window.confirm(
+      `Are you sure you want to delete "${book.title}"?`,
+    );
+
+    if (!shouldDelete) return;
+
+    try {
+      setDeletingId(book.id);
+      await deleteBookService(book.id);
+      addToast('Book deleted successfully', 'success');
+      await refetch();
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : 'Failed to delete book';
+      addToast(message, 'error');
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   console.log(books);
 
@@ -175,7 +198,8 @@ export default function BookManagementPage() {
               </Link>
               <button
                 title="Delete Book"
-                onClick={() => console.log('Delete book', item.id)}
+                onClick={() => handleDeleteBook(item)}
+                disabled={deletingId === item.id}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#fff0f0] text-[#a63232] hover:bg-[#ffd9d9]"
               >
                 <Trash2 className="w-4" />
