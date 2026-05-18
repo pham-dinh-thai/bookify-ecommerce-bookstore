@@ -18,6 +18,29 @@ export default function useImportStock() {
   );
   const [loadingBookDetail, setLoadingBookDetail] = useState(false);
 
+  const fetchBookDetail = useCallback(
+    async (bookId: string) => {
+      if (!bookId) {
+        setSelectedBookDetail(null);
+        return;
+      }
+
+      try {
+        setLoadingBookDetail(true);
+        const detail = await findBookService(bookId);
+        setSelectedBookDetail(detail ?? null);
+      } catch (error: unknown) {
+        setSelectedBookDetail(null);
+        const message =
+          error instanceof Error ? error.message : 'Failed to load book detail';
+        addToast(message, 'error');
+      } finally {
+        setLoadingBookDetail(false);
+      }
+    },
+    [addToast],
+  );
+
   const loadBooks = useCallback(async () => {
     setLoadingBooks(true);
     try {
@@ -45,25 +68,8 @@ export default function useImportStock() {
 
   const selectBook = useCallback(async (bookId: string) => {
     setSelectedBookId(bookId);
-
-    if (!bookId) {
-      setSelectedBookDetail(null);
-      return;
-    }
-
-    try {
-      setLoadingBookDetail(true);
-      const detail = await findBookService(bookId);
-      setSelectedBookDetail(detail ?? null);
-    } catch (error: unknown) {
-      setSelectedBookDetail(null);
-      const message =
-        error instanceof Error ? error.message : 'Failed to load book detail';
-      addToast(message, 'error');
-    } finally {
-      setLoadingBookDetail(false);
-    }
-  }, [addToast]);
+    await fetchBookDetail(bookId);
+  }, [fetchBookDetail]);
 
   const importStock = async () => {
     const parsedQuantity = Number(quantity);
@@ -81,6 +87,7 @@ export default function useImportStock() {
     try {
       setImporting(true);
       await importBookStockService(selectedBookId, parsedQuantity);
+      await fetchBookDetail(selectedBookId);
       addToast('Import stock successfully.', 'success');
       setQuantity('');
     } catch (error: unknown) {
