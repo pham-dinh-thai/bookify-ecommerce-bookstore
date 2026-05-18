@@ -193,12 +193,12 @@ export default async function BookDetailPage({
         <div className="mx-auto max-w-7xl">
           <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12">
             {/* Left column: cover + buttons + shipping */}
-            <div className="space-y-5 lg:col-span-4 lg:top-20">
-              <div className="overflow-hidden shadow-[0px_16px_32px_rgba(43,53,47,0.14)]">
+            <div className="space-y-5 lg:col-span-5 lg:top-20">
+              <div className="overflow-hidden bg-white shadow-[0px_18px_36px_rgba(43,53,47,0.18)]">
                 <img
                   src={book.cover}
                   alt={book.title}
-                  className="w-full object-cover transition-transform duration-700 hover:scale-105"
+                  className="h-[560px] w-full object-cover object-center transition-transform duration-700 hover:scale-105 md:h-[640px]"
                 />
               </div>
 
@@ -226,7 +226,7 @@ export default async function BookDetailPage({
             </div>
 
             {/* Right column: title + price/qty + specs + description */}
-            <div className="space-y-6 lg:col-span-8">
+            <div className="space-y-6 lg:col-span-7">
               <header className="space-y-4">
                 <div className="space-y-1.5">
                   <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#3f6754]">
@@ -255,13 +255,27 @@ export default async function BookDetailPage({
                 </div>
               </section>
 
+
+              <section className="rounded-xl border border-[#d4dfd7] bg-white p-6">
+                <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.15em] text-[#737d76]">
+                  Book Details
+                </h3>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Meta label="Price" value={book.price} />
+                  <Meta
+                    label="Quantity"
+                    value={`${book.quantity} ${book.quantity === 1 ? 'copy' : 'copies'} available`}
+                  />
+                </div>
+              </section>
+
               <PriceAndQuantity price={book.price} />
 
               <PurchaseButtons />
 
               <section className="space-y-2.5">
                 <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-[#737d76]">
-                  Book's description
+                  Book Description
                 </h3>
                 <p className="whitespace-pre-line text-base font-medium leading-relaxed text-[#58615b]">
                   {book.description}
