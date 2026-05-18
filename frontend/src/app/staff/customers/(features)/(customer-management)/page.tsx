@@ -84,7 +84,7 @@ export default function StaffCustomerManagement() {
         style={{ color: '#2b352f' }}
       >
         <span className="italic" style={{ color: '#335b48' }}>
-          Customer Management
+          Customer Directory
         </span>
       </h2>
 
