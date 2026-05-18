@@ -148,10 +148,12 @@ export default function BookDetailScreen({ id }: { id: string }) {
                       disabled={!coverFile || uploadingCover}
                       onClick={async () => {
                         if (!coverFile) return;
-                        await handleAddCover(
-                          coverFile,
-                          book.covers?.length ?? 0,
-                        );
+                        const nextDisplayOrder =
+                          Math.max(
+                            0,
+                            ...(book.covers?.map((cover) => cover.displayOrder) ?? []),
+                          ) + 1;
+                        await handleAddCover(coverFile, nextDisplayOrder);
                         setCoverFile(null);
                       }}
                       className="mt-3 rounded-xl bg-[#c1ecd4] px-4 py-2 text-xs font-bold text-[#325947] hover:bg-[#b3dec6] disabled:cursor-not-allowed disabled:opacity-70"
