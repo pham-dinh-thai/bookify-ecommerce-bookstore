@@ -16,7 +16,11 @@ export default function useImportStock() {
     setLoadingBooks(true);
     try {
       const result = await allBookService(1, 200, '');
-      setBooks(result?.data || []);
+      const normalizedBooks = (result?.books || []).map((book: Book) => ({
+        ...book,
+        status: book.isInStock ? 'In Stock' : 'Out of Stock',
+      }));
+      setBooks(normalizedBooks);
     } catch (error: unknown) {
       const message =
         error instanceof Error ? error.message : 'Failed to load books';
