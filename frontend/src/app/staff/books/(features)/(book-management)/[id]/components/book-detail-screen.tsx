@@ -73,6 +73,18 @@ export default function BookDetailScreen({ id }: { id: string }) {
 
   const displayQuantity = quantityInput ?? String(book?.quantity || 0);
 
+  const sortedCovers = useMemo(() => {
+    if (!book?.covers?.length) return [];
+
+    return [...book.covers].sort((a, b) => {
+      if (a.isPrimary === b.isPrimary) {
+        return a.displayOrder - b.displayOrder;
+      }
+
+      return a.isPrimary ? -1 : 1;
+    });
+  }, [book]);
+
   if (loading)
     return (
       <div className="p-12 max-w-7xl mx-auto">
@@ -97,8 +109,8 @@ export default function BookDetailScreen({ id }: { id: string }) {
     );
 
   const coverUrl =
-    book.covers && book.covers.length > 0
-      ? book.covers[0].url
+    sortedCovers.length > 0
+      ? sortedCovers[0].url
       : 'https://tse1.mm.bing.net/th/id/OIP.dI055T7RdiMDYUAVQbp88AHaLX?o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3';
 
   return (
@@ -157,7 +169,7 @@ export default function BookDetailScreen({ id }: { id: string }) {
                         const nextDisplayOrder =
                           Math.max(
                             0,
-                            ...(book.covers?.map(
+                            ...(sortedCovers.map(
                               (cover) => cover.displayOrder,
                             ) ?? []),
                           ) + 1;
@@ -184,8 +196,8 @@ export default function BookDetailScreen({ id }: { id: string }) {
                         </tr>
                       </thead>
                       <tbody>
-                        {book.covers?.length ? (
-                          book.covers.map((cover, index) => (
+                        {sortedCovers.length ? (
+                          sortedCovers.map((cover, index) => (
                             <tr
                               key={`${cover.id}-${index}`}
                               className="border-b border-[#edf2ee] last:border-0"
