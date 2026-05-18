@@ -84,3 +84,32 @@ export const deleteBookCoverService = async (
 
   return parsed;
 };
+
+export const changePrimaryBookCoverService = async (
+  bookId: string,
+  coverId: string,
+) => {
+  const token = getAccessToken();
+
+  const res = await fetch(`/api/books/${bookId}/book-cover/${coverId}`, {
+    method: 'PATCH',
+    credentials: 'include',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const text = await res.text();
+  let parsed: { message?: string } | null = null;
+  try {
+    parsed = text ? JSON.parse(text) : null;
+  } catch {}
+
+  if (!res.ok) {
+    throw new Error(
+      parsed?.message || text || 'Failed to change primary cover',
+    );
+  }
+
+  return parsed;
+};

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useToast } from '@/shared/common/toast/toast';
 import {
+  changePrimaryBookCoverService,
   createBookCoverService,
   deleteBookCoverService,
   uploadBookCoverFileService,
@@ -18,6 +19,9 @@ export default function useBookCoverManager({
   const { addToast } = useToast();
   const [uploadingCover, setUploadingCover] = useState(false);
   const [deletingCoverId, setDeletingCoverId] = useState<string | null>(null);
+  const [changingPrimaryCoverId, setChangingPrimaryCoverId] = useState<
+    string | null
+  >(null);
 
   const handleAddCover = async (file: File, nextDisplayOrder: number) => {
     if (uploadingCover) return;
@@ -44,6 +48,26 @@ export default function useBookCoverManager({
     }
   };
 
+  const handleChangePrimaryCover = async (coverId: string) => {
+    if (changingPrimaryCoverId || deletingCoverId) return;
+
+    try {
+      setChangingPrimaryCoverId(coverId);
+      await changePrimaryBookCoverService(bookId, coverId);
+      await refetch();
+      addToast('Primary cover updated successfully.', 'success');
+    } catch (error) {
+      addToast(
+        error instanceof Error
+          ? error.message
+          : 'Failed to update primary cover. Please try again.',
+        'error',
+      );
+    } finally {
+      setChangingPrimaryCoverId(null);
+    }
+  };
+
   const handleDeleteCover = async (coverId: string) => {
     if (deletingCoverId) return;
 
@@ -67,7 +91,9 @@ export default function useBookCoverManager({
   return {
     uploadingCover,
     deletingCoverId,
+    changingPrimaryCoverId,
     handleAddCover,
+    handleChangePrimaryCover,
     handleDeleteCover,
   };
 }

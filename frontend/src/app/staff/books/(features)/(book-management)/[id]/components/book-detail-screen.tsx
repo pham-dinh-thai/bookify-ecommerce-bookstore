@@ -30,11 +30,17 @@ export default function BookDetailScreen({ id }: { id: string }) {
   const [quantityInput, setQuantityInput] = useState<string | null>(null);
   const [showCoverModal, setShowCoverModal] = useState(false);
   const [coverFile, setCoverFile] = useState<File | null>(null);
-  const { uploadingCover, deletingCoverId, handleAddCover, handleDeleteCover } =
-    useBookCoverManager({
-      bookId: id,
-      refetch,
-    });
+  const {
+    uploadingCover,
+    deletingCoverId,
+    changingPrimaryCoverId,
+    handleAddCover,
+    handleChangePrimaryCover,
+    handleDeleteCover,
+  } = useBookCoverManager({
+    bookId: id,
+    refetch,
+  });
 
   const handleQuantityInputChange = (value: string) => {
     const numValue = value.replace(/\D/g, '');
@@ -151,7 +157,9 @@ export default function BookDetailScreen({ id }: { id: string }) {
                         const nextDisplayOrder =
                           Math.max(
                             0,
-                            ...(book.covers?.map((cover) => cover.displayOrder) ?? []),
+                            ...(book.covers?.map(
+                              (cover) => cover.displayOrder,
+                            ) ?? []),
                           ) + 1;
                         await handleAddCover(coverFile, nextDisplayOrder);
                         setCoverFile(null);
@@ -198,8 +206,29 @@ export default function BookDetailScreen({ id }: { id: string }) {
                                 <div className="flex justify-end gap-2">
                                   <button
                                     type="button"
+                                    onClick={() =>
+                                      handleChangePrimaryCover(cover.id)
+                                    }
+                                    disabled={
+                                      cover.isPrimary ||
+                                      !!changingPrimaryCoverId ||
+                                      !!deletingCoverId
+                                    }
+                                    className="rounded-lg border border-[#dbe5dd] bg-white px-3 py-1.5 text-xs font-semibold text-[#325947] hover:bg-[#f7faf5] transition-colors disabled:cursor-not-allowed disabled:opacity-70"
+                                  >
+                                    {changingPrimaryCoverId === cover.id
+                                      ? 'Updating...'
+                                      : cover.isPrimary
+                                        ? 'Primary'
+                                        : 'Make primary'}
+                                  </button>
+                                  <button
+                                    type="button"
                                     onClick={() => handleDeleteCover(cover.id)}
-                                    disabled={!!deletingCoverId}
+                                    disabled={
+                                      !!deletingCoverId ||
+                                      !!changingPrimaryCoverId
+                                    }
                                     className="rounded-lg border border-[#fa746f]/20 bg-white px-3 py-1.5 text-xs font-semibold text-[#a83836] hover:bg-[#fff0f0] transition-colors inline-flex items-center gap-1 disabled:cursor-not-allowed disabled:opacity-70"
                                   >
                                     <Trash2 size={14} />
