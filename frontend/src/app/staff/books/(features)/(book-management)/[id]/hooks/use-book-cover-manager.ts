@@ -4,7 +4,7 @@ import { uploadBookCoverService } from '@/app/staff/books/(features)/create/serv
 import {
   createBookCoverService,
   deleteBookCoverService,
-} from '../../../services/book-cover.service';
+} from '../../services/book-cover.service';
 
 interface UseBookCoverManagerProps {
   bookId: string;
