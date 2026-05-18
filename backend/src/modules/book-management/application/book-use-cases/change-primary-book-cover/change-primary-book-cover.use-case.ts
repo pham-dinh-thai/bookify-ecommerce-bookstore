@@ -17,6 +17,13 @@ import {
   UNIT_OF_WORK,
 } from '../../../../../shared/modules/unit-of-work/application/unit-of-work';
 
+/**
+ * Changes the primary cover of a book.
+ *
+ * Retrieves the book, delegates the primary cover change to the aggregate,
+ * persists the result and writes an audit log entry within a single transaction,
+ * then invalidates the book cache.
+ */
 @Injectable()
 export class ChangePrimaryBookCoverUseCase {
   constructor(
