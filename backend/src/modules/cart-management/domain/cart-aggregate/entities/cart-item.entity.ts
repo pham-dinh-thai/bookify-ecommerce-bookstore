@@ -6,6 +6,13 @@ import { CreateCartItemProps, FromPersistentCartItemProps } from './types';
 import { ProductQuantity } from './value-objects/product-quantity.value-object';
 
 export class CartItem {
+  private static CART_ITEM_STATUS = {
+    ACTIVE: true,
+    DISABLE: false,
+  };
+
+  private status: boolean = CartItem.CART_ITEM_STATUS.ACTIVE;
+
   private constructor(
     private readonly id: string,
     private readonly productId: string,
@@ -49,6 +56,18 @@ export class CartItem {
 
   public updateQuantity(quantity: number): void {
     this.quantity = this.quantity.update(quantity);
+  }
+
+  public deactivate(): void {
+    this.status = false;
+  }
+
+  public activate(): void {
+    this.status = true;
+  }
+
+  public isActive(): boolean {
+    return this.status;
   }
 
   public getTotalPrice(): number {
