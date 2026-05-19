@@ -1,17 +1,19 @@
 import { CartItemIdEmptyException } from './exceptions/cart-item-id-empty.exception';
 import { ProductIdEmptyException } from './exceptions/product-id-empty.exception';
-import { ProductQuantityCanNotBeLessThanOneException } from './exceptions/product-quantity-can-not-be-less-than-one.exception';
-import { CreateCartProps } from './types';
+import { ProductPriceCanNotNegativeException } from './exceptions/product-price-can-not-be-lnegative.exception';
+import { ProductPriceEmptyException } from './exceptions/product-price-empty.exception';
+import { CreateCartItemProps, FromPersistentCartItemProps } from './types';
+import { ProductQuantity } from './value-objects/product-quantity.value-object';
 
 export class CartItem {
   private constructor(
     private readonly id: string,
-    private productId: string,
-    private quantity: number,
+    private readonly productId: string,
+    private quantity: ProductQuantity,
     private price: number,
   ) {}
 
-  public static create(props: CreateCartProps): CartItem {
+  public static create(props: CreateCartItemProps): CartItem {
     if (!props.id) {
       throw new CartItemIdEmptyException();
     }
@@ -20,10 +22,52 @@ export class CartItem {
       throw new ProductIdEmptyException();
     }
 
-    if (!props.quantity || props.quantity <= 0) {
-      throw new ProductQuantityCanNotBeLessThanOneException();
+    if (props.price == null) {
+      throw new ProductPriceEmptyException();
     }
 
-    return new CartItem(props.id, props.productId, props.quantity, props.price);
+    if (props.price < 0) {
+      throw new ProductPriceCanNotNegativeException();
+    }
+
+    return new CartItem(
+      props.id,
+      props.productId,
+      ProductQuantity.create(props.quantity),
+      props.price,
+    );
+  }
+
+  public static fromPersistent(props: FromPersistentCartItemProps): CartItem {
+    return new CartItem(
+      props.id,
+      props.productId,
+      ProductQuantity.create(props.quantity),
+      props.price,
+    );
+  }
+
+  public updateQuantity(quantity: number): void {
+    this.quantity = this.quantity.update(quantity);
+  }
+
+  public getTotalPrice(): number {
+    return this.quantity.getValue() * this.price;
+  }
+
+  public getId(): string {
+    return this.id;
+  }
+
+  public getProductId(): string {
+    return this.productId;
+  }
+
+  public getQuantity(): number {
+    return this.quantity.getValue();
+  }
+
+  public getPrice(): number {
+    return this.price;
   }
 }

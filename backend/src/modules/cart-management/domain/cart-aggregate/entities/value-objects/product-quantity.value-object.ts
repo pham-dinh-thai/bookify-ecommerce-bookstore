@@ -14,4 +14,8 @@ export class ProductQuantity {
   public update(quantity: number): ProductQuantity {
     return new ProductQuantity(quantity);
   }
+
+  public getValue(): number {
+    return this.value;
+  }
 }
