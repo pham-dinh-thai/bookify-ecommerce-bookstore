@@ -1,4 +1,4 @@
-import { NotFoundDomainException } from '../../../../../../shared/domain/exception/domain.exception';
+import { NotFoundDomainException } from '../../../../../shared/domain/exception/domain.exception';
 
 export class CartItemNotFoundException extends NotFoundDomainException {
   public constructor() {

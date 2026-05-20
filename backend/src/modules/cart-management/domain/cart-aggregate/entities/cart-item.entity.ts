@@ -11,13 +11,12 @@ export class CartItem {
     DISABLE: false,
   };
 
-  private status: boolean = CartItem.CART_ITEM_STATUS.ACTIVE;
-
   private constructor(
     private readonly id: string,
     private readonly productId: string,
     private quantity: ProductQuantity,
     private price: number,
+    private status: boolean = CartItem.CART_ITEM_STATUS.ACTIVE,
   ) {}
 
   public static create(props: CreateCartItemProps): CartItem {
@@ -51,6 +50,7 @@ export class CartItem {
       props.productId,
       ProductQuantity.create(props.quantity),
       props.price,
+      props.status,
     );
   }
 
