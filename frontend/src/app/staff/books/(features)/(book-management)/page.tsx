@@ -38,8 +38,9 @@ export default function BookManagementPage() {
         <div className="flex items-center gap-3">
           <img
             src={
+              item.covers?.find((cover) => cover.isPrimary)?.url ??
               item.covers?.[0]?.url ??
-              'https://tse1.mm.bing.net/th/id/OIP.dI055T7RdiMDYUAVQbp88AHaLX?o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3'
+              'https://fallback-image-url'
             }
             alt={item.title}
             className="w-18 h-24 object-cover flex-shrink-0"
