@@ -1,7 +1,7 @@
 import { CartItem } from './entities/cart-item.entity';
-import { CartItemDuplicatedException } from './entities/exceptions/cart-item-duplicated.exception';
-import { CartItemLimitExceededException } from './entities/exceptions/cart-item-limit-exceeded.exception';
-import { CartItemNotFoundException } from './entities/exceptions/cart-item-not-found.exception';
+import { CartItemDuplicatedException } from './exceptions/cart-item-duplicated.exception';
+import { CartItemLimitExceededException } from './exceptions/cart-item-limit-exceeded.exception';
+import { CartItemNotFoundException } from './exceptions/cart-item-not-found.exception';
 import { CreateCartItemProps } from './entities/types';
 import { CreateCartProps, FromPersistentCartProps } from './types';
 
@@ -26,7 +26,7 @@ export class Cart {
     );
   }
 
-  public addItem(item: CreateCartItemProps): void {
+  public addItem(item: CreateCartItemProps): CartItem {
     const existing = this.items.find(
       (fromCart) => fromCart.getId() === item.id,
     );
@@ -39,7 +39,11 @@ export class Cart {
       throw new CartItemLimitExceededException();
     }
 
-    this.items.push(CartItem.create(item));
+    const addedItem = CartItem.create(item);
+
+    this.items.push(addedItem);
+
+    return addedItem;
   }
 
   public removeItem(itemId: string): void {

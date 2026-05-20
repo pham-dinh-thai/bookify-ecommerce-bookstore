@@ -10,4 +10,5 @@ export type FromPersistentCartItemProps = {
   productId: string;
   quantity: number;
   price: number;
+  status: boolean;
 };
