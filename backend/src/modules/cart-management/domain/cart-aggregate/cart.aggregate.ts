@@ -46,13 +46,15 @@ export class Cart {
     return addedItem;
   }
 
-  public removeItem(itemId: string): void {
+  public removeItem(itemId: string): { deletedId: string } {
     const index = this.items.findIndex((item) => item.getId() === itemId);
     if (index === -1) {
       throw new CartItemNotFoundException();
     }
 
     this.items.splice(index, 1);
+
+    return { deletedId: itemId };
   }
 
   public hasDisableItem(): boolean {

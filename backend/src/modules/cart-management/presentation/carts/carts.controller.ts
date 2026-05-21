@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -14,6 +15,7 @@ import { FindUserCartUseCase } from '../../application/cart-use-cases/find-all-u
 import { CartReadModel } from '../../domain/cart-aggregate/read-models/cart.read-model';
 import { AddItemToCartUseCase } from '../../application/cart-use-cases/add-item-to-cart/add-item-to-cart.use-case';
 import { AddItemToCartRequest } from './requests/add-item-to-cart.request';
+import { RemoveItemFromCartUseCase } from '../../application/cart-use-cases/remove-item-from-cart/remove-item-from-cart.use-case';
 
 @Controller('carts')
 @UseGuards(JwtAuthGuard)
@@ -21,6 +23,7 @@ export class CartsController {
   public constructor(
     private readonly findUserCartUseCase: FindUserCartUseCase,
     private readonly addItemToCartUseCase: AddItemToCartUseCase,
+    private readonly removeItemFromCartUseCase: RemoveItemFromCartUseCase,
   ) {}
 
   @Get()
@@ -43,5 +46,10 @@ export class CartsController {
 
   @Delete(':itemId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  public removeItem(@CurrentUser('userId') userId: string) {}
+  public async removeItem(
+    @Param('itemId') itemId: string,
+    @CurrentUser('userId') userId: string,
+  ): Promise<void> {
+    await this.removeItemFromCartUseCase.execute(itemId, userId);
+  }
 }

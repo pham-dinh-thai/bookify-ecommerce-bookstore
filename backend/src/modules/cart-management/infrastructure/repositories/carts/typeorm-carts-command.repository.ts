@@ -52,6 +52,13 @@ export class TypeOrmCartsCommandRepository implements ICartsCommandRepository {
     await this.unitOfWork.getManager().insert(CartItemTypeOrm, cartItemTypeOrm);
   }
 
+  public async removeItem(cartId: string, itemId: string): Promise<void> {
+    await this.unitOfWork.getManager().delete(CartItemTypeOrm, {
+      id: itemId,
+      cartId: cartId,
+    });
+  }
+
   public async insert(cart: Cart): Promise<void> {
     const cartTypeOrm = new CartTypeOrm();
 

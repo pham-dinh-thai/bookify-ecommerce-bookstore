@@ -29,7 +29,7 @@ export class CartTypeOrm {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'userId' })
-  customer!: UserTypeOrm;
+  user!: UserTypeOrm;
 
   @OneToMany(() => CartItemTypeOrm, (cartItem) => cartItem.cart)
   cartItems!: CartItemTypeOrm[];
