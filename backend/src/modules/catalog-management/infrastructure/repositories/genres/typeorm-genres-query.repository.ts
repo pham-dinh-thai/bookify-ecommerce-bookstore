@@ -24,6 +24,7 @@ export class TypeOrmGenresQueryRepository implements IGenresQueryRepository {
     }
 
     const genresTypeOrm = await query
+      .orderBy('genre.id', 'DESC')
       .skip((page - 1) * limit)
       .take(limit)
       .getMany();

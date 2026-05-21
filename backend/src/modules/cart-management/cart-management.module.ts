@@ -12,6 +12,7 @@ import { UnitOfWorkModule } from '../../shared/modules/unit-of-work/unit-of-work
 import { CARTS_COMMAND_REPOSITORY } from './domain/cart-aggregate/repositories/carts-command.repository.interface';
 import { TypeOrmCartsCommandRepository } from './infrastructure/repositories/carts/typeorm-carts-command.repository';
 import { UuidModule } from '../../shared/modules/uuid/uuid.module';
+import { RemoveItemFromCartUseCase } from './application/cart-use-cases/remove-item-from-cart/remove-item-from-cart.use-case';
 
 @Module({
   controllers: [CartsController],
@@ -24,6 +25,7 @@ import { UuidModule } from '../../shared/modules/uuid/uuid.module';
   providers: [
     FindUserCartUseCase,
     AddItemToCartUseCase,
+    RemoveItemFromCartUseCase,
     {
       provide: CARTS_QUERY_REPOSITORY,
       useClass: TypeOrmCartsQueryRepository,

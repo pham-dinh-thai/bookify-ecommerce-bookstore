@@ -6,6 +6,8 @@ export interface ICartsCommandRepository {
 
   addItemToCart(cartId: string, cartItem: CartItem): Promise<void>;
 
+  removeItem(cartId: string, itemId: string): Promise<void>;
+
   insert(cart: Cart): Promise<void>;
 }
 
