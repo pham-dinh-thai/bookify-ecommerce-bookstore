@@ -5,7 +5,16 @@ import { CartItemNotFoundException } from './exceptions/cart-item-not-found.exce
 import { CreateCartItemProps } from './entities/types';
 import { CreateCartProps, FromPersistentCartProps } from './types';
 
+/**
+ * Cart aggregate root.
+ *
+ * Rules:
+ * - Each item can only appear once in the cart
+ * - Number of items cannot exceed MAX_ITEMS
+ * - Cannot remove an item that does not exist in the cart
+ */
 export class Cart {
+  /** Maximum number of items allowed in a single cart */
   private static MAX_ITEMS = 100;
 
   private constructor(
