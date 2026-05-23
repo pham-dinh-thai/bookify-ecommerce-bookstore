@@ -5,6 +5,13 @@ import {
 } from '../../../domain/cart-aggregate/repositories/carts-query.repository.interface';
 import { CartReadModel } from '../../../domain/cart-aggregate/read-models/cart.read-model';
 
+/**
+ * Retrieves the current user's cart for display purposes.
+ *
+ * Uses the query repository (read side) rather than the command repository
+ * to return a flattened read model — callers need a view of the cart,
+ * not a domain aggregate to mutate.
+ */
 @Injectable()
 export class FindUserCartUseCase {
   public constructor(

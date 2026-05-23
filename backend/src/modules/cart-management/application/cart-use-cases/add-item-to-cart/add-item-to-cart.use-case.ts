@@ -10,6 +10,12 @@ import {
   UUID_GENERATOR,
 } from '../../../../../shared/modules/uuid/domain/uuid-generator.interface';
 
+/**
+ * Adds a product item to the user's cart.
+ *
+ * A cart is created on demand if the user does not have one yet —
+ * carts should not exist until there is actual purchase intent.
+ */
 @Injectable()
 export class AddItemToCartUseCase {
   public constructor(
