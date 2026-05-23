@@ -25,6 +25,11 @@ import {
   CACHE_REPOSITORY,
   type ICacheRepository,
 } from '../../../../../shared/modules/cache/domain/cache.repository.interface';
+import {
+  BOOK_ISBN_DUPLICATE_CHECKER,
+  type IBookIsbnDuplicateChecker,
+} from '../../../domain/book-aggregate/services/book-isbn-duplicate-checker.service';
+import { BookIsbnDuplicateException } from '../../../domain/book-aggregate/exceptions/book-isbn-duplicate.exception';
 
 /**
  * Updates an existing book's details.
@@ -57,6 +62,9 @@ export class UpdateBookUseCase {
 
     @Inject(BOOK_VALIDATION)
     private readonly bookValidation: IBookValidation,
+
+    @Inject(BOOK_ISBN_DUPLICATE_CHECKER)
+    private readonly bookIsbnDuplicateChecker: IBookIsbnDuplicateChecker,
   ) {}
 
   public async execute(
@@ -75,6 +83,10 @@ export class UpdateBookUseCase {
       genreIds: request.genreIds,
       languageId: request.languageId,
     });
+
+    if (await this.bookIsbnDuplicateChecker.check(request.isbn)) {
+      throw new BookIsbnDuplicateException();
+    }
 
     const book = await this.booksCommandRepository.findOne(id);
 

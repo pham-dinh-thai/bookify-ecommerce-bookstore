@@ -33,6 +33,8 @@ import { AdjustBookStockUseCase } from './application/book-use-cases/adjust-book
 import { DeleteBookUseCase } from './application/book-use-cases/delete-book/delete-book.use-case';
 import { FileStorageModule } from '../file-storage/file-storage.module';
 import { ChangePrimaryBookCoverUseCase } from './application/book-use-cases/change-primary-book-cover/change-primary-book-cover.use-case';
+import { BOOK_ISBN_DUPLICATE_CHECKER } from './domain/book-aggregate/services/book-isbn-duplicate-checker.service';
+import { BookIsbnDuplicateChecker } from './infrastructure/services/books/book-isbn-duplicate-checker.service';
 
 @Module({
   controllers: [BooksController],
@@ -78,6 +80,10 @@ import { ChangePrimaryBookCoverUseCase } from './application/book-use-cases/chan
     {
       provide: BOOK_VALIDATION,
       useClass: BookValidation,
+    },
+    {
+      provide: BOOK_ISBN_DUPLICATE_CHECKER,
+      useClass: BookIsbnDuplicateChecker,
     },
   ],
   exports: [BOOKS_QUERY_REPOSITORY, BOOK_EXISTS_CHECKER, BOOK_VALIDATION],
