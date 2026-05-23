@@ -146,7 +146,19 @@ export default async function BestSellerPage() {
                     <p className="text-base font-extrabold text-[#1b4332] md:text-lg">
                       {formatVnd(book.originalPrice)}
                     </p>
-                    <AddToCartButton />
+                    <AddToCartButton
+                      item={{
+                        id: book.id,
+                        title: book.title,
+                        author: book.author,
+                        edition: book.publisher,
+                        price: book.originalPrice,
+                        quantity: 1,
+                        stock: book.quantity,
+                        cover: book.cover,
+                        isAvailable: book.quantity > 0,
+                      }}
+                    />
                   </div>
                 </article>
               </Link>

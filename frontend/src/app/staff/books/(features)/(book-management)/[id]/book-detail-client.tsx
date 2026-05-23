@@ -211,7 +211,7 @@ export default function BookDetailClient({ id }: { id: string }) {
               <div className="flex items-center gap-4">
                 <div className="relative flex-1">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-[#58615b]">
-                    ₫
+                    VNĐ
                   </span>
                   <input
                     readOnly

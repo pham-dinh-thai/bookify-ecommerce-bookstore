@@ -10,10 +10,8 @@ import { ShoppingCart, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-type NavUserMenuProps = {};
-
-export default function NavUserMenu({}: NavUserMenuProps) {
-  const dropdown = useDropdown();
+export default function NavUserMenu() {
+  const { close, isOpen, ref, toggle } = useDropdown();
   const auth = useAuth();
   const router = useRouter();
 
@@ -37,7 +35,7 @@ export default function NavUserMenu({}: NavUserMenuProps) {
       }
     } finally {
       clearAccessToken();
-      dropdown.close();
+      close();
       router.push('/login');
       router.refresh();
     }
@@ -45,25 +43,29 @@ export default function NavUserMenu({}: NavUserMenuProps) {
 
   return (
     <div className="flex items-center gap-3.5 shrink-0">
-      <button className="text-[#047857B3] hover:text-[#2b352f] transition-colors">
+      <Link
+        href="/cart"
+        className="text-[#047857B3] hover:text-[#2b352f] transition-colors"
+        aria-label="Open cart"
+      >
         <ShoppingCart size={17} strokeWidth={1.7} />
-      </button>
+      </Link>
 
-      <div className="relative" ref={dropdown.ref}>
+      <div className="relative" ref={ref}>
         <button
-          onClick={dropdown.toggle}
+          onClick={toggle}
           className="text-[#047857B3] hover:text-[#2b352f] transition-colors"
         >
           <User size={17} strokeWidth={1.7} />
         </button>
-        {dropdown.isOpen && (
+        {isOpen && (
           <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
             {auth.isAuth ? (
               <>
                 <Link
                   href="/account"
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  onClick={dropdown.close}
+                  onClick={close}
                 >
                   My Account
                 </Link>
@@ -71,7 +73,7 @@ export default function NavUserMenu({}: NavUserMenuProps) {
                   <Link
                     href="/admin/system-overview"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={dropdown.close}
+                    onClick={close}
                   >
                     Dashboard
                   </Link>
@@ -81,7 +83,7 @@ export default function NavUserMenu({}: NavUserMenuProps) {
                   <Link
                     href="/staff/books"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={dropdown.close}
+                    onClick={close}
                   >
                     Dashboard
                   </Link>
@@ -98,14 +100,14 @@ export default function NavUserMenu({}: NavUserMenuProps) {
                 <Link
                   href="/login"
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  onClick={dropdown.close}
+                  onClick={close}
                 >
                   Login
                 </Link>
                 <Link
                   href="/register"
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  onClick={dropdown.close}
+                  onClick={close}
                 >
                   Register
                 </Link>
