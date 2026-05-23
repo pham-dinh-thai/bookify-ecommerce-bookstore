@@ -11,11 +11,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  readCartItems,
-  StoredCartItem,
-  writeCartItems,
-} from './cart-storage';
+import { readCartItems, StoredCartItem, writeCartItems } from './cart-storage';
 
 const initialItems: StoredCartItem[] = [
   {
@@ -65,7 +61,7 @@ function getInitialItems(): StoredCartItem[] {
 }
 
 function formatCurrency(value: number): string {
-  return `${value.toLocaleString('vi-VN')} ₫`;
+  return `${value.toLocaleString('vi-VN')} VNĐ`;
 }
 
 export default function CartPage() {
@@ -103,7 +99,9 @@ export default function CartPage() {
   );
 
   const discount =
-    appliedPromo && subtotal > 0 ? Math.min(Math.round(subtotal * 0.1), 150000) : 0;
+    appliedPromo && subtotal > 0
+      ? Math.min(Math.round(subtotal * 0.1), 150000)
+      : 0;
   const total = subtotal > 0 ? subtotal + shippingFee + taxFee - discount : 0;
 
   const toggleItem = (id: string): void => {
@@ -136,7 +134,9 @@ export default function CartPage() {
 
   const removeItem = (id: string): void => {
     setItems((current) => current.filter((item) => item.id !== id));
-    setSelectedIds((current) => current.filter((selectedId) => selectedId !== id));
+    setSelectedIds((current) =>
+      current.filter((selectedId) => selectedId !== id),
+    );
   };
 
   const saveForLater = (id: string): void => {
@@ -152,7 +152,9 @@ export default function CartPage() {
     if (!item) return;
 
     setItems((current) => [item, ...current]);
-    setSavedItems((current) => current.filter((savedItem) => savedItem.id !== id));
+    setSavedItems((current) =>
+      current.filter((savedItem) => savedItem.id !== id),
+    );
     if (item.isAvailable) {
       setSelectedIds((current) => [...current, item.id]);
     }
@@ -166,7 +168,9 @@ export default function CartPage() {
     }
 
     setAppliedPromo(normalizedCode.toUpperCase());
-    setPromoMessage(`Code ${normalizedCode.toUpperCase()} applied for 10% off.`);
+    setPromoMessage(
+      `Code ${normalizedCode.toUpperCase()} applied for 10% off.`,
+    );
     setPromoCode('');
   };
 
@@ -227,7 +231,10 @@ export default function CartPage() {
 
             {items.length === 0 ? (
               <div className="rounded-lg border border-dashed border-[#1b4332]/20 bg-white p-10 text-center">
-                <ShoppingBag className="mx-auto mb-4 text-[#1b4332]/45" size={38} />
+                <ShoppingBag
+                  className="mx-auto mb-4 text-[#1b4332]/45"
+                  size={38}
+                />
                 <h2 className="text-2xl font-bold">Your cart is empty</h2>
                 <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#1b4332]/60">
                   Add a few archive-ready volumes to start building your order.
@@ -277,7 +284,9 @@ export default function CartPage() {
                       <div>
                         <h2
                           className={`text-lg font-bold leading-tight sm:text-xl ${
-                            item.isAvailable ? '' : 'text-[#1b4332]/50 line-through'
+                            item.isAvailable
+                              ? ''
+                              : 'text-[#1b4332]/50 line-through'
                           }`}
                         >
                           {item.title}
@@ -300,7 +309,9 @@ export default function CartPage() {
 
                       <div
                         className={`mt-6 flex flex-col gap-4 border-t border-[#1b4332]/5 pt-4 sm:flex-row sm:items-center sm:justify-between ${
-                          item.isAvailable ? '' : 'pointer-events-none opacity-50 grayscale'
+                          item.isAvailable
+                            ? ''
+                            : 'pointer-events-none opacity-50 grayscale'
                         }`}
                       >
                         <div className="inline-flex w-fit items-center overflow-hidden rounded-md border border-[#1b4332]/20 bg-[#f7f3e9]/45">
@@ -327,7 +338,9 @@ export default function CartPage() {
                           </button>
                         </div>
                         <p className="text-lg font-bold">
-                          {formatCurrency(item.price * Math.max(item.quantity, 1))}
+                          {formatCurrency(
+                            item.price * Math.max(item.quantity, 1),
+                          )}
                         </p>
                       </div>
 
@@ -369,7 +382,9 @@ export default function CartPage() {
                       className="flex items-center justify-between gap-4 border-t border-[#1b4332]/5 pt-3"
                     >
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-bold">{item.title}</p>
+                        <p className="truncate text-sm font-bold">
+                          {item.title}
+                        </p>
                         <p className="text-xs text-[#1b4332]/55">
                           {formatCurrency(item.price)}
                         </p>
@@ -402,7 +417,9 @@ export default function CartPage() {
                   <span className="flex items-center gap-2">
                     Eco-Shipping <Info size={13} />
                   </span>
-                  <span>{subtotal > 0 ? formatCurrency(shippingFee) : '—'}</span>
+                  <span>
+                    {subtotal > 0 ? formatCurrency(shippingFee) : '—'}
+                  </span>
                 </div>
                 <div className="flex justify-between text-white/70">
                   <span>Acquisition Tax</span>
