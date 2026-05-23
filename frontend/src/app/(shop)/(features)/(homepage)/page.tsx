@@ -18,6 +18,12 @@ type ApiBook = {
   description?: string;
 };
 
+type ApiGenre = {
+  id?: string;
+  _id?: string;
+  name: string;
+};
+
 type HomepageBook = {
   id: string;
   title: string;
@@ -26,6 +32,12 @@ type HomepageBook = {
   cover: string;
   publisher?: string;
   description?: string;
+};
+
+type HomepageGenre = {
+  id: string;
+  name: string;
+  slug: string;
 };
 
 function getApiBaseUrl(): string {
@@ -87,10 +99,52 @@ async function getHomepageBooks(): Promise<HomepageBook[]> {
   }
 }
 
-export default async function Homepage() {
-  const books = await getHomepageBooks();
+function createSlug(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
 
-  console.log('Fetched books for homepage:', books);
+async function getHomepageGenres(): Promise<HomepageGenre[]> {
+  try {
+    const apiBase = getApiBaseUrl();
+    const response = await fetch(`${apiBase}/genres?page=1&limit=4`, {
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      console.error(
+        'Homepage genres request failed:',
+        response.status,
+        response.statusText,
+      );
+      return [];
+    }
+
+    const data = await response.json();
+    const genres: ApiGenre[] = Array.isArray(data?.genres) ? data.genres : [];
+
+    return genres
+      .filter((genre) => Boolean(genre.name))
+      .slice(0, 4)
+      .map((genre) => ({
+        id: genre.id || genre._id || genre.name,
+        name: genre.name,
+        slug: createSlug(genre.name),
+      }));
+  } catch {
+    return [];
+  }
+}
+
+export default async function Homepage() {
+  const [books, genres] = await Promise.all([
+    getHomepageBooks(),
+    getHomepageGenres(),
+  ]);
 
   return (
     <>
@@ -150,7 +204,7 @@ export default async function Homepage() {
         </div>
       </section>
 
-      <Category />
+      <Category genres={genres} />
 
       {books.length > 0 && (
         <>
