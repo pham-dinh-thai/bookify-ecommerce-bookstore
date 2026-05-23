@@ -1,7 +1,9 @@
 'use client';
 
 import { ShoppingCart } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useMemo, useState, createContext, useContext } from 'react';
+import { addCartItem, StoredCartItem } from '../../cart/cart-storage';
 
 type PurchaseCtx = {
   quantity: number;
@@ -86,13 +88,37 @@ export function PriceAndQuantity({ price }: { price: string }) {
   );
 }
 
-export function PurchaseButtons() {
+type PurchaseButtonsProps = {
+  book: Omit<StoredCartItem, 'quantity'>;
+};
+
+export function PurchaseButtons({ book }: PurchaseButtonsProps) {
   const { quantity, canBuy } = usePurchase();
+  const router = useRouter();
+  const [added, setAdded] = useState(false);
+
+  const cartItem: StoredCartItem = {
+    ...book,
+    quantity,
+    isAvailable: canBuy,
+  };
+
+  const handleAddToCart = () => {
+    addCartItem(cartItem);
+    setAdded(true);
+    window.setTimeout(() => setAdded(false), 1400);
+  };
+
+  const handleBuyNow = () => {
+    addCartItem(cartItem);
+    router.push('/cart');
+  };
 
   return (
     <div className="flex flex-wrap items-center gap-2">
       <button
         type="button"
+        onClick={handleBuyNow}
         disabled={!canBuy}
         className="rounded-xl bg-[#2d6a4f] px-6 py-2.5 text-sm font-bold text-[#e6ffef] transition-all enabled:hover:bg-[#245740] enabled:active:scale-95 disabled:cursor-not-allowed disabled:bg-[#a7b9ad]"
       >
@@ -100,11 +126,13 @@ export function PurchaseButtons() {
       </button>
       <button
         type="button"
+        onClick={handleAddToCart}
         disabled={!canBuy}
         aria-label={`Add ${quantity} item${quantity > 1 ? 's' : ''} to cart`}
-        className="inline-flex h-10 w-10 items-center justify-center rounded-xl"
+        className="inline-flex h-10 items-center justify-center gap-2 rounded-xl px-3 text-sm font-semibold text-[#1b4332] transition-colors enabled:hover:bg-[#eff5ef] disabled:cursor-not-allowed disabled:text-[#9aa59f]"
       >
         <ShoppingCart size={20} strokeWidth={2} />
+        <span>{added ? 'Added' : 'Cart'}</span>
       </button>
     </div>
   );

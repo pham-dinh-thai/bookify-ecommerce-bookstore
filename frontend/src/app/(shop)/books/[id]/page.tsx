@@ -40,6 +40,7 @@ type BookDetail = {
   authors: string;
   publisher?: string;
   price: string;
+  originalPrice: number;
   quantity: number;
   pageCount: number;
   isInStock: boolean;
@@ -100,6 +101,7 @@ async function getBookDetail(id: string): Promise<BookDetail | null> {
       authors: data.authors?.join(', ') || 'Unknown author',
       publisher: data.publisher || 'Unknown publisher',
       price: formatVnd(data.originalPrice),
+      originalPrice: Number(data.originalPrice) || 0,
       quantity: data.quantity ?? 0,
       pageCount: data.pageCount ?? 0,
       isInStock: data.isInStock ?? false,
@@ -271,7 +273,18 @@ export default async function BookDetailPage({
 
               <PriceAndQuantity price={book.price} />
 
-              <PurchaseButtons />
+              <PurchaseButtons
+                book={{
+                  id: book.id,
+                  title: book.title,
+                  author: book.authors,
+                  edition: book.publisher || 'Unknown publisher',
+                  price: book.originalPrice,
+                  stock: book.quantity,
+                  cover: book.cover,
+                  isAvailable: book.isInStock && book.quantity > 0,
+                }}
+              />
 
               <section className="space-y-2.5">
                 <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-[#737d76]">
