@@ -8,6 +8,7 @@ export default async function GenrePage({
   const { slug } = await params;
   const heading = slug
     .split('-')
+    .filter(Boolean)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 

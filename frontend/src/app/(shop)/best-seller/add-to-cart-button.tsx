@@ -3,6 +3,7 @@
 import { ShoppingCart } from 'lucide-react';
 import type { MouseEvent } from 'react';
 import { useState } from 'react';
+import { useToast } from '@/shared/common/toast/toast';
 import { addCartItem, StoredCartItem } from '../cart/cart-storage';
 
 type AddToCartButtonProps = {
@@ -11,6 +12,7 @@ type AddToCartButtonProps = {
 
 export function AddToCartButton({ item }: AddToCartButtonProps) {
   const [added, setAdded] = useState(false);
+  const toast = useToast();
 
   const handleAddToCart = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -18,6 +20,7 @@ export function AddToCartButton({ item }: AddToCartButtonProps) {
 
     addCartItem(item);
     setAdded(true);
+    toast?.addToast('Added to cart successfully', 'success');
     window.setTimeout(() => setAdded(false), 1400);
   };
 

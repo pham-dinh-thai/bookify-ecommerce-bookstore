@@ -10,7 +10,8 @@ import {
   ShoppingBag,
   Trash2,
 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useToast } from '@/shared/common/toast/toast';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { readCartItems, StoredCartItem, writeCartItems } from './cart-storage';
 
 const initialItems: StoredCartItem[] = [
@@ -55,21 +56,16 @@ const initialItems: StoredCartItem[] = [
 const shippingFee = 25000;
 const taxFee = 15000;
 
-function getInitialItems(): StoredCartItem[] {
-  const storedItems = readCartItems();
-  return storedItems.length > 0 ? storedItems : initialItems;
-}
-
 function formatCurrency(value: number): string {
   return `${value.toLocaleString('vi-VN')} VNĐ`;
 }
 
 export default function CartPage() {
-  const [items, setItems] = useState<StoredCartItem[]>(getInitialItems);
-  const [selectedIds, setSelectedIds] = useState<string[]>(() =>
-    getInitialItems()
-      .filter((item) => item.isAvailable)
-      .map((item) => item.id),
+  const toast = useToast();
+  const hasHydratedCart = useRef(false);
+  const [items, setItems] = useState<StoredCartItem[]>(initialItems);
+  const [selectedIds, setSelectedIds] = useState<string[]>(
+    initialItems.filter((item) => item.isAvailable).map((item) => item.id),
   );
   const [savedItems, setSavedItems] = useState<StoredCartItem[]>([]);
   const [promoCode, setPromoCode] = useState('');
@@ -78,6 +74,28 @@ export default function CartPage() {
   const [checkoutMessage, setCheckoutMessage] = useState<string | null>(null);
 
   useEffect(() => {
+    let isActive = true;
+
+    queueMicrotask(() => {
+      if (!isActive) return;
+
+      const storedItems = readCartItems();
+      if (storedItems.length > 0) {
+        setItems(storedItems);
+        setSelectedIds(
+          storedItems.filter((item) => item.isAvailable).map((item) => item.id),
+        );
+      }
+      hasHydratedCart.current = true;
+    });
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hasHydratedCart.current) return;
     writeCartItems(items);
   }, [items]);
 
@@ -137,6 +155,7 @@ export default function CartPage() {
     setSelectedIds((current) =>
       current.filter((selectedId) => selectedId !== id),
     );
+    toast?.addToast('Item removed from cart', 'success');
   };
 
   const saveForLater = (id: string): void => {

@@ -36,7 +36,12 @@ function getApiBaseUrl(): string {
 }
 
 function normalize(text: string): string {
-  return text.toLowerCase().replace(/\s+/g, '-');
+  return text
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
 
 function formatCurrency(amount: number): string {
@@ -73,9 +78,13 @@ async function getBooks(
 
     let filteredBooks = books;
 
-    if (genreSlug) {
+    const normalizedGenreSlug = genreSlug ? normalize(genreSlug) : undefined;
+
+    if (normalizedGenreSlug) {
       filteredBooks = books.filter((book) =>
-        (book.genres || []).some((genre) => normalize(genre) === genreSlug),
+        (book.genres || []).some(
+          (genre) => normalize(genre) === normalizedGenreSlug,
+        ),
       );
     }
 

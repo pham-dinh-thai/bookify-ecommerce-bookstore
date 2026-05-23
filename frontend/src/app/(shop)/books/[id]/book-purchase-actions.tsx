@@ -3,6 +3,7 @@
 import { ShoppingCart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState, createContext, useContext } from 'react';
+import { useToast } from '@/shared/common/toast/toast';
 import { addCartItem, StoredCartItem } from '../../cart/cart-storage';
 
 type PurchaseCtx = {
@@ -95,6 +96,7 @@ type PurchaseButtonsProps = {
 export function PurchaseButtons({ book }: PurchaseButtonsProps) {
   const { quantity, canBuy } = usePurchase();
   const router = useRouter();
+  const toast = useToast();
   const [added, setAdded] = useState(false);
 
   const cartItem: StoredCartItem = {
@@ -106,11 +108,13 @@ export function PurchaseButtons({ book }: PurchaseButtonsProps) {
   const handleAddToCart = () => {
     addCartItem(cartItem);
     setAdded(true);
+    toast?.addToast('Added to cart successfully', 'success');
     window.setTimeout(() => setAdded(false), 1400);
   };
 
   const handleBuyNow = () => {
     addCartItem(cartItem);
+    toast?.addToast('Added to cart successfully', 'success');
     router.push('/cart');
   };
 

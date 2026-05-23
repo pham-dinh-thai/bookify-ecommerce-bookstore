@@ -4,6 +4,15 @@ import NavigationBarPresenter from './navigation-bar.presenter';
 import { useEffect, useState } from 'react';
 import { allGenreService } from '@/app/admin/genres/(genre-management)/services/all-genre.service';
 
+function createSlug(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 export default function NavigationBarContainer() {
   const [genres, setGenres] = useState<GenreLink[]>([]);
 
@@ -14,7 +23,7 @@ export default function NavigationBarContainer() {
         const genreLinks = (response?.genres || []).map(
           (genre: { name: string }) => ({
             label: genre.name,
-            path: `/genres/${genre.name.toLowerCase().replace(/\s+/g, '-')}`,
+            path: `/genres/${encodeURIComponent(createSlug(genre.name))}`,
           }),
         );
 
