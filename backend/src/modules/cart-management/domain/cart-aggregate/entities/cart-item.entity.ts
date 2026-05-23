@@ -5,6 +5,14 @@ import { ProductPriceEmptyException } from './exceptions/product-price-empty.exc
 import { CreateCartItemProps, FromPersistentCartItemProps } from './types';
 import { ProductQuantity } from './value-objects/product-quantity.value-object';
 
+/**
+ * CartItem entity representing a single product entry in a cart.
+ *
+ * Rules:
+ * - ID and product ID cannot be empty
+ * - Price cannot be null or negative
+ * - Items are active by default upon creation
+ */
 export class CartItem {
   private static CART_ITEM_STATUS = {
     ACTIVE: true,
