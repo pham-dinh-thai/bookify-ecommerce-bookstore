@@ -10,6 +10,13 @@ import {
   UNIT_OF_WORK,
 } from '../../../../../shared/modules/unit-of-work/application/unit-of-work';
 
+/**
+ * Removes an item from the user's cart.
+ *
+ * Removal is wrapped in a Unit of Work because it must be atomic —
+ * the aggregate enforces the item exists before deletion,
+ * and persistence must only happen if that check passes.
+ */
 @Injectable()
 export class RemoveItemFromCartUseCase {
   public constructor(
