@@ -35,7 +35,7 @@ export default function NavSearch({}: NavSearchProps) {
       />
       <input
         type="text"
-        placeholder="Search books..."
+        placeholder="Search books by title, author,..."
         value={keyword}
         onChange={(event) => setKeyword(event.target.value)}
         className="bg-transparent border-none outline-none text-[13px] text-[#2b352f] placeholder:text-[#aab4ad] w-full"

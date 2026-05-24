@@ -217,12 +217,14 @@ export default async function Homepage() {
             label="Just In"
             title="NEW ARRIVALS"
             books={books}
+            viewAllHref="/new-arrivals"
           />
           <BookSection
             label="Limited Time"
             title="ON SALES"
             books={books}
             visible={10}
+            viewAllHref="/on-sales"
           />
         </>
       )}
