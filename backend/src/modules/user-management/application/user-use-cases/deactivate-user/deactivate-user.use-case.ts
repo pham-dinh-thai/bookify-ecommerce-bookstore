@@ -51,7 +51,7 @@ export class DeactivateUserUseCase {
         'user-management',
         'users',
         {
-          userId: user.getId(),
+          user,
         },
       );
     });

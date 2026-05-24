@@ -1,25 +1,19 @@
-import { AggregateRoot } from '../../../../shared/domain/aggregate-root';
 import { Email } from '../../../../shared/domain/value-objects/email/email.value-object';
 import { Password } from '../../../../shared/domain/value-objects/password/password.value-object';
 import { Gender } from '../../../../shared/domain/enums/gender.enum';
-import { PasswordChanged } from './events/password-changed';
-import { UserCreated } from './events/user-created.event';
-import { UserDeactivated } from './events/user-deactivated.event';
 import { GenderEmptyException } from './exceptions/gender-empty.exception';
 import { GenderInvalidOptionException } from './exceptions/gender-invalid-option.exception';
 import { PasswordNotMatchingException } from './exceptions/password-not-matching.exception';
 import { PasswordVerifyFailed } from './exceptions/password-verify-failed.exception';
 import { UserId } from './value-objects/user-id.value-object';
 import { Name } from './value-objects/name.value-object';
-import { UserUpdated } from './events/user-updated.event';
-import { UserActivated } from './events/user-activated.event';
 import {
   CreateUserProps,
   FromPersistentUserProps,
   UpdateUserProps,
 } from './types';
 
-export class User extends AggregateRoot {
+export class User {
   private constructor(
     private readonly id: UserId,
     private firstName: Name,
@@ -29,9 +23,7 @@ export class User extends AggregateRoot {
     private password: Password,
     private isActive: boolean = true,
     private roleId: string = 'staff', // When admin create an account, the default is staff; when customer register an account, it will be user
-  ) {
-    super();
-  }
+  ) {}
 
   public static async create(props: CreateUserProps): Promise<User> {
     if (!props.gender) {
@@ -87,14 +79,10 @@ export class User extends AggregateRoot {
 
   public deactivate(): void {
     this.isActive = false;
-
-    this.addDomainEvent(new UserDeactivated(this.id.getValue()));
   }
 
   public activate(): void {
     this.isActive = true;
-
-    this.addDomainEvent(new UserActivated(this.id.getValue()));
   }
 
   public async changePassword(
@@ -115,8 +103,6 @@ export class User extends AggregateRoot {
     }
 
     this.password = password;
-
-    this.addDomainEvent(new PasswordChanged(this.id.getValue()));
   }
 
   public getIsActive(): boolean {
