@@ -59,24 +59,24 @@ export class UpdateUserUseCase {
       throw new UserNotFoundException();
     }
 
+    const user = await this.repository.findOne(id);
+
+    const isEmailBeenUse = await this.emailExistsChecker.isExists(
+      request.email,
+    );
+    if (user.getEmail() !== request.email && isEmailBeenUse) {
+      throw new EmailHasBeenUseException();
+    }
+
+    user.update({
+      firstName: request.firstName,
+      lastName: request.lastName,
+      email: request.email,
+      gender: request.gender,
+      roleId: request.roleId,
+    });
+
     await this.unitOfWork.execute(async () => {
-      const user = await this.repository.findOne(id);
-
-      const isEmailBeenUse = await this.emailExistsChecker.isExists(
-        request.email,
-      );
-      if (user.getEmail() !== request.email && isEmailBeenUse) {
-        throw new EmailHasBeenUseException();
-      }
-
-      user.update(
-        request.firstName,
-        request.lastName,
-        request.email,
-        request.gender,
-        request.roleId,
-      );
-
       await this.repository.save(user);
 
       await this.auditLogRepository.write(
@@ -85,7 +85,7 @@ export class UpdateUserUseCase {
         'user-management',
         'users',
         {
-          userId: id,
+          user,
         },
       );
     });

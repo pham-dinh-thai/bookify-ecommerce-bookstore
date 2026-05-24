@@ -13,7 +13,11 @@ import { UserId } from './value-objects/user-id.value-object';
 import { Name } from './value-objects/name.value-object';
 import { UserUpdated } from './events/user-updated.event';
 import { UserActivated } from './events/user-activated.event';
-import { CreateUserProps, FromPersistentUserProps } from './types';
+import {
+  CreateUserProps,
+  FromPersistentUserProps,
+  UpdateUserProps,
+} from './types';
 
 export class User extends AggregateRoot {
   private constructor(
@@ -64,52 +68,21 @@ export class User extends AggregateRoot {
     );
   }
 
-  public update(
-    firstName: string,
-    lastName: string,
-    email: string,
-    gender: Gender,
-    roleId: string,
-  ): void {
-    if (!gender) {
+  public update(props: UpdateUserProps): void {
+    if (!props.gender) {
       throw new GenderEmptyException();
     }
 
-    const isIncludesInGender = Object.values(Gender).includes(gender);
+    const isIncludesInGender = Object.values(Gender).includes(props.gender);
     if (!isIncludesInGender) {
-      throw new GenderInvalidOptionException(gender);
+      throw new GenderInvalidOptionException(props.gender);
     }
 
-    let hasChanges = false;
-
-    if (this.firstName.getValue() !== firstName) {
-      this.firstName = Name.create(firstName);
-      hasChanges = true;
-    }
-
-    if (this.lastName.getValue() !== lastName) {
-      this.lastName = Name.create(lastName);
-      hasChanges = true;
-    }
-
-    if (this.email.getValue() !== email) {
-      this.email = Email.create(email);
-      hasChanges = true;
-    }
-
-    if (this.gender !== gender) {
-      this.gender = gender;
-      hasChanges = true;
-    }
-
-    if (this.roleId !== roleId) {
-      this.roleId = roleId;
-      hasChanges = true;
-    }
-
-    if (hasChanges) {
-      this.addDomainEvent(new UserUpdated(this.id.getValue()));
-    }
+    this.firstName = Name.create(props.firstName);
+    this.lastName = Name.create(props.lastName);
+    this.email = Email.create(props.email);
+    this.gender = props.gender;
+    this.roleId = props.roleId;
   }
 
   public deactivate(): void {

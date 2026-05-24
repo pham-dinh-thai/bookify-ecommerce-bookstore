@@ -89,16 +89,9 @@ export class CreateUserUseCase {
         'user-management',
         'users',
         {
-          id: user.getId(),
-          firstName: user.getFirstName(),
-          lastName: user.getLastName(),
-          email: user.getEmail(),
-          gender: user.getGender(),
-          roleId: user.getRoleId(),
+          user,
         },
       );
-
-      user.clearDomainEvents();
     });
 
     await this.cache.delByPattern('users:*');

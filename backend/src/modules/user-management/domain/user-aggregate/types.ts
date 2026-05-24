@@ -20,3 +20,11 @@ export type FromPersistentUserProps = {
   isActive: boolean;
   roleId: string;
 };
+
+export type UpdateUserProps = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  gender: Gender;
+  roleId: string;
+};
