@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Bookmark,
   Check,
@@ -14,45 +15,6 @@ import { useToast } from '@/shared/common/toast/toast';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { readCartItems, StoredCartItem, writeCartItems } from './cart-storage';
 
-const initialItems: StoredCartItem[] = [
-  {
-    id: 'idiot-limited',
-    title: 'Chàng Ngốc - Ấn Bản Giới Hạn',
-    author: 'Fyodor Dostoevsky',
-    edition: 'Leather Bound Edition',
-    price: 1000000,
-    quantity: 1,
-    stock: 4,
-    cover:
-      'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=420&q=80',
-    isAvailable: true,
-  },
-  {
-    id: 'war-and-peace',
-    title: 'War And Peace',
-    author: 'Leo Tolstoy',
-    edition: 'Hardcover Archive',
-    price: 378000,
-    quantity: 0,
-    stock: 0,
-    cover:
-      'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=420&q=80',
-    isAvailable: false,
-  },
-  {
-    id: 'meditations',
-    title: 'Meditations',
-    author: 'Marcus Aurelius',
-    edition: 'Clothbound Folio',
-    price: 550000,
-    quantity: 1,
-    stock: 8,
-    cover:
-      'https://images.unsplash.com/photo-1495640388908-05fa85288e61?auto=format&fit=crop&w=420&q=80',
-    isAvailable: true,
-  },
-];
-
 const shippingFee = 25000;
 const taxFee = 15000;
 
@@ -62,15 +24,11 @@ function formatCurrency(value: number): string {
 
 export default function CartPage() {
   const toast = useToast();
+  const router = useRouter();
   const hasHydratedCart = useRef(false);
-  const [items, setItems] = useState<StoredCartItem[]>(initialItems);
-  const [selectedIds, setSelectedIds] = useState<string[]>(
-    initialItems.filter((item) => item.isAvailable).map((item) => item.id),
-  );
+  const [items, setItems] = useState<StoredCartItem[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [savedItems, setSavedItems] = useState<StoredCartItem[]>([]);
-  const [promoCode, setPromoCode] = useState('');
-  const [appliedPromo, setAppliedPromo] = useState<string | null>(null);
-  const [promoMessage, setPromoMessage] = useState<string | null>(null);
   const [checkoutMessage, setCheckoutMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -116,11 +74,11 @@ export default function CartPage() {
     [selectedAvailableItems],
   );
 
-  const discount =
-    appliedPromo && subtotal > 0
-      ? Math.min(Math.round(subtotal * 0.1), 150000)
-      : 0;
-  const total = subtotal > 0 ? subtotal + shippingFee + taxFee - discount : 0;
+  const total = subtotal > 0 ? subtotal + shippingFee + taxFee : 0;
+
+  const openBookDetail = (id: string): void => {
+    router.push(`/books/${encodeURIComponent(id)}`);
+  };
 
   const toggleItem = (id: string): void => {
     setSelectedIds((current) =>
@@ -177,20 +135,6 @@ export default function CartPage() {
     if (item.isAvailable) {
       setSelectedIds((current) => [...current, item.id]);
     }
-  };
-
-  const applyPromo = (): void => {
-    const normalizedCode = promoCode.trim();
-    if (!normalizedCode) {
-      setPromoMessage('Enter a discount code first.');
-      return;
-    }
-
-    setAppliedPromo(normalizedCode.toUpperCase());
-    setPromoMessage(
-      `Code ${normalizedCode.toUpperCase()} applied for 10% off.`,
-    );
-    setPromoCode('');
   };
 
   const checkout = (): void => {
@@ -269,10 +213,23 @@ export default function CartPage() {
               items.map((item) => (
                 <article
                   key={item.id}
-                  className="rounded-lg border border-[#1b4332]/10 bg-white p-4 shadow-sm transition-colors hover:border-[#1b4332]/30 sm:p-6"
+                  role="link"
+                  tabIndex={0}
+                  onClick={() => openBookDetail(item.id)}
+                  onKeyDown={(event) => {
+                    if (event.currentTarget !== event.target) return;
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      openBookDetail(item.id);
+                    }
+                  }}
+                  className="cursor-pointer rounded-lg border border-[#1b4332]/10 bg-white p-4 shadow-sm transition-colors hover:border-[#1b4332]/30 focus:outline-none focus:ring-2 focus:ring-[#1b4332]/25 sm:p-6"
                 >
                   <div className="grid grid-cols-[auto_88px_1fr] gap-4 sm:grid-cols-[auto_128px_1fr] sm:gap-6">
-                    <div className="flex items-center">
+                    <div
+                      className="flex items-center"
+                      onClick={(event) => event.stopPropagation()}
+                    >
                       <span className="relative flex items-center justify-center">
                         <input
                           type="checkbox"
@@ -336,7 +293,10 @@ export default function CartPage() {
                         <div className="inline-flex w-fit items-center overflow-hidden rounded-md border border-[#1b4332]/20 bg-[#f7f3e9]/45">
                           <button
                             type="button"
-                            onClick={() => updateQuantity(item.id, 'decrease')}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              updateQuantity(item.id, 'decrease');
+                            }}
                             disabled={item.quantity <= 1}
                             aria-label={`Decrease ${item.title} quantity`}
                             className="flex h-9 w-9 items-center justify-center transition-colors enabled:hover:bg-[#e7f2ea] disabled:cursor-not-allowed disabled:text-[#1b4332]/30"
@@ -348,7 +308,10 @@ export default function CartPage() {
                           </span>
                           <button
                             type="button"
-                            onClick={() => updateQuantity(item.id, 'increase')}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              updateQuantity(item.id, 'increase');
+                            }}
                             disabled={item.quantity >= item.stock}
                             aria-label={`Increase ${item.title} quantity`}
                             className="flex h-9 w-9 items-center justify-center transition-colors enabled:hover:bg-[#e7f2ea] disabled:cursor-not-allowed disabled:text-[#1b4332]/30"
@@ -367,7 +330,10 @@ export default function CartPage() {
                         {item.isAvailable && (
                           <button
                             type="button"
-                            onClick={() => saveForLater(item.id)}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              saveForLater(item.id);
+                            }}
                             className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#1b4332]/60 transition-colors hover:text-[#1b4332]"
                           >
                             <Bookmark size={16} />
@@ -376,7 +342,10 @@ export default function CartPage() {
                         )}
                         <button
                           type="button"
-                          onClick={() => removeItem(item.id)}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            removeItem(item.id);
+                          }}
                           className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-red-700/70 transition-colors hover:text-red-700"
                         >
                           <Trash2 size={16} />
@@ -444,12 +413,6 @@ export default function CartPage() {
                   <span>Acquisition Tax</span>
                   <span>{subtotal > 0 ? formatCurrency(taxFee) : '—'}</span>
                 </div>
-                {discount > 0 && (
-                  <div className="flex justify-between text-[#b7f7ca]">
-                    <span>Discount ({appliedPromo})</span>
-                    <span>-{formatCurrency(discount)}</span>
-                  </div>
-                )}
                 <div className="flex items-baseline justify-between border-t border-white/20 pt-4">
                   <span className="text-lg font-bold uppercase tracking-[0.16em]">
                     Total
@@ -484,49 +447,6 @@ export default function CartPage() {
               )}
             </section>
 
-            <section className="rounded-lg border border-[#1b4332]/10 bg-white p-6">
-              <label
-                className="mb-3 block text-xs font-bold uppercase tracking-[0.18em] text-[#1b4332]/60"
-                htmlFor="promo"
-              >
-                Institutional Discount
-              </label>
-              <div className="flex gap-2">
-                <input
-                  id="promo"
-                  value={promoCode}
-                  onChange={(event) => setPromoCode(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter') applyPromo();
-                  }}
-                  placeholder="Enter code"
-                  className="min-w-0 flex-1 rounded-md border border-transparent bg-[#f7f3e9] px-4 text-sm outline-none transition-shadow focus:ring-1 focus:ring-[#1b4332]"
-                />
-                <button
-                  type="button"
-                  onClick={applyPromo}
-                  className="rounded-md bg-[#1b4332] px-5 py-2 text-xs font-bold uppercase tracking-[0.16em] text-white transition-opacity hover:opacity-90"
-                >
-                  Apply
-                </button>
-              </div>
-              {promoMessage && (
-                <p
-                  className={`mt-3 text-xs font-semibold ${
-                    appliedPromo ? 'text-[#2d6a4f]' : 'text-red-700'
-                  }`}
-                >
-                  {promoMessage}
-                </p>
-              )}
-            </section>
-
-            <section className="rounded-lg border border-dashed border-[#1b4332]/20 bg-[#f7f3e9] p-6">
-              <p className="text-center text-xs italic leading-6 text-[#1b4332]/60">
-                &quot;Every volume added to the archive contributes to the
-                preservation of human narrative.&quot;
-              </p>
-            </section>
           </aside>
         </div>
       </div>
