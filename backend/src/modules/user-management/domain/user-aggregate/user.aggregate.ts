@@ -13,6 +13,7 @@ import { UserId } from './value-objects/user-id.value-object';
 import { Name } from './value-objects/name.value-object';
 import { UserUpdated } from './events/user-updated.event';
 import { UserActivated } from './events/user-activated.event';
+import { CreateUserProps } from './types';
 
 export class User extends AggregateRoot {
   private constructor(
@@ -28,38 +29,26 @@ export class User extends AggregateRoot {
     super();
   }
 
-  public static async create(
-    id: string,
-    firstName: string,
-    lastName: string,
-    email: string,
-    gender: Gender,
-    password: string,
-    roleId: string,
-  ): Promise<User> {
-    if (!gender) {
+  public static async create(props: CreateUserProps): Promise<User> {
+    if (!props.gender) {
       throw new GenderEmptyException();
     }
 
-    const isIncludesInGender = Object.values(Gender).includes(gender);
+    const isIncludesInGender = Object.values(Gender).includes(props.gender);
     if (!isIncludesInGender) {
-      throw new GenderInvalidOptionException(gender);
+      throw new GenderInvalidOptionException(props.gender);
     }
 
-    const user = new User(
-      UserId.create(id),
-      Name.create(firstName),
-      Name.create(lastName),
-      Email.create(email),
-      gender,
-      await Password.create(password),
+    return new User(
+      UserId.create(props.id),
+      Name.create(props.firstName),
+      Name.create(props.lastName),
+      Email.create(props.email),
+      props.gender,
+      await Password.create(props.password),
       true,
-      roleId,
+      props.roleId,
     );
-
-    user.addDomainEvent(new UserCreated(id));
-
-    return user;
   }
 
   public static fromPersistent(

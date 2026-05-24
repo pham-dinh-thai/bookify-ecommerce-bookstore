@@ -70,15 +70,15 @@ export class CreateUserUseCase {
     const role = await this.roleRepository.findOne(request.roleId);
     const id = this.uuid.generate();
 
-    const user = await User.create(
-      id,
-      request.firstName,
-      request.lastName,
-      request.email,
-      request.gender,
-      request.password,
-      role.getId(),
-    );
+    const user = await User.create({
+      id: id,
+      firstName: request.firstName,
+      lastName: request.lastName,
+      email: request.email,
+      gender: request.gender,
+      password: request.password,
+      roleId: role.getId(),
+    });
 
     await this.unitOfWork.execute(async () => {
       await this.repository.save(user);
