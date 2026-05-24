@@ -4,16 +4,16 @@ import { UserTypeOrm } from '../../entities/user.entity';
 
 export class UsersMapper {
   public static toDomain(userTypeOrm: UserTypeOrm): User {
-    return User.fromPersistent(
-      userTypeOrm.id,
-      userTypeOrm.firstName,
-      userTypeOrm.lastName,
-      userTypeOrm.email,
-      userTypeOrm.gender,
-      userTypeOrm.password,
-      userTypeOrm.isActive,
-      userTypeOrm.roleId,
-    );
+    return User.fromPersistent({
+      id: userTypeOrm.id,
+      firstName: userTypeOrm.firstName,
+      lastName: userTypeOrm.lastName,
+      email: userTypeOrm.email,
+      gender: userTypeOrm.gender,
+      password: userTypeOrm.password,
+      isActive: userTypeOrm.isActive,
+      roleId: userTypeOrm.roleId,
+    });
   }
 
   public static toTypeOrm(user: User): UserTypeOrm {

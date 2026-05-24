@@ -9,3 +9,14 @@ export type CreateUserProps = {
   password: string;
   roleId: string;
 };
+
+export type FromPersistentUserProps = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  gender: string;
+  password: string;
+  isActive: boolean;
+  roleId: string;
+};

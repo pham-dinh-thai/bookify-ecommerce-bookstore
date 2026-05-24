@@ -13,7 +13,7 @@ import { UserId } from './value-objects/user-id.value-object';
 import { Name } from './value-objects/name.value-object';
 import { UserUpdated } from './events/user-updated.event';
 import { UserActivated } from './events/user-activated.event';
-import { CreateUserProps } from './types';
+import { CreateUserProps, FromPersistentUserProps } from './types';
 
 export class User extends AggregateRoot {
   private constructor(
@@ -51,25 +51,16 @@ export class User extends AggregateRoot {
     );
   }
 
-  public static fromPersistent(
-    id: string,
-    firstName: string,
-    lastName: string,
-    email: string,
-    gender: string,
-    password: string,
-    isActive: boolean,
-    roleId: string,
-  ): User {
+  public static fromPersistent(props: FromPersistentUserProps): User {
     return new User(
-      UserId.create(id),
-      Name.create(firstName),
-      Name.create(lastName),
-      Email.create(email),
-      gender as Gender,
-      Password.fromHashed(password),
-      isActive,
-      roleId,
+      UserId.create(props.id),
+      Name.create(props.firstName),
+      Name.create(props.lastName),
+      Email.create(props.email),
+      props.gender as Gender,
+      Password.fromHashed(props.password),
+      props.isActive,
+      props.roleId,
     );
   }
 
