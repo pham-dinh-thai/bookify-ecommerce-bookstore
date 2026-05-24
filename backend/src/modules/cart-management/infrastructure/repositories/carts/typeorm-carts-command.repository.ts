@@ -5,6 +5,8 @@ import { CartItem } from '../../../domain/cart-aggregate/entities/cart-item.enti
 import { CartItemTypeOrm } from '../../entities/cart-item.entity';
 import { Cart } from '../../../domain/cart-aggregate/cart.aggregate';
 import { CartTypeOrm } from '../../entities/cart.entity';
+import { CartsMapper } from '../../mappers/carts.mapper';
+import { CartItemsMapper } from '../../mappers/cart-items.mapper';
 
 @Injectable()
 export class TypeOrmCartsCommandRepository implements ICartsCommandRepository {
@@ -22,34 +24,16 @@ export class TypeOrmCartsCommandRepository implements ICartsCommandRepository {
       return null;
     }
 
-    return Cart.fromPersistent({
-      id: cartTypeOrm.id,
-      userId: cartTypeOrm.userId,
-      items:
-        cartTypeOrm.cartItems?.map((cartItem) => ({
-          id: cartItem.id,
-          productId: cartItem.productId,
-          quantity: cartItem.quantity,
-          price: cartItem.price,
-          status: cartItem.isActive,
-        })) ?? [],
-    });
+    return CartsMapper.toDomain(cartTypeOrm);
   }
 
   public async addItemToCart(
     cartId: string,
     cartItem: CartItem,
   ): Promise<void> {
-    const cartItemTypeOrm = new CartItemTypeOrm();
-
-    cartItemTypeOrm.id = cartItem.getId();
-    cartItemTypeOrm.cartId = cartId;
-    cartItemTypeOrm.productId = cartItem.getProductId();
-    cartItemTypeOrm.quantity = cartItem.getQuantity();
-    cartItemTypeOrm.price = cartItem.getPrice();
-    cartItemTypeOrm.isActive = cartItem.isActive();
-
-    await this.unitOfWork.getManager().insert(CartItemTypeOrm, cartItemTypeOrm);
+    await this.unitOfWork
+      .getManager()
+      .insert(CartItemTypeOrm, CartItemsMapper.toTypeOrm(cartId, cartItem));
   }
 
   public async removeItem(cartId: string, itemId: string): Promise<void> {
@@ -60,11 +44,8 @@ export class TypeOrmCartsCommandRepository implements ICartsCommandRepository {
   }
 
   public async insert(cart: Cart): Promise<void> {
-    const cartTypeOrm = new CartTypeOrm();
-
-    cartTypeOrm.id = cart.getId();
-    cartTypeOrm.userId = cart.getUserId();
-
-    await this.unitOfWork.getManager().save(CartTypeOrm, cartTypeOrm);
+    await this.unitOfWork
+      .getManager()
+      .save(CartTypeOrm, CartsMapper.toTypeOrm(cart));
   }
 }
