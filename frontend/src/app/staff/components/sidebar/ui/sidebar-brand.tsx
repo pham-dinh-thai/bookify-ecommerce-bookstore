@@ -12,7 +12,7 @@ export default function SidebarBrand() {
 
       <div>
         <p className="text-[16px] font-bold text-[#1a3d2b] leading-tight">
-          Admin Dashboard
+          Staff Dashboard
         </p>
         <p className="text-[9px] font-semibold tracking-[0.08em] uppercase text-[#aab4ad]">
           Bookify
