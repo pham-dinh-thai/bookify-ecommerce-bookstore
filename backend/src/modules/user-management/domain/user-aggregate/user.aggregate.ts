@@ -1,20 +1,19 @@
-import { AggregateRoot } from '../../../../shared/domain/aggregate-root';
 import { Email } from '../../../../shared/domain/value-objects/email/email.value-object';
 import { Password } from '../../../../shared/domain/value-objects/password/password.value-object';
 import { Gender } from '../../../../shared/domain/enums/gender.enum';
-import { PasswordChanged } from './events/password-changed';
-import { UserCreated } from './events/user-created.event';
-import { UserDeactivated } from './events/user-deactivated.event';
 import { GenderEmptyException } from './exceptions/gender-empty.exception';
 import { GenderInvalidOptionException } from './exceptions/gender-invalid-option.exception';
 import { PasswordNotMatchingException } from './exceptions/password-not-matching.exception';
 import { PasswordVerifyFailed } from './exceptions/password-verify-failed.exception';
 import { UserId } from './value-objects/user-id.value-object';
 import { Name } from './value-objects/name.value-object';
-import { UserUpdated } from './events/user-updated.event';
-import { UserActivated } from './events/user-activated.event';
+import {
+  CreateUserProps,
+  FromPersistentUserProps,
+  UpdateUserProps,
+} from './types';
 
-export class User extends AggregateRoot {
+export class User {
   private constructor(
     private readonly id: UserId,
     private firstName: Name,
@@ -24,124 +23,66 @@ export class User extends AggregateRoot {
     private password: Password,
     private isActive: boolean = true,
     private roleId: string = 'staff', // When admin create an account, the default is staff; when customer register an account, it will be user
-  ) {
-    super();
-  }
+  ) {}
 
-  public static async create(
-    id: string,
-    firstName: string,
-    lastName: string,
-    email: string,
-    gender: Gender,
-    password: string,
-    roleId: string,
-  ): Promise<User> {
-    if (!gender) {
+  public static async create(props: CreateUserProps): Promise<User> {
+    if (!props.gender) {
       throw new GenderEmptyException();
     }
 
-    const isIncludesInGender = Object.values(Gender).includes(gender);
+    const isIncludesInGender = Object.values(Gender).includes(props.gender);
     if (!isIncludesInGender) {
-      throw new GenderInvalidOptionException(gender);
+      throw new GenderInvalidOptionException(props.gender);
     }
 
-    const user = new User(
-      UserId.create(id),
-      Name.create(firstName),
-      Name.create(lastName),
-      Email.create(email),
-      gender,
-      await Password.create(password),
-      true,
-      roleId,
-    );
-
-    user.addDomainEvent(new UserCreated(id));
-
-    return user;
-  }
-
-  public static fromPersistent(
-    id: string,
-    firstName: string,
-    lastName: string,
-    email: string,
-    gender: string,
-    password: string,
-    isActive: boolean,
-    roleId: string,
-  ): User {
     return new User(
-      UserId.create(id),
-      Name.create(firstName),
-      Name.create(lastName),
-      Email.create(email),
-      gender as Gender,
-      Password.fromHashed(password),
-      isActive,
-      roleId,
+      UserId.create(props.id),
+      Name.create(props.firstName),
+      Name.create(props.lastName),
+      Email.create(props.email),
+      props.gender,
+      await Password.create(props.password),
+      true,
+      props.roleId,
     );
   }
 
-  public update(
-    firstName: string,
-    lastName: string,
-    email: string,
-    gender: Gender,
-    roleId: string,
-  ): void {
-    if (!gender) {
+  public static fromPersistent(props: FromPersistentUserProps): User {
+    return new User(
+      UserId.create(props.id),
+      Name.create(props.firstName),
+      Name.create(props.lastName),
+      Email.create(props.email),
+      props.gender as Gender,
+      Password.fromHashed(props.password),
+      props.isActive,
+      props.roleId,
+    );
+  }
+
+  public update(props: UpdateUserProps): void {
+    if (!props.gender) {
       throw new GenderEmptyException();
     }
 
-    const isIncludesInGender = Object.values(Gender).includes(gender);
+    const isIncludesInGender = Object.values(Gender).includes(props.gender);
     if (!isIncludesInGender) {
-      throw new GenderInvalidOptionException(gender);
+      throw new GenderInvalidOptionException(props.gender);
     }
 
-    let hasChanges = false;
-
-    if (this.firstName.getValue() !== firstName) {
-      this.firstName = Name.create(firstName);
-      hasChanges = true;
-    }
-
-    if (this.lastName.getValue() !== lastName) {
-      this.lastName = Name.create(lastName);
-      hasChanges = true;
-    }
-
-    if (this.email.getValue() !== email) {
-      this.email = Email.create(email);
-      hasChanges = true;
-    }
-
-    if (this.gender !== gender) {
-      this.gender = gender;
-      hasChanges = true;
-    }
-
-    if (this.roleId !== roleId) {
-      this.roleId = roleId;
-      hasChanges = true;
-    }
-
-    if (hasChanges) {
-      this.addDomainEvent(new UserUpdated(this.id.getValue()));
-    }
+    this.firstName = Name.create(props.firstName);
+    this.lastName = Name.create(props.lastName);
+    this.email = Email.create(props.email);
+    this.gender = props.gender;
+    this.roleId = props.roleId;
   }
 
   public deactivate(): void {
     this.isActive = false;
-
-    this.addDomainEvent(new UserDeactivated(this.id.getValue()));
   }
 
   public activate(): void {
     this.isActive = true;
-
-    this.addDomainEvent(new UserActivated(this.id.getValue()));
   }
 
   public async changePassword(
@@ -162,8 +103,6 @@ export class User extends AggregateRoot {
     }
 
     this.password = password;
-
-    this.addDomainEvent(new PasswordChanged(this.id.getValue()));
   }
 
   public getIsActive(): boolean {
