@@ -4,9 +4,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CustomerTypeOrm } from '../../entities/customer.entity';
 import { Repository } from 'typeorm';
 import { UserTypeOrm } from '../../../../user-management/infrastructure/entities/user.entity';
-import { CustomerReadModel } from '../../../domain/customer-aggregate/read-models/customer.read-model';
+import { CustomerDetailReadModel } from '../../../domain/customer-aggregate/read-models/customer-detail.read-model';
 import { CustomersMapper } from '../../mappers/customers.mapper';
 import { CustomerFilter } from '../../../domain/customer-aggregate/customer.filter';
+import { CustomerReadModel } from '../../../domain/customer-aggregate/read-models/customer.read-model';
+import { AddressReadModel } from '../../../domain/customer-aggregate/entities/read-models/address.read-model';
 
 @Injectable()
 export class TypeOrmCustomersQueryRepository implements ICustomersQueryRepository {
@@ -23,7 +25,7 @@ export class TypeOrmCustomersQueryRepository implements ICustomersQueryRepositor
     limit: number,
     filter?: CustomerFilter,
     search?: string,
-  ): Promise<CustomerReadModel[]> {
+  ): Promise<CustomerDetailReadModel[]> {
     const query = this.repository
       .createQueryBuilder('customer')
       .leftJoinAndSelect('customer.user', 'user')
@@ -51,6 +53,30 @@ export class TypeOrmCustomersQueryRepository implements ICustomersQueryRepositor
     return customersTypeOrm.map((customerTypeOrm) =>
       CustomersMapper.toReadModel(customerTypeOrm),
     );
+  }
+
+  public async findByUserId(userId: string): Promise<CustomerReadModel | null> {
+    const customerTypeOrm = await this.repository.findOne({
+      where: { userId },
+      relations: { addresses: true },
+    });
+
+    return customerTypeOrm
+      ? new CustomerReadModel(
+          customerTypeOrm.id,
+          customerTypeOrm.phoneNumber,
+          customerTypeOrm.addresses.map(
+            (addressTypeOrm) =>
+              new AddressReadModel(
+                addressTypeOrm.id,
+                addressTypeOrm.street,
+                addressTypeOrm.provinceName,
+                addressTypeOrm.wardName,
+                addressTypeOrm.isDefault,
+              ),
+          ),
+        )
+      : null;
   }
 
   public async findIdByEmail(email: string): Promise<string | null> {

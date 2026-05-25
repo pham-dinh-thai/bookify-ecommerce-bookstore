@@ -1,4 +1,5 @@
 import { CustomerFilter } from '../customer.filter';
+import { CustomerDetailReadModel } from '../read-models/customer-detail.read-model';
 import { CustomerReadModel } from '../read-models/customer.read-model';
 
 export interface ICustomersQueryRepository {
@@ -7,7 +8,9 @@ export interface ICustomersQueryRepository {
     limit: number,
     filter?: CustomerFilter,
     search?: string,
-  ): Promise<CustomerReadModel[]>;
+  ): Promise<CustomerDetailReadModel[]>;
+
+  findByUserId(userId: string): Promise<CustomerReadModel | null>;
 
   findIdByEmail(email: string): Promise<string | null>;
 

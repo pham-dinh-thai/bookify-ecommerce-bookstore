@@ -1,6 +1,6 @@
 import { Gender } from '../../../../shared/domain/enums/gender.enum';
 import { Customer } from '../../domain/customer-aggregate/customer.aggregate';
-import { CustomerReadModel } from '../../domain/customer-aggregate/read-models/customer.read-model';
+import { CustomerDetailReadModel } from '../../domain/customer-aggregate/read-models/customer-detail.read-model';
 import { CustomerTypeOrm } from '../entities/customer.entity';
 import { AddressesMapper } from './addresses.mapper';
 
@@ -17,8 +17,8 @@ export class CustomersMapper {
 
   public static toReadModel(
     customerTypeOrm: CustomerTypeOrm,
-  ): CustomerReadModel {
-    return new CustomerReadModel(
+  ): CustomerDetailReadModel {
+    return new CustomerDetailReadModel(
       customerTypeOrm.id,
       customerTypeOrm.userId,
       customerTypeOrm.user.firstName,
