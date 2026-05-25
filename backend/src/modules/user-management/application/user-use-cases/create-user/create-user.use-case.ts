@@ -89,7 +89,7 @@ export class CreateUserUseCase {
         'user-management',
         'users',
         {
-          user,
+          userId: user.getId(),
         },
       );
     });

@@ -86,7 +86,7 @@ export class User {
     this.isActive = true;
   }
 
-  public changeEmail(email): void {
+  public changeEmail(email: string): void {
     this.email = Email.create(email);
   }
 

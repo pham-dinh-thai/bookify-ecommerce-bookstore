@@ -50,7 +50,7 @@ export class ActivateUserUseCase {
         'user-management',
         'users',
         {
-          user,
+          userId: user.getId(),
         },
       );
     });

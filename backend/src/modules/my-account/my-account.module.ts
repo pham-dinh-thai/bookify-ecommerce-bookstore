@@ -5,6 +5,9 @@ import { CustomerManagementModule } from '../customer-management/customer-manage
 import { FindMyBasicInfoUseCase } from './application/my-account-use-cases/find-my-basic-info/find-my-basic-info.use-case';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { FindMyContactInfoUseCase } from './application/my-account-use-cases/find-my-contact-info/find-my-contact-info.use-case';
+import { ChangeEmailUseCase } from './application/my-account-use-cases/change-email/change-email.use-case';
+import { AuditLogModule } from '../audit-log/audit-log.module';
+import { UnitOfWorkModule } from '../../shared/modules/unit-of-work/unit-of-work.module';
 
 @Module({
   controllers: [MyAccountController],
@@ -12,7 +15,13 @@ import { FindMyContactInfoUseCase } from './application/my-account-use-cases/fin
     UserManagementModule,
     CustomerManagementModule,
     AuthenticationModule,
+    AuditLogModule,
+    UnitOfWorkModule,
   ],
-  providers: [FindMyBasicInfoUseCase, FindMyContactInfoUseCase],
+  providers: [
+    FindMyBasicInfoUseCase,
+    FindMyContactInfoUseCase,
+    ChangeEmailUseCase,
+  ],
 })
 export class MyAccountModule {}
