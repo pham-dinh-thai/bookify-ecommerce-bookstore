@@ -17,6 +17,7 @@ import KeyvRedis from '@keyv/redis';
 import { CatalogManagementModule } from './modules/catalog-management/catalog-management.module';
 import { FileStorageModule } from './modules/file-storage/file-storage.module';
 import { CartManagementModule } from './modules/cart-management/cart-management.module';
+import { MyAccountModule } from './modules/my-account/my-account.module';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { CartManagementModule } from './modules/cart-management/cart-management.
     CatalogManagementModule,
     FileStorageModule,
     CartManagementModule,
+    MyAccountModule,
   ],
   controllers: [AppController],
   providers: [AppService],
