@@ -10,6 +10,8 @@ import { AuditLogModule } from '../audit-log/audit-log.module';
 import { UnitOfWorkModule } from '../../shared/modules/unit-of-work/unit-of-work.module';
 import { SharedCacheModule } from '../../shared/modules/cache/cache.module';
 import { UpdateBasicInfoUseCase } from './application/my-account-use-cases/update-basic-info/update-basic-info.use-case';
+import { UpdatePhoneNumberUseCase } from './application/my-account-use-cases/update-phone-number/update-phone-number.use-case';
+import { UuidModule } from '../../shared/modules/uuid/uuid.module';
 
 @Module({
   controllers: [MyAccountController],
@@ -20,12 +22,14 @@ import { UpdateBasicInfoUseCase } from './application/my-account-use-cases/updat
     AuditLogModule,
     UnitOfWorkModule,
     SharedCacheModule,
+    UuidModule,
   ],
   providers: [
     FindMyBasicInfoUseCase,
     FindMyContactInfoUseCase,
     ChangeEmailUseCase,
     UpdateBasicInfoUseCase,
+    UpdatePhoneNumberUseCase,
   ],
 })
 export class MyAccountModule {}

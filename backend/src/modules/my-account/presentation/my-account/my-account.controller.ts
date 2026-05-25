@@ -9,6 +9,8 @@ import { ChangeEmailUseCase } from '../../application/my-account-use-cases/chang
 import { ChangeEmailRequest } from './requests/change-email.request';
 import { UpdateBasicInfoUseCase } from '../../application/my-account-use-cases/update-basic-info/update-basic-info.use-case';
 import { UpdateBasicInfoRequest } from './requests/update-basic-info.request';
+import { UpdatePhoneNumberUseCase } from '../../application/my-account-use-cases/update-phone-number/update-phone-number.use-case';
+import { UpdatePhoneNumberRequest } from './requests/update-phone-number.request';
 
 @Controller('my-account')
 @UseGuards(JwtAuthGuard)
@@ -18,6 +20,7 @@ export class MyAccountController {
     private readonly findMyContactInfoUseCase: FindMyContactInfoUseCase,
     private readonly changeEmailUseCase: ChangeEmailUseCase,
     private readonly updateBasicInfoUseCase: UpdateBasicInfoUseCase,
+    private readonly updatePhoneNumberUseCase: UpdatePhoneNumberUseCase,
   ) {}
 
   @Get('/basic-info')
@@ -52,5 +55,13 @@ export class MyAccountController {
     @CurrentUser('userId') userId: string,
   ): Promise<void> {
     await this.updateBasicInfoUseCase.execute(request, userId);
+  }
+
+  @Patch('/phone-number')
+  public async updatePhoneNumber(
+    @Body() request: UpdatePhoneNumberRequest,
+    @CurrentUser('userId') userId: string,
+  ): Promise<void> {
+    await this.updatePhoneNumberUseCase.execute(request, userId);
   }
 }

@@ -2,6 +2,7 @@ import { AggregateRoot } from '../../../../shared/domain/aggregate-root';
 import { Gender } from '../../../../shared/domain/enums/gender.enum';
 import { Address } from './entities/address.entity';
 import { AddressProps } from './entities/address.props';
+import { CreateCustomerProps } from './types';
 import { CustomerId } from './value-objects/customer-id.value-object';
 import { PhoneNumber } from './value-objects/phone-number.value-object';
 
@@ -16,17 +17,12 @@ export class Customer extends AggregateRoot {
     super();
   }
 
-  public static create(
-    id: string,
-    userId: string,
-    gender: Gender,
-    phoneNumber: string,
-  ): Customer {
+  public static create(props: CreateCustomerProps): Customer {
     const customer = new Customer(
-      CustomerId.create(id),
-      userId,
-      gender,
-      PhoneNumber.create(phoneNumber),
+      CustomerId.create(props.id),
+      props.userId,
+      props.gender ?? Gender.OTHER,
+      PhoneNumber.create(props.phoneNumber),
       [],
     );
 
@@ -39,6 +35,10 @@ export class Customer extends AggregateRoot {
     this.addresses.push(address);
 
     return address;
+  }
+
+  public updatePhoneNumber(phoneNumber: string): void {
+    this.phoneNumber = PhoneNumber.create(phoneNumber);
   }
 
   public getId(): string {
