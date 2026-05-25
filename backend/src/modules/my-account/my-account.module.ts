@@ -8,6 +8,7 @@ import { FindMyContactInfoUseCase } from './application/my-account-use-cases/fin
 import { ChangeEmailUseCase } from './application/my-account-use-cases/change-email/change-email.use-case';
 import { AuditLogModule } from '../audit-log/audit-log.module';
 import { UnitOfWorkModule } from '../../shared/modules/unit-of-work/unit-of-work.module';
+import { SharedCacheModule } from '../../shared/modules/cache/cache.module';
 
 @Module({
   controllers: [MyAccountController],
@@ -17,6 +18,7 @@ import { UnitOfWorkModule } from '../../shared/modules/unit-of-work/unit-of-work
     AuthenticationModule,
     AuditLogModule,
     UnitOfWorkModule,
+    SharedCacheModule,
   ],
   providers: [
     FindMyBasicInfoUseCase,

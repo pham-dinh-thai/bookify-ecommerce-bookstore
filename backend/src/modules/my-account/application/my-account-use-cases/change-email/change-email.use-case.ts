@@ -13,6 +13,10 @@ import {
   type IUnitOfWork,
   UNIT_OF_WORK,
 } from '../../../../../shared/modules/unit-of-work/application/unit-of-work';
+import {
+  CACHE_REPOSITORY,
+  type ICacheRepository,
+} from '../../../../../shared/modules/cache/domain/cache.repository.interface';
 
 @Injectable()
 export class ChangeEmailUseCase {
@@ -22,6 +26,9 @@ export class ChangeEmailUseCase {
 
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogCommandRepository: IAuditLogCommandRepository,
+
+    @Inject(CACHE_REPOSITORY)
+    private readonly cacheRepository: ICacheRepository,
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
@@ -48,5 +55,8 @@ export class ChangeEmailUseCase {
         },
       );
     });
+
+    await this.cacheRepository.delByPattern('users:*');
+    await this.cacheRepository.delByPattern('customers:*');
   }
 }
