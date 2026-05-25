@@ -10,6 +10,7 @@ import { Name } from './value-objects/name.value-object';
 import {
   CreateUserProps,
   FromPersistentUserProps,
+  UpdateBasicInfoProps,
   UpdateUserProps,
 } from './types';
 
@@ -85,6 +86,10 @@ export class User {
     this.isActive = true;
   }
 
+  public changeEmail(email): void {
+    this.email = Email.create(email);
+  }
+
   public async changePassword(
     oldPassword: string,
     newPassword: string,
@@ -103,6 +108,21 @@ export class User {
     }
 
     this.password = password;
+  }
+
+  public updateBasicInfo(props: UpdateBasicInfoProps): void {
+    if (!props.gender) {
+      throw new GenderEmptyException();
+    }
+
+    const isIncludesInGender = Object.values(Gender).includes(props.gender);
+    if (!isIncludesInGender) {
+      throw new GenderInvalidOptionException(props.gender);
+    }
+
+    this.firstName = Name.create(props.firstName);
+    this.lastName = Name.create(props.lastName);
+    this.gender = props.gender;
   }
 
   public getIsActive(): boolean {

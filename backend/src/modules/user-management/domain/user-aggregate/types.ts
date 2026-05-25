@@ -28,3 +28,9 @@ export type UpdateUserProps = {
   gender: Gender;
   roleId: string;
 };
+
+export type UpdateBasicInfoProps = {
+  firstName: string;
+  lastName: string;
+  gender: Gender;
+};
