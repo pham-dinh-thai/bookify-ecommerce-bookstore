@@ -11,6 +11,8 @@ import { UpdateBasicInfoUseCase } from '../../application/my-account-use-cases/u
 import { UpdateBasicInfoRequest } from './requests/update-basic-info.request';
 import { UpdatePhoneNumberUseCase } from '../../application/my-account-use-cases/update-phone-number/update-phone-number.use-case';
 import { UpdatePhoneNumberRequest } from './requests/update-phone-number.request';
+import { ChangePasswordRequest } from './requests/change-password.request';
+import { ChangePasswordUseCase } from '../../application/my-account-use-cases/change-password/change-password.use-case';
 
 @Controller('my-account')
 @UseGuards(JwtAuthGuard)
@@ -21,6 +23,7 @@ export class MyAccountController {
     private readonly changeEmailUseCase: ChangeEmailUseCase,
     private readonly updateBasicInfoUseCase: UpdateBasicInfoUseCase,
     private readonly updatePhoneNumberUseCase: UpdatePhoneNumberUseCase,
+    private readonly changePasswordUseCase: ChangePasswordUseCase,
   ) {}
 
   @Get('/basic-info')
@@ -46,7 +49,7 @@ export class MyAccountController {
     @CurrentUser('userId') userId: string,
     @Body() request: ChangeEmailRequest,
   ): Promise<void> {
-    await this.changeEmailUseCase.execute(userId, request);
+    await this.changeEmailUseCase.execute(request, userId);
   }
 
   @Put('/basic-info')
@@ -63,5 +66,13 @@ export class MyAccountController {
     @CurrentUser('userId') userId: string,
   ): Promise<void> {
     await this.updatePhoneNumberUseCase.execute(request, userId);
+  }
+
+  @Patch('/password')
+  public async changePassword(
+    @Body() request: ChangePasswordRequest,
+    @CurrentUser('userId') userId: string,
+  ) {
+    await this.changePasswordUseCase.execute(request, userId);
   }
 }

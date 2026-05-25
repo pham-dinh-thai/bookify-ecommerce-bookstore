@@ -12,6 +12,7 @@ import { SharedCacheModule } from '../../shared/modules/cache/cache.module';
 import { UpdateBasicInfoUseCase } from './application/my-account-use-cases/update-basic-info/update-basic-info.use-case';
 import { UpdatePhoneNumberUseCase } from './application/my-account-use-cases/update-phone-number/update-phone-number.use-case';
 import { UuidModule } from '../../shared/modules/uuid/uuid.module';
+import { ChangePasswordUseCase } from './application/my-account-use-cases/change-password/change-password.use-case';
 
 @Module({
   controllers: [MyAccountController],
@@ -30,6 +31,7 @@ import { UuidModule } from '../../shared/modules/uuid/uuid.module';
     ChangeEmailUseCase,
     UpdateBasicInfoUseCase,
     UpdatePhoneNumberUseCase,
+    ChangePasswordUseCase,
   ],
 })
 export class MyAccountModule {}
