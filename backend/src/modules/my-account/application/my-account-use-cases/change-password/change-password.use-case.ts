@@ -4,22 +4,22 @@ import {
   USERS_COMMAND_REPOSITORY,
 } from '../../../../user-management/domain/user-aggregate/repositories/users-command.repository.interface';
 import { User } from '../../../../user-management/domain/user-aggregate/user.aggregate';
-import { IChangeEmailRequest } from './change-email.request';
-import {
-  AUDIT_LOG_COMMAND_REPOSITORY,
-  type IAuditLogCommandRepository,
-} from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
+import { IChangePasswordRequest } from './change-password.request';
 import {
   type IUnitOfWork,
   UNIT_OF_WORK,
 } from '../../../../../shared/modules/unit-of-work/application/unit-of-work';
+import {
+  AUDIT_LOG_COMMAND_REPOSITORY,
+  type IAuditLogCommandRepository,
+} from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
 } from '../../../../../shared/modules/cache/domain/cache.repository.interface';
 
 @Injectable()
-export class ChangeEmailUseCase {
+export class ChangePasswordUseCase {
   public constructor(
     @Inject(USERS_COMMAND_REPOSITORY)
     private readonly usersCommandRepository: IUsersCommandRepository,
@@ -35,28 +35,27 @@ export class ChangeEmailUseCase {
   ) {}
 
   public async execute(
-    request: IChangeEmailRequest,
+    request: IChangePasswordRequest,
     userId: string,
   ): Promise<void> {
     const user: User = await this.usersCommandRepository.findOne(userId);
 
-    user.changeEmail(request.email);
+    await user.changePassword(
+      request.oldPassword,
+      request.newPassword,
+      request.newPasswordConfirmation,
+    );
 
     await this.unitOfWork.execute(async () => {
       await this.usersCommandRepository.save(user);
 
       await this.auditLogCommandRepository.write(
-        'CHANGE_EMAIL',
+        'CHANGE_PASSWORD',
         userId,
         'my-account',
         'users',
-        {
-          userId: user.getId(),
-        },
+        { userId },
       );
     });
-
-    await this.cacheRepository.delByPattern('users:*');
-    await this.cacheRepository.delByPattern('customers:*');
   }
 }

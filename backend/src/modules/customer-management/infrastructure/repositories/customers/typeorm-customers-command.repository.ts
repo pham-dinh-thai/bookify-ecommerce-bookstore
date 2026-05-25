@@ -4,7 +4,6 @@ import { ICustomersCommandRepository } from '../../../domain/customer-aggregate/
 import { CustomerTypeOrm } from '../../entities/customer.entity';
 import { Customer } from '../../../domain/customer-aggregate/customer.aggregate';
 import { CustomersMapper } from '../../mappers/customers.mapper';
-import { CustomerNotFoundException } from '../../../domain/customer-aggregate/exceptions/customer-not-found.exception';
 import { Gender } from '../../../../../shared/domain/enums/gender.enum';
 
 @Injectable({ scope: Scope.REQUEST })
