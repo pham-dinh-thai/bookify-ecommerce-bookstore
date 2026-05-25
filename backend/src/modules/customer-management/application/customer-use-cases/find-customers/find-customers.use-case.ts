@@ -3,7 +3,6 @@ import {
   CUSTOMERS_QUERY_REPOSITORY,
   type ICustomersQueryRepository,
 } from '../../../domain/customer-aggregate/repositories/customers-query.repository.interface';
-import { CustomerReadModel } from '../../../domain/customer-aggregate/read-models/customer.read-model';
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
