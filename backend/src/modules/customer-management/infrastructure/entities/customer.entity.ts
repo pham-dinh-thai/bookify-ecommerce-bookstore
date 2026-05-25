@@ -23,8 +23,8 @@ export class CustomerTypeOrm {
   @Column({ name: 'userId', type: 'varchar', length: 36 })
   userId!: string;
 
-  @Column({ type: 'varchar', length: 50, unique: true })
-  phoneNumber!: string;
+  @Column({ type: 'varchar', length: 50, unique: true, nullable: true })
+  phoneNumber?: string | null;
 
   @OneToMany(() => AddressTypeOrm, (address) => address.customer)
   addresses!: AddressTypeOrm[];

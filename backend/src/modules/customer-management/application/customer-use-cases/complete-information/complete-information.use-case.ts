@@ -98,7 +98,6 @@ export class CompleteInformationUseCase {
     const addressId = this.uuid.generate();
     const address = customer.addAddress({
       id: addressId,
-      isDefault: true,
       ...request.address,
     });
 

@@ -64,7 +64,7 @@ export class TypeOrmCustomersQueryRepository implements ICustomersQueryRepositor
     return customerTypeOrm
       ? new CustomerReadModel(
           customerTypeOrm.id,
-          customerTypeOrm.phoneNumber,
+          customerTypeOrm?.phoneNumber ?? null,
           customerTypeOrm.addresses.map(
             (addressTypeOrm) =>
               new AddressReadModel(

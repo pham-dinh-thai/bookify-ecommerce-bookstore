@@ -4,7 +4,8 @@ import { ICustomersCommandRepository } from '../../../domain/customer-aggregate/
 import { CustomerTypeOrm } from '../../entities/customer.entity';
 import { Customer } from '../../../domain/customer-aggregate/customer.aggregate';
 import { CustomersMapper } from '../../mappers/customers.mapper';
-import { Gender } from '../../../../../shared/domain/enums/gender.enum';
+import { Address } from '../../../domain/customer-aggregate/entities/address.entity';
+import { AddressTypeOrm } from '../../entities/address.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class TypeOrmCustomersCommandRepository implements ICustomersCommandRepository {
@@ -15,19 +16,14 @@ export class TypeOrmCustomersCommandRepository implements ICustomersCommandRepos
       .getManager()
       .findOne(CustomerTypeOrm, {
         where: { userId },
-        relations: { user: true },
+        relations: { user: true, addresses: true },
       });
 
     if (!customerTypeOrm) {
       return null;
     }
 
-    return Customer.create({
-      id: customerTypeOrm.id,
-      userId: customerTypeOrm.userId,
-      gender: customerTypeOrm.user.gender as Gender,
-      phoneNumber: customerTypeOrm.phoneNumber,
-    });
+    return CustomersMapper.toDomain(customerTypeOrm);
   }
 
   public async insert(customer: Customer): Promise<void> {
@@ -38,6 +34,21 @@ export class TypeOrmCustomersCommandRepository implements ICustomersCommandRepos
     customerTypeOrm.phoneNumber = customer.getPhoneNumber();
 
     await this.unitOfWork.getManager().insert(CustomerTypeOrm, customerTypeOrm);
+  }
+
+  public async addAddress(customerId: string, address: Address): Promise<void> {
+    const addressTypeOrm = new AddressTypeOrm();
+
+    addressTypeOrm.id = address.getId();
+    addressTypeOrm.customerId = customerId;
+    addressTypeOrm.street = address.getStreet();
+    addressTypeOrm.provinceCode = address.getProvinceCode();
+    addressTypeOrm.provinceName = address.getProvinceName();
+    addressTypeOrm.wardCode = address.getWardCode();
+    addressTypeOrm.wardName = address.getWardName();
+    addressTypeOrm.isDefault = address.getIsDefault();
+
+    await this.unitOfWork.getManager().insert(AddressTypeOrm, addressTypeOrm);
   }
 
   public async save(customer: Customer): Promise<void> {
