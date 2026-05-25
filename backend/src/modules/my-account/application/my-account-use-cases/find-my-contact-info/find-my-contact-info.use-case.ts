@@ -24,7 +24,7 @@ export class FindMyContactInfoUseCase {
     }
 
     const response = new FindMyContactInfoResponse(
-      customer.phoneNumber,
+      customer?.phoneNumber ?? null,
       customer.addresses.map(
         (address) =>
           new AddressResponse(

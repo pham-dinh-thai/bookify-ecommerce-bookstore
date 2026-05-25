@@ -5,12 +5,30 @@ import { CustomerTypeOrm } from '../entities/customer.entity';
 import { AddressesMapper } from './addresses.mapper';
 
 export class CustomersMapper {
+  public static toDomain(customerTypeOrm: CustomerTypeOrm): Customer {
+    return Customer.fromPersistent({
+      id: customerTypeOrm.id,
+      userId: customerTypeOrm.userId,
+      gender: customerTypeOrm.user.gender as Gender,
+      phoneNumber: customerTypeOrm?.phoneNumber ?? null,
+      addresses: customerTypeOrm.addresses.map((addressTypeOrm) => ({
+        id: addressTypeOrm.id,
+        street: addressTypeOrm.street,
+        provinceCode: addressTypeOrm.provinceCode,
+        provinceName: addressTypeOrm.provinceName,
+        wardCode: addressTypeOrm.wardCode,
+        wardName: addressTypeOrm.wardName,
+        isDefault: addressTypeOrm.isDefault,
+      })),
+    });
+  }
+
   public static toTypeOrm(customer: Customer): CustomerTypeOrm {
     const customerTypeOrm = new CustomerTypeOrm();
 
     customerTypeOrm.id = customer.getId();
     customerTypeOrm.userId = customer.getUserId();
-    customerTypeOrm.phoneNumber = customer.getPhoneNumber();
+    customerTypeOrm.phoneNumber = customer?.getPhoneNumber() ?? null;
 
     return customerTypeOrm;
   }
@@ -25,7 +43,7 @@ export class CustomersMapper {
       customerTypeOrm.user.lastName,
       customerTypeOrm.user.email,
       customerTypeOrm.user.gender as Gender,
-      customerTypeOrm.phoneNumber,
+      customerTypeOrm?.phoneNumber ?? null,
       customerTypeOrm.addresses
         ? customerTypeOrm.addresses.map((address) =>
             AddressesMapper.toReadModel(address),

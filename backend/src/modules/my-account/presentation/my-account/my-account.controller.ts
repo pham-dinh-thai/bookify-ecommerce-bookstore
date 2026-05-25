@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Patch, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { FindMyBasicInfoUseCase } from '../../application/my-account-use-cases/find-my-basic-info/find-my-basic-info.use-case';
 import { JwtAuthGuard } from '../../../../shared/http/guards/jwt-auth.guard';
 import { CurrentUser } from '../../../../shared/http/decorators/current-user.decorator';
@@ -13,6 +21,8 @@ import { UpdatePhoneNumberUseCase } from '../../application/my-account-use-cases
 import { UpdatePhoneNumberRequest } from './requests/update-phone-number.request';
 import { ChangePasswordRequest } from './requests/change-password.request';
 import { ChangePasswordUseCase } from '../../application/my-account-use-cases/change-password/change-password.use-case';
+import { AddAddressRequest } from './requests/add-address.request';
+import { AddAddressUseCase } from '../../application/my-account-use-cases/add-address/add-address.use-case';
 
 @Controller('my-account')
 @UseGuards(JwtAuthGuard)
@@ -24,6 +34,7 @@ export class MyAccountController {
     private readonly updateBasicInfoUseCase: UpdateBasicInfoUseCase,
     private readonly updatePhoneNumberUseCase: UpdatePhoneNumberUseCase,
     private readonly changePasswordUseCase: ChangePasswordUseCase,
+    private readonly addAddressUseCase: AddAddressUseCase,
   ) {}
 
   @Get('/basic-info')
@@ -74,5 +85,13 @@ export class MyAccountController {
     @CurrentUser('userId') userId: string,
   ) {
     await this.changePasswordUseCase.execute(request, userId);
+  }
+
+  @Post('/address')
+  public async addAddress(
+    @Body() request: AddAddressRequest,
+    @CurrentUser('userId') userId: string,
+  ): Promise<void> {
+    await this.addAddressUseCase.execute(request, userId);
   }
 }

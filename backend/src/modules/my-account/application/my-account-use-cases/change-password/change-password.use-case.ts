@@ -13,10 +13,6 @@ import {
   AUDIT_LOG_COMMAND_REPOSITORY,
   type IAuditLogCommandRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
-import {
-  CACHE_REPOSITORY,
-  type ICacheRepository,
-} from '../../../../../shared/modules/cache/domain/cache.repository.interface';
 
 @Injectable()
 export class ChangePasswordUseCase {
@@ -26,9 +22,6 @@ export class ChangePasswordUseCase {
 
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogCommandRepository: IAuditLogCommandRepository,
-
-    @Inject(CACHE_REPOSITORY)
-    private readonly cacheRepository: ICacheRepository,
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,

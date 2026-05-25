@@ -1,4 +1,4 @@
-import { AddressProps } from './address.props';
+import { CreateAddressProps, FromPersistentAddressProps } from './types';
 import { AddressId } from './value-objects/address-id.value-object';
 import { Street } from './value-objects/street.value-object';
 
@@ -13,7 +13,19 @@ export class Address {
     private isDefault: boolean,
   ) {}
 
-  public static create(props: AddressProps): Address {
+  public static create(props: CreateAddressProps): Address {
+    return new Address(
+      AddressId.create(props.id),
+      new Street(props.street),
+      props.provinceCode,
+      props.provinceName,
+      props.wardCode,
+      props.wardName,
+      props.isDefault,
+    );
+  }
+
+  public static fromPersistent(props: FromPersistentAddressProps): Address {
     return new Address(
       AddressId.create(props.id),
       new Street(props.street),
