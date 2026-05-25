@@ -88,12 +88,12 @@ export class CompleteInformationUseCase {
     }
 
     const id = this.uuid.generate();
-    const customer = Customer.create(
-      id,
-      userId,
-      request.gender,
-      request.phoneNumber,
-    );
+    const customer = Customer.create({
+      id: id,
+      userId: userId,
+      gender: request.gender,
+      phoneNumber: request.phoneNumber,
+    });
 
     const addressId = this.uuid.generate();
     const address = customer.addAddress({
