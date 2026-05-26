@@ -10,6 +10,8 @@ export interface ICustomersCommandRepository {
 
   removeAddress(customerId: string, addressId: string): Promise<void>;
 
+  setDefaultAddress(customerId: string, addressId: string): Promise<void>;
+
   save(customer: Customer): Promise<void>;
 }
 
