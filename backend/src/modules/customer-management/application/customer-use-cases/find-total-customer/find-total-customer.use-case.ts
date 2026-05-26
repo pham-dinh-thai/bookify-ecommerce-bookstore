@@ -4,6 +4,11 @@ import {
   type ICustomersQueryRepository,
 } from '../../../domain/customer-aggregate/repositories/customers-query.repository.interface';
 
+/**
+ * Returns the total number of customers in the system.
+ *
+ * Used for business dashboards that track customer growth and store reach.
+ */
 @Injectable()
 export class FindTotalCustomerUseCase {
   public constructor(

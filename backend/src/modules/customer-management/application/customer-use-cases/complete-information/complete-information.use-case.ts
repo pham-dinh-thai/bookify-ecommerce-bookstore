@@ -33,6 +33,20 @@ import {
   USERS_COMMAND_REPOSITORY,
 } from '../../../../user-management/domain/user-aggregate/repositories/users-command.repository.interface';
 
+/**
+ * Completes a customer's profile after account creation.
+ *
+ * Business logic: Customers can create an account first and provide their
+ * phone number, gender, and first delivery address later from My Account when
+ * they are ready to use shopping and delivery features. The phone number must
+ * be unique because it is used for delivery contact and customer support.
+ * The supplied gender is also reflected on the linked user account so customer
+ * and user profile data stay consistent.
+ *
+ * Every completion is recorded in the audit log for traceability.
+ * Customer cache is invalidated after a successful completion to ensure clients
+ * see the latest data.
+ */
 @Injectable()
 export class CompleteInformationUseCase {
   public constructor(

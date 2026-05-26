@@ -2,6 +2,14 @@ import { CreateAddressProps, FromPersistentAddressProps } from './types';
 import { AddressId } from './value-objects/address-id.value-object';
 import { Street } from './value-objects/street.value-object';
 
+/**
+ * Customer delivery address.
+ *
+ * Business rules:
+ * - Street is required so orders can be delivered to an exact location
+ * - Province and ward identify the supported delivery area
+ * - Default address lets checkout choose a delivery target without asking every time
+ */
 export class Address {
   private constructor(
     private readonly id: AddressId,

@@ -9,6 +9,15 @@ import {
 import { CustomerId } from './value-objects/customer-id.value-object';
 import { PhoneNumber } from './value-objects/phone-number.value-object';
 
+/**
+ * Customer aggregate root.
+ *
+ * Business rules:
+ * - A customer profile belongs to exactly one user account
+ * - Gender defaults to OTHER when the customer has not provided it yet
+ * - Phone number is optional during early registration but must be valid once supplied
+ * - The first address added becomes the default address so checkout has a delivery target
+ */
 export class Customer extends AggregateRoot {
   private constructor(
     private readonly id: CustomerId,
@@ -20,6 +29,9 @@ export class Customer extends AggregateRoot {
     super();
   }
 
+  /**
+   * Creates a customer profile when a user becomes identifiable as a shopper.
+   */
   public static create(props: CreateCustomerProps): Customer {
     const customer = new Customer(
       CustomerId.create(props.id),
@@ -32,6 +44,10 @@ export class Customer extends AggregateRoot {
     return customer;
   }
 
+  /**
+   * Restores a customer profile with its saved addresses so business rules
+   * remain centralized.
+   */
   public static fromPersistent(props: FromPersistentCustomerProps): Customer {
     return new Customer(
       CustomerId.create(props.id),
@@ -52,6 +68,10 @@ export class Customer extends AggregateRoot {
     );
   }
 
+  /**
+   * Adds a delivery address and automatically makes it default when it is the
+   * customer's first one.
+   */
   public addAddress(props: AddAddressProps): Address {
     const hasDefault = this.addresses.some((address) => address.getIsDefault());
 
@@ -70,6 +90,9 @@ export class Customer extends AggregateRoot {
     return address;
   }
 
+  /**
+   * Updates the customer's contact number used for delivery and account communication.
+   */
   public updatePhoneNumber(phoneNumber: string): void {
     this.phoneNumber = PhoneNumber.create(phoneNumber);
   }
