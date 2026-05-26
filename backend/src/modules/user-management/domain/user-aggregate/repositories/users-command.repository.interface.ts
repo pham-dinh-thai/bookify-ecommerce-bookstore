@@ -5,6 +5,8 @@ export interface IUsersCommandRepository {
 
   save(user: User): Promise<void>;
 
+  updateGender(userId: string, gender: string): Promise<void>;
+
   delete(user: User): Promise<void>;
 }
 

@@ -14,6 +14,13 @@ import {
   CUSTOMER_CACHE_TTL,
 } from '../customer-cache.constants';
 
+/**
+ * Retrieves a paginated customer directory with optional filtering and search.
+ *
+ * Business logic: Back-office users need to find customers quickly for service,
+ * account review, and operational follow-up. Results are cached because this
+ * directory is read often and only needs to change when customer data changes.
+ */
 @Injectable()
 export class FindCustomersUseCase {
   public constructor(

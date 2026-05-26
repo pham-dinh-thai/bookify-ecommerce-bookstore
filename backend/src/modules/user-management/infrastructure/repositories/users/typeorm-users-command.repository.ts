@@ -27,6 +27,12 @@ export class TypeOrmUsersCommandRepository implements IUsersCommandRepository {
       .save(UserTypeOrm, UsersMapper.toTypeOrm(user));
   }
 
+  public async updateGender(userId: string, gender: string): Promise<void> {
+    await this.unitOfWork
+      .getManager()
+      .update(UserTypeOrm, { id: userId }, { gender });
+  }
+
   public async delete(user: User): Promise<void> {
     await this.unitOfWork
       .getManager()

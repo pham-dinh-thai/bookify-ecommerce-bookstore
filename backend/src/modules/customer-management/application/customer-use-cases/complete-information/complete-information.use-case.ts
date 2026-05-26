@@ -14,17 +14,9 @@ import {
   type ICustomersCommandRepository,
 } from '../../../domain/customer-aggregate/repositories/customers-command.repository.interface';
 import {
-  ADDRESSES_COMMAND_REPOSITORY,
-  type IAddressesCommandRepository,
-} from '../../../domain/customer-aggregate/entities/repositories/addresses-command.repository.interface';
-import {
   AUDIT_LOG_COMMAND_REPOSITORY,
   type IAuditLogCommandRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
-import {
-  CUSTOMER_MODULE_USERS_COMMAND_REPOSITORY,
-  type IUsersCommandRepository,
-} from '../../../domain/customer-aggregate/repositories/users-command.repository.interface';
 import {
   type IPhoneNumberExistsChecker,
   PHONE_NUMBER_EXISTS_CHECKER,
@@ -36,27 +28,42 @@ import {
   CACHE_REPOSITORY,
   type ICacheRepository,
 } from '../../../../../shared/modules/cache/domain/cache.repository.interface';
+import {
+  type IUsersCommandRepository,
+  USERS_COMMAND_REPOSITORY,
+} from '../../../../user-management/domain/user-aggregate/repositories/users-command.repository.interface';
 
+/**
+ * Completes a customer's profile after account creation.
+ *
+ * Business logic: Customers can create an account first and provide their
+ * phone number, gender, and first delivery address later from My Account when
+ * they are ready to use shopping and delivery features. The phone number must
+ * be unique because it is used for delivery contact and customer support.
+ * The supplied gender is also reflected on the linked user account so customer
+ * and user profile data stay consistent.
+ *
+ * Every completion is recorded in the audit log for traceability.
+ * Customer cache is invalidated after a successful completion to ensure clients
+ * see the latest data.
+ */
 @Injectable()
 export class CompleteInformationUseCase {
   public constructor(
     @Inject(CUSTOMERS_COMMAND_REPOSITORY)
-    private readonly commandRepository: ICustomersCommandRepository,
+    private readonly customersCommandRepository: ICustomersCommandRepository,
+
+    @Inject(USERS_COMMAND_REPOSITORY)
+    private readonly usersCommandRepository: IUsersCommandRepository,
 
     @Inject(UUID_GENERATOR)
-    private readonly uuid: IUuidGenerator,
+    private readonly uuidGenerator: IUuidGenerator,
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
 
-    @Inject(ADDRESSES_COMMAND_REPOSITORY)
-    private readonly addressCommandRepository: IAddressesCommandRepository,
-
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogCommandRepository: IAuditLogCommandRepository,
-
-    @Inject(CUSTOMER_MODULE_USERS_COMMAND_REPOSITORY)
-    private readonly usersCommandRepository: IUsersCommandRepository,
 
     @Inject(PHONE_NUMBER_EXISTS_CHECKER)
     private readonly phoneNumberExistsChecker: IPhoneNumberExistsChecker,
@@ -87,29 +94,34 @@ export class CompleteInformationUseCase {
       throw new PhoneNumberAlreadyBeenUseException();
     }
 
-    const id = this.uuid.generate();
     const customer = Customer.create({
-      id: id,
+      id: this.uuidGenerator.generate(),
       userId: userId,
       gender: request.gender,
       phoneNumber: request.phoneNumber,
     });
 
-    const addressId = this.uuid.generate();
-    const address = customer.addAddress({
-      id: addressId,
-      ...request.address,
+    const addedAddress = customer.addAddress({
+      id: this.uuidGenerator.generate(),
+      street: request.address.street,
+      provinceCode: request.address.provinceCode,
+      provinceName: request.address.provinceName,
+      wardCode: request.address.wardCode,
+      wardName: request.address.wardName,
     });
 
     await this.unitOfWork.execute(async () => {
-      await this.commandRepository.save(customer);
+      await this.customersCommandRepository.insert(customer);
 
       await this.usersCommandRepository.updateGender(
         customer.getUserId(),
         customer.getGender(),
       );
 
-      await this.addressCommandRepository.save(customer.getId(), address);
+      await this.customersCommandRepository.addAddress(
+        customer.getId(),
+        addedAddress,
+      );
 
       await this.auditLogCommandRepository.write(
         'COMPLETE_CUSTOMER_INFORMATION',
@@ -120,7 +132,7 @@ export class CompleteInformationUseCase {
           customerId: customer.getId(),
           phoneNumber: request.phoneNumber,
           address: {
-            addressId: address.getId(),
+            addressId: addedAddress.getId(),
             provinceCode: request.address.provinceCode,
             provinceName: request.address.provinceName,
             wardCode: request.address.wardCode,
