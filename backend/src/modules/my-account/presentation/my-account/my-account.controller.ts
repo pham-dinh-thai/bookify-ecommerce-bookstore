@@ -28,6 +28,7 @@ import { ChangePasswordUseCase } from '../../application/my-account-use-cases/ch
 import { AddAddressRequest } from './requests/add-address.request';
 import { AddAddressUseCase } from '../../application/my-account-use-cases/add-address/add-address.use-case';
 import { RemoveAddressUseCase } from '../../application/my-account-use-cases/remove-address/remove-address.use-case';
+import { SetDefaultAddressUseCase } from '../../application/my-account-use-cases/set-default-address/set-default-address.use-case';
 
 @Controller('my-account')
 @UseGuards(JwtAuthGuard)
@@ -41,6 +42,7 @@ export class MyAccountController {
     private readonly changePasswordUseCase: ChangePasswordUseCase,
     private readonly addAddressUseCase: AddAddressUseCase,
     private readonly removeAddressUseCase: RemoveAddressUseCase,
+    private readonly setDefaultAddressUseCase: SetDefaultAddressUseCase,
   ) {}
 
   @Get('/basic-info')
@@ -108,5 +110,13 @@ export class MyAccountController {
     @CurrentUser('userId') userId: string,
   ): Promise<void> {
     await this.removeAddressUseCase.execute(userId, id);
+  }
+
+  @Patch('/address/:id/is-default')
+  public async setDefaultAddress(
+    @Param('id') id: string,
+    @CurrentUser('userId') userId: string,
+  ): Promise<void> {
+    await this.setDefaultAddressUseCase.execute(userId, id);
   }
 }

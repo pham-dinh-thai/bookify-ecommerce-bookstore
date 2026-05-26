@@ -15,6 +15,7 @@ import { UuidModule } from '../../shared/modules/uuid/uuid.module';
 import { ChangePasswordUseCase } from './application/my-account-use-cases/change-password/change-password.use-case';
 import { AddAddressUseCase } from './application/my-account-use-cases/add-address/add-address.use-case';
 import { RemoveAddressUseCase } from './application/my-account-use-cases/remove-address/remove-address.use-case';
+import { SetDefaultAddressUseCase } from './application/my-account-use-cases/set-default-address/set-default-address.use-case';
 
 @Module({
   controllers: [MyAccountController],
@@ -36,6 +37,7 @@ import { RemoveAddressUseCase } from './application/my-account-use-cases/remove-
     ChangePasswordUseCase,
     AddAddressUseCase,
     RemoveAddressUseCase,
+    SetDefaultAddressUseCase,
   ],
 })
 export class MyAccountModule {}

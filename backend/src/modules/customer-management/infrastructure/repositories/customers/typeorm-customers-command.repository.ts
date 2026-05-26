@@ -60,6 +60,23 @@ export class TypeOrmCustomersCommandRepository implements ICustomersCommandRepos
       .delete(AddressTypeOrm, { id: addressId, customerId });
   }
 
+  public async setDefaultAddress(
+    customerId: string,
+    addressId: string,
+  ): Promise<void> {
+    await this.unitOfWork
+      .getManager()
+      .update(AddressTypeOrm, { customerId }, { isDefault: false });
+
+    await this.unitOfWork
+      .getManager()
+      .update(
+        AddressTypeOrm,
+        { customerId, id: addressId },
+        { isDefault: true },
+      );
+  }
+
   public async save(customer: Customer): Promise<void> {
     await this.unitOfWork
       .getManager()
