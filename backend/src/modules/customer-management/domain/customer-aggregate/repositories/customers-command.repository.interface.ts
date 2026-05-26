@@ -8,6 +8,8 @@ export interface ICustomersCommandRepository {
 
   addAddress(customerId: string, address: Address): Promise<void>;
 
+  removeAddress(customerId: string, addressId: string): Promise<void>;
+
   save(customer: Customer): Promise<void>;
 }
 
