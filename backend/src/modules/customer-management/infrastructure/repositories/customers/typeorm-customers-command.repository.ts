@@ -51,6 +51,15 @@ export class TypeOrmCustomersCommandRepository implements ICustomersCommandRepos
     await this.unitOfWork.getManager().insert(AddressTypeOrm, addressTypeOrm);
   }
 
+  public async removeAddress(
+    customerId: string,
+    addressId: string,
+  ): Promise<void> {
+    await this.unitOfWork
+      .getManager()
+      .delete(AddressTypeOrm, { id: addressId, customerId });
+  }
+
   public async save(customer: Customer): Promise<void> {
     await this.unitOfWork
       .getManager()

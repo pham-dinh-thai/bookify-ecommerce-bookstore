@@ -1,7 +1,11 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
+  Param,
   Patch,
   Post,
   Put,
@@ -23,6 +27,7 @@ import { ChangePasswordRequest } from './requests/change-password.request';
 import { ChangePasswordUseCase } from '../../application/my-account-use-cases/change-password/change-password.use-case';
 import { AddAddressRequest } from './requests/add-address.request';
 import { AddAddressUseCase } from '../../application/my-account-use-cases/add-address/add-address.use-case';
+import { RemoveAddressUseCase } from '../../application/my-account-use-cases/remove-address/remove-address.use-case';
 
 @Controller('my-account')
 @UseGuards(JwtAuthGuard)
@@ -35,6 +40,7 @@ export class MyAccountController {
     private readonly updatePhoneNumberUseCase: UpdatePhoneNumberUseCase,
     private readonly changePasswordUseCase: ChangePasswordUseCase,
     private readonly addAddressUseCase: AddAddressUseCase,
+    private readonly removeAddressUseCase: RemoveAddressUseCase,
   ) {}
 
   @Get('/basic-info')
@@ -93,5 +99,14 @@ export class MyAccountController {
     @CurrentUser('userId') userId: string,
   ): Promise<void> {
     await this.addAddressUseCase.execute(request, userId);
+  }
+
+  @Delete('/address/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async removeAddress(
+    @Param('id') id: string,
+    @CurrentUser('userId') userId: string,
+  ): Promise<void> {
+    await this.removeAddressUseCase.execute(userId, id);
   }
 }
