@@ -17,6 +17,12 @@ export type EmailForm = {
   email: string;
 };
 
+export type ChangePasswordForm = {
+  oldPassword: string;
+  newPassword: string;
+  newPasswordConfirmation: string;
+};
+
 export const genderOptions: Array<{ label: string; value: Gender }> = [
   { label: 'Female', value: 'female' },
   { label: 'Male', value: 'male' },

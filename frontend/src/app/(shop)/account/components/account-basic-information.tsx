@@ -1,15 +1,10 @@
 'use client';
-import { Info, Lock, MapPin, ReceiptText, RotateCcw, Save } from 'lucide-react';
+import { RotateCcw, Save } from 'lucide-react';
 import Link from 'next/link';
 import { FormEvent } from 'react';
 import { useMyBasicInfo } from '../hooks/use-my-basic-info';
 import { Gender, genderOptions } from '../types';
-
-const inactiveItems = [
-  { icon: MapPin, label: 'Contact Information' },
-  { icon: Lock, label: 'Change Password' },
-  { icon: ReceiptText, label: 'My Order' },
-];
+import AccountSidebar from './account-sidebar';
 
 export default function AccountBasicInformation() {
   const {
@@ -45,38 +40,7 @@ export default function AccountBasicInformation() {
   return (
     <section className="min-h-screen bg-[#f7faf5] text-[#2b352f]">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 py-10 sm:px-6 lg:flex-row lg:gap-14 lg:px-8 lg:py-14">
-        <aside className="w-full lg:w-64 lg:shrink-0">
-          <div className="lg:top-28">
-            <p className="mb-5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#58615b]/70">
-              My Account
-            </p>
-            <nav className="flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
-              <Link
-                href="/account"
-                className="flex min-w-fit items-center gap-3 rounded-lg bg-[#c1ecd4] px-4 py-3 text-sm font-bold text-[#325947]"
-              >
-                <Info size={18} strokeWidth={2.2} />
-                <span>Basic Information</span>
-              </Link>
-
-              {inactiveItems.map((item) => {
-                const Icon = item.icon;
-
-                return (
-                  <button
-                    key={item.label}
-                    type="button"
-                    disabled
-                    className="flex min-w-fit cursor-not-allowed items-center gap-3 rounded-lg px-4 py-3 text-left text-sm font-semibold text-[#58615b]/60 lg:w-full"
-                  >
-                    <Icon size={18} strokeWidth={1.8} />
-                    <span>{item.label}</span>
-                  </button>
-                );
-              })}
-            </nav>
-          </div>
-        </aside>
+        <AccountSidebar activeItem="basic-information" />
 
         <div className="min-w-0 flex-1">
           <header className="mb-8">
