@@ -1,5 +1,7 @@
 import { OrderItem } from './entities/order-item.entity';
+import { CreateOrderItemProps } from './entities/types';
 import { OrderIdEmptyException } from './exceptions/order-id-empty.exception';
+import { OrderItemNotFoundException } from './exceptions/order-item-not-found.exception';
 import { UserIdEmptyException } from './exceptions/user-id-empty.exception';
 import { CreateOrderProps, FromPersistentOrderProps } from './types';
 
@@ -37,12 +39,23 @@ export class Order {
     );
   }
 
-  public addItem() {
-    // TODO:
+  public addItem(item: CreateOrderItemProps): OrderItem {
+    const addedItem = OrderItem.create(item);
+
+    this.items.push(addedItem);
+
+    return addedItem;
   }
 
-  public removeItem() {
-    // TODO:
+  public removeItem(itemId: string): { deletedId: string } {
+    const index = this.items.findIndex((item) => item.getId() === itemId);
+    if (index === -1) {
+      throw new OrderItemNotFoundException();
+    }
+
+    this.items.splice(index, 1);
+
+    return { deletedId: itemId };
   }
 
   public getId(): string {

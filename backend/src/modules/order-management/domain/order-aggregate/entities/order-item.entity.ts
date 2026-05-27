@@ -1,5 +1,6 @@
 import { OrderItemIdEmptyException } from './exceptions/order-item-id-empty.exception';
 import { OrderItemPriceCanNotNegativeException } from './exceptions/order-item-price-can-not-negative.exception';
+import { OrderItemPriceEmptyException } from './exceptions/order-item-price-empty.exception';
 import { ProductIdEmptyException } from './exceptions/product-id-empty.exception';
 import { CreateOrderItemProps, FromPersistentOrderItemProps } from './types';
 import { OrderItemQuantity } from './value-objects/order-item-quantity.value-object';
@@ -22,7 +23,7 @@ export class OrderItem {
     }
 
     if (props.price == null) {
-      throw new OrderItemIdEmptyException();
+      throw new OrderItemPriceEmptyException();
     }
 
     if (props.price < 0) {
