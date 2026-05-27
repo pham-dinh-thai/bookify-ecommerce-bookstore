@@ -1,8 +1,14 @@
 import { getAccessToken } from '@/shared/auth/lib/token-storage';
-import { BasicInfoForm, EmailForm, MyBasicInfo } from '../types';
+import {
+  BasicInfoForm,
+  ChangePasswordForm,
+  EmailForm,
+  MyBasicInfo,
+} from '../types';
 
 const BASIC_INFO_ENDPOINT = '/api/my-account/basic-info';
 const EMAIL_ENDPOINT = '/api/my-account/email';
+const PASSWORD_ENDPOINT = '/api/my-account/password';
 
 async function getErrorMessage(response: Response): Promise<string> {
   const text = await response.text();
@@ -56,6 +62,24 @@ export async function updateMyBasicInfoService(
 
 export async function updateMyEmailService(payload: EmailForm): Promise<void> {
   const response = await fetch(EMAIL_ENDPOINT, {
+    method: 'PATCH',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders(),
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error(await getErrorMessage(response));
+  }
+}
+
+export async function changeMyPasswordService(
+  payload: ChangePasswordForm,
+): Promise<void> {
+  const response = await fetch(PASSWORD_ENDPOINT, {
     method: 'PATCH',
     credentials: 'include',
     headers: {
