@@ -1,4 +1,7 @@
-import { CreateOrderItemProps } from './types';
+import { OrderItemIdEmptyException } from './exceptions/order-item-id-empty.exception';
+import { OrderItemPriceCanNotNegativeException } from './exceptions/order-item-price-can-not-negative.exception';
+import { ProductIdEmptyException } from './exceptions/product-id-empty.exception';
+import { CreateOrderItemProps, FromPersistentOrderItemProps } from './types';
 import { OrderItemQuantity } from './value-objects/order-item-quantity.value-object';
 
 export class OrderItem {
@@ -10,6 +13,22 @@ export class OrderItem {
   ) {}
 
   public static create(props: CreateOrderItemProps): OrderItem {
+    if (!props.id) {
+      throw new OrderItemIdEmptyException();
+    }
+
+    if (!props.productId) {
+      throw new ProductIdEmptyException();
+    }
+
+    if (props.price == null) {
+      throw new OrderItemIdEmptyException();
+    }
+
+    if (props.price < 0) {
+      throw new OrderItemPriceCanNotNegativeException();
+    }
+
     return new OrderItem(
       props.id,
       props.productId,
@@ -18,8 +37,13 @@ export class OrderItem {
     );
   }
 
-  public updateQuantity(quantity: number): void {
-    this.quantity = this.quantity.update(quantity);
+  public static fromPersistent(props: FromPersistentOrderItemProps): OrderItem {
+    return new OrderItem(
+      props.id,
+      props.productId,
+      OrderItemQuantity.create(props.quantity),
+      props.price,
+    );
   }
 
   public getId(): string {

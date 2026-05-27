@@ -11,10 +11,6 @@ export class OrderItemQuantity {
     return new OrderItemQuantity(quantity);
   }
 
-  public update(quantity: number): OrderItemQuantity {
-    return new OrderItemQuantity(quantity);
-  }
-
   public getValue(): number {
     return this.value;
   }
