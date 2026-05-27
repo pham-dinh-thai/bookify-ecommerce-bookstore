@@ -1,9 +1,8 @@
-import { useAuth } from '@/shared/auth/hooks/use-auth';
 import {
   clearAccessToken,
   getAccessToken,
 } from '@/shared/auth/lib/token-storage';
-import { Settings, LogOut, Home, User } from 'lucide-react';
+import { LogOut, Home, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -45,7 +44,7 @@ export default function SidebarFooter() {
         Go to Homepage
       </Link>
       <Link
-        href="/admin/profile"
+        href="/my-account"
         className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13px] font-medium text-gray-700 hover:bg-gray-50 transition-colors"
       >
         <User size={16} strokeWidth={1.8} />
