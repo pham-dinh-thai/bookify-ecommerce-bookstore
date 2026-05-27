@@ -9,7 +9,8 @@ export class Order {
   private constructor(
     private readonly id: string,
     private readonly userId: string,
-    private readonly items: OrderItem[],
+    private items: OrderItem[],
+    private status,
   ) {}
 
   public static create(props: CreateOrderProps): Order {
@@ -21,7 +22,7 @@ export class Order {
       throw new UserIdEmptyException();
     }
 
-    return new Order(props.id, props.userId, []);
+    return new Order(props.id, props.userId, [], props.status);
   }
 
   public static fromPersistent(props: FromPersistentOrderProps): Order {
@@ -36,6 +37,7 @@ export class Order {
           price: item.price,
         }),
       ),
+      props.status,
     );
   }
 
