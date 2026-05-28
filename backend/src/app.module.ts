@@ -18,7 +18,7 @@ import { CatalogManagementModule } from './modules/catalog-management/catalog-ma
 import { FileStorageModule } from './modules/file-storage/file-storage.module';
 import { CartManagementModule } from './modules/cart-management/cart-management.module';
 import { MyAccountModule } from './modules/my-account/my-account.module';
-import { OrderManagementModule } from './modules/order-management/order-management.module';
+import { OrderModule } from './modules/order/order.module';
 
 @Module({
   imports: [
@@ -66,7 +66,7 @@ import { OrderManagementModule } from './modules/order-management/order-manageme
     FileStorageModule,
     CartManagementModule,
     MyAccountModule,
-    OrderManagementModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],

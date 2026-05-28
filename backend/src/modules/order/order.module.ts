@@ -14,4 +14,4 @@ import { AuditLogModule } from '../audit-log/audit-log.module';
     AuditLogModule,
   ],
 })
-export class OrderManagementModule {}
+export class OrderModule {}
