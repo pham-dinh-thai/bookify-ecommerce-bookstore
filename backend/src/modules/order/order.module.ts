@@ -6,6 +6,7 @@ import { UnitOfWorkModule } from '../../shared/modules/unit-of-work/unit-of-work
 import { AuditLogModule } from '../audit-log/audit-log.module';
 import { PlaceOrderUseCase } from './application/order-use-cases/place-order/place-order.use-case';
 import { UuidModule } from '../../shared/modules/uuid/uuid.module';
+import { CustomerManagementModule } from '../customer-management/customer-management.module';
 
 @Module({
   controllers: [OrdersController],
@@ -15,6 +16,7 @@ import { UuidModule } from '../../shared/modules/uuid/uuid.module';
     UnitOfWorkModule,
     AuditLogModule,
     UuidModule,
+    CustomerManagementModule,
   ],
   providers: [PlaceOrderUseCase],
 })

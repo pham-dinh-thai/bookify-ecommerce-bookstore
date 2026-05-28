@@ -7,6 +7,8 @@ export type CreateOrderProps = {
   id: string;
   userId: string;
   paymentMethod: PaymentMethod;
+  shippingAddress: string;
+  phoneNumber: string;
 };
 
 export type FromPersistentOrderProps = {
@@ -16,4 +18,6 @@ export type FromPersistentOrderProps = {
   status: OrderStatus;
   paymentStatus: PaymentStatus;
   paymentMethod: PaymentMethod;
+  shippingAddress: string;
+  phoneNumber: string;
 };
