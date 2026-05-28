@@ -9,6 +9,10 @@ import {
   type IUuidGenerator,
   UUID_GENERATOR,
 } from '../../../../../shared/modules/uuid/domain/uuid-generator.interface';
+import {
+  type IUnitOfWork,
+  UNIT_OF_WORK,
+} from '../../../../../shared/modules/unit-of-work/application/unit-of-work';
 
 /**
  * Adds a product item to the user's cart.
@@ -24,31 +28,55 @@ export class AddItemToCartUseCase {
 
     @Inject(UUID_GENERATOR)
     private readonly uuidGenerator: IUuidGenerator,
+
+    @Inject(UNIT_OF_WORK)
+    private readonly unitOfWork: IUnitOfWork,
   ) {}
 
   public async execute(
     request: IAddItemToCartRequest,
     userId: string,
   ): Promise<void> {
-    let cart: Cart | null =
+    const cart: Cart | null =
       await this.cartsCommandRepository.findUserCart(userId);
-
-    if (cart === null) {
-      cart = Cart.create({
+    const isNewCart = cart === null;
+    const activeCart =
+      cart ??
+      Cart.create({
         id: this.uuidGenerator.generate(),
         userId: userId,
       });
 
-      await this.cartsCommandRepository.insert(cart);
-    }
+    const existingItem = activeCart
+      .getItems()
+      .find((item) => item.getProductId() === request.productId);
 
-    const addedItem = cart.addItem({
+    const addedItem = activeCart.addItem({
       id: this.uuidGenerator.generate(),
       productId: request.productId,
       quantity: request.quantity,
       price: request.price,
     });
 
-    await this.cartsCommandRepository.addItemToCart(cart.getId(), addedItem);
+    await this.unitOfWork.execute(async () => {
+      if (isNewCart) {
+        await this.cartsCommandRepository.insert(activeCart);
+      }
+
+      if (existingItem) {
+        await this.cartsCommandRepository.updateItemQuantity(
+          activeCart.getId(),
+          addedItem.getProductId(),
+          addedItem.getQuantity(),
+        );
+
+        return;
+      }
+
+      await this.cartsCommandRepository.addItemToCart(
+        activeCart.getId(),
+        addedItem,
+      );
+    });
   }
 }

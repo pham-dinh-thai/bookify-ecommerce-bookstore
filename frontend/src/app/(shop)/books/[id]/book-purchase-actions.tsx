@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useMemo, useState, createContext, useContext } from 'react';
 import { useToast } from '@/shared/common/toast/toast';
 import { addCartItem, StoredCartItem } from '../../cart/cart-storage';
+import { addCartItemService } from '../../cart/cart.service';
 
 type PurchaseCtx = {
   quantity: number;
@@ -98,6 +99,7 @@ export function PurchaseButtons({ book }: PurchaseButtonsProps) {
   const router = useRouter();
   const toast = useToast();
   const [added, setAdded] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const cartItem: StoredCartItem = {
     ...book,
@@ -105,17 +107,39 @@ export function PurchaseButtons({ book }: PurchaseButtonsProps) {
     isAvailable: canBuy,
   };
 
-  const handleAddToCart = () => {
-    addCartItem(cartItem);
-    setAdded(true);
-    toast?.addToast('Added to cart successfully', 'success');
-    window.setTimeout(() => setAdded(false), 1400);
+  const handleAddToCart = async () => {
+    try {
+      setSubmitting(true);
+      await addCartItemService(cartItem);
+      addCartItem(cartItem);
+      setAdded(true);
+      toast?.addToast('Added to cart successfully', 'success');
+      window.setTimeout(() => setAdded(false), 1400);
+    } catch (error) {
+      toast?.addToast(
+        error instanceof Error ? error.message : 'Failed to add item to cart',
+        'error',
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handleBuyNow = () => {
-    addCartItem(cartItem);
-    toast?.addToast('Added to cart successfully', 'success');
-    router.push('/cart');
+  const handleBuyNow = async () => {
+    try {
+      setSubmitting(true);
+      await addCartItemService(cartItem);
+      addCartItem(cartItem);
+      toast?.addToast('Added to cart successfully', 'success');
+      router.push('/cart');
+    } catch (error) {
+      toast?.addToast(
+        error instanceof Error ? error.message : 'Failed to add item to cart',
+        'error',
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -123,7 +147,7 @@ export function PurchaseButtons({ book }: PurchaseButtonsProps) {
       <button
         type="button"
         onClick={handleBuyNow}
-        disabled={!canBuy}
+        disabled={!canBuy || submitting}
         className="rounded-xl bg-[#2d6a4f] px-6 py-2.5 text-sm font-bold text-[#e6ffef] transition-all enabled:hover:bg-[#245740] enabled:active:scale-95 disabled:cursor-not-allowed disabled:bg-[#a7b9ad]"
       >
         Buy now
@@ -131,12 +155,12 @@ export function PurchaseButtons({ book }: PurchaseButtonsProps) {
       <button
         type="button"
         onClick={handleAddToCart}
-        disabled={!canBuy}
+        disabled={!canBuy || submitting}
         aria-label={`Add ${quantity} item${quantity > 1 ? 's' : ''} to cart`}
         className="inline-flex h-10 items-center justify-center gap-2 rounded-xl px-3 text-sm font-semibold text-[#1b4332] transition-colors enabled:hover:bg-[#eff5ef] disabled:cursor-not-allowed disabled:text-[#9aa59f]"
       >
         <ShoppingCart size={20} strokeWidth={2} />
-        <span>{added ? 'Added' : 'Cart'}</span>
+        <span>{submitting ? 'Adding' : added ? 'Added' : 'Cart'}</span>
       </button>
     </div>
   );

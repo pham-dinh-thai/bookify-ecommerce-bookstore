@@ -2,18 +2,11 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import {
-  Bookmark,
-  Check,
-  Info,
-  Minus,
-  Plus,
-  ShoppingBag,
-  Trash2,
-} from 'lucide-react';
+import { Check, Info, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
 import { useToast } from '@/shared/common/toast/toast';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { readCartItems, StoredCartItem, writeCartItems } from './cart-storage';
+import { removeCartItemService } from './cart.service';
 
 const shippingFee = 25000;
 const taxFee = 15000;
@@ -28,8 +21,8 @@ export default function CartPage() {
   const hasHydratedCart = useRef(false);
   const [items, setItems] = useState<StoredCartItem[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [savedItems, setSavedItems] = useState<StoredCartItem[]>([]);
   const [checkoutMessage, setCheckoutMessage] = useState<string | null>(null);
+  const [removingIds, setRemovingIds] = useState<string[]>([]);
 
   useEffect(() => {
     let isActive = true;
@@ -108,33 +101,30 @@ export default function CartPage() {
     );
   };
 
-  const removeItem = (id: string): void => {
-    setItems((current) => current.filter((item) => item.id !== id));
-    setSelectedIds((current) =>
-      current.filter((selectedId) => selectedId !== id),
-    );
-    toast?.addToast('Item removed from cart', 'success');
-  };
-
-  const saveForLater = (id: string): void => {
-    const item = items.find((cartItem) => cartItem.id === id);
-    if (!item) return;
-
-    setSavedItems((current) => [item, ...current]);
-    removeItem(id);
-  };
-
-  const moveToCart = (id: string): void => {
-    const item = savedItems.find((savedItem) => savedItem.id === id);
-    if (!item) return;
-
-    setItems((current) => [item, ...current]);
-    setSavedItems((current) =>
-      current.filter((savedItem) => savedItem.id !== id),
-    );
-    if (item.isAvailable) {
-      setSelectedIds((current) => [...current, item.id]);
+  const removeItem = async (id: string): Promise<boolean> => {
+    try {
+      setRemovingIds((current) => [...current, id]);
+      await removeCartItemService(id);
+      setItems((current) => current.filter((item) => item.id !== id));
+      setSelectedIds((current) =>
+        current.filter((selectedId) => selectedId !== id),
+      );
+      toast?.addToast('Item removed from cart', 'success');
+    } catch (error) {
+      toast?.addToast(
+        error instanceof Error
+          ? error.message
+          : 'Failed to remove item from cart',
+        'error',
+      );
+      return false;
+    } finally {
+      setRemovingIds((current) =>
+        current.filter((removingId) => removingId !== id),
+      );
     }
+
+    return true;
   };
 
   const checkout = (): void => {
@@ -327,67 +317,25 @@ export default function CartPage() {
                       </div>
 
                       <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
-                        {item.isAvailable && (
-                          <button
-                            type="button"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              saveForLater(item.id);
-                            }}
-                            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#1b4332]/60 transition-colors hover:text-[#1b4332]"
-                          >
-                            <Bookmark size={16} />
-                            Save for Later
-                          </button>
-                        )}
                         <button
                           type="button"
                           onClick={(event) => {
                             event.stopPropagation();
-                            removeItem(item.id);
+                            void removeItem(item.id);
                           }}
+                          disabled={removingIds.includes(item.id)}
                           className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-red-700/70 transition-colors hover:text-red-700"
                         >
                           <Trash2 size={16} />
-                          Remove
+                          {removingIds.includes(item.id)
+                            ? 'Removing'
+                            : 'Remove'}
                         </button>
                       </div>
                     </div>
                   </div>
                 </article>
               ))
-            )}
-
-            {savedItems.length > 0 && (
-              <section className="rounded-lg border border-[#1b4332]/10 bg-white p-5">
-                <h2 className="text-sm font-extrabold uppercase tracking-[0.2em]">
-                  Saved for Later
-                </h2>
-                <div className="mt-4 space-y-3">
-                  {savedItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center justify-between gap-4 border-t border-[#1b4332]/5 pt-3"
-                    >
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-bold">
-                          {item.title}
-                        </p>
-                        <p className="text-xs text-[#1b4332]/55">
-                          {formatCurrency(item.price)}
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => moveToCart(item.id)}
-                        className="shrink-0 rounded-md border border-[#1b4332]/20 px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] transition-colors hover:bg-[#1b4332] hover:text-white"
-                      >
-                        Move to cart
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </section>
             )}
           </div>
 
@@ -446,7 +394,6 @@ export default function CartPage() {
                 </p>
               )}
             </section>
-
           </aside>
         </div>
       </div>

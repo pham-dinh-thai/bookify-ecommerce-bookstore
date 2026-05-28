@@ -13,7 +13,7 @@ export class OrdersController {
   public async placeOrder(
     @Body() request: PlaceOrderRequest,
     @CurrentUser('userId') userId: string,
-  ): Promise<any> {
-    return await this.placeOrderUseCase.execute(request, userId);
+  ): Promise<void> {
+    await this.placeOrderUseCase.execute(request, userId);
   }
 }

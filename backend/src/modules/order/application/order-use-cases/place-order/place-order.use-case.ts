@@ -21,12 +21,22 @@ import {
   type IUnitOfWork,
   UNIT_OF_WORK,
 } from '../../../../../shared/modules/unit-of-work/application/unit-of-work';
+import {
+  type IOrdersCommandRepository,
+  ORDERS_COMMAND_REPOSITORY,
+} from '../../../domain/order-aggregate/repositories/orders-command.repository.interface';
 
+/**
+ * Places an order only when the customer profile has enough fulfillment data.
+ *
+ * The order captures the customer's current default address and phone number
+ * as a delivery snapshot so later profile changes do not mutate the order.
+ */
 @Injectable()
 export class PlaceOrderUseCase {
   public constructor(
-    @Inject(UUID_GENERATOR)
-    private readonly uuidGenerator: IUuidGenerator,
+    @Inject(ORDERS_COMMAND_REPOSITORY)
+    private readonly ordersCommandRepository: IOrdersCommandRepository,
 
     @Inject(CUSTOMERS_QUERY_REPOSITORY)
     private readonly customersQueryRepository: ICustomersQueryRepository,
@@ -36,12 +46,19 @@ export class PlaceOrderUseCase {
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
+
+    @Inject(UUID_GENERATOR)
+    private readonly uuidGenerator: IUuidGenerator,
   ) {}
 
+  /**
+   * Requires a known customer, a phone number, and a default shipping address
+   * before accepting payment intent or reserving order items.
+   */
   public async execute(
     request: IPlaceOrderRequest,
     userId: string,
-  ): Promise<Order> {
+  ): Promise<void> {
     const customer: CustomerReadModel | null =
       await this.customersQueryRepository.findByUserId(userId);
 
@@ -78,8 +95,18 @@ export class PlaceOrderUseCase {
       });
     }
 
-    await this.unitOfWork.execute(async () => {});
+    await this.unitOfWork.execute(async () => {
+      await this.ordersCommandRepository.insert(order);
 
-    return order;
+      await this.auditLogCommandRepository.write(
+        'PLACE_ORDER',
+        userId,
+        'order',
+        'orders',
+        {
+          order,
+        },
+      );
+    });
   }
 }
