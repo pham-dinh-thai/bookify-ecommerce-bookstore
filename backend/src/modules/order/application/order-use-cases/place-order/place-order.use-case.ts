@@ -13,6 +13,14 @@ import { CustomerReadModel } from '../../../../customer-management/domain/custom
 import { CustomerNotFoundException } from '../../../../customer-management/domain/customer-aggregate/exceptions/customer-not-found.exception';
 import { PhoneNumberEmptyException } from '../../../domain/order-aggregate/entities/exceptions/phone-number-empty.exception';
 import { ShippingAddressEmptyException } from '../../../domain/order-aggregate/entities/exceptions/shipping-address-empty.exception';
+import {
+  AUDIT_LOG_COMMAND_REPOSITORY,
+  type IAuditLogCommandRepository,
+} from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
+import {
+  type IUnitOfWork,
+  UNIT_OF_WORK,
+} from '../../../../../shared/modules/unit-of-work/application/unit-of-work';
 
 @Injectable()
 export class PlaceOrderUseCase {
@@ -22,6 +30,12 @@ export class PlaceOrderUseCase {
 
     @Inject(CUSTOMERS_QUERY_REPOSITORY)
     private readonly customersQueryRepository: ICustomersQueryRepository,
+
+    @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
+    private readonly auditLogCommandRepository: IAuditLogCommandRepository,
+
+    @Inject(UNIT_OF_WORK)
+    private readonly unitOfWork: IUnitOfWork,
   ) {}
 
   public async execute(
@@ -63,6 +77,8 @@ export class PlaceOrderUseCase {
         price: item.price,
       });
     }
+
+    await this.unitOfWork.execute(async () => {});
 
     return order;
   }

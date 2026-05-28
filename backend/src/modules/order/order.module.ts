@@ -7,11 +7,13 @@ import { AuditLogModule } from '../audit-log/audit-log.module';
 import { PlaceOrderUseCase } from './application/order-use-cases/place-order/place-order.use-case';
 import { UuidModule } from '../../shared/modules/uuid/uuid.module';
 import { CustomerManagementModule } from '../customer-management/customer-management.module';
+import { OrderTypeOrm } from './infrastructure/entities/order.entity';
+import { OrderItemTypeOrm } from './infrastructure/entities/order-item.entity';
 
 @Module({
   controllers: [OrdersController],
   imports: [
-    TypeOrmModule.forFeature([]),
+    TypeOrmModule.forFeature([OrderTypeOrm, OrderItemTypeOrm]),
     AuthenticationModule,
     UnitOfWorkModule,
     AuditLogModule,
