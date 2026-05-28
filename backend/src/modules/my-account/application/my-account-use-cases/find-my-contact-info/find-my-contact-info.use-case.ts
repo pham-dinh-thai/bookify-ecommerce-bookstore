@@ -20,7 +20,7 @@ export class FindMyContactInfoUseCase {
       await this.customersQueryRepository.findByUserId(userId);
 
     if (!customer) {
-      throw new CustomerNotFoundException(userId);
+      throw new CustomerNotFoundException();
     }
 
     const response = new FindMyContactInfoResponse(

@@ -32,7 +32,7 @@ export class RemoveAddressUseCase {
       await this.customersCommandRepository.findByUserId(userId);
 
     if (!customer) {
-      throw new CustomerNotFoundException(userId);
+      throw new CustomerNotFoundException();
     }
 
     await this.unitOfWork.execute(async () => {

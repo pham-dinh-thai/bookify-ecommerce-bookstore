@@ -17,6 +17,8 @@ export class Order {
     private status: OrderStatus,
     private paymentStatus: PaymentStatus,
     private readonly paymentMethod: PaymentMethod,
+    private readonly shippingAddress: string,
+    private readonly phoneNumber: string,
   ) {}
 
   public static create(props: CreateOrderProps): Order {
@@ -35,6 +37,8 @@ export class Order {
       OrderStatus.PENDING,
       Order.getInitialPaymentStatus(props.paymentMethod),
       props.paymentMethod,
+      props.shippingAddress,
+      props.phoneNumber,
     );
   }
 
@@ -53,6 +57,8 @@ export class Order {
       props.status,
       props.paymentStatus,
       props.paymentMethod,
+      props.shippingAddress,
+      props.phoneNumber,
     );
   }
 
@@ -157,6 +163,14 @@ export class Order {
 
   public getPaymentMethod(): PaymentMethod {
     return this.paymentMethod;
+  }
+
+  public getShippingAddress(): string {
+    return this.shippingAddress;
+  }
+
+  public getPhoneNumber(): string {
+    return this.phoneNumber;
   }
 
   private static getInitialPaymentStatus(

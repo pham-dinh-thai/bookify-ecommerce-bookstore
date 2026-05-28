@@ -5,22 +5,54 @@ import {
   type IUuidGenerator,
   UUID_GENERATOR,
 } from '../../../../../shared/modules/uuid/domain/uuid-generator.interface';
+import {
+  CUSTOMERS_QUERY_REPOSITORY,
+  type ICustomersQueryRepository,
+} from '../../../../customer-management/domain/customer-aggregate/repositories/customers-query.repository.interface';
+import { CustomerReadModel } from '../../../../customer-management/domain/customer-aggregate/read-models/customer.read-model';
+import { CustomerNotFoundException } from '../../../../customer-management/domain/customer-aggregate/exceptions/customer-not-found.exception';
+import { PhoneNumberEmptyException } from '../../../domain/order-aggregate/entities/exceptions/phone-number-empty.exception';
+import { ShippingAddressEmptyException } from '../../../domain/order-aggregate/entities/exceptions/shipping-address-empty.exception';
 
 @Injectable()
 export class PlaceOrderUseCase {
   public constructor(
     @Inject(UUID_GENERATOR)
     private readonly uuidGenerator: IUuidGenerator,
+
+    @Inject(CUSTOMERS_QUERY_REPOSITORY)
+    private readonly customersQueryRepository: ICustomersQueryRepository,
   ) {}
 
   public async execute(
     request: IPlaceOrderRequest,
     userId: string,
   ): Promise<Order> {
+    const customer: CustomerReadModel | null =
+      await this.customersQueryRepository.findByUserId(userId);
+
+    if (!customer) {
+      throw new CustomerNotFoundException();
+    }
+
+    if (!customer.phoneNumber) {
+      throw new PhoneNumberEmptyException();
+    }
+
+    const defaultAddress = customer.addresses.find(
+      (address) => address.isDefault === true,
+    );
+    if (!defaultAddress) {
+      throw new ShippingAddressEmptyException();
+    }
+    const shippingAddress = `${defaultAddress.street}, ${defaultAddress.wardName}, ${defaultAddress.provinceName}`;
+
     const order: Order = Order.create({
       id: this.uuidGenerator.generate(),
       userId: userId,
       paymentMethod: request.paymentMethod,
+      shippingAddress: shippingAddress,
+      phoneNumber: customer.phoneNumber,
     });
 
     for (const item of request.items) {

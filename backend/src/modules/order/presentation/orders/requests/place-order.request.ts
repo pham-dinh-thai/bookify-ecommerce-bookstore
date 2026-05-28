@@ -1,4 +1,4 @@
-import { IsArray, IsEnum, IsNotEmpty } from 'class-validator';
+import { IsArray, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { IPlaceOrderRequest } from '../../../application/order-use-cases/place-order/place-order.request';
 import { PaymentMethod } from '../../../domain/order-aggregate/enums/payment-method.enum';
 
