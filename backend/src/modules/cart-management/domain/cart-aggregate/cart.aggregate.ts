@@ -1,5 +1,4 @@
 import { CartItem } from './entities/cart-item.entity';
-import { CartItemDuplicatedException } from './exceptions/cart-item-duplicated.exception';
 import { CartItemLimitExceededException } from './exceptions/cart-item-limit-exceeded.exception';
 import { CartItemNotFoundException } from './exceptions/cart-item-not-found.exception';
 import { CreateCartItemProps } from './entities/types';
@@ -9,7 +8,7 @@ import { CreateCartProps, FromPersistentCartProps } from './types';
  * Cart aggregate root.
  *
  * Rules:
- * - Each item can only appear once in the cart
+ * - Each product can only appear once in the cart
  * - Number of items cannot exceed MAX_ITEMS
  * - Cannot remove an item that does not exist in the cart
  */
@@ -37,11 +36,13 @@ export class Cart {
 
   public addItem(item: CreateCartItemProps): CartItem {
     const existing = this.items.find(
-      (fromCart) => fromCart.getId() === item.id,
+      (fromCart) => fromCart.getProductId() === item.productId,
     );
 
     if (existing) {
-      throw new CartItemDuplicatedException();
+      existing.updateQuantity(existing.getQuantity() + item.quantity);
+
+      return existing;
     }
 
     if (this.items.length >= Cart.MAX_ITEMS) {

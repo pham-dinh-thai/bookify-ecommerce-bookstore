@@ -9,6 +9,7 @@ import {
   type IUnitOfWork,
   UNIT_OF_WORK,
 } from '../../../../../shared/modules/unit-of-work/application/unit-of-work';
+import { CartItemNotFoundException } from '../../../domain/cart-aggregate/exceptions/cart-item-not-found.exception';
 
 /**
  * Removes an item from the user's cart.
@@ -27,7 +28,7 @@ export class RemoveItemFromCartUseCase {
     private readonly unitOfWork: IUnitOfWork,
   ) {}
 
-  public async execute(itemId: string, userId: string): Promise<void> {
+  public async execute(productId: string, userId: string): Promise<void> {
     const cart: Cart | null =
       await this.cartsCommandRepository.findUserCart(userId);
 
@@ -35,10 +36,18 @@ export class RemoveItemFromCartUseCase {
       throw new CartNotFoundException();
     }
 
-    const { deletedId } = cart.removeItem(itemId);
+    const cartItem = cart
+      .getItems()
+      .find((item) => item.getProductId() === productId);
+
+    if (!cartItem) {
+      throw new CartItemNotFoundException();
+    }
+
+    cart.removeItem(cartItem.getId());
 
     await this.unitOfWork.execute(async () => {
-      await this.cartsCommandRepository.removeItem(cart.getId(), deletedId);
+      await this.cartsCommandRepository.removeItem(cart.getId(), productId);
     });
   }
 }

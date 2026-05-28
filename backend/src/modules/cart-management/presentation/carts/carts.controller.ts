@@ -44,12 +44,12 @@ export class CartsController {
     await this.addItemToCartUseCase.execute(request, userId);
   }
 
-  @Delete(':itemId')
+  @Delete(':productId')
   @HttpCode(HttpStatus.NO_CONTENT)
   public async removeItem(
-    @Param('itemId') itemId: string,
+    @Param('productId') productId: string,
     @CurrentUser('userId') userId: string,
   ): Promise<void> {
-    await this.removeItemFromCartUseCase.execute(itemId, userId);
+    await this.removeItemFromCartUseCase.execute(productId, userId);
   }
 }

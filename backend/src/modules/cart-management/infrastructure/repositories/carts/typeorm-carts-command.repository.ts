@@ -36,10 +36,27 @@ export class TypeOrmCartsCommandRepository implements ICartsCommandRepository {
       .insert(CartItemTypeOrm, CartItemsMapper.toTypeOrm(cartId, cartItem));
   }
 
-  public async removeItem(cartId: string, itemId: string): Promise<void> {
+  public async updateItemQuantity(
+    cartId: string,
+    productId: string,
+    quantity: number,
+  ): Promise<void> {
+    await this.unitOfWork.getManager().update(
+      CartItemTypeOrm,
+      {
+        cartId,
+        productId,
+      },
+      {
+        quantity,
+      },
+    );
+  }
+
+  public async removeItem(cartId: string, productId: string): Promise<void> {
     await this.unitOfWork.getManager().delete(CartItemTypeOrm, {
-      id: itemId,
       cartId: cartId,
+      productId: productId,
     });
   }
 
