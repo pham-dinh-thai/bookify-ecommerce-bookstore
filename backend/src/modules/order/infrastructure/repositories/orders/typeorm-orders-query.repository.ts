@@ -7,6 +7,7 @@ import { OrderTypeOrm } from '../../entities/order.entity';
 import { Repository } from 'typeorm';
 import { MyOrderReadModel } from '../../../domain/order-aggregate/read-models/my-order.read-model';
 import { OrderItemPreviewReadModel } from '../../../domain/order-aggregate/read-models/order-item-preview.read-model';
+import { OrdersMapper } from '../../mappers/orders.mapper';
 
 @Injectable()
 export class TypeOrmOrdersQueryRepository implements IOrdersQueryRepository {
@@ -34,29 +35,9 @@ export class TypeOrmOrdersQueryRepository implements IOrdersQueryRepository {
       },
     });
 
-    return ordersTypeOrm.map((orderTypeOrm) => {
-      const previewItems = orderTypeOrm.items.map((item) => {
-        const primaryCover = item.product.covers?.find(
-          (cover) => cover.isPrimary,
-        );
-
-        return new OrderItemPreviewReadModel(
-          item.productId,
-          item.product.title,
-          primaryCover?.url ?? null,
-          item.quantity,
-        );
-      });
-
-      return new MyOrderReadModel(
-        orderTypeOrm.id,
-        orderTypeOrm.status,
-        orderTypeOrm.paymentStatus,
-        orderTypeOrm.items.reduce((total, item) => total + item.quantity, 0),
-        previewItems,
-        orderTypeOrm.createdAt,
-      );
-    });
+    return ordersTypeOrm.map((orderTypeOrm) =>
+      OrdersMapper.toMyOrderReadModel(orderTypeOrm),
+    );
   }
 
   public async findOne(id: string): Promise<OrderReadModel | null> {
