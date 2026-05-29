@@ -6,10 +6,23 @@ import { OrderTypeOrm } from '../../entities/order.entity';
 import { OrderItemTypeOrm } from '../../entities/order-item.entity';
 import { OrdersMapper } from '../../mappers/orders.mapper';
 import { OrderItemsMapper } from '../../mappers/order-items.mapper';
+import { OrderNotFoundException } from '../../../domain/order-aggregate/exceptions/order-not-found.exception';
 
 @Injectable()
 export class TypeOrmOrdersCommandRepository implements IOrdersCommandRepository {
   public constructor(private readonly unitOfWork: TypeOrmUnitOfWork) {}
+
+  public async findOne(id: string): Promise<Order> {
+    const orderTypeOrm: OrderTypeOrm | null = await this.unitOfWork
+      .getManager()
+      .findOne(OrderTypeOrm, { where: { id }, relations: { items: true } });
+
+    if (!orderTypeOrm) {
+      throw new OrderNotFoundException();
+    }
+
+    return OrdersMapper.toDomain(orderTypeOrm);
+  }
 
   /**
    * Stores the order root first, then stores each order item with the created
@@ -28,5 +41,11 @@ export class TypeOrmOrdersCommandRepository implements IOrdersCommandRepository 
           OrderItemsMapper.toTypeOrm(orderTypeOrm.id, item),
         );
     }
+  }
+
+  public async save(order: Order): Promise<void> {
+    await this.unitOfWork
+      .getManager()
+      .save(OrderTypeOrm, OrdersMapper.toTypeOrm(order));
   }
 }
