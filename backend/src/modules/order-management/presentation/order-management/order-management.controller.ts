@@ -1,4 +1,10 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 
-@Controller('order-management')
-export class OrderManagementController {}
+@Controller('orders')
+export class OrderManagementController {
+  @Get()
+  public async findAll() {}
+
+  @Get(':id')
+  public async findOne() {}
+}
