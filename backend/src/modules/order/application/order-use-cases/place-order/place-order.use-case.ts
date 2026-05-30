@@ -25,6 +25,12 @@ import {
   type IOrdersCommandRepository,
   ORDERS_COMMAND_REPOSITORY,
 } from '../../../domain/order-aggregate/repositories/orders-command.repository.interface';
+import {
+  BOOKS_QUERY_REPOSITORY,
+  type IBooksQueryRepository,
+} from '../../../../book-management/domain/book-aggregate/repositories/books-query.repository.interface';
+import { BookReadModel } from '../../../../book-management/domain/book-aggregate/read-models/book.read-model';
+import { BookNotFoundException } from '../../../../book-management/domain/book-aggregate/exceptions/book-not-found.exception';
 
 /**
  * Places an order only when the customer profile has enough fulfillment data.
@@ -40,6 +46,9 @@ export class PlaceOrderUseCase {
 
     @Inject(CUSTOMERS_QUERY_REPOSITORY)
     private readonly customersQueryRepository: ICustomersQueryRepository,
+
+    @Inject(BOOKS_QUERY_REPOSITORY)
+    private readonly booksQueryRepository: IBooksQueryRepository,
 
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogCommandRepository: IAuditLogCommandRepository,
@@ -87,11 +96,19 @@ export class PlaceOrderUseCase {
     });
 
     for (const item of request.items) {
+      const book: BookReadModel | null = await this.booksQueryRepository.findOne(
+        item.productId,
+      );
+
+      if (!book) {
+        throw new BookNotFoundException();
+      }
+
       order.addItem({
         id: this.uuidGenerator.generate(),
         productId: item.productId,
         quantity: item.quantity,
-        price: item.price,
+        price: book.originalPrice,
       });
     }
 
