@@ -17,7 +17,7 @@ import { CancelOrderUseCase } from '../../application/order-use-cases/cancel-ord
 import { OrderDetailReadModel } from '../../domain/order-aggregate/read-models/order-detail.read-model';
 import { ViewOrderDetailUseCase } from '../../application/order-use-cases/view-order-detail/view-order-detail.use-case';
 
-@Controller('orders')
+@Controller('my-orders')
 @UseGuards(JwtAuthGuard)
 export class OrdersController {
   public constructor(
@@ -27,7 +27,7 @@ export class OrdersController {
     private readonly viewOrderDetailUseCase: ViewOrderDetailUseCase,
   ) {}
 
-  @Get('my-orders')
+  @Get()
   public async findMyOrders(
     @CurrentUser('userId') userId: string,
   ): Promise<FindMyOrdersResponse> {
@@ -37,7 +37,7 @@ export class OrdersController {
     return response;
   }
 
-  @Get('my-orders/:id')
+  @Get(':id')
   public async viewDetail(
     @Param('id') id: string,
     @CurrentUser('userId') userId: string,
