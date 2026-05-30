@@ -9,7 +9,10 @@ export interface IOrdersQueryRepository {
 
   findOne(id: string): Promise<OrderReadModel | null>;
 
-  findOrderDetail(orderId: string): Promise<OrderDetailReadModel | null>;
+  findOrderDetail(
+    userId: string,
+    orderId: string,
+  ): Promise<OrderDetailReadModel>;
 }
 
 export const ORDERS_QUERY_REPOSITORY = 'IOrdersQueryRepository';
