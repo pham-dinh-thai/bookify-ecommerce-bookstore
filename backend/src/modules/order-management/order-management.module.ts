@@ -6,6 +6,7 @@ import { UnitOfWorkModule } from '../../shared/modules/unit-of-work/unit-of-work
 import { UpdateOrderStatusUseCase } from './application/order-management-use-cases/update-order-status/update-order-status.use-case';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { FindOrdersUseCase } from './application/order-management-use-cases/find-orders/find-orders.use-case';
+import { FindOrderDetailUseCase } from './application/order-management-use-cases/find-order-detail/find-order-detail.use-case';
 
 @Module({
   controllers: [OrderManagementController],
@@ -15,6 +16,10 @@ import { FindOrdersUseCase } from './application/order-management-use-cases/find
     UnitOfWorkModule,
     AuthenticationModule,
   ],
-  providers: [FindOrdersUseCase, UpdateOrderStatusUseCase],
+  providers: [
+    FindOrdersUseCase,
+    FindOrderDetailUseCase,
+    UpdateOrderStatusUseCase,
+  ],
 })
 export class OrderManagementModule {}

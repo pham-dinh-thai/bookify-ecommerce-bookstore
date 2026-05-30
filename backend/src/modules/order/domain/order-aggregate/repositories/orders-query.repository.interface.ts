@@ -9,6 +9,8 @@ export interface IOrdersQueryRepository {
 
   findOne(id: string): Promise<OrderReadModel | null>;
 
+  findOrderDetailById(orderId: string): Promise<OrderDetailReadModel>;
+
   findOrderDetail(
     userId: string,
     orderId: string,

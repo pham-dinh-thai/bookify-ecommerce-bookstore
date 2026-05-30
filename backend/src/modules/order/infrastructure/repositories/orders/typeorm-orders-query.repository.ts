@@ -66,6 +66,28 @@ export class TypeOrmOrdersQueryRepository implements IOrdersQueryRepository {
     return OrdersMapper.toOrderReadModel(orderTypeOrm);
   }
 
+  public async findOrderDetailById(
+    orderId: string,
+  ): Promise<OrderDetailReadModel> {
+    const orderTypeOrm: OrderTypeOrm | null = await this.repository.findOne({
+      where: { id: orderId },
+      relations: {
+        user: true,
+        items: {
+          product: {
+            covers: true,
+          },
+        },
+      },
+    });
+
+    if (!orderTypeOrm) {
+      throw new OrderNotFoundException();
+    }
+
+    return OrdersMapper.toOrderDetailReadModel(orderTypeOrm);
+  }
+
   public async findOrderDetail(
     userId: string,
     orderId: string,

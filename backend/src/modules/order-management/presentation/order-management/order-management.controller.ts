@@ -7,6 +7,8 @@ import { UpdateOrderStatusRequest } from './requests/update-order-status.request
 import { CurrentUser } from '../../../../shared/http/decorators/current-user.decorator';
 import { FindOrdersUseCase } from '../../application/order-management-use-cases/find-orders/find-orders.use-case';
 import { FindOrdersResponse } from '../../application/order-management-use-cases/find-orders/find-orders.response';
+import { FindOrderDetailUseCase } from '../../application/order-management-use-cases/find-order-detail/find-order-detail.use-case';
+import { OrderDetailReadModel } from '../../../../modules/order/domain/order-aggregate/read-models/order-detail.read-model';
 
 @Controller('orders')
 @UseGuards(JwtAuthGuard, RoleGuard)
@@ -14,12 +16,22 @@ import { FindOrdersResponse } from '../../application/order-management-use-cases
 export class OrderManagementController {
   public constructor(
     private readonly findOrdersUseCase: FindOrdersUseCase,
+    private readonly findOrderDetailUseCase: FindOrderDetailUseCase,
     private readonly updateOrderStatusUseCase: UpdateOrderStatusUseCase,
   ) {}
 
   @Get()
   public async findOrders(): Promise<FindOrdersResponse> {
     const response = await this.findOrdersUseCase.execute();
+
+    return response;
+  }
+
+  @Get(':id')
+  public async findOrderDetail(
+    @Param('id') id: string,
+  ): Promise<OrderDetailReadModel> {
+    const response = await this.findOrderDetailUseCase.execute(id);
 
     return response;
   }
