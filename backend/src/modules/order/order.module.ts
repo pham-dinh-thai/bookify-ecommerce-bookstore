@@ -15,6 +15,7 @@ import { ORDERS_QUERY_REPOSITORY } from './domain/order-aggregate/repositories/o
 import { TypeOrmOrdersQueryRepository } from './infrastructure/repositories/orders/typeorm-orders-query.repository';
 import { FindMyOrdersUseCase } from './application/order-use-cases/find-my-orders/find-my-orders.use-case';
 import { CancelOrderUseCase } from './application/order-use-cases/cancel-order/cancel-order.use-case';
+import { ViewOrderDetailUseCase } from './application/order-use-cases/view-order-detail/view-order-detail.use-case';
 
 @Module({
   controllers: [OrdersController],
@@ -30,6 +31,7 @@ import { CancelOrderUseCase } from './application/order-use-cases/cancel-order/c
     PlaceOrderUseCase,
     FindMyOrdersUseCase,
     CancelOrderUseCase,
+    ViewOrderDetailUseCase,
     {
       provide: ORDERS_COMMAND_REPOSITORY,
       useClass: TypeOrmOrdersCommandRepository,

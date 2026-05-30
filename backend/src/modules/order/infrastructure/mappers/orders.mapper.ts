@@ -1,5 +1,7 @@
 import { Order } from '../../domain/order-aggregate/order.aggregate';
 import { MyOrderReadModel } from '../../domain/order-aggregate/read-models/my-order.read-model';
+import { OrderDetailItemReadModel } from '../../domain/order-aggregate/read-models/order-detail-item.read-model';
+import { OrderDetailReadModel } from '../../domain/order-aggregate/read-models/order-detail.read-model';
 import { OrderItemPreviewReadModel } from '../../domain/order-aggregate/read-models/order-item-preview.read-model';
 import { OrderTypeOrm } from '../entities/order.entity';
 
@@ -59,6 +61,48 @@ export class OrdersMapper {
       orderTypeOrm.items.reduce((total, item) => total + item.quantity, 0),
       previewItems,
       orderTypeOrm.createdAt,
+    );
+  }
+
+  public static toOrderDetailReadModel(
+    orderTypeOrm: OrderTypeOrm,
+  ): OrderDetailReadModel {
+    const items = orderTypeOrm.items.map((item) => {
+      const primaryCover = item.product.covers?.find(
+        (cover) => cover.isPrimary,
+      );
+      const unitPrice = Number(item.price);
+
+      return new OrderDetailItemReadModel(
+        item.id,
+        item.productId,
+        item.product.title,
+        primaryCover?.url ?? null,
+        item.quantity,
+        unitPrice,
+        unitPrice * item.quantity,
+      );
+    });
+
+    const totalItems = items.reduce((total, item) => total + item.quantity, 0);
+    const totalAmount = items.reduce(
+      (total, item) => total + item.lineTotal,
+      0,
+    );
+
+    return new OrderDetailReadModel(
+      orderTypeOrm.id,
+      orderTypeOrm.userId,
+      orderTypeOrm.status,
+      orderTypeOrm.paymentStatus,
+      orderTypeOrm.paymentMethod,
+      orderTypeOrm.shippingAddress,
+      orderTypeOrm.phoneNumber,
+      totalItems,
+      totalAmount,
+      items,
+      orderTypeOrm.createdAt,
+      orderTypeOrm.updatedAt,
     );
   }
 }

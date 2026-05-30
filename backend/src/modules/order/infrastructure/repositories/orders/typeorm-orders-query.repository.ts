@@ -8,6 +8,8 @@ import { Repository } from 'typeorm';
 import { MyOrderReadModel } from '../../../domain/order-aggregate/read-models/my-order.read-model';
 import { OrderItemPreviewReadModel } from '../../../domain/order-aggregate/read-models/order-item-preview.read-model';
 import { OrdersMapper } from '../../mappers/orders.mapper';
+import { OrderNotFoundException } from '../../../domain/order-aggregate/exceptions/order-not-found.exception';
+import { OrderDetailItemReadModel } from '../../../domain/order-aggregate/read-models/order-detail-item.read-model';
 
 @Injectable()
 export class TypeOrmOrdersQueryRepository implements IOrdersQueryRepository {
@@ -17,6 +19,7 @@ export class TypeOrmOrdersQueryRepository implements IOrdersQueryRepository {
   ) {}
 
   public async findAll(): Promise<OrderReadModel[]> {
+    // TODO:
     throw new Error();
   }
 
@@ -41,12 +44,30 @@ export class TypeOrmOrdersQueryRepository implements IOrdersQueryRepository {
   }
 
   public async findOne(id: string): Promise<OrderReadModel | null> {
+    // TODO:
     throw new Error();
   }
 
   public async findOrderDetail(
+    userId: string,
     orderId: string,
-  ): Promise<OrderDetailReadModel | null> {
-    throw new Error();
+  ): Promise<OrderDetailReadModel> {
+    const orderTypeOrm: OrderTypeOrm | null = await this.repository.findOne({
+      where: { id: orderId, userId },
+      relations: {
+        user: true,
+        items: {
+          product: {
+            covers: true,
+          },
+        },
+      },
+    });
+
+    if (!orderTypeOrm) {
+      throw new OrderNotFoundException();
+    }
+
+    return OrdersMapper.toOrderDetailReadModel(orderTypeOrm);
   }
 }
