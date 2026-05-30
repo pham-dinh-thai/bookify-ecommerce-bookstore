@@ -6,6 +6,12 @@ import {
 } from '../../../domain/order-aggregate/repositories/orders-query.repository.interface';
 import { MyOrderReadModel } from '../../../domain/order-aggregate/read-models/my-order.read-model';
 
+/**
+ * Retrieves the authenticated customer's order history.
+ *
+ * Business logic: Customers can only read their own orders because order
+ * history contains private purchase and fulfillment information.
+ */
 @Injectable()
 export class FindMyOrdersUseCase {
   public constructor(

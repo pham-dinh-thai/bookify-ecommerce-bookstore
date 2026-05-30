@@ -12,7 +12,17 @@ import {
   AUDIT_LOG_COMMAND_REPOSITORY,
   type IAuditLogCommandRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
+import { OrderNotFoundException } from '../../../domain/order-aggregate/exceptions/order-not-found.exception';
 
+/**
+ * Cancels a customer-owned order.
+ *
+ * Business logic: Customers can only cancel their own orders while the order is
+ * still in a cancellable lifecycle state, preventing disruption once fulfillment
+ * has moved too far operationally.
+ *
+ * Every cancellation is recorded in the audit log for traceability.
+ */
 @Injectable()
 export class CancelOrderUseCase {
   public constructor(
@@ -28,6 +38,10 @@ export class CancelOrderUseCase {
 
   public async execute(id: string, performedBy: string): Promise<void> {
     const order: Order = await this.ordersCommandRepository.findOne(id);
+
+    if (order.getUserId() !== performedBy) {
+      throw new OrderNotFoundException();
+    }
 
     order.cancel();
 

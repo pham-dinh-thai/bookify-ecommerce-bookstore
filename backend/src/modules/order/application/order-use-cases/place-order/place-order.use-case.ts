@@ -33,10 +33,13 @@ import { BookReadModel } from '../../../../book-management/domain/book-aggregate
 import { BookNotFoundException } from '../../../../book-management/domain/book-aggregate/exceptions/book-not-found.exception';
 
 /**
- * Places an order only when the customer profile has enough fulfillment data.
+ * Places a new customer order.
  *
- * The order captures the customer's current default address and phone number
- * as a delivery snapshot so later profile changes do not mutate the order.
+ * Business logic: The customer must have fulfillment-ready profile data before
+ * checkout. Delivery details and product prices are captured as order snapshots
+ * so the transaction keeps the exact state the customer agreed to buy.
+ *
+ * Every order placement is recorded in the audit log for traceability.
  */
 @Injectable()
 export class PlaceOrderUseCase {
@@ -60,10 +63,6 @@ export class PlaceOrderUseCase {
     private readonly uuidGenerator: IUuidGenerator,
   ) {}
 
-  /**
-   * Requires a known customer, a phone number, and a default shipping address
-   * before accepting payment intent or reserving order items.
-   */
   public async execute(
     request: IPlaceOrderRequest,
     userId: string,
