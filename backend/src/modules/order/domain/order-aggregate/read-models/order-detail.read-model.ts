@@ -6,6 +6,7 @@ import { OrderDetailItemReadModel } from './order-detail-item.read-model';
 export class OrderDetailReadModel {
   public constructor(
     public readonly id: string,
+    public readonly orderCode: string,
     public readonly userId: string,
     public readonly status: OrderStatus,
     public readonly paymentStatus: PaymentStatus,

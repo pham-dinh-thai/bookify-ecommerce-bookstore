@@ -5,6 +5,7 @@ import { PaymentStatus } from './enums/payment-status.enum';
 
 export type CreateOrderProps = {
   id: string;
+  orderCode: string;
   userId: string;
   paymentMethod: PaymentMethod;
   shippingAddress: string;
@@ -13,6 +14,7 @@ export type CreateOrderProps = {
 
 export type FromPersistentOrderProps = {
   id: string;
+  orderCode: string;
   userId: string;
   items: FromPersistentOrderItemProps[];
   status: OrderStatus;
