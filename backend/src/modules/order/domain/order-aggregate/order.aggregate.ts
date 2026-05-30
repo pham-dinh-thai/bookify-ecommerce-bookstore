@@ -245,7 +245,7 @@ export class Order {
 
   private ensureStatusIs(...allowedStatuses: OrderStatus[]): void {
     if (!allowedStatuses.includes(this.status)) {
-      throw new OrderStatusCanNotBeUpdatedException();
+      throw OrderStatusCanNotBeUpdatedException.needToBe(...allowedStatuses);
     }
   }
 }
