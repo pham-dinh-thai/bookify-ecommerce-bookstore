@@ -19,6 +19,9 @@ export class OrderTypeOrm {
   @PrimaryColumn({ type: 'uuid' })
   id!: string;
 
+  @Column({ unique: true })
+  orderCode!: string;
+
   @Column({ type: 'uuid' })
   userId!: string;
 

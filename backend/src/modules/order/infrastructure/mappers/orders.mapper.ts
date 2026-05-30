@@ -1,5 +1,6 @@
 import { Order } from '../../domain/order-aggregate/order.aggregate';
 import { MyOrderReadModel } from '../../domain/order-aggregate/read-models/my-order.read-model';
+import { OrderReadModel } from '../../domain/order-aggregate/read-models/order.read-model';
 import { OrderDetailItemReadModel } from '../../domain/order-aggregate/read-models/order-detail-item.read-model';
 import { OrderDetailReadModel } from '../../domain/order-aggregate/read-models/order-detail.read-model';
 import { OrderItemPreviewReadModel } from '../../domain/order-aggregate/read-models/order-item-preview.read-model';
@@ -9,6 +10,7 @@ export class OrdersMapper {
   public static toDomain(orderTypeOrm: OrderTypeOrm): Order {
     return Order.fromPersistent({
       id: orderTypeOrm.id,
+      orderCode: orderTypeOrm.orderCode,
       userId: orderTypeOrm.userId,
       items: orderTypeOrm.items.map((item) => ({
         id: item.id,
@@ -28,6 +30,7 @@ export class OrdersMapper {
     const orderTypeOrm = new OrderTypeOrm();
 
     orderTypeOrm.id = order.getId();
+    orderTypeOrm.orderCode = order.getOrderCode();
     orderTypeOrm.userId = order.getUserId();
     orderTypeOrm.status = order.getStatus();
     orderTypeOrm.paymentStatus = order.getPaymentStatus();
@@ -36,6 +39,28 @@ export class OrdersMapper {
     orderTypeOrm.phoneNumber = order.getPhoneNumber();
 
     return orderTypeOrm;
+  }
+
+  public static toOrderReadModel(orderTypeOrm: OrderTypeOrm): OrderReadModel {
+    const totalAmount = orderTypeOrm.items.reduce(
+      (total, item) => total + Number(item.price) * item.quantity,
+      0,
+    );
+    const totalItems = orderTypeOrm.items.reduce(
+      (total, item) => total + item.quantity,
+      0,
+    );
+
+    return new OrderReadModel(
+      orderTypeOrm.id,
+      OrdersMapper.getDisplayOrderCode(orderTypeOrm),
+      orderTypeOrm.status,
+      orderTypeOrm.paymentStatus,
+      orderTypeOrm.paymentMethod,
+      totalAmount,
+      totalItems,
+      orderTypeOrm.createdAt,
+    );
   }
 
   public static toMyOrderReadModel(
@@ -56,6 +81,7 @@ export class OrdersMapper {
 
     return new MyOrderReadModel(
       orderTypeOrm.id,
+      OrdersMapper.getDisplayOrderCode(orderTypeOrm),
       orderTypeOrm.status,
       orderTypeOrm.paymentStatus,
       orderTypeOrm.items.reduce((total, item) => total + item.quantity, 0),
@@ -92,6 +118,7 @@ export class OrdersMapper {
 
     return new OrderDetailReadModel(
       orderTypeOrm.id,
+      OrdersMapper.getDisplayOrderCode(orderTypeOrm),
       orderTypeOrm.userId,
       orderTypeOrm.status,
       orderTypeOrm.paymentStatus,
@@ -104,5 +131,9 @@ export class OrdersMapper {
       orderTypeOrm.createdAt,
       orderTypeOrm.updatedAt,
     );
+  }
+
+  private static getDisplayOrderCode(orderTypeOrm: OrderTypeOrm): string {
+    return orderTypeOrm.orderCode;
   }
 }

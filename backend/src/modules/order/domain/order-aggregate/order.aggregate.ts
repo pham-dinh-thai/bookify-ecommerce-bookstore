@@ -23,6 +23,7 @@ import { CreateOrderProps, FromPersistentOrderProps } from './types';
 export class Order {
   private constructor(
     private readonly id: string,
+    private readonly orderCode: string,
     private readonly userId: string,
     private items: OrderItem[],
     private status: OrderStatus,
@@ -47,6 +48,7 @@ export class Order {
 
     return new Order(
       props.id,
+      props.orderCode,
       props.userId,
       [],
       OrderStatus.PENDING,
@@ -63,6 +65,7 @@ export class Order {
   public static fromPersistent(props: FromPersistentOrderProps): Order {
     return new Order(
       props.id,
+      props.orderCode,
       props.userId,
       props.items.map((item) =>
         OrderItem.fromPersistent({
@@ -203,6 +206,10 @@ export class Order {
 
   public getId(): string {
     return this.id;
+  }
+
+  public getOrderCode(): string {
+    return this.orderCode;
   }
 
   public getUserId(): string {

@@ -86,8 +86,10 @@ export class PlaceOrderUseCase {
     }
     const shippingAddress = `${defaultAddress.street}, ${defaultAddress.wardName}, ${defaultAddress.provinceName}`;
 
+    const orderId = this.uuidGenerator.generate();
     const order: Order = Order.create({
-      id: this.uuidGenerator.generate(),
+      id: orderId,
+      orderCode: this.generateOrderCode(orderId),
       userId: userId,
       paymentMethod: request.paymentMethod,
       shippingAddress: shippingAddress,
@@ -124,5 +126,16 @@ export class PlaceOrderUseCase {
         },
       );
     });
+  }
+
+  private generateOrderCode(orderId: string): string {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const readableDate = `${year}${month}${day}`;
+    const suffix = orderId.replace(/-/g, '').slice(-12).toUpperCase();
+
+    return `BKF-${readableDate}-${suffix}`;
   }
 }

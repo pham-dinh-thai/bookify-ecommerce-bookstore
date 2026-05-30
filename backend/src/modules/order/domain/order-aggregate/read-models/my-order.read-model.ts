@@ -5,6 +5,7 @@ import { OrderItemPreviewReadModel } from './order-item-preview.read-model';
 export class MyOrderReadModel {
   public constructor(
     public readonly id: string,
+    public readonly orderCode: string,
     public readonly status: OrderStatus,
     public readonly paymentStatus: PaymentStatus,
     public readonly totalItems: number,
