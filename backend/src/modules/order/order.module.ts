@@ -16,6 +16,7 @@ import { TypeOrmOrdersQueryRepository } from './infrastructure/repositories/orde
 import { FindMyOrdersUseCase } from './application/order-use-cases/find-my-orders/find-my-orders.use-case';
 import { CancelOrderUseCase } from './application/order-use-cases/cancel-order/cancel-order.use-case';
 import { ViewOrderDetailUseCase } from './application/order-use-cases/view-order-detail/view-order-detail.use-case';
+import { BookManagementModule } from '../book-management/book-management.module';
 
 @Module({
   controllers: [OrdersController],
@@ -26,6 +27,7 @@ import { ViewOrderDetailUseCase } from './application/order-use-cases/view-order
     AuditLogModule,
     UuidModule,
     CustomerManagementModule,
+    BookManagementModule,
   ],
   providers: [
     PlaceOrderUseCase,

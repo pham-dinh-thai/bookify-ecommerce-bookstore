@@ -5,6 +5,5 @@ export interface IPlaceOrderRequest {
   items: {
     productId: string;
     quantity: number;
-    price: number;
   }[];
 }

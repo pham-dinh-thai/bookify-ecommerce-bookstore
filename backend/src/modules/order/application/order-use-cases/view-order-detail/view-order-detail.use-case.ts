@@ -5,6 +5,12 @@ import {
 } from '../../../domain/order-aggregate/repositories/orders-query.repository.interface';
 import { OrderDetailReadModel } from '../../../domain/order-aggregate/read-models/order-detail.read-model';
 
+/**
+ * Retrieves the authenticated customer's order detail.
+ *
+ * Business logic: Customers need fulfillment and item snapshots to verify a
+ * purchase, while staff-only operational fields stay in order management.
+ */
 @Injectable()
 export class ViewOrderDetailUseCase {
   public constructor(

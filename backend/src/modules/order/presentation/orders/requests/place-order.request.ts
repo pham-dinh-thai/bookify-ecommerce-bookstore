@@ -1,6 +1,26 @@
-import { IsArray, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsUUID,
+  Min,
+  ValidateNested,
+} from 'class-validator';
 import { IPlaceOrderRequest } from '../../../application/order-use-cases/place-order/place-order.request';
 import { PaymentMethod } from '../../../domain/order-aggregate/enums/payment-method.enum';
+
+class PlaceOrderItemRequest {
+  @IsUUID()
+  @IsNotEmpty()
+  productId!: string;
+
+  @IsInt()
+  @Min(1)
+  quantity!: number;
+}
 
 export class PlaceOrderRequest implements IPlaceOrderRequest {
   @IsEnum(PaymentMethod)
@@ -8,10 +28,8 @@ export class PlaceOrderRequest implements IPlaceOrderRequest {
   paymentMethod!: PaymentMethod;
 
   @IsArray()
-  @IsNotEmpty()
-  items!: {
-    productId: string;
-    quantity: number;
-    price: number;
-  }[];
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => PlaceOrderItemRequest)
+  items!: PlaceOrderItemRequest[];
 }
