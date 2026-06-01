@@ -10,6 +10,7 @@ import { OrdersMapper } from '../../mappers/orders.mapper';
 import { OrderNotFoundException } from '../../../domain/order-aggregate/exceptions/order-not-found.exception';
 import { OrderStatus } from '../../../domain/order-aggregate/enums/order-status.enum';
 import { PaymentStatus } from '../../../domain/order-aggregate/enums/payment-status.enum';
+import { PaymentMethod } from '../../../domain/order-aggregate/enums/payment-method.enum';
 
 @Injectable()
 export class TypeOrmOrdersQueryRepository implements IOrdersQueryRepository {
@@ -152,5 +153,49 @@ export class TypeOrmOrdersQueryRepository implements IOrdersQueryRepository {
     paymentStatus: PaymentStatus,
   ): Promise<number> {
     return this.repository.countBy({ paymentStatus });
+  }
+
+  public async countWorkload(): Promise<{
+    pending: number;
+    confirmed: number;
+    delivering: number;
+    unpaidCod: number;
+    deliveredUnpaid: number;
+  }> {
+    const result = await this.repository
+      .createQueryBuilder('orderEntity')
+      .select([
+        `SUM(CASE WHEN orderEntity.status = :pending THEN 1 ELSE 0 END) AS pending`,
+        `SUM(CASE WHEN orderEntity.status = :confirmed THEN 1 ELSE 0 END) AS confirmed`,
+        `SUM(CASE WHEN orderEntity.status = :delivering THEN 1 ELSE 0 END) AS delivering`,
+        `SUM(CASE WHEN orderEntity.paymentMethod = :cashOnDelivery
+          AND orderEntity.paymentStatus = :unpaid THEN 1 ELSE 0 END) AS unpaidCod`,
+        `SUM(CASE WHEN orderEntity.status = :delivered
+          AND orderEntity.paymentStatus != :paid THEN 1 ELSE 0 END) AS deliveredUnpaid`,
+      ])
+      .setParameters({
+        pending: OrderStatus.PENDING,
+        confirmed: OrderStatus.CONFIRMED,
+        delivering: OrderStatus.DELIVERING,
+        delivered: OrderStatus.DELIVERED,
+        cashOnDelivery: PaymentMethod.CASH_ON_DELIVERY,
+        unpaid: PaymentStatus.UNPAID,
+        paid: PaymentStatus.PAID,
+      })
+      .getRawOne<{
+        pending?: string | number | null;
+        confirmed?: string | number | null;
+        delivering?: string | number | null;
+        unpaidCod?: string | number | null;
+        deliveredUnpaid?: string | number | null;
+      }>();
+
+    return {
+      pending: Number(result?.pending) || 0,
+      confirmed: Number(result?.confirmed) || 0,
+      delivering: Number(result?.delivering) || 0,
+      unpaidCod: Number(result?.unpaidCod) || 0,
+      deliveredUnpaid: Number(result?.deliveredUnpaid) || 0,
+    };
   }
 }

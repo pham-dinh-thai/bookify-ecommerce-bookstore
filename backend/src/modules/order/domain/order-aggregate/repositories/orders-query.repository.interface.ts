@@ -27,6 +27,14 @@ export interface IOrdersQueryRepository {
   countByStatus(status: OrderStatus): Promise<number>;
 
   countByPaymentStatus(paymentStatus: PaymentStatus): Promise<number>;
+
+  countWorkload(): Promise<{
+    pending: number;
+    confirmed: number;
+    delivering: number;
+    unpaidCod: number;
+    deliveredUnpaid: number;
+  }>;
 }
 
 export const ORDERS_QUERY_REPOSITORY = 'IOrdersQueryRepository';

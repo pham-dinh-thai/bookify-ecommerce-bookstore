@@ -35,7 +35,7 @@ import { FindRecentActivityUseCase } from './application/audit-log-use-cases/fin
       useClass: TypeormAuditlogQueryRepository,
     },
   ],
-  exports: [AUDIT_LOG_COMMAND_REPOSITORY],
+  exports: [AUDIT_LOG_COMMAND_REPOSITORY, AUDIT_LOG_QUERY_REPOSITORY],
   controllers: [AuditLogsController],
 })
 export class AuditLogModule {}

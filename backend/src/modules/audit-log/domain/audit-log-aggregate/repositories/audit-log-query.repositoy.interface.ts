@@ -1,5 +1,13 @@
 import { AuditLogReadModel } from '../read-models/audit-log.read-model';
 
+export type TodayOrderActivityCounts = {
+  placed: number;
+  confirmed: number;
+  delivered: number;
+  completed: number;
+  canceled: number;
+};
+
 export interface IAuditLogQueryRepository {
   findAll(
     page: number,
@@ -10,6 +18,8 @@ export interface IAuditLogQueryRepository {
   recentActivity(): Promise<AuditLogReadModel[]>;
 
   count(search?: string): Promise<number>;
+
+  countTodayOrderActivity(): Promise<TodayOrderActivityCounts>;
 }
 
 export const AUDIT_LOG_QUERY_REPOSITORY = 'IAuditLogQueryRepository';

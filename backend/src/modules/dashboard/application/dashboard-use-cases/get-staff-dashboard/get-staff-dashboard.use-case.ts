@@ -3,18 +3,16 @@ import {
   type IOrdersQueryRepository,
   ORDERS_QUERY_REPOSITORY,
 } from '../../../../order/domain/order-aggregate/repositories/orders-query.repository.interface';
+import {
+  AUDIT_LOG_QUERY_REPOSITORY,
+  type IAuditLogQueryRepository,
+} from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-query.repositoy.interface';
 import { GetStaffDashboardResponse } from './get-staff-dashboard.response';
+import { OrderWorkloadReadModel } from '../../../domain/staff-dashboard-aggregate/read-models/order-workload.read-model';
+import { TodayActivityReadModel } from '../../../domain/staff-dashboard-aggregate/read-models/today-activity.read-model';
 
 /**
  * TODO: Staff dashboard implementation checklist
- *
- * 1. Order workload
- *    - Add an order query read model for workload counts.
- *    - Count pending orders that need staff confirmation.
- *    - Count confirmed orders that need fulfillment or delivery handoff.
- *    - Count delivering orders currently in transit.
- *    - Count unpaid COD orders.
- *    - Count delivered but unpaid orders, because they cannot be completed.
  *
  * 2. Today activity
  *    - Count orders placed today.
@@ -51,7 +49,42 @@ export class GetStaffDashboardUseCase {
   public constructor(
     @Inject(ORDERS_QUERY_REPOSITORY)
     private readonly ordersQueryRepository: IOrdersQueryRepository,
+
+    @Inject(AUDIT_LOG_QUERY_REPOSITORY)
+    private readonly auditLogQueryRepository: IAuditLogQueryRepository,
   ) {}
 
-  public async execute(): Promise<GetStaffDashboardResponse> {}
+  public async execute(): Promise<GetStaffDashboardResponse> {
+    const orderWorkload = await this.getOrderWorkload();
+    const todayActivity = await this.getTodayActivity();
+
+    return new GetStaffDashboardResponse(orderWorkload, todayActivity);
+  }
+
+  private async getOrderWorkload(): Promise<OrderWorkloadReadModel> {
+    const workload = await this.ordersQueryRepository.countWorkload();
+
+    const orderWorkload = new OrderWorkloadReadModel(
+      workload.pending,
+      workload.confirmed,
+      workload.delivering,
+      workload.unpaidCod,
+      workload.deliveredUnpaid,
+    );
+
+    return orderWorkload;
+  }
+
+  private async getTodayActivity(): Promise<TodayActivityReadModel> {
+    const activity =
+      await this.auditLogQueryRepository.countTodayOrderActivity();
+
+    return new TodayActivityReadModel(
+      activity.placed,
+      activity.confirmed,
+      activity.delivered,
+      activity.completed,
+      activity.canceled,
+    );
+  }
 }
