@@ -5,7 +5,6 @@ import {
 } from '../../../../customer-management/domain/customer-aggregate/repositories/customers-query.repository.interface';
 import { FindMyContactInfoResponse } from './find-my-contact-info.response';
 import { CustomerReadModel } from '../../../../customer-management/domain/customer-aggregate/read-models/customer.read-model';
-import { CustomerNotFoundException } from '../../../../customer-management/domain/customer-aggregate/exceptions/customer-not-found.exception';
 import { AddressResponse } from './address.response';
 
 @Injectable()
@@ -20,7 +19,7 @@ export class FindMyContactInfoUseCase {
       await this.customersQueryRepository.findByUserId(userId);
 
     if (!customer) {
-      throw new CustomerNotFoundException();
+      return new FindMyContactInfoResponse(null, []);
     }
 
     const response = new FindMyContactInfoResponse(
