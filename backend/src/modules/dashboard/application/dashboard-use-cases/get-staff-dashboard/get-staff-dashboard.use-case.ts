@@ -7,18 +7,17 @@ import {
   AUDIT_LOG_QUERY_REPOSITORY,
   type IAuditLogQueryRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-query.repositoy.interface';
+import {
+  BOOKS_QUERY_REPOSITORY,
+  type IBooksQueryRepository,
+} from '../../../../book-management/domain/book-aggregate/repositories/books-query.repository.interface';
 import { GetStaffDashboardResponse } from './get-staff-dashboard.response';
 import { OrderWorkloadReadModel } from '../../../domain/staff-dashboard-aggregate/read-models/order-workload.read-model';
 import { TodayActivityReadModel } from '../../../domain/staff-dashboard-aggregate/read-models/today-activity.read-model';
+import { BookStockAlertsReadModel } from '../../../../book-management/domain/book-aggregate/read-models/book-stock-alerts.read-model';
 
 /**
  * TODO: Staff dashboard implementation checklist
- *
- * 3. Stock alerts
- *    - Add a book query read model for low-stock and out-of-stock counts.
- *    - Count out-of-stock books.
- *    - Count low-stock books using an agreed threshold, for example quantity <= 5.
- *    - Optionally include a small list of low-stock books for quick action.
  *
  * 4. Recent orders
  *    - Reuse or add an order query for the latest 5-10 orders.
@@ -37,19 +36,30 @@ import { TodayActivityReadModel } from '../../../domain/staff-dashboard-aggregat
  */
 @Injectable()
 export class GetStaffDashboardUseCase {
+  private static readonly LOW_STOCK_THRESHOLD = 5;
+  private static readonly LOW_STOCK_BOOK_LIMIT = 5;
+
   public constructor(
     @Inject(ORDERS_QUERY_REPOSITORY)
     private readonly ordersQueryRepository: IOrdersQueryRepository,
 
     @Inject(AUDIT_LOG_QUERY_REPOSITORY)
     private readonly auditLogQueryRepository: IAuditLogQueryRepository,
+
+    @Inject(BOOKS_QUERY_REPOSITORY)
+    private readonly booksQueryRepository: IBooksQueryRepository,
   ) {}
 
   public async execute(): Promise<GetStaffDashboardResponse> {
     const orderWorkload = await this.getOrderWorkload();
     const todayActivity = await this.getTodayActivity();
+    const stockAlerts = await this.getStockAlerts();
 
-    return new GetStaffDashboardResponse(orderWorkload, todayActivity);
+    return new GetStaffDashboardResponse(
+      orderWorkload,
+      todayActivity,
+      stockAlerts,
+    );
   }
 
   private async getOrderWorkload(): Promise<OrderWorkloadReadModel> {
@@ -76,6 +86,13 @@ export class GetStaffDashboardUseCase {
       activity.delivered,
       activity.completed,
       activity.canceled,
+    );
+  }
+
+  private async getStockAlerts(): Promise<BookStockAlertsReadModel> {
+    return this.booksQueryRepository.findStockAlerts(
+      GetStaffDashboardUseCase.LOW_STOCK_THRESHOLD,
+      GetStaffDashboardUseCase.LOW_STOCK_BOOK_LIMIT,
     );
   }
 

@@ -5,6 +5,10 @@ import { BookTypeOrm } from '../../entities/book.entity';
 import { Repository } from 'typeorm/repository/Repository.js';
 import { BookReadModel } from '../../../domain/book-aggregate/read-models/book.read-model';
 import { BooksMapper } from '../../mappers/books.mapper';
+import {
+  BookStockAlertsReadModel,
+  LowStockBookReadModel,
+} from '../../../domain/book-aggregate/read-models/book-stock-alerts.read-model';
 
 @Injectable()
 export class TypeormBooksQueryRepository implements IBooksQueryRepository {
@@ -68,5 +72,45 @@ export class TypeormBooksQueryRepository implements IBooksQueryRepository {
     }
 
     return query.getCount() ?? 0;
+  }
+
+  public async findStockAlerts(
+    lowStockThreshold: number,
+    lowStockBookLimit: number,
+  ): Promise<BookStockAlertsReadModel> {
+    const summary = await this.repository
+      .createQueryBuilder('book')
+      .select([
+        `SUM(CASE WHEN book.quantity = 0 THEN 1 ELSE 0 END) AS outOfStockCount`,
+        `SUM(CASE WHEN book.quantity <= :lowStockThreshold THEN 1 ELSE 0 END) AS lowStockCount`,
+      ])
+      .setParameter('lowStockThreshold', lowStockThreshold)
+      .getRawOne<{
+        outOfStockCount?: string | number | null;
+        lowStockCount?: string | number | null;
+      }>();
+
+    const lowStockBooks = await this.repository
+      .createQueryBuilder('book')
+      .where('book.quantity <= :lowStockThreshold', { lowStockThreshold })
+      .orderBy('book.quantity', 'ASC')
+      .addOrderBy('book.updatedAt', 'ASC')
+      .take(lowStockBookLimit)
+      .getMany();
+
+    return new BookStockAlertsReadModel(
+      Number(summary?.outOfStockCount) || 0,
+      Number(summary?.lowStockCount) || 0,
+      lowStockThreshold,
+      lowStockBooks.map(
+        (book) =>
+          new LowStockBookReadModel(
+            book.id,
+            book.isbn,
+            book.title,
+            book.quantity,
+          ),
+      ),
+    );
   }
 }
