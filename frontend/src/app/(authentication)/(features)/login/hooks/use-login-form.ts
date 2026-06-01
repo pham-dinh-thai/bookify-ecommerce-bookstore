@@ -3,6 +3,26 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { loginService } from '../services/login.service';
 import { setAccessToken } from '@/shared/auth/lib/token-storage';
+import { jwtDecode } from 'jwt-decode';
+import { JwtPayload } from '@/shared/auth/lib/auth';
+
+function getPostLoginRedirectPath(accessToken: string): string {
+  try {
+    const { roleId } = jwtDecode<JwtPayload>(accessToken);
+
+    if (roleId === 'admin') {
+      return '/admin/system-overview';
+    }
+
+    if (roleId === 'staff') {
+      return '/staff/system-overview';
+    }
+  } catch {
+    return '/';
+  }
+
+  return '/';
+}
 
 export function useLoginForm() {
   const router = useRouter();
@@ -26,7 +46,7 @@ export function useLoginForm() {
       });
 
       setAccessToken(accessToken);
-      router.push('/');
+      router.replace(getPostLoginRedirectPath(accessToken));
       router.refresh();
     } catch (error) {
       setErrorMessage(
