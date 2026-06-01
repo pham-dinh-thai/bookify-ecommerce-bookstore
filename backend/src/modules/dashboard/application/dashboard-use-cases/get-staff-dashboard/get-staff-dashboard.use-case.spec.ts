@@ -3,9 +3,14 @@ import { BookStockAlertsReadModel } from '../../../../book-management/domain/boo
 import { IBooksQueryRepository } from '../../../../book-management/domain/book-aggregate/repositories/books-query.repository.interface';
 import { IOrdersQueryRepository } from '../../../../order/domain/order-aggregate/repositories/orders-query.repository.interface';
 import { IAuditLogQueryRepository } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-query.repositoy.interface';
+import { OrderReadModel } from '../../../../order/domain/order-aggregate/read-models/order.read-model';
+import { OrderStatus } from '../../../../order/domain/order-aggregate/enums/order-status.enum';
+import { PaymentStatus } from '../../../../order/domain/order-aggregate/enums/payment-status.enum';
+import { PaymentMethod } from '../../../../order/domain/order-aggregate/enums/payment-method.enum';
 
 describe('GetStaffDashboardUseCase', () => {
-  it('returns stock alerts with low-stock threshold and quick action list', async () => {
+  it('returns the staff operations dashboard contract', async () => {
+    const createdAt = new Date('2026-06-01T08:00:00.000Z');
     const ordersQueryRepository = {
       countWorkload: jest.fn().mockResolvedValue({
         pending: 1,
@@ -14,6 +19,20 @@ describe('GetStaffDashboardUseCase', () => {
         unpaidCod: 4,
         deliveredUnpaid: 5,
       }),
+      findRecent: jest
+        .fn()
+        .mockResolvedValue([
+          new OrderReadModel(
+            'order-id',
+            'ORD-001',
+            OrderStatus.PENDING,
+            PaymentStatus.UNPAID,
+            PaymentMethod.CASH_ON_DELIVERY,
+            125000,
+            2,
+            createdAt,
+          ),
+        ]),
     };
     const auditLogQueryRepository = {
       countTodayOrderActivity: jest.fn().mockResolvedValue({
@@ -45,6 +64,40 @@ describe('GetStaffDashboardUseCase', () => {
     const response = await useCase.execute();
 
     expect(booksQueryRepository.findStockAlerts).toHaveBeenCalledWith(5, 5);
+    expect(ordersQueryRepository.findRecent).toHaveBeenCalledWith(5);
     expect(response.stockAlerts).toBe(stockAlerts);
+    expect(response.recentOrders).toEqual([
+      {
+        id: 'order-id',
+        orderCode: 'ORD-001',
+        status: OrderStatus.PENDING,
+        paymentStatus: PaymentStatus.UNPAID,
+        totalAmount: 125000,
+        createdAt,
+        detailPath: '/staff/orders/order-id',
+      },
+    ]);
+    expect(response.quickActions).toEqual([
+      {
+        key: 'order-management',
+        label: 'Order Management',
+        path: '/staff/orders',
+      },
+      {
+        key: 'import-stock',
+        label: 'Import Stock',
+        path: '/staff/stock',
+      },
+      {
+        key: 'book-management',
+        label: 'Book Management',
+        path: '/staff/books',
+      },
+      {
+        key: 'customer-directory',
+        label: 'Customer Directory',
+        path: '/staff/customers',
+      },
+    ]);
   });
 });

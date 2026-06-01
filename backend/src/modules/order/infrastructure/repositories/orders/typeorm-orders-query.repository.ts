@@ -69,6 +69,22 @@ export class TypeOrmOrdersQueryRepository implements IOrdersQueryRepository {
     );
   }
 
+  public async findRecent(limit: number): Promise<OrderReadModel[]> {
+    const ordersTypeOrm: OrderTypeOrm[] = await this.repository.find({
+      relations: {
+        items: true,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+      take: limit,
+    });
+
+    return ordersTypeOrm.map((orderTypeOrm) =>
+      OrdersMapper.toOrderReadModel(orderTypeOrm),
+    );
+  }
+
   public async findOne(id: string): Promise<OrderReadModel | null> {
     const orderTypeOrm: OrderTypeOrm | null = await this.repository.findOne({
       where: { id },

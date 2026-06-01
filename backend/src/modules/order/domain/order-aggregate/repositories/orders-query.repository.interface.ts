@@ -13,6 +13,8 @@ export interface IOrdersQueryRepository {
 
   findUserOrders(userId: string): Promise<MyOrderReadModel[]>;
 
+  findRecent(limit: number): Promise<OrderReadModel[]>;
+
   findOne(id: string): Promise<OrderReadModel | null>;
 
   findOrderDetailById(orderId: string): Promise<OrderDetailReadModel>;
