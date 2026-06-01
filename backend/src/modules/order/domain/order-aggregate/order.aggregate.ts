@@ -5,6 +5,7 @@ import { PaymentMethod } from './enums/payment-method.enum';
 import { PaymentStatus } from './enums/payment-status.enum';
 import { OrderIdEmptyException } from './exceptions/order-id-empty.exception';
 import { OrderItemNotFoundException } from './exceptions/order-item-not-found.exception';
+import { OrderPaymentNeedsToBePaidException } from './exceptions/order-payment-needs-to-be-paid.exception';
 import { OrderStatusCanNotBeUpdatedException } from './exceptions/order-status-can-not-be-updated.exception';
 import { UserIdEmptyException } from './exceptions/user-id-empty.exception';
 import { CreateOrderProps, FromPersistentOrderProps } from './types';
@@ -17,6 +18,7 @@ import { CreateOrderProps, FromPersistentOrderProps } from './types';
  * - New orders always start with PENDING status
  * - Cash on delivery orders start as UNPAID; online payment orders start as PENDING
  * - Order status can only move through the allowed lifecycle transitions
+ * - Delivered orders can only be completed after payment is marked as paid
  * - Canceled and delivered orders can be refunded
  * - Order total is calculated from the current order items
  */
@@ -137,6 +139,7 @@ export class Order {
    */
   public complete(): void {
     this.ensureStatusIs(OrderStatus.DELIVERED);
+    this.ensurePaymentIsPaid();
     this.status = OrderStatus.COMPLETED;
   }
 
@@ -253,6 +256,12 @@ export class Order {
   private ensureStatusIs(...allowedStatuses: OrderStatus[]): void {
     if (!allowedStatuses.includes(this.status)) {
       throw OrderStatusCanNotBeUpdatedException.needToBe(...allowedStatuses);
+    }
+  }
+
+  private ensurePaymentIsPaid(): void {
+    if (this.paymentStatus !== PaymentStatus.PAID) {
+      throw new OrderPaymentNeedsToBePaidException();
     }
   }
 }
