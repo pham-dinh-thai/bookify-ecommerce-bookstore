@@ -11,7 +11,6 @@ import { BOOKS_QUERY_REPOSITORY } from './domain/book-aggregate/repositories/boo
 import { TypeormBooksQueryRepository } from './infrastructure/repositories/books/typeorm-books-query.repository';
 import { FindBooksUseCase } from './application/book-use-cases/find-books/find-books.use-case';
 import { FindOneBookUseCase } from './application/book-use-cases/find-one-book/find-one-book.use-case';
-import { FindTotalBookUseCase } from './application/book-use-cases/find-total-book/find-total-book.use-case';
 import { UnitOfWorkModule } from '../../shared/modules/unit-of-work/unit-of-work.module';
 import { CreateBookUseCase } from './application/book-use-cases/create-book/create-book.use-case';
 import { TypeormBooksCommandRepository } from './infrastructure/repositories/books/typeorm-books-command.repository';
@@ -54,7 +53,6 @@ import { BookIsbnDuplicateChecker } from './infrastructure/services/books/book-i
   providers: [
     FindBooksUseCase,
     FindOneBookUseCase,
-    FindTotalBookUseCase,
     CreateBookUseCase,
     UpdateBookUseCase,
     AddBookCoverUseCase,

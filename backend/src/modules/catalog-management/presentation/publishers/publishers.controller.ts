@@ -23,7 +23,6 @@ import { CurrentUser } from '../../../../shared/http/decorators/current-user.dec
 import { RenamePublisherUseCase } from '../../application/publisher-use-cases/rename-publisher/rename-publisher.use-case';
 import { RenamePublisherRequest } from './requests/rename-publisher.request';
 import { DeletePublisherUseCase } from '../../application/publisher-use-cases/delete-publisher/delete-publisher.use-case';
-import { FindTotalPublisherUseCase } from '../../application/publisher-use-cases/find-total-publisher/find-total-publisher.use-case';
 import { FindPublishersResponse } from '../../application/publisher-use-cases/find-publishers/find-publishers.response';
 
 @Controller('publishers')
@@ -31,7 +30,6 @@ export class PublishersController {
   public constructor(
     private readonly findPublishersUseCase: FindPublishersUseCase,
     private readonly findOnePublisherUseCase: FindOnePublisherUseCase,
-    private readonly findTotalPublisherUseCase: FindTotalPublisherUseCase,
     private readonly createPublisherUseCase: CreatePublisherUseCase,
     private readonly renamePublisherUseCase: RenamePublisherUseCase,
     private readonly deletePublisherUseCase: DeletePublisherUseCase,
@@ -50,15 +48,6 @@ export class PublishersController {
     );
 
     return response;
-  }
-
-  @Get('total')
-  @UseGuards(JwtAuthGuard, RoleGuard)
-  @Roles('admin')
-  public async total(): Promise<number> {
-    const total = await this.findTotalPublisherUseCase.execute();
-
-    return total;
   }
 
   @Get(':id')

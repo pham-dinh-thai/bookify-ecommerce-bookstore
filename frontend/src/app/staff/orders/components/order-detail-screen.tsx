@@ -2,13 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import {
-  ArrowLeft,
-  CheckCircle2,
-  ChevronDown,
-  RefreshCw,
-  Save,
-} from 'lucide-react';
+import { ArrowLeft, CheckCircle2, ChevronDown, Save } from 'lucide-react';
 import { refreshAccessToken } from '@/shared/auth/lib/refresh';
 import { getAccessToken } from '@/shared/auth/lib/token-storage';
 import { useToast } from '@/shared/common/toast/toast';
@@ -21,6 +15,7 @@ import {
   PaymentMethod,
   PaymentStatus,
 } from '../types';
+import RefreshButton from '@/shared/common/components/refresh-button';
 
 type OrderDetailScreenProps = {
   id: string;
@@ -218,15 +213,7 @@ export default function OrderDetailScreen({ id }: OrderDetailScreenProps) {
           </h2>
         </div>
 
-        <button
-          type="button"
-          onClick={fetchOrderDetail}
-          disabled={loading}
-          className="inline-flex h-12 items-center gap-2 rounded-full bg-[#2d6a4f] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#166244] disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          <RefreshCw className={`w-4 ${loading ? 'animate-spin' : ''}`} />
-          Refresh
-        </button>
+        <RefreshButton onRefresh={fetchOrderDetail} loading={loading} />
       </div>
 
       {error ? (
@@ -244,9 +231,7 @@ export default function OrderDetailScreen({ id }: OrderDetailScreenProps) {
           <section className="rounded-3xl border border-[#e8ede9] bg-white p-6 shadow-sm">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
-                <p className="text-sm font-medium text-[#6c7d70]">
-                  Order Code
-                </p>
+                <p className="text-sm font-medium text-[#6c7d70]">Order Code</p>
                 <h3 className="text-2xl font-bold text-[#2b352f]">
                   {order.orderCode}
                 </h3>
@@ -265,8 +250,14 @@ export default function OrderDetailScreen({ id }: OrderDetailScreenProps) {
             </div>
 
             <div className="mt-6 grid gap-4 md:grid-cols-4">
-              <Info label="Created At" value={formatDateTime(order.createdAt)} />
-              <Info label="Updated At" value={formatDateTime(order.updatedAt)} />
+              <Info
+                label="Created At"
+                value={formatDateTime(order.createdAt)}
+              />
+              <Info
+                label="Updated At"
+                value={formatDateTime(order.updatedAt)}
+              />
               <Info label="Total Items" value={String(order.totalItems)} />
               <Info label="Total Amount" value={formatVnd(order.totalAmount)} />
             </div>

@@ -10,93 +10,67 @@ import {
   Globe,
   Book,
 } from 'lucide-react';
-import totalStaffService from './services/total-staff.service';
-import totalCustomerService from './services/total-customer.service';
-import { useEffect, useState } from 'react';
-import totalGenreService from './services/total-genre.service';
-import totalAuditLogService from './services/total-audit-log.service';
-import totalPublisherService from './services/total-publisher.service';
-import totalAuthorService from './services/total-author.service';
-import totalLanguageService from './services/total-language.service';
-import totalBookService from './services/total-book.service';
-import useRecentActivities from './hooks/use-recent-activities';
+import useAdminDashboard from './hooks/use-admin-dashboard';
+import RefreshButton from '@/shared/common/components/refresh-button';
 
 export default function SystemOverview() {
-  const { recentActivities } = useRecentActivities();
-
-  const [totalStaff, setTotalStaff] = useState(0);
-  const [totalCustomers, setTotalCustomers] = useState(0);
-  const [totalGenres, setTotalGenres] = useState(0);
-  const [totalAuditLogs, setTotalAuditLogs] = useState(0);
-  const [totalPublishers, setTotalPublishers] = useState(0);
-  const [totalAuthors, setTotalAuthors] = useState(0);
-  const [totalLanguages, setTotalLanguages] = useState(0);
-  const [totalBooks, setTotalBooks] = useState(0);
-
-  useEffect(() => {
-    totalStaffService().then(setTotalStaff).catch(console.error);
-    totalCustomerService().then(setTotalCustomers).catch(console.error);
-    totalGenreService().then(setTotalGenres).catch(console.error);
-    totalAuditLogService().then(setTotalAuditLogs).catch(console.error);
-    totalPublisherService().then(setTotalPublishers).catch(console.error);
-    totalAuthorService().then(setTotalAuthors).catch(console.error);
-    totalLanguageService().then(setTotalLanguages).catch(console.error);
-    totalBookService().then(setTotalBooks).catch(console.error);
-  }, []);
+  const { dashboard, loading, error, refetch } = useAdminDashboard();
+  const totals = dashboard?.systemTotals;
+  const recentActivities = dashboard?.recentActivities ?? [];
 
   const stats = [
     {
       label: 'Total Staff',
-      value: totalStaff,
+      value: totals?.totalStaff ?? 0,
       icon: Users,
       color: '#eef6ff',
       text: '#204877',
     },
     {
       label: 'Total Customers',
-      value: totalCustomers,
+      value: totals?.totalCustomers ?? 0,
       icon: BookUser,
       color: '#f0faf4',
       text: '#2d6a4f',
     },
     {
       label: 'Total Genres',
-      value: totalGenres,
+      value: totals?.totalGenres ?? 0,
       icon: BookOpen,
       color: '#fff8e6',
       text: '#7a5800',
     },
     {
       label: 'Total Publishers',
-      value: totalPublishers,
+      value: totals?.totalPublishers ?? 0,
       icon: Building,
       color: '#f3e8ff',
       text: '#6b21a8',
     },
     {
       label: 'Total Authors',
-      value: totalAuthors,
+      value: totals?.totalAuthors ?? 0,
       icon: UserCheck,
       color: '#fef3c7',
       text: '#92400e',
     },
     {
       label: 'Total Languages',
-      value: totalLanguages,
+      value: totals?.totalLanguages ?? 0,
       icon: Globe,
       color: '#dbeafe',
       text: '#1e40af',
     },
     {
       label: 'Total Books',
-      value: totalBooks,
+      value: totals?.totalBooks ?? 0,
       icon: Book,
       color: '#ecfdf5',
       text: '#065f46',
     },
     {
       label: 'Audit Logs',
-      value: totalAuditLogs,
+      value: totals?.totalAuditLogs ?? 0,
       icon: ScrollText,
       color: '#fff1f1',
       text: '#b33a3a',
@@ -105,14 +79,24 @@ export default function SystemOverview() {
 
   return (
     <div className="p-12">
-      <h2
-        className="text-5xl font-extrabold tracking-tighter mb-8 leading-[1.1]"
-        style={{ color: '#2b352f' }}
-      >
-        <span className="italic" style={{ color: '#335b48' }}>
-          System Overview
-        </span>
-      </h2>
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <h2
+          className="text-5xl font-extrabold tracking-tighter leading-[1.1]"
+          style={{ color: '#2b352f' }}
+        >
+          <span className="italic" style={{ color: '#335b48' }}>
+            System Overview
+          </span>
+        </h2>
+
+        <RefreshButton onRefresh={refetch} loading={loading} />
+      </div>
+
+      {error ? (
+        <div className="mb-6 rounded-2xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {error.message}
+        </div>
+      ) : null}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {stats.map((stat) => (
@@ -142,27 +126,33 @@ export default function SystemOverview() {
           Recent Activity
         </h3>
         <div className="divide-y divide-[#eef2ea]">
-          {recentActivities.map((activity, index) => (
-            <div
-              key={index}
-              className="py-4 flex items-start justify-between gap-4"
-            >
-              <div className="flex items-start gap-3">
-                <div className="mt-1 w-2 h-2 rounded-full bg-[#2d6a4f] shrink-0" />
-                <div>
-                  <p className="text-sm font-medium text-[#1c3725]">
-                    {activity.message}
-                  </p>
-                  <p className="text-xs text-[#6d7f72] mt-1">
-                    {activity.performedBy}
-                  </p>
+          {recentActivities.length > 0 ? (
+            recentActivities.map((activity) => (
+              <div
+                key={activity.id}
+                className="py-4 flex items-start justify-between gap-4"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 w-2 h-2 rounded-full bg-[#2d6a4f] shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-[#1c3725]">
+                      {activity.message}
+                    </p>
+                    <p className="text-xs text-[#6d7f72] mt-1">
+                      {activity.performedBy}
+                    </p>
+                  </div>
                 </div>
+                <span className="text-xs text-[#8c9b8d] shrink-0">
+                  {activity.createdAt}
+                </span>
               </div>
-              <span className="text-xs text-[#8c9b8d] shrink-0">
-                {activity.createdAt}
-              </span>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="py-4 text-sm text-[#5a6d60]">
+              {loading ? 'Loading activity...' : 'No recent activity.'}
+            </p>
+          )}
         </div>
       </div>
     </div>

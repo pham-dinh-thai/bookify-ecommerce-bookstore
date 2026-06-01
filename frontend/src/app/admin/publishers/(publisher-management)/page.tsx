@@ -11,6 +11,7 @@ import { createPublisherService } from './services/create-publisher.service';
 import { deletePublisherService } from './services/delete-publisher.service';
 import { updatePublisherService } from './services/update-publisher.service';
 import ToolBar from '@/shared/common/components/tool-bar/tool-bar';
+import RefreshButton from '@/shared/common/components/refresh-button';
 
 export default function PublisherManagement() {
   const pageSize = 10;
@@ -95,7 +96,9 @@ export default function PublisherManagement() {
   return (
     <div>
       <div className="p-12">
-        <PublisherManagementHeader />
+        <PublisherManagementHeader
+          action={<RefreshButton onRefresh={refetch} loading={loading} />}
+        />
 
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-8">

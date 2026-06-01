@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import useCustomers from './hooks/use-customers';
 import FilterDropdown from './components/filter-dropdown';
 import ToolBar from '@/shared/common/components/tool-bar/tool-bar';
+import RefreshButton from '@/shared/common/components/refresh-button';
 
 export default function StaffCustomerManagement() {
   const [search, setSearch] = useState('');
@@ -22,7 +23,12 @@ export default function StaffCustomerManagement() {
         ? false
         : undefined;
 
-  const { customers, total } = useCustomers(page, pageSize, isActive, search);
+  const { customers, total, loading, refetch } = useCustomers(
+    page,
+    pageSize,
+    isActive,
+    search,
+  );
 
   useEffect(() => {
     setPage(1);
@@ -79,14 +85,17 @@ export default function StaffCustomerManagement() {
 
   return (
     <div className="p-12">
-      <h2
-        className="text-5xl font-extrabold tracking-tighter mb-6 leading-[1.1]"
-        style={{ color: '#2b352f' }}
-      >
-        <span className="italic" style={{ color: '#335b48' }}>
-          Customer Directory
-        </span>
-      </h2>
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <h2
+          className="text-5xl font-extrabold tracking-tighter leading-[1.1]"
+          style={{ color: '#2b352f' }}
+        >
+          <span className="italic" style={{ color: '#335b48' }}>
+            Customer Directory
+          </span>
+        </h2>
+        <RefreshButton onRefresh={refetch} loading={loading} />
+      </div>
 
       <div className="mb-4">
         <ToolBar
@@ -96,22 +105,24 @@ export default function StaffCustomerManagement() {
             setPage(1);
           }}
           actions={
-            <div className="relative" ref={filterRef}>
-              <button
-                type="button"
-                onClick={() => setShowFilter(!showFilter)}
-                className="inline-flex items-center gap-2 h-12 rounded-full bg-[#eef6ff] px-4 py-2 text-sm font-semibold text-[#204877] hover:bg-[#dbe9ff] transition-colors"
-              >
-                <Funnel className="w-4" /> Filter
-              </button>
-              {showFilter && (
-                <FilterDropdown
-                  filter={filter}
-                  setFilter={setFilter}
-                  onClose={() => setShowFilter(false)}
-                />
-              )}
-            </div>
+            <>
+              <div className="relative" ref={filterRef}>
+                <button
+                  type="button"
+                  onClick={() => setShowFilter(!showFilter)}
+                  className="inline-flex items-center gap-2 h-12 rounded-full bg-[#eef6ff] px-4 py-2 text-sm font-semibold text-[#204877] hover:bg-[#dbe9ff] transition-colors"
+                >
+                  <Funnel className="w-4" /> Filter
+                </button>
+                {showFilter && (
+                  <FilterDropdown
+                    filter={filter}
+                    setFilter={setFilter}
+                    onClose={() => setShowFilter(false)}
+                  />
+                )}
+              </div>
+            </>
           }
           variant="minimal"
         />

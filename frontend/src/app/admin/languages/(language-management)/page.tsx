@@ -11,6 +11,7 @@ import { deleteLanguageService } from './services/delete-language.service';
 import { updateLanguageService } from './services/update-language.service';
 import useLanguages from './hooks/use-languages';
 import ToolBar from '@/shared/common/components/tool-bar/tool-bar';
+import RefreshButton from '@/shared/common/components/refresh-button';
 
 export default function LanguageManagement() {
   const pageSize = 10;
@@ -108,7 +109,9 @@ export default function LanguageManagement() {
   return (
     <div>
       <div className="p-12">
-        <LanguageManagementHeader />
+        <LanguageManagementHeader
+          action={<RefreshButton onRefresh={refetch} loading={loading} />}
+        />
 
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-8">

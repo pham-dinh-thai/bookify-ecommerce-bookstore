@@ -7,49 +7,48 @@ import {
   AUDIT_LOG_QUERY_REPOSITORY,
   type IAuditLogQueryRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-query.repositoy.interface';
+import {
+  BOOKS_QUERY_REPOSITORY,
+  type IBooksQueryRepository,
+} from '../../../../book-management/domain/book-aggregate/repositories/books-query.repository.interface';
 import { GetStaffDashboardResponse } from './get-staff-dashboard.response';
 import { OrderWorkloadReadModel } from '../../../domain/staff-dashboard-aggregate/read-models/order-workload.read-model';
 import { TodayActivityReadModel } from '../../../domain/staff-dashboard-aggregate/read-models/today-activity.read-model';
+import { BookStockAlertsReadModel } from '../../../../book-management/domain/book-aggregate/read-models/book-stock-alerts.read-model';
+import { RecentOrderReadModel } from '../../../domain/staff-dashboard-aggregate/read-models/recent-order.read-model';
+import { QuickActionReadModel } from '../../../domain/staff-dashboard-aggregate/read-models/quick-action.read-model';
 
-/**
- * TODO: Staff dashboard implementation checklist
- *
- * 3. Stock alerts
- *    - Add a book query read model for low-stock and out-of-stock counts.
- *    - Count out-of-stock books.
- *    - Count low-stock books using an agreed threshold, for example quantity <= 5.
- *    - Optionally include a small list of low-stock books for quick action.
- *
- * 4. Recent orders
- *    - Reuse or add an order query for the latest 5-10 orders.
- *    - Include order code, status, payment status, total amount, createdAt.
- *    - Keep enough data for a direct link to staff order detail.
- *
- * 5. Quick actions
- *    - Return route metadata only if the frontend needs it.
- *    - Suggested actions: Order Management, Import Stock, Book Management,
- *      Customer Directory.
- *
- * 6. Response contract
- *    - Shape response around staff operations, not admin system totals.
- *    - Suggested top-level fields:
- *      orderWorkload, todayActivity, stockAlerts, recentOrders, quickActions.
- */
 @Injectable()
 export class GetStaffDashboardUseCase {
+  private static readonly LOW_STOCK_THRESHOLD = 5;
+  private static readonly LOW_STOCK_BOOK_LIMIT = 5;
+  private static readonly RECENT_ORDER_LIMIT = 5;
+
   public constructor(
     @Inject(ORDERS_QUERY_REPOSITORY)
     private readonly ordersQueryRepository: IOrdersQueryRepository,
 
     @Inject(AUDIT_LOG_QUERY_REPOSITORY)
     private readonly auditLogQueryRepository: IAuditLogQueryRepository,
+
+    @Inject(BOOKS_QUERY_REPOSITORY)
+    private readonly booksQueryRepository: IBooksQueryRepository,
   ) {}
 
   public async execute(): Promise<GetStaffDashboardResponse> {
     const orderWorkload = await this.getOrderWorkload();
     const todayActivity = await this.getTodayActivity();
+    const stockAlerts = await this.getStockAlerts();
+    const recentOrders = await this.getRecentOrders();
+    const quickActions = this.getQuickActions();
 
-    return new GetStaffDashboardResponse(orderWorkload, todayActivity);
+    return new GetStaffDashboardResponse(
+      orderWorkload,
+      todayActivity,
+      stockAlerts,
+      recentOrders,
+      quickActions,
+    );
   }
 
   private async getOrderWorkload(): Promise<OrderWorkloadReadModel> {
@@ -79,5 +78,50 @@ export class GetStaffDashboardUseCase {
     );
   }
 
-  private getRecentOrderPlaced() {}
+  private async getStockAlerts(): Promise<BookStockAlertsReadModel> {
+    return this.booksQueryRepository.findStockAlerts(
+      GetStaffDashboardUseCase.LOW_STOCK_THRESHOLD,
+      GetStaffDashboardUseCase.LOW_STOCK_BOOK_LIMIT,
+    );
+  }
+
+  private async getRecentOrders(): Promise<RecentOrderReadModel[]> {
+    const orders = await this.ordersQueryRepository.findRecent(
+      GetStaffDashboardUseCase.RECENT_ORDER_LIMIT,
+    );
+
+    return orders.map(
+      (order) =>
+        new RecentOrderReadModel(
+          order.id,
+          order.orderCode,
+          order.status,
+          order.paymentStatus,
+          order.totalAmount,
+          order.createdAt,
+          `/staff/orders/${order.id}`,
+        ),
+    );
+  }
+
+  private getQuickActions(): QuickActionReadModel[] {
+    return [
+      new QuickActionReadModel(
+        'order-management',
+        'Order Management',
+        '/staff/orders',
+      ),
+      new QuickActionReadModel('import-stock', 'Import Stock', '/staff/stock'),
+      new QuickActionReadModel(
+        'book-management',
+        'Book Management',
+        '/staff/books',
+      ),
+      new QuickActionReadModel(
+        'customer-directory',
+        'Customer Directory',
+        '/staff/customers',
+      ),
+    ];
+  }
 }

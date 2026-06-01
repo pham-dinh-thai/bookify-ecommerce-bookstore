@@ -6,7 +6,6 @@ import { FindCustomersResponse } from '../../application/customer-use-cases/find
 import { JwtAuthGuard } from '../../../../shared/http/guards/jwt-auth.guard';
 import { RoleGuard } from '../../../../shared/http/guards/role.guard';
 import { Roles } from '../../../../shared/http/decorators/roles.decorator';
-import { FindTotalCustomerUseCase } from '../../application/customer-use-cases/find-total-customer/find-total-customer.use-case';
 import { CustomerFilter } from '../../domain/customer-aggregate/customer.filter';
 
 @Controller('customers')
@@ -14,7 +13,6 @@ export class CustomersController {
   public constructor(
     private readonly completeInformationUseCase: CompleteInformationUseCase,
     private readonly findCustomersUseCase: FindCustomersUseCase,
-    private readonly findTotalCustomerUseCase: FindTotalCustomerUseCase,
   ) {}
 
   @UseGuards(JwtAuthGuard, RoleGuard)
@@ -38,15 +36,6 @@ export class CustomersController {
     );
 
     return response;
-  }
-
-  @UseGuards(JwtAuthGuard, RoleGuard)
-  @Roles('admin')
-  @Get('total')
-  public async total(): Promise<number> {
-    const total = await this.findTotalCustomerUseCase.execute();
-
-    return total;
   }
 
   @Post('complete-information')

@@ -16,7 +16,6 @@ import { RolesModule } from '../authorization/roles.module';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { RenameGenreUseCase } from './application/genre-use-cases/rename-genre/rename-genre.use-case';
 import { DeleteGenreUseCase } from './application/genre-use-cases/delete-genre/delete-genre.use-case';
-import { FindTotalGenreUseCase } from './application/genre-use-cases/find-total-genre/find-total-genre.use-case';
 import { SharedCacheModule } from '../../shared/modules/cache/cache.module';
 import { GENRE_EXISTS_CHECKER } from './domain/genre-aggregate/services/genre-exists-checker.service';
 import { GenreExistsChecker } from './infrastructure/services/genres/genre-exists-checker.service';
@@ -35,7 +34,6 @@ import { GenreExistsChecker } from './infrastructure/services/genres/genre-exist
   providers: [
     FindGenresUseCase,
     FindOneGenreUseCase,
-    FindTotalGenreUseCase,
     CreateGenreUseCase,
     RenameGenreUseCase,
     DeleteGenreUseCase,

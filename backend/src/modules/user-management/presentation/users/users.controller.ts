@@ -23,7 +23,6 @@ import { UpdateUserRequest } from './requests/update-user.request';
 import { UpdateUserUseCase } from '../../application/user-use-cases/update-user/update-user.use-case';
 import { DeactivateUserUseCase } from '../../application/user-use-cases/deactivate-user/deactivate-user.use-case';
 import { ActivateUserUseCase } from '../../application/user-use-cases/activate-user/activate-user.use-case';
-import { FindTotalByRoleUseCase } from '../../application/user-use-cases/find-total-by-role/find-total-by-role.use-case';
 import { UserFilter } from '../../domain/user-aggregate/user-filter';
 
 @Controller('users')
@@ -33,7 +32,6 @@ export class UsersController {
   public constructor(
     private readonly findUsersUseCase: FindUsersUseCase,
     private readonly findOneUserUseCase: FindOneUserUseCase,
-    private readonly findTotalByRoleUseCase: FindTotalByRoleUseCase,
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly updateUserUseCase: UpdateUserUseCase,
     private readonly deactivateUserUseCase: DeactivateUserUseCase,
@@ -72,13 +70,6 @@ export class UsersController {
     const user = await this.findOneUserUseCase.execute(id);
 
     return user;
-  }
-
-  @Get('total/:roleId')
-  public async totalByRole(@Param('roleId') roleId: string): Promise<number> {
-    const total = await this.findTotalByRoleUseCase.execute(roleId);
-
-    return total;
   }
 
   @Post()

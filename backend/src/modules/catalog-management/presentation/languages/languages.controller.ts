@@ -23,7 +23,6 @@ import { CreateLanguageUseCase } from '../../application/language-use-cases/crea
 import { RenameLanguageUseCase } from '../../application/language-use-cases/rename-language/rename-language.use-case';
 import { RenameLanguageRequest } from './requests/rename-language.request';
 import { DeleteLanguageUseCase } from '../../application/language-use-cases/delete-language/delete-language.use-case';
-import { FindTotalLanguageUseCase } from '../../application/language-use-cases/find-total-language/find-total-language.use-case';
 import { FindLanguagesResponse } from '../../application/language-use-cases/find-languages/find-languages.response';
 
 @Controller('languages')
@@ -31,7 +30,6 @@ export class LanguagesController {
   public constructor(
     private readonly findLanguagesUseCase: FindLanguagesUseCase,
     private readonly findOneLanguageUseCase: FindOneLanguageUseCase,
-    private readonly findTotalLanguageUseCase: FindTotalLanguageUseCase,
     private readonly createLanguageUseCase: CreateLanguageUseCase,
     private readonly renameLanguageUseCase: RenameLanguageUseCase,
     private readonly deleteLanguageUseCase: DeleteLanguageUseCase,
@@ -50,15 +48,6 @@ export class LanguagesController {
     );
 
     return response;
-  }
-
-  @Get('total')
-  @UseGuards(JwtAuthGuard, RoleGuard)
-  @Roles('admin')
-  public async total(): Promise<number> {
-    const total = await this.findTotalLanguageUseCase.execute();
-
-    return total;
   }
 
   @Get(':id')

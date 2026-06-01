@@ -16,7 +16,6 @@ import { PUBLISHERS_COMMAND_REPOSITORY } from './domain/publisher-aggregate/repo
 import { TypeOrmPublishersCommandRepository } from './infrastructure/repositories/publishers/typeorm-publishers-command.repository';
 import { RenamePublisherUseCase } from './application/publisher-use-cases/rename-publisher/rename-publisher.use-case';
 import { DeletePublisherUseCase } from './application/publisher-use-cases/delete-publisher/delete-publisher.use-case';
-import { FindTotalPublisherUseCase } from './application/publisher-use-cases/find-total-publisher/find-total-publisher.use-case';
 import { PUBLISHER_EXISTS_CHECKER } from './domain/publisher-aggregate/services/publisher-exists-checker.service';
 import { PublisherExistsChecker } from './infrastructure/services/publishers/publisher-exists-checker.service';
 
@@ -33,7 +32,6 @@ import { PublisherExistsChecker } from './infrastructure/services/publishers/pub
   providers: [
     FindPublishersUseCase,
     FindOnePublisherUseCase,
-    FindTotalPublisherUseCase,
     CreatePublisherUseCase,
     RenamePublisherUseCase,
     DeletePublisherUseCase,

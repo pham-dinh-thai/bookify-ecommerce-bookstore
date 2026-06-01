@@ -6,6 +6,7 @@ import useAuditLogs from './hooks/use-audit-logs';
 import usePaginate from '../users/(features)/(user-management)/hooks/use-paginate';
 import { type AuditLog } from './types';
 import { useState } from 'react';
+import RefreshButton from '@/shared/common/components/refresh-button';
 
 export default function AuditLog() {
   const pageSize = 10;
@@ -68,15 +69,17 @@ export default function AuditLog() {
   return (
     <div>
       <div className="p-12">
-        <div>
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <h2
-            className="text-5xl font-extrabold tracking-tighter mb-6 leading-[1.1]"
+            className="text-5xl font-extrabold tracking-tighter leading-[1.1]"
             style={{ color: '#2b352f' }}
           >
             <span className="italic" style={{ color: '#335b48' }}>
               AuditLog
             </span>
           </h2>
+
+          <RefreshButton onRefresh={refetch} loading={loading} />
         </div>
 
         <div className="mb-4">

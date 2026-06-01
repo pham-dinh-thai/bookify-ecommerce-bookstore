@@ -12,6 +12,7 @@ import { Book } from '../../types';
 import ToolBar from '@/shared/common/components/tool-bar/tool-bar';
 import { deleteBookService } from './services/delete-book.service';
 import ConfirmDeleteModal from './components/confirm-delete-modal';
+import RefreshButton from '@/shared/common/components/refresh-button';
 
 export default function BookManagementPage() {
   const pageSize = 10;
@@ -159,7 +160,9 @@ export default function BookManagementPage() {
   return (
     <div>
       <div className="p-12">
-        <BookManagementHeader />
+        <BookManagementHeader
+          action={<RefreshButton onRefresh={refetch} loading={loading} />}
+        />
 
         <div className="mb-4">
           <ToolBar

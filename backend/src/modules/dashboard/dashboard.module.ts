@@ -6,6 +6,13 @@ import { OrderModule } from '../order/order.module';
 import { BookManagementModule } from '../book-management/book-management.module';
 import { GetStaffDashboardUseCase } from './application/dashboard-use-cases/get-staff-dashboard/get-staff-dashboard.use-case';
 import { AuditLogModule } from '../audit-log/audit-log.module';
+import { GetAdminDashboardUseCase } from './application/dashboard-use-cases/get-admin-dashboard/get-admin-dashboard.use-case';
+import { UserManagementModule } from '../user-management/user-management.module';
+import { CustomerManagementModule } from '../customer-management/customer-management.module';
+import { GenresModule } from '../catalog-management/genres.module';
+import { PublishersModule } from '../catalog-management/publishers.module';
+import { AuthorsModule } from '../catalog-management/authors.module';
+import { LanguagesModule } from '../catalog-management/languages.module';
 
 @Module({
   controllers: [AdminDashboardController, StaffDashboardController],
@@ -14,7 +21,13 @@ import { AuditLogModule } from '../audit-log/audit-log.module';
     OrderModule,
     BookManagementModule,
     AuditLogModule,
+    UserManagementModule,
+    CustomerManagementModule,
+    GenresModule,
+    PublishersModule,
+    AuthorsModule,
+    LanguagesModule,
   ],
-  providers: [GetStaffDashboardUseCase],
+  providers: [GetStaffDashboardUseCase, GetAdminDashboardUseCase],
 })
 export class DashboardModule {}
