@@ -6,6 +6,7 @@ import { useMemo, useState, createContext, useContext } from 'react';
 import { useToast } from '@/shared/common/toast/toast';
 import { addCartItem, StoredCartItem } from '../../cart/cart-storage';
 import { addCartItemService } from '../../cart/cart.service';
+import { writeCheckoutItems } from '../../checkout/checkout-storage';
 
 type PurchaseCtx = {
   quantity: number;
@@ -126,20 +127,9 @@ export function PurchaseButtons({ book }: PurchaseButtonsProps) {
   };
 
   const handleBuyNow = async () => {
-    try {
-      setSubmitting(true);
-      await addCartItemService(cartItem);
-      addCartItem(cartItem);
-      toast?.addToast('Added to cart successfully', 'success');
-      router.push('/cart');
-    } catch (error) {
-      toast?.addToast(
-        error instanceof Error ? error.message : 'Failed to add item to cart',
-        'error',
-      );
-    } finally {
-      setSubmitting(false);
-    }
+    setSubmitting(true);
+    writeCheckoutItems([cartItem]);
+    router.push('/checkout');
   };
 
   return (

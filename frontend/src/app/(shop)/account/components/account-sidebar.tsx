@@ -4,7 +4,11 @@ import { Info, Lock, MapPin, ReceiptText } from 'lucide-react';
 import Link from 'next/link';
 
 type AccountSidebarProps = {
-  activeItem: 'basic-information' | 'change-password' | 'contact-information';
+  activeItem:
+    | 'basic-information'
+    | 'change-password'
+    | 'contact-information'
+    | 'orders';
 };
 
 const navItems = [
@@ -26,9 +30,13 @@ const navItems = [
     id: 'change-password',
     label: 'Change Password',
   },
+  {
+    href: '/account/orders',
+    icon: ReceiptText,
+    id: 'orders',
+    label: 'My Orders',
+  },
 ] as const;
-
-const disabledItems = [{ icon: ReceiptText, label: 'My Order' }];
 
 export default function AccountSidebar({ activeItem }: AccountSidebarProps) {
   return (
@@ -58,21 +66,6 @@ export default function AccountSidebar({ activeItem }: AccountSidebarProps) {
             );
           })}
 
-          {disabledItems.map((item) => {
-            const Icon = item.icon;
-
-            return (
-              <button
-                key={item.label}
-                type="button"
-                disabled
-                className="flex min-w-fit cursor-not-allowed items-center gap-3 rounded-lg px-4 py-3 text-left text-sm font-semibold text-[#58615b]/60 lg:w-full"
-              >
-                <Icon size={18} strokeWidth={1.8} />
-                <span>{item.label}</span>
-              </button>
-            );
-          })}
         </nav>
       </div>
     </aside>

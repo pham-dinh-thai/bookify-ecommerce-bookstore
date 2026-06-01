@@ -74,17 +74,23 @@ export class PlaceOrderUseCase {
       throw new CustomerNotFoundException();
     }
 
-    if (!customer.phoneNumber) {
+    const phoneNumber = request.phoneNumber?.trim() || customer.phoneNumber;
+    if (!phoneNumber) {
       throw new PhoneNumberEmptyException();
     }
 
     const defaultAddress = customer.addresses.find(
       (address) => address.isDefault === true,
     );
-    if (!defaultAddress) {
+    const shippingAddress =
+      request.shippingAddress?.trim() ||
+      (defaultAddress
+        ? `${defaultAddress.street}, ${defaultAddress.wardName}, ${defaultAddress.provinceName}`
+        : '');
+
+    if (!shippingAddress) {
       throw new ShippingAddressEmptyException();
     }
-    const shippingAddress = `${defaultAddress.street}, ${defaultAddress.wardName}, ${defaultAddress.provinceName}`;
 
     const orderId = this.uuidGenerator.generate();
     const order: Order = Order.create({
@@ -93,7 +99,7 @@ export class PlaceOrderUseCase {
       userId: userId,
       paymentMethod: request.paymentMethod,
       shippingAddress: shippingAddress,
-      phoneNumber: customer.phoneNumber,
+      phoneNumber: phoneNumber,
     });
 
     for (const item of request.items) {

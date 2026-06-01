@@ -71,20 +71,33 @@ export class OrdersMapper {
         (cover) => cover.isPrimary,
       );
 
+      const unitPrice = Number(item.price);
+
       return new OrderItemPreviewReadModel(
         item.productId,
         item.product.title,
         primaryCover?.url ?? null,
         item.quantity,
+        unitPrice,
+        unitPrice * item.quantity,
       );
     });
+    const totalItems = orderTypeOrm.items.reduce(
+      (total, item) => total + item.quantity,
+      0,
+    );
+    const totalAmount = previewItems.reduce(
+      (total, item) => total + item.lineTotal,
+      0,
+    );
 
     return new MyOrderReadModel(
       orderTypeOrm.id,
       OrdersMapper.getDisplayOrderCode(orderTypeOrm),
       orderTypeOrm.status,
       orderTypeOrm.paymentStatus,
-      orderTypeOrm.items.reduce((total, item) => total + item.quantity, 0),
+      totalItems,
+      totalAmount,
       previewItems,
       orderTypeOrm.createdAt,
     );

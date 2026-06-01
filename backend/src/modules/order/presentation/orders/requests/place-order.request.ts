@@ -5,6 +5,8 @@ import {
   IsEnum,
   IsInt,
   IsNotEmpty,
+  IsOptional,
+  IsString,
   IsUUID,
   Min,
   ValidateNested,
@@ -26,6 +28,14 @@ export class PlaceOrderRequest implements IPlaceOrderRequest {
   @IsEnum(PaymentMethod)
   @IsNotEmpty()
   paymentMethod!: PaymentMethod;
+
+  @IsString()
+  @IsOptional()
+  phoneNumber?: string;
+
+  @IsString()
+  @IsOptional()
+  shippingAddress?: string;
 
   @IsArray()
   @ArrayMinSize(1)
