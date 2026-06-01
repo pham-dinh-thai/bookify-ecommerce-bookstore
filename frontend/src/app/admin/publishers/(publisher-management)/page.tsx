@@ -12,16 +12,27 @@ import { deletePublisherService } from './services/delete-publisher.service';
 import { updatePublisherService } from './services/update-publisher.service';
 import ToolBar from '@/shared/common/components/tool-bar/tool-bar';
 import RefreshButton from '@/shared/common/components/refresh-button';
+import useAdminDashboard from '../../system-overview/hooks/use-admin-dashboard';
 
 export default function PublisherManagement() {
   const pageSize = 10;
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
 
-  const { publishers, total, loading, errors, refetch } = usePublishers(
+  const { publishers, total, loading, refetch } = usePublishers(
     page,
     pageSize,
     search,
+  );
+  const {
+    dashboard,
+    loading: dashboardLoading,
+    refetch: refetchDashboard,
+  } = useAdminDashboard();
+  const topPublishers = dashboard?.topPublishers ?? [];
+  const maxUnitsSold = Math.max(
+    1,
+    ...topPublishers.map((publisher) => publisher.unitsSold),
   );
 
   const { addToast } = useToast();
@@ -31,7 +42,11 @@ export default function PublisherManagement() {
   const [newName, setNewName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
 
-  const handleEdit = (item: any) => {
+  const handleRefresh = async () => {
+    await Promise.all([refetch(), refetchDashboard()]);
+  };
+
+  const handleEdit = (item: Publisher) => {
     setEditingId(item.id);
     setEditingName(item.name);
   };
@@ -42,9 +57,13 @@ export default function PublisherManagement() {
       await updatePublisherService(editingId, { name: editingName });
       addToast('Publisher updated successfully', 'success');
       setEditingId(null);
-      refetch();
-    } catch (err: any) {
-      addToast(err?.message || 'Something went wrong', 'error');
+      void refetch();
+      void refetchDashboard();
+    } catch (err: unknown) {
+      addToast(
+        err instanceof Error ? err.message : 'Something went wrong',
+        'error',
+      );
     }
   };
 
@@ -52,9 +71,13 @@ export default function PublisherManagement() {
     try {
       await deletePublisherService(id);
       addToast('Publisher deleted successfully', 'success');
-      refetch();
-    } catch (err: any) {
-      addToast(err?.message || 'Something went wrong', 'error');
+      void refetch();
+      void refetchDashboard();
+    } catch (err: unknown) {
+      addToast(
+        err instanceof Error ? err.message : 'Something went wrong',
+        'error',
+      );
     }
   };
 
@@ -65,18 +88,22 @@ export default function PublisherManagement() {
       addToast('Publisher created successfully', 'success');
       setNewName('');
       setIsCreating(false);
-      refetch();
-    } catch (err: any) {
-      addToast(err?.message || 'Something went wrong', 'error');
+      void refetch();
+      void refetchDashboard();
+    } catch (err: unknown) {
+      addToast(
+        err instanceof Error ? err.message : 'Something went wrong',
+        'error',
+      );
     }
   };
 
   const columns = [
     {
       key: 'name',
-      label: 'Author Name',
+      label: 'Publisher Name',
       className: 'text-[#4f6553]',
-      render: (item: any) =>
+      render: (item: Publisher) =>
         editingId === item.id ? (
           <input
             type="text"
@@ -97,7 +124,12 @@ export default function PublisherManagement() {
     <div>
       <div className="p-12">
         <PublisherManagementHeader
-          action={<RefreshButton onRefresh={refetch} loading={loading} />}
+          action={
+            <RefreshButton
+              onRefresh={handleRefresh}
+              loading={loading || dashboardLoading}
+            />
+          }
         />
 
         <div className="grid grid-cols-12 gap-6">
@@ -176,7 +208,7 @@ export default function PublisherManagement() {
                     <>
                       <button
                         type="button"
-                        title="Edit Genre"
+                        title="Edit Publisher"
                         onClick={() => handleEdit(item)}
                         className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#eef6ff] text-[#204877] hover:bg-[#dbe9ff]"
                       >
@@ -184,7 +216,7 @@ export default function PublisherManagement() {
                       </button>
                       <button
                         type="button"
-                        title="Delete Genre"
+                        title="Delete Publisher"
                         onClick={() => handleDelete(item.id)}
                         className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#fff1f1] text-[#b33a3a] hover:bg-[#ffdede]"
                       >
@@ -224,35 +256,41 @@ export default function PublisherManagement() {
               </h3>
 
               <div className="space-y-4">
-                {[
-                  { name: 'Penguin Random House', count: 42 },
-                  { name: 'Penguin Classics', count: 38 },
-                  { name: 'Vintage Classics', count: 27 },
-                  { name: 'Wordsworth Classics', count: 21 },
-                  { name: 'Oxford Classics', count: 15 },
-                ].map((author, index) => (
-                  <div key={author.name}>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-[#1c3725]">
-                        {index + 1}. {author.name}
-                      </span>
-                      <span className="text-xs text-[#6d7f72]">
-                        {author.count} books
-                      </span>
+                {dashboardLoading ? (
+                  <p className="text-sm text-[#6d7f72]">
+                    Loading publishers...
+                  </p>
+                ) : topPublishers.length > 0 ? (
+                  topPublishers.map((publisher, index) => (
+                    <div key={publisher.publisherId}>
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <span className="min-w-0 truncate text-sm font-medium text-[#1c3725]">
+                          {index + 1}. {publisher.publisherName}
+                        </span>
+                        <span className="shrink-0 text-xs text-[#6d7f72]">
+                          {publisher.unitsSold} sold
+                        </span>
+                      </div>
+                      <div className="w-full bg-[#f0f4f0] rounded-full h-1.5">
+                        <div
+                          className="bg-[#2d6a4f] h-1.5 rounded-full"
+                          style={{
+                            width: `${(publisher.unitsSold / maxUnitsSold) * 100}%`,
+                          }}
+                        />
+                      </div>
                     </div>
-                    <div className="w-full bg-[#f0f4f0] rounded-full h-1.5">
-                      <div
-                        className="bg-[#2d6a4f] h-1.5 rounded-full"
-                        style={{ width: `${(author.count / 42) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-sm text-[#6d7f72]">
+                    No publisher sales in the last 30 days.
+                  </p>
+                )}
               </div>
 
               <div className="mt-8 pt-6 border-t border-[#e8ede9]">
                 <p className="text-xs text-[#8c9b8d] italic">
-                  Fake data — connect books module later
+                  Ranked by units sold in the last 30 days
                 </p>
               </div>
             </div>
