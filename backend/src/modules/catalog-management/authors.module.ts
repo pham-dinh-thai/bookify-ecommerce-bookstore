@@ -16,7 +16,6 @@ import { CreateAuthorUseCase } from './application/author-use-cases/create-autho
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { RenameAuthorUseCase } from './application/author-use-cases/rename-author/rename-author.use-case';
 import { DeleteAuthorUseCase } from './application/author-use-cases/delete-author/delete-author.use-case';
-import { FindTotalAuthorUseCase } from './application/author-use-cases/find-total-author/find-total-author.use-case';
 import { AUTHOR_EXISTS_CHECKER } from './domain/author-aggregate/services/author-exists-checker.service';
 import { AuthorExistsChecker } from './infrastructure/services/authors/author-exists-checker.service';
 
@@ -32,7 +31,6 @@ import { AuthorExistsChecker } from './infrastructure/services/authors/author-ex
   providers: [
     FindAuthorsUseCase,
     FindOneAuthorUseCase,
-    FindTotalAuthorUseCase,
     CreateAuthorUseCase,
     RenameAuthorUseCase,
     DeleteAuthorUseCase,

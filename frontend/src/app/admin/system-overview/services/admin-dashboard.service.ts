@@ -1,9 +1,10 @@
 import { getAccessToken } from '@/shared/auth/lib/token-storage';
+import { AdminDashboard } from '../types';
 
-export const recentActivitiesService = async () => {
+export default async function adminDashboardService(): Promise<AdminDashboard> {
   const token = getAccessToken();
 
-  const res = await fetch('/api/audit-logs/recent', {
+  const res = await fetch('/api/admin-dashboard', {
     credentials: 'include',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -15,4 +16,4 @@ export const recentActivitiesService = async () => {
   }
 
   return await res.json();
-};
+}

@@ -18,7 +18,6 @@ import { PhoneNumberExistsCheckerService } from './infrastructure/services/phone
 import { SharedJwtModule } from '../../shared/modules/jwt/shared-jwt.module';
 import { FindCustomersUseCase } from './application/customer-use-cases/find-customers/find-customers.use-case';
 import { AuthenticationModule } from '../authentication/authentication.module';
-import { FindTotalCustomerUseCase } from './application/customer-use-cases/find-total-customer/find-total-customer.use-case';
 import { UserManagementModule } from '../user-management/user-management.module';
 
 @Module({
@@ -36,7 +35,6 @@ import { UserManagementModule } from '../user-management/user-management.module'
   providers: [
     CompleteInformationUseCase,
     FindCustomersUseCase,
-    FindTotalCustomerUseCase,
     {
       provide: CUSTOMERS_QUERY_REPOSITORY,
       useClass: TypeOrmCustomersQueryRepository,

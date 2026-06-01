@@ -23,7 +23,6 @@ import { CurrentUser } from '../../../../shared/http/decorators/current-user.dec
 import { RenameGenreRequest } from './requests/rename-genre.request';
 import { RenameGenreUseCase } from '../../application/genre-use-cases/rename-genre/rename-genre.use-case';
 import { DeleteGenreUseCase } from '../../application/genre-use-cases/delete-genre/delete-genre.use-case';
-import { FindTotalGenreUseCase } from '../../application/genre-use-cases/find-total-genre/find-total-genre.use-case';
 import { FindGenresResponse } from '../../application/genre-use-cases/find-genres/find-genres.response';
 
 @Controller('genres')
@@ -31,7 +30,6 @@ export class GenresController {
   public constructor(
     private readonly findGenresUseCase: FindGenresUseCase,
     private readonly findOneGenreUseCase: FindOneGenreUseCase,
-    private readonly findTotalGenreUseCase: FindTotalGenreUseCase,
     private readonly createGenreUseCase: CreateGenreUseCase,
     private readonly renameGenreUseCase: RenameGenreUseCase,
     private readonly deleteGenreUseCase: DeleteGenreUseCase,
@@ -50,13 +48,6 @@ export class GenresController {
     );
 
     return response;
-  }
-
-  @Get('total')
-  public async total(): Promise<number> {
-    const total = await this.findTotalGenreUseCase.execute();
-
-    return total;
   }
 
   @Get(':id')

@@ -14,7 +14,6 @@ import {
 } from '@nestjs/common';
 import { FindBooksUseCase } from '../../application/book-use-cases/find-books/find-books.use-case';
 import { FindOneBookUseCase } from '../../application/book-use-cases/find-one-book/find-one-book.use-case';
-import { FindTotalBookUseCase } from '../../application/book-use-cases/find-total-book/find-total-book.use-case';
 import { JwtAuthGuard } from '../../../../shared/http/guards/jwt-auth.guard';
 import { RoleGuard } from '../../../../shared/http/guards/role.guard';
 import { Roles } from '../../../../shared/http/decorators/roles.decorator';
@@ -41,7 +40,6 @@ export class BooksController {
   public constructor(
     private readonly findBooksUseCase: FindBooksUseCase,
     private readonly findOneBookUseCase: FindOneBookUseCase,
-    private readonly findTotalBookUseCase: FindTotalBookUseCase,
     private readonly createBookUseCase: CreateBookUseCase,
     private readonly updateBookUseCase: UpdateBookUseCase,
     private readonly addBookCoverUseCase: AddBookCoverUseCase,
@@ -66,11 +64,6 @@ export class BooksController {
     );
 
     return response;
-  }
-
-  @Get('total')
-  public async total(): Promise<number> {
-    return await this.findTotalBookUseCase.execute();
   }
 
   @Get(':id')
