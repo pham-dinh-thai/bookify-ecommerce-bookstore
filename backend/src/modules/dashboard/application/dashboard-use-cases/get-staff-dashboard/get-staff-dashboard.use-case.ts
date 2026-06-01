@@ -14,15 +14,6 @@ import { TodayActivityReadModel } from '../../../domain/staff-dashboard-aggregat
 /**
  * TODO: Staff dashboard implementation checklist
  *
- * 2. Today activity
- *    - Count orders placed today.
- *    - Count orders confirmed today if status history/audit data is available.
- *    - Count orders delivered today if status history/audit data is available.
- *    - Count orders completed today if status history/audit data is available.
- *    - Count orders canceled today if status history/audit data is available.
- *    - If the order table does not track status transition timestamps, use
- *      audit-log events or keep this section limited to "placed today" first.
- *
  * 3. Stock alerts
  *    - Add a book query read model for low-stock and out-of-stock counts.
  *    - Count out-of-stock books.
@@ -87,4 +78,6 @@ export class GetStaffDashboardUseCase {
       activity.canceled,
     );
   }
+
+  private getRecentOrderPlaced() {}
 }
