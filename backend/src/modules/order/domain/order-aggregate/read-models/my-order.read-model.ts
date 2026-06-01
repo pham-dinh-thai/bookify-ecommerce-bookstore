@@ -9,6 +9,7 @@ export class MyOrderReadModel {
     public readonly status: OrderStatus,
     public readonly paymentStatus: PaymentStatus,
     public readonly totalItems: number,
+    public readonly totalAmount: number,
     public readonly previewItems: OrderItemPreviewReadModel[],
     public readonly createdAt: Date,
   ) {}
