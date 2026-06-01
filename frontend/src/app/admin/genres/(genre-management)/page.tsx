@@ -12,6 +12,7 @@ import Paginate from '@/shared/common/components/pagination/paginate';
 import GenreManagementHeader from './ui/genre-management-header';
 import ToolBar from '@/shared/common/components/tool-bar/tool-bar';
 import RefreshButton from '@/shared/common/components/refresh-button';
+import useAdminDashboard from '../../system-overview/hooks/use-admin-dashboard';
 
 export default function GenreManagement() {
   const pageSize = 10;
@@ -22,6 +23,17 @@ export default function GenreManagement() {
     page,
     pageSize,
     search,
+  );
+  const {
+    dashboard,
+    loading: dashboardLoading,
+    error: dashboardError,
+    refetch: refetchDashboard,
+  } = useAdminDashboard();
+  const topGenres = dashboard?.topGenres ?? [];
+  const maxUnitsSold = Math.max(
+    ...topGenres.map((genre) => genre.unitsSold),
+    1,
   );
 
   const { addToast } = useToast();
@@ -76,6 +88,16 @@ export default function GenreManagement() {
     }
   };
 
+  const handleRefresh = async () => {
+    await Promise.all([refetch(), refetchDashboard()]);
+  };
+
+  const formatVnd = (value: number) =>
+    Number(value).toLocaleString('vi-VN', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }) + ' VNĐ';
+
   const columns = [
     {
       key: 'name',
@@ -102,7 +124,12 @@ export default function GenreManagement() {
     <div>
       <div className="p-12">
         <GenreManagementHeader
-          action={<RefreshButton onRefresh={refetch} loading={loading} />}
+          action={
+            <RefreshButton
+              onRefresh={handleRefresh}
+              loading={loading || dashboardLoading}
+            />
+          }
         />
 
         <div className="grid grid-cols-12 gap-6">
@@ -224,41 +251,51 @@ export default function GenreManagement() {
             </div>
 
             <div className="bg-white rounded-3xl border border-[#e8ede9] p-6 shadow-sm">
-              <h3 className="text-sm font-bold uppercase tracking-widest text-[#6d7f72] mb-6">
-                Top Genres
-              </h3>
-
-              <div className="space-y-4">
-                {[
-                  { name: 'Classic Literature', count: 42 },
-                  { name: 'Trending', count: 38 },
-                  { name: 'Nordic Noir', count: 27 },
-                  { name: 'Magical Realism', count: 21 },
-                  { name: 'Historical Biography', count: 15 },
-                ].map((genre, index) => (
-                  <div key={genre.name}>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-[#1c3725]">
-                        {index + 1}. {genre.name}
-                      </span>
-                      <span className="text-xs text-[#6d7f72]">
-                        {genre.count} books
-                      </span>
-                    </div>
-                    <div className="w-full bg-[#f0f4f0] rounded-full h-1.5">
-                      <div
-                        className="bg-[#2d6a4f] h-1.5 rounded-full"
-                        style={{ width: `${(genre.count / 42) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
+              <div className="mb-6 flex items-center justify-between gap-3">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-[#6d7f72]">
+                  Top Genres
+                </h3>
+                <span className="rounded-full bg-[#f7faf5] px-3 py-1 text-xs font-semibold text-[#55735f]">
+                  30 days
+                </span>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-[#e8ede9]">
-                <p className="text-xs text-[#8c9b8d] italic">
-                  Fake data — connect books module later
-                </p>
+              <div className="space-y-4">
+                {topGenres.length > 0 ? (
+                  topGenres.map((genre, index) => (
+                    <div key={genre.genreId}>
+                      <div className="mb-1 flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <span className="block truncate text-sm font-medium text-[#1c3725]">
+                            {index + 1}. {genre.genreName}
+                          </span>
+                          <span className="text-xs text-[#6d7f72]">
+                            {formatVnd(genre.revenue)}
+                          </span>
+                        </div>
+                        <span className="shrink-0 text-xs font-semibold text-[#6d7f72]">
+                          {genre.unitsSold} sold
+                        </span>
+                      </div>
+                      <div className="h-1.5 w-full rounded-full bg-[#f0f4f0]">
+                        <div
+                          className="h-1.5 rounded-full bg-[#2d6a4f]"
+                          style={{
+                            width: `${(genre.unitsSold / maxUnitsSold) * 100}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="rounded-2xl bg-[#f7faf5] px-4 py-3 text-sm text-[#5a6d60]">
+                    {dashboardLoading
+                      ? 'Loading top genres...'
+                      : dashboardError
+                        ? 'Unable to load top genres.'
+                        : 'No genre sales in the last 30 days.'}
+                  </p>
+                )}
               </div>
             </div>
           </div>

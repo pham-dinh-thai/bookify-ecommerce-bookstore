@@ -11,6 +11,10 @@ import { OrderNotFoundException } from '../../../domain/order-aggregate/exceptio
 import { OrderStatus } from '../../../domain/order-aggregate/enums/order-status.enum';
 import { PaymentStatus } from '../../../domain/order-aggregate/enums/payment-status.enum';
 import { PaymentMethod } from '../../../domain/order-aggregate/enums/payment-method.enum';
+import { TopAuthorReadModel } from '../../../../dashboard/domain/admin-dashboard-aggregate/read-models/top-author.read-model';
+import { TopGenreReadModel } from '../../../../dashboard/domain/admin-dashboard-aggregate/read-models/top-genre.read-model';
+import { TopLanguageReadModel } from '../../../../dashboard/domain/admin-dashboard-aggregate/read-models/top-language.read-model';
+import { TopPublisherReadModel } from '../../../../dashboard/domain/admin-dashboard-aggregate/read-models/top-publisher.read-model';
 
 @Injectable()
 export class TypeOrmOrdersQueryRepository implements IOrdersQueryRepository {
@@ -213,5 +217,175 @@ export class TypeOrmOrdersQueryRepository implements IOrdersQueryRepository {
       unpaidCod: Number(result?.unpaidCod) || 0,
       deliveredUnpaid: Number(result?.deliveredUnpaid) || 0,
     };
+  }
+
+  public async findTopGenresByUnitsSold(
+    limit: number,
+    since: Date,
+  ): Promise<TopGenreReadModel[]> {
+    const rows = await this.repository
+      .createQueryBuilder('orderEntity')
+      .innerJoin('orderEntity.items', 'item')
+      .innerJoin('item.product', 'book')
+      .innerJoin('book.bookGenres', 'bookGenre')
+      .innerJoin('bookGenre.genre', 'genre')
+      .select([
+        'genre.id AS genreId',
+        'genre.name AS genreName',
+        'SUM(item.quantity) AS unitsSold',
+        'SUM(item.quantity * item.price) AS revenue',
+      ])
+      .where('orderEntity.createdAt >= :since', { since })
+      .andWhere('orderEntity.status != :canceled', {
+        canceled: OrderStatus.CANCELED,
+      })
+      .groupBy('genre.id')
+      .addGroupBy('genre.name')
+      .orderBy('unitsSold', 'DESC')
+      .addOrderBy('revenue', 'DESC')
+      .limit(limit)
+      .getRawMany<{
+        genreId: string;
+        genreName: string;
+        unitsSold: string | number;
+        revenue: string | number;
+      }>();
+
+    return rows.map(
+      (row) =>
+        new TopGenreReadModel(
+          row.genreId,
+          row.genreName,
+          Number(row.unitsSold) || 0,
+          Number(row.revenue) || 0,
+        ),
+    );
+  }
+
+  public async findTopAuthorsByUnitsSold(
+    limit: number,
+    since: Date,
+  ): Promise<TopAuthorReadModel[]> {
+    const rows = await this.repository
+      .createQueryBuilder('orderEntity')
+      .innerJoin('orderEntity.items', 'item')
+      .innerJoin('item.product', 'book')
+      .innerJoin('book.bookAuthors', 'bookAuthor')
+      .innerJoin('bookAuthor.author', 'author')
+      .select([
+        'author.id AS authorId',
+        'author.name AS authorName',
+        'SUM(item.quantity) AS unitsSold',
+        'SUM(item.quantity * item.price) AS revenue',
+      ])
+      .where('orderEntity.createdAt >= :since', { since })
+      .andWhere('orderEntity.status != :canceled', {
+        canceled: OrderStatus.CANCELED,
+      })
+      .groupBy('author.id')
+      .addGroupBy('author.name')
+      .orderBy('unitsSold', 'DESC')
+      .addOrderBy('revenue', 'DESC')
+      .limit(limit)
+      .getRawMany<{
+        authorId: string;
+        authorName: string;
+        unitsSold: string | number;
+        revenue: string | number;
+      }>();
+
+    return rows.map(
+      (row) =>
+        new TopAuthorReadModel(
+          row.authorId,
+          row.authorName,
+          Number(row.unitsSold) || 0,
+          Number(row.revenue) || 0,
+        ),
+    );
+  }
+
+  public async findTopPublishersByUnitsSold(
+    limit: number,
+    since: Date,
+  ): Promise<TopPublisherReadModel[]> {
+    const rows = await this.repository
+      .createQueryBuilder('orderEntity')
+      .innerJoin('orderEntity.items', 'item')
+      .innerJoin('item.product', 'book')
+      .innerJoin('book.publisher', 'publisher')
+      .select([
+        'publisher.id AS publisherId',
+        'publisher.name AS publisherName',
+        'SUM(item.quantity) AS unitsSold',
+        'SUM(item.quantity * item.price) AS revenue',
+      ])
+      .where('orderEntity.createdAt >= :since', { since })
+      .andWhere('orderEntity.status != :canceled', {
+        canceled: OrderStatus.CANCELED,
+      })
+      .groupBy('publisher.id')
+      .addGroupBy('publisher.name')
+      .orderBy('unitsSold', 'DESC')
+      .addOrderBy('revenue', 'DESC')
+      .limit(limit)
+      .getRawMany<{
+        publisherId: string;
+        publisherName: string;
+        unitsSold: string | number;
+        revenue: string | number;
+      }>();
+
+    return rows.map(
+      (row) =>
+        new TopPublisherReadModel(
+          row.publisherId,
+          row.publisherName,
+          Number(row.unitsSold) || 0,
+          Number(row.revenue) || 0,
+        ),
+    );
+  }
+
+  public async findTopLanguagesByUnitsSold(
+    limit: number,
+    since: Date,
+  ): Promise<TopLanguageReadModel[]> {
+    const rows = await this.repository
+      .createQueryBuilder('orderEntity')
+      .innerJoin('orderEntity.items', 'item')
+      .innerJoin('item.product', 'book')
+      .innerJoin('book.language', 'language')
+      .select([
+        'language.id AS languageId',
+        'language.name AS languageName',
+        'SUM(item.quantity) AS unitsSold',
+        'SUM(item.quantity * item.price) AS revenue',
+      ])
+      .where('orderEntity.createdAt >= :since', { since })
+      .andWhere('orderEntity.status != :canceled', {
+        canceled: OrderStatus.CANCELED,
+      })
+      .groupBy('language.id')
+      .addGroupBy('language.name')
+      .orderBy('unitsSold', 'DESC')
+      .addOrderBy('revenue', 'DESC')
+      .limit(limit)
+      .getRawMany<{
+        languageId: string;
+        languageName: string;
+        unitsSold: string | number;
+        revenue: string | number;
+      }>();
+
+    return rows.map(
+      (row) =>
+        new TopLanguageReadModel(
+          row.languageId,
+          row.languageName,
+          Number(row.unitsSold) || 0,
+          Number(row.revenue) || 0,
+        ),
+    );
   }
 }

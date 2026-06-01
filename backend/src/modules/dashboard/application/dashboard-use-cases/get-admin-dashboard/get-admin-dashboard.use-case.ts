@@ -31,11 +31,21 @@ import {
   AUDIT_LOG_QUERY_REPOSITORY,
   type IAuditLogQueryRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-query.repositoy.interface';
+import {
+  ORDERS_QUERY_REPOSITORY,
+  type IOrdersQueryRepository,
+} from '../../../../order/domain/order-aggregate/repositories/orders-query.repository.interface';
 import { SystemTotalsReadModel } from '../../../domain/admin-dashboard-aggregate/read-models/system-totals.read-model';
 import { GetAdminDashboardResponse } from './get-admin-dashboard.response';
 
 @Injectable()
 export class GetAdminDashboardUseCase {
+  private static readonly TOP_GENRE_LIMIT = 5;
+  private static readonly TOP_AUTHOR_LIMIT = 5;
+  private static readonly TOP_PUBLISHER_LIMIT = 5;
+  private static readonly TOP_LANGUAGE_LIMIT = 5;
+  private static readonly SALES_LOOKBACK_DAYS = 30;
+
   public constructor(
     @Inject(USERS_QUERY_REPOSITORY)
     private readonly usersQueryRepository: IUsersQueryRepository,
@@ -60,9 +70,13 @@ export class GetAdminDashboardUseCase {
 
     @Inject(AUDIT_LOG_QUERY_REPOSITORY)
     private readonly auditLogQueryRepository: IAuditLogQueryRepository,
+
+    @Inject(ORDERS_QUERY_REPOSITORY)
+    private readonly ordersQueryRepository: IOrdersQueryRepository,
   ) {}
 
   public async execute(): Promise<GetAdminDashboardResponse> {
+    const salesSince = this.getSalesSinceDate();
     const [
       totalStaff,
       totalCustomers,
@@ -73,6 +87,10 @@ export class GetAdminDashboardUseCase {
       totalBooks,
       totalAuditLogs,
       recentActivities,
+      topGenres,
+      topAuthors,
+      topPublishers,
+      topLanguages,
     ] = await Promise.all([
       this.usersQueryRepository.countByRole('staff'),
       this.customersQueryRepository.count(),
@@ -83,6 +101,22 @@ export class GetAdminDashboardUseCase {
       this.booksQueryRepository.count(),
       this.auditLogQueryRepository.count(),
       this.auditLogQueryRepository.recentActivity(),
+      this.ordersQueryRepository.findTopGenresByUnitsSold(
+        GetAdminDashboardUseCase.TOP_GENRE_LIMIT,
+        salesSince,
+      ),
+      this.ordersQueryRepository.findTopAuthorsByUnitsSold(
+        GetAdminDashboardUseCase.TOP_AUTHOR_LIMIT,
+        salesSince,
+      ),
+      this.ordersQueryRepository.findTopPublishersByUnitsSold(
+        GetAdminDashboardUseCase.TOP_PUBLISHER_LIMIT,
+        salesSince,
+      ),
+      this.ordersQueryRepository.findTopLanguagesByUnitsSold(
+        GetAdminDashboardUseCase.TOP_LANGUAGE_LIMIT,
+        salesSince,
+      ),
     ]);
 
     return new GetAdminDashboardResponse(
@@ -97,6 +131,19 @@ export class GetAdminDashboardUseCase {
         totalAuditLogs,
       ),
       recentActivities,
+      topGenres,
+      topAuthors,
+      topPublishers,
+      topLanguages,
     );
+  }
+
+  private getSalesSinceDate(): Date {
+    const since = new Date();
+    since.setDate(
+      since.getDate() - GetAdminDashboardUseCase.SALES_LOOKBACK_DAYS,
+    );
+
+    return since;
   }
 }

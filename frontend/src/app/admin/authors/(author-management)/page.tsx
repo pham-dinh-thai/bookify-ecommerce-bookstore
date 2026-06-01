@@ -12,16 +12,27 @@ import { deleteAuthorService } from './services/delete-author.service';
 import { createAuthorService } from './services/create-author.service';
 import ToolBar from '@/shared/common/components/tool-bar/tool-bar';
 import RefreshButton from '@/shared/common/components/refresh-button';
+import useAdminDashboard from '../../system-overview/hooks/use-admin-dashboard';
 
 export default function AuthorManagement() {
   const pageSize = 10;
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
 
-  const { authors, total, loading, errors, refetch } = useAuthors(
+  const { authors, total, loading, refetch } = useAuthors(
     page,
     pageSize,
     search,
+  );
+  const {
+    dashboard,
+    loading: dashboardLoading,
+    refetch: refetchDashboard,
+  } = useAdminDashboard();
+  const topAuthors = dashboard?.topAuthors ?? [];
+  const maxUnitsSold = Math.max(
+    1,
+    ...topAuthors.map((author) => author.unitsSold),
   );
 
   const { addToast } = useToast();
@@ -31,7 +42,11 @@ export default function AuthorManagement() {
   const [newName, setNewName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
 
-  const handleEdit = (item: any) => {
+  const handleRefresh = async () => {
+    await Promise.all([refetch(), refetchDashboard()]);
+  };
+
+  const handleEdit = (item: Author) => {
     setEditingId(item.id);
     setEditingName(item.name);
   };
@@ -42,9 +57,13 @@ export default function AuthorManagement() {
       await updateAuthorService(editingId, { name: editingName });
       addToast('Author updated successfully', 'success');
       setEditingId(null);
-      refetch();
-    } catch (err: any) {
-      addToast(err?.message || 'Something went wrong', 'error');
+      void refetch();
+      void refetchDashboard();
+    } catch (err: unknown) {
+      addToast(
+        err instanceof Error ? err.message : 'Something went wrong',
+        'error',
+      );
     }
   };
 
@@ -56,10 +75,14 @@ export default function AuthorManagement() {
       if (authors.length === 1 && page > 1) {
         setPage((prev) => prev - 1);
       } else {
-        refetch();
+        void refetch();
       }
-    } catch (err: any) {
-      addToast(err?.message || 'Something went wrong', 'error');
+      void refetchDashboard();
+    } catch (err: unknown) {
+      addToast(
+        err instanceof Error ? err.message : 'Something went wrong',
+        'error',
+      );
     }
   };
 
@@ -70,9 +93,13 @@ export default function AuthorManagement() {
       addToast('Author created successfully', 'success');
       setNewName('');
       setIsCreating(false);
-      refetch();
-    } catch (err: any) {
-      addToast(err?.message || 'Something went wrong', 'error');
+      void refetch();
+      void refetchDashboard();
+    } catch (err: unknown) {
+      addToast(
+        err instanceof Error ? err.message : 'Something went wrong',
+        'error',
+      );
     }
   };
 
@@ -81,7 +108,7 @@ export default function AuthorManagement() {
       key: 'name',
       label: 'Author Name',
       className: 'text-[#4f6553]',
-      render: (item: any) =>
+      render: (item: Author) =>
         editingId === item.id ? (
           <input
             type="text"
@@ -102,7 +129,12 @@ export default function AuthorManagement() {
     <div>
       <div className="p-12">
         <AuthorManagementHeader
-          action={<RefreshButton onRefresh={refetch} loading={loading} />}
+          action={
+            <RefreshButton
+              onRefresh={handleRefresh}
+              loading={loading || dashboardLoading}
+            />
+          }
         />
 
         <div className="grid grid-cols-12 gap-6">
@@ -229,35 +261,39 @@ export default function AuthorManagement() {
               </h3>
 
               <div className="space-y-4">
-                {[
-                  { name: 'Franz Kafka', count: 42 },
-                  { name: 'Aldous Huxley', count: 38 },
-                  { name: 'Nordic Noir', count: 27 },
-                  { name: 'F. Scott Fitzgerald', count: 21 },
-                  { name: 'Herman Melville', count: 15 },
-                ].map((author, index) => (
-                  <div key={author.name}>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-[#1c3725]">
-                        {index + 1}. {author.name}
-                      </span>
-                      <span className="text-xs text-[#6d7f72]">
-                        {author.count} books
-                      </span>
+                {dashboardLoading ? (
+                  <p className="text-sm text-[#6d7f72]">Loading authors...</p>
+                ) : topAuthors.length > 0 ? (
+                  topAuthors.map((author, index) => (
+                    <div key={author.authorId}>
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <span className="min-w-0 truncate text-sm font-medium text-[#1c3725]">
+                          {index + 1}. {author.authorName}
+                        </span>
+                        <span className="shrink-0 text-xs text-[#6d7f72]">
+                          {author.unitsSold} sold
+                        </span>
+                      </div>
+                      <div className="w-full bg-[#f0f4f0] rounded-full h-1.5">
+                        <div
+                          className="bg-[#2d6a4f] h-1.5 rounded-full"
+                          style={{
+                            width: `${(author.unitsSold / maxUnitsSold) * 100}%`,
+                          }}
+                        />
+                      </div>
                     </div>
-                    <div className="w-full bg-[#f0f4f0] rounded-full h-1.5">
-                      <div
-                        className="bg-[#2d6a4f] h-1.5 rounded-full"
-                        style={{ width: `${(author.count / 42) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-sm text-[#6d7f72]">
+                    No author sales in the last 30 days.
+                  </p>
+                )}
               </div>
 
               <div className="mt-8 pt-6 border-t border-[#e8ede9]">
                 <p className="text-xs text-[#8c9b8d] italic">
-                  Fake data — connect books module later
+                  Ranked by units sold in the last 30 days
                 </p>
               </div>
             </div>

@@ -8,9 +8,16 @@ import { ILanguagesQueryRepository } from '../../../../catalog-management/domain
 import { IBooksQueryRepository } from '../../../../book-management/domain/book-aggregate/repositories/books-query.repository.interface';
 import { IAuditLogQueryRepository } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-query.repositoy.interface';
 import { AuditLogReadModel } from '../../../../audit-log/domain/audit-log-aggregate/read-models/audit-log.read-model';
+import { IOrdersQueryRepository } from '../../../../order/domain/order-aggregate/repositories/orders-query.repository.interface';
+import { TopAuthorReadModel } from '../../../domain/admin-dashboard-aggregate/read-models/top-author.read-model';
+import { TopGenreReadModel } from '../../../domain/admin-dashboard-aggregate/read-models/top-genre.read-model';
+import { TopLanguageReadModel } from '../../../domain/admin-dashboard-aggregate/read-models/top-language.read-model';
+import { TopPublisherReadModel } from '../../../domain/admin-dashboard-aggregate/read-models/top-publisher.read-model';
 
 describe('GetAdminDashboardUseCase', () => {
   it('returns system totals and recent activities from query repositories', async () => {
+    jest.useFakeTimers().setSystemTime(new Date('2026-06-01T12:00:00.000Z'));
+
     const recentActivities = [
       new AuditLogReadModel(
         'audit-log-id',
@@ -19,6 +26,18 @@ describe('GetAdminDashboardUseCase', () => {
         null,
         new Date('2026-06-01T08:00:00.000Z'),
       ),
+    ];
+    const topGenres = [
+      new TopGenreReadModel('genre-id', 'Fiction', 12, 480000),
+    ];
+    const topAuthors = [
+      new TopAuthorReadModel('author-id', 'Franz Kafka', 9, 360000),
+    ];
+    const topPublishers = [
+      new TopPublisherReadModel('publisher-id', 'Penguin Classics', 7, 280000),
+    ];
+    const topLanguages = [
+      new TopLanguageReadModel('en', 'English', 16, 640000),
     ];
     const usersQueryRepository = {
       countByRole: jest.fn().mockResolvedValue(1),
@@ -33,6 +52,12 @@ describe('GetAdminDashboardUseCase', () => {
       count: jest.fn().mockResolvedValue(8),
       recentActivity: jest.fn().mockResolvedValue(recentActivities),
     };
+    const ordersQueryRepository = {
+      findTopGenresByUnitsSold: jest.fn().mockResolvedValue(topGenres),
+      findTopAuthorsByUnitsSold: jest.fn().mockResolvedValue(topAuthors),
+      findTopPublishersByUnitsSold: jest.fn().mockResolvedValue(topPublishers),
+      findTopLanguagesByUnitsSold: jest.fn().mockResolvedValue(topLanguages),
+    };
 
     const useCase = new GetAdminDashboardUseCase(
       usersQueryRepository as unknown as IUsersQueryRepository,
@@ -43,6 +68,7 @@ describe('GetAdminDashboardUseCase', () => {
       languagesQueryRepository as unknown as ILanguagesQueryRepository,
       booksQueryRepository as unknown as IBooksQueryRepository,
       auditLogQueryRepository as unknown as IAuditLogQueryRepository,
+      ordersQueryRepository as unknown as IOrdersQueryRepository,
     );
 
     const response = await useCase.execute();
@@ -59,5 +85,24 @@ describe('GetAdminDashboardUseCase', () => {
       totalAuditLogs: 8,
     });
     expect(response.recentActivities).toBe(recentActivities);
+    expect(ordersQueryRepository.findTopGenresByUnitsSold).toHaveBeenCalledWith(
+      5,
+      new Date('2026-05-02T12:00:00.000Z'),
+    );
+    expect(
+      ordersQueryRepository.findTopAuthorsByUnitsSold,
+    ).toHaveBeenCalledWith(5, new Date('2026-05-02T12:00:00.000Z'));
+    expect(
+      ordersQueryRepository.findTopPublishersByUnitsSold,
+    ).toHaveBeenCalledWith(5, new Date('2026-05-02T12:00:00.000Z'));
+    expect(
+      ordersQueryRepository.findTopLanguagesByUnitsSold,
+    ).toHaveBeenCalledWith(5, new Date('2026-05-02T12:00:00.000Z'));
+    expect(response.topGenres).toBe(topGenres);
+    expect(response.topAuthors).toBe(topAuthors);
+    expect(response.topPublishers).toBe(topPublishers);
+    expect(response.topLanguages).toBe(topLanguages);
+
+    jest.useRealTimers();
   });
 });
