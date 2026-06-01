@@ -20,6 +20,7 @@ import { CartManagementModule } from './modules/cart-management/cart-management.
 import { MyAccountModule } from './modules/my-account/my-account.module';
 import { OrderModule } from './modules/order/order.module';
 import { OrderManagementModule } from './modules/order-management/order-management.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { OrderManagementModule } from './modules/order-management/order-manageme
     MyAccountModule,
     OrderModule,
     OrderManagementModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -8,6 +8,8 @@ import { Repository } from 'typeorm';
 import { MyOrderReadModel } from '../../../domain/order-aggregate/read-models/my-order.read-model';
 import { OrdersMapper } from '../../mappers/orders.mapper';
 import { OrderNotFoundException } from '../../../domain/order-aggregate/exceptions/order-not-found.exception';
+import { OrderStatus } from '../../../domain/order-aggregate/enums/order-status.enum';
+import { PaymentStatus } from '../../../domain/order-aggregate/enums/payment-status.enum';
 
 @Injectable()
 export class TypeOrmOrdersQueryRepository implements IOrdersQueryRepository {
@@ -44,22 +46,6 @@ export class TypeOrmOrdersQueryRepository implements IOrdersQueryRepository {
     return ordersTypeOrm.map((orderTypeOrm) =>
       OrdersMapper.toOrderReadModel(orderTypeOrm),
     );
-  }
-
-  public async count(search?: string): Promise<number> {
-    const query = this.repository.createQueryBuilder('orderEntity');
-
-    if (search) {
-      query.where(
-        `orderEntity.orderCode LIKE :search
-        OR orderEntity.status LIKE :search
-        OR orderEntity.paymentStatus LIKE :search
-        OR orderEntity.paymentMethod LIKE :search`,
-        { search: `%${search}%` },
-      );
-    }
-
-    return query.getCount() ?? 0;
   }
 
   public async findUserOrders(userId: string): Promise<MyOrderReadModel[]> {
@@ -140,5 +126,31 @@ export class TypeOrmOrdersQueryRepository implements IOrdersQueryRepository {
     }
 
     return OrdersMapper.toOrderDetailReadModel(orderTypeOrm);
+  }
+
+  public async count(search?: string): Promise<number> {
+    const query = this.repository.createQueryBuilder('orderEntity');
+
+    if (search) {
+      query.where(
+        `orderEntity.orderCode LIKE :search
+        OR orderEntity.status LIKE :search
+        OR orderEntity.paymentStatus LIKE :search
+        OR orderEntity.paymentMethod LIKE :search`,
+        { search: `%${search}%` },
+      );
+    }
+
+    return query.getCount() ?? 0;
+  }
+
+  public async countByStatus(status: OrderStatus): Promise<number> {
+    return this.repository.countBy({ status });
+  }
+
+  public async countByPaymentStatus(
+    paymentStatus: PaymentStatus,
+  ): Promise<number> {
+    return this.repository.countBy({ paymentStatus });
   }
 }
