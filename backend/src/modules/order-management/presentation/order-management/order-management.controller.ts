@@ -17,6 +17,7 @@ import { FindOrdersUseCase } from '../../application/order-management-use-cases/
 import { FindOrdersResponse } from '../../application/order-management-use-cases/find-orders/find-orders.response';
 import { FindOrderDetailUseCase } from '../../application/order-management-use-cases/find-order-detail/find-order-detail.use-case';
 import { OrderDetailReadModel } from '../../../../modules/order/domain/order-aggregate/read-models/order-detail.read-model';
+import { MarkOrderAsPaidUseCase } from '../../application/order-management-use-cases/mark-order-as-paid/mark-order-as-paid.use-case';
 
 @Controller('orders')
 @UseGuards(JwtAuthGuard, RoleGuard)
@@ -26,6 +27,7 @@ export class OrderManagementController {
     private readonly findOrdersUseCase: FindOrdersUseCase,
     private readonly findOrderDetailUseCase: FindOrderDetailUseCase,
     private readonly updateOrderStatusUseCase: UpdateOrderStatusUseCase,
+    private readonly markOrderAsPaidUseCase: MarkOrderAsPaidUseCase,
   ) {}
 
   @Get()
@@ -59,5 +61,13 @@ export class OrderManagementController {
     @CurrentUser('userId') actorId: string,
   ) {
     await this.updateOrderStatusUseCase.execute(request, id, actorId);
+  }
+
+  @Patch(':id/payment-status/paid')
+  public async markOrderAsPaid(
+    @Param('id') id: string,
+    @CurrentUser('userId') actorId: string,
+  ): Promise<void> {
+    await this.markOrderAsPaidUseCase.execute(id, actorId);
   }
 }

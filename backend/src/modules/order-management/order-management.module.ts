@@ -7,6 +7,7 @@ import { UpdateOrderStatusUseCase } from './application/order-management-use-cas
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { FindOrdersUseCase } from './application/order-management-use-cases/find-orders/find-orders.use-case';
 import { FindOrderDetailUseCase } from './application/order-management-use-cases/find-order-detail/find-order-detail.use-case';
+import { MarkOrderAsPaidUseCase } from './application/order-management-use-cases/mark-order-as-paid/mark-order-as-paid.use-case';
 
 @Module({
   controllers: [OrderManagementController],
@@ -20,6 +21,7 @@ import { FindOrderDetailUseCase } from './application/order-management-use-cases
     FindOrdersUseCase,
     FindOrderDetailUseCase,
     UpdateOrderStatusUseCase,
+    MarkOrderAsPaidUseCase,
   ],
 })
 export class OrderManagementModule {}

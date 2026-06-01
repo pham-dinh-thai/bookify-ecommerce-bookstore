@@ -2,10 +2,19 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, PackageCheck, RefreshCw } from 'lucide-react';
+import {
+  ArrowLeft,
+  CheckCircle2,
+  ChevronDown,
+  RefreshCw,
+  Save,
+} from 'lucide-react';
 import { refreshAccessToken } from '@/shared/auth/lib/refresh';
 import { getAccessToken } from '@/shared/auth/lib/token-storage';
+import { useToast } from '@/shared/common/toast/toast';
 import { findOrderService } from '../services/find-order.service';
+import { markOrderAsPaidService } from '../services/mark-order-as-paid.service';
+import { updateOrderStatusService } from '../services/update-order-status.service';
 import {
   OrderDetail,
   OrderStatus,
@@ -35,6 +44,13 @@ const statusClassName: Record<OrderStatus, string> = {
   completed: 'bg-green-100 text-green-800',
   canceled: 'bg-red-100 text-red-800',
   refunded: 'bg-slate-100 text-slate-700',
+};
+
+const nextStatusOptions: Partial<Record<OrderStatus, OrderStatus[]>> = {
+  pending: ['confirmed'],
+  confirmed: ['delivering'],
+  delivering: ['delivered'],
+  delivered: ['completed'],
 };
 
 const paymentStatusLabel: Record<PaymentStatus, string> = {
@@ -69,7 +85,7 @@ const formatVnd = (value: number) =>
 const formatDateTime = (value?: string) => {
   if (!value) return '-';
 
-  return new Intl.DateTimeFormat('vi-VN', {
+  return new Intl.DateTimeFormat('en-US', {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(value));
@@ -77,8 +93,12 @@ const formatDateTime = (value?: string) => {
 
 export default function OrderDetailScreen({ id }: OrderDetailScreenProps) {
   const [order, setOrder] = useState<OrderDetail | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<OrderStatus | ''>('');
   const [loading, setLoading] = useState(false);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [markingPaid, setMarkingPaid] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const { addToast } = useToast();
 
   const fetchOrderDetail = useCallback(async () => {
     setLoading(true);
@@ -91,6 +111,7 @@ export default function OrderDetailScreen({ id }: OrderDetailScreenProps) {
 
       const orderDetail = await findOrderService(id);
       setOrder(orderDetail);
+      setSelectedStatus(orderDetail.status);
     } catch (err: unknown) {
       setError(
         err instanceof Error ? err : new Error('Failed to load order detail'),
@@ -103,6 +124,77 @@ export default function OrderDetailScreen({ id }: OrderDetailScreenProps) {
   useEffect(() => {
     void Promise.resolve().then(fetchOrderDetail);
   }, [fetchOrderDetail]);
+
+  const allowedStatusOptions = order
+    ? [order.status, ...(nextStatusOptions[order.status] ?? [])]
+    : [];
+  const canUpdateStatus =
+    Boolean(order) &&
+    Boolean(selectedStatus) &&
+    selectedStatus !== order?.status &&
+    !updatingStatus;
+  const canMarkAsPaid =
+    Boolean(order) &&
+    order?.paymentStatus !== 'paid' &&
+    order?.paymentStatus !== 'refunded' &&
+    !markingPaid;
+
+  const handleUpdateStatus = async () => {
+    if (!order || !selectedStatus || selectedStatus === order.status) return;
+
+    setUpdatingStatus(true);
+
+    try {
+      if (!getAccessToken()) {
+        await refreshAccessToken();
+      }
+
+      await updateOrderStatusService(order.id, selectedStatus);
+      addToast('Order status updated successfully', 'success');
+      await fetchOrderDetail();
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : 'Failed to update order status';
+      addToast(message, 'error');
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
+
+  const handleStatusChange = (status: OrderStatus) => {
+    if (
+      order?.status === 'delivered' &&
+      order.paymentStatus !== 'paid' &&
+      status === 'completed'
+    ) {
+      addToast('Order must be paid before it can be completed', 'error');
+      return;
+    }
+
+    setSelectedStatus(status);
+  };
+
+  const handleMarkAsPaid = async () => {
+    if (!order || order.paymentStatus === 'paid') return;
+
+    setMarkingPaid(true);
+
+    try {
+      if (!getAccessToken()) {
+        await refreshAccessToken();
+      }
+
+      await markOrderAsPaidService(order.id);
+      addToast('Order marked as paid', 'success');
+      await fetchOrderDetail();
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : 'Failed to mark order as paid';
+      addToast(message, 'error');
+    } finally {
+      setMarkingPaid(false);
+    }
+  };
 
   return (
     <div className="p-12">
@@ -151,18 +243,13 @@ export default function OrderDetailScreen({ id }: OrderDetailScreenProps) {
         <div className="space-y-6">
           <section className="rounded-3xl border border-[#e8ede9] bg-white p-6 shadow-sm">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div className="flex items-center gap-4">
-                <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#eef6ff] text-[#204877]">
-                  <PackageCheck className="w-7" />
-                </span>
-                <div>
-                  <p className="text-sm font-medium text-[#6c7d70]">
-                    Order Code
-                  </p>
-                  <h3 className="text-2xl font-bold text-[#2b352f]">
-                    {order.orderCode}
-                  </h3>
-                </div>
+              <div>
+                <p className="text-sm font-medium text-[#6c7d70]">
+                  Order Code
+                </p>
+                <h3 className="text-2xl font-bold text-[#2b352f]">
+                  {order.orderCode}
+                </h3>
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -186,9 +273,75 @@ export default function OrderDetailScreen({ id }: OrderDetailScreenProps) {
           </section>
 
           <section className="rounded-3xl border border-[#e8ede9] bg-white p-6 shadow-sm">
-            <h3 className="mb-4 text-xl font-bold text-[#2b352f]">
-              Customer & Payment
-            </h3>
+            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-[#2b352f]">
+                  Update Order Status
+                </h3>
+                <p className="mt-1 text-sm text-[#6c7d70]">
+                  Move this order to the next fulfillment step.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <div className="relative">
+                  <select
+                    value={selectedStatus}
+                    onChange={(event) =>
+                      handleStatusChange(event.target.value as OrderStatus)
+                    }
+                    disabled={
+                      allowedStatusOptions.length <= 1 || updatingStatus
+                    }
+                    className="h-12 min-w-56 appearance-none rounded-full border border-[#d6ded4] bg-white py-2 pl-4 pr-11 text-sm font-semibold text-[#2b352f] outline-none focus:border-[#2d6a4f] disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {allowedStatusOptions.map((status) => (
+                      <option key={status} value={status}>
+                        {statusLabel[status]}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6c7d70]" />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleUpdateStatus}
+                  disabled={!canUpdateStatus}
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#2d6a4f] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#166244] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <Save className="w-4" />
+                  {updatingStatus ? 'Updating...' : 'Update Status'}
+                </button>
+              </div>
+            </div>
+
+            {allowedStatusOptions.length <= 1 ? (
+              <div className="mt-4 rounded-2xl bg-[#fbfdf9] px-4 py-3 text-sm text-[#6c7d70]">
+                This order has no available next status.
+              </div>
+            ) : null}
+          </section>
+
+          <section className="rounded-3xl border border-[#e8ede9] bg-white p-6 shadow-sm">
+            <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <h3 className="text-xl font-bold text-[#2b352f]">
+                Customer & Payment
+              </h3>
+
+              {order.paymentStatus !== 'paid' &&
+              order.paymentStatus !== 'refunded' ? (
+                <button
+                  type="button"
+                  onClick={handleMarkAsPaid}
+                  disabled={!canMarkAsPaid}
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[#2d6a4f] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#166244] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <CheckCircle2 className="w-4" />
+                  {markingPaid ? 'Marking...' : 'Mark as Paid'}
+                </button>
+              ) : null}
+            </div>
 
             <div className="grid gap-4 md:grid-cols-3">
               <Info label="Customer ID" value={order.userId} />

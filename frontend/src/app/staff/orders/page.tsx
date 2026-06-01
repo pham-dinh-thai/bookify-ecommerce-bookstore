@@ -62,7 +62,7 @@ const formatVnd = (value: number) =>
   }) + ' VNĐ';
 
 const formatDateTime = (value: string) =>
-  new Intl.DateTimeFormat('vi-VN', {
+  new Intl.DateTimeFormat('en-US', {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(value));
