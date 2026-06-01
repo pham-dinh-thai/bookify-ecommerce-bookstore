@@ -7,6 +7,7 @@ import { useToast } from '@/shared/common/toast/toast';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { readCartItems, StoredCartItem, writeCartItems } from './cart-storage';
 import { removeCartItemService } from './cart.service';
+import { writeCheckoutItems } from '../checkout/checkout-storage';
 
 const shippingFee = 25000;
 const taxFee = 15000;
@@ -130,11 +131,9 @@ export default function CartPage() {
   const checkout = (): void => {
     if (selectedAvailableItems.length === 0) return;
 
-    setCheckoutMessage(
-      `Checkout ready for ${selectedAvailableItems.length} item${
-        selectedAvailableItems.length > 1 ? 's' : ''
-      } at ${formatCurrency(total)}.`,
-    );
+    writeCheckoutItems(selectedAvailableItems);
+    setCheckoutMessage(null);
+    router.push('/checkout');
   };
 
   return (
@@ -237,6 +236,7 @@ export default function CartPage() {
                     </div>
 
                     <div className="aspect-[8/11] overflow-hidden bg-[#f7f3e9]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         alt={`${item.title} cover`}
                         src={item.cover}

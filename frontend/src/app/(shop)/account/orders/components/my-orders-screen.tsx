@@ -200,7 +200,7 @@ export default function MyOrdersScreen() {
               ))}
             </div>
           ) : error ? (
-            <div className="w-full max-w-2xl rounded-lg border border-[#a83836]/20 bg-white p-6">
+            <div className="w-full max-w-4xl rounded-lg border border-[#a83836]/20 bg-white p-6">
               <h2 className="text-xl font-bold text-[#2b352f]">
                 Orders unavailable
               </h2>
@@ -222,7 +222,7 @@ export default function MyOrdersScreen() {
               </div>
             </div>
           ) : orders.length === 0 ? (
-            <div className="w-full max-w-3xl rounded-lg border border-dashed border-[#3f6754]/20 bg-white p-10 text-center">
+            <div className="w-full max-w-4xl rounded-lg border border-dashed border-[#3f6754]/20 bg-white p-10 text-center">
               <ShoppingBag
                 className="mx-auto mb-4 text-[#3f6754]/55"
                 size={40}
@@ -241,7 +241,7 @@ export default function MyOrdersScreen() {
               </Link>
             </div>
           ) : filteredOrders.length === 0 ? (
-            <div className="w-full max-w-3xl rounded-lg border border-dashed border-[#3f6754]/20 bg-white p-8 text-center">
+            <div className="w-full max-w-4xl rounded-lg border border-dashed border-[#3f6754]/20 bg-white p-8 text-center">
               <PackageSearch
                 className="mx-auto mb-4 text-[#3f6754]/55"
                 size={38}
@@ -309,12 +309,6 @@ function OrderCard({
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <div className="rounded-lg bg-white px-4 py-3 text-sm font-bold text-[#3f6754]">
-            {order.totalItems} {order.totalItems === 1 ? 'item' : 'items'}
-          </div>
-          <div className="rounded-lg bg-white px-4 py-3 text-sm font-bold text-[#2b352f]">
-            {formatVnd(order.totalAmount)}
-          </div>
           <Link
             href={`/account/orders/${order.id}`}
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#3f6754] px-4 py-3 text-sm font-bold text-[#e6ffef] transition-colors hover:bg-[#335b48]"
@@ -384,6 +378,15 @@ function OrderCard({
             +{hiddenItems} more {hiddenItems === 1 ? 'book' : 'books'}
           </div>
         ) : null}
+      </div>
+
+      <div className="mt-5 flex flex-col gap-2 border-t border-[#d7e3d8] pt-5 text-[#2b352f] sm:flex-row sm:items-center sm:justify-between">
+        <span className="text-sm font-extrabold">
+          x{order.totalItems} {order.totalItems === 1 ? 'item' : 'items'}
+        </span>
+        <span className="text-lg font-extrabold sm:text-right">
+          Total: {formatVnd(order.totalAmount)}
+        </span>
       </div>
     </article>
   );
