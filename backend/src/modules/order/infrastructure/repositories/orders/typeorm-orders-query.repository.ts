@@ -16,19 +16,50 @@ export class TypeOrmOrdersQueryRepository implements IOrdersQueryRepository {
     private readonly repository: Repository<OrderTypeOrm>,
   ) {}
 
-  public async findAll(): Promise<OrderReadModel[]> {
-    const ordersTypeOrm: OrderTypeOrm[] = await this.repository.find({
-      relations: {
-        items: true,
-      },
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+  public async findAll(
+    page: number,
+    limit: number,
+    search?: string,
+  ): Promise<OrderReadModel[]> {
+    const query = this.repository
+      .createQueryBuilder('orderEntity')
+      .leftJoinAndSelect('orderEntity.items', 'items');
+
+    if (search) {
+      query.where(
+        `orderEntity.orderCode LIKE :search
+        OR orderEntity.status LIKE :search
+        OR orderEntity.paymentStatus LIKE :search
+        OR orderEntity.paymentMethod LIKE :search`,
+        { search: `%${search}%` },
+      );
+    }
+
+    const ordersTypeOrm: OrderTypeOrm[] = await query
+      .orderBy('orderEntity.createdAt', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getMany();
 
     return ordersTypeOrm.map((orderTypeOrm) =>
       OrdersMapper.toOrderReadModel(orderTypeOrm),
     );
+  }
+
+  public async count(search?: string): Promise<number> {
+    const query = this.repository.createQueryBuilder('orderEntity');
+
+    if (search) {
+      query.where(
+        `orderEntity.orderCode LIKE :search
+        OR orderEntity.status LIKE :search
+        OR orderEntity.paymentStatus LIKE :search
+        OR orderEntity.paymentMethod LIKE :search`,
+        { search: `%${search}%` },
+      );
+    }
+
+    return query.getCount() ?? 0;
   }
 
   public async findUserOrders(userId: string): Promise<MyOrderReadModel[]> {

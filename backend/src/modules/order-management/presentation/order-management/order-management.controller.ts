@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { UpdateOrderStatusUseCase } from '../../application/order-management-use-cases/update-order-status/update-order-status.use-case';
 import { JwtAuthGuard } from '../../../../shared/http/guards/jwt-auth.guard';
 import { RoleGuard } from '../../../../shared/http/guards/role.guard';
@@ -21,8 +29,16 @@ export class OrderManagementController {
   ) {}
 
   @Get()
-  public async findOrders(): Promise<FindOrdersResponse> {
-    const response = await this.findOrdersUseCase.execute();
+  public async findOrders(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+    @Query('search') search?: string,
+  ): Promise<FindOrdersResponse> {
+    const response = await this.findOrdersUseCase.execute(
+      parseInt(page, 10),
+      parseInt(limit, 10),
+      search,
+    );
 
     return response;
   }

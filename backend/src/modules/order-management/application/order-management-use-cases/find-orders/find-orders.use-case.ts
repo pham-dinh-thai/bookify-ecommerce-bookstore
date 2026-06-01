@@ -13,10 +13,19 @@ export class FindOrdersUseCase {
     private readonly ordersQueryRepository: IOrdersQueryRepository,
   ) {}
 
-  public async execute(): Promise<FindOrdersResponse> {
-    const orders: OrderReadModel[] = await this.ordersQueryRepository.findAll();
+  public async execute(
+    page: number,
+    limit: number,
+    search?: string,
+  ): Promise<FindOrdersResponse> {
+    const orders: OrderReadModel[] = await this.ordersQueryRepository.findAll(
+      page,
+      limit,
+      search,
+    );
+    const total = await this.ordersQueryRepository.count(search);
 
-    const response = new FindOrdersResponse(orders);
+    const response = new FindOrdersResponse(orders, total);
 
     return response;
   }

@@ -5,7 +5,7 @@ import { RegisterUseCase } from '../application/use-cases/register/register.use-
 import { RegisterRequest } from './requests/register.request';
 import { JwtAuthGuard } from '../../../shared/http/guards/jwt-auth.guard';
 import { LogoutUseCase } from '../application/use-cases/logout/logout.use-case';
-import { response, type Request, type Response } from 'express';
+import { type Request, type Response } from 'express';
 import { RefreshTokenUseCase } from '../application/use-cases/refresh-token/refresh-token.use-case';
 
 @Controller('auth')
