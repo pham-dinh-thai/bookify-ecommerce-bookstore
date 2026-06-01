@@ -1,6 +1,13 @@
+import type { ReactNode } from 'react';
 import { BookDetail } from '@/app/staff/books/types';
 
-export default function BookDetailHeader({ book }: { book: BookDetail }) {
+export default function BookDetailHeader({
+  book,
+  action,
+}: {
+  book: BookDetail;
+  action?: ReactNode;
+}) {
   return (
     <div className="flex items-end justify-between">
       <div>
@@ -19,6 +26,7 @@ export default function BookDetailHeader({ book }: { book: BookDetail }) {
           {book.authors.join(', ')}
         </p>
       </div>
+      {action}
     </div>
   );
 }

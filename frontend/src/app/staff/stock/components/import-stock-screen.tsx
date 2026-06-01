@@ -3,6 +3,7 @@
 import { useEffect, useMemo } from 'react';
 import SearchSelect from '@/shared/common/components/input-select/search-select';
 import useImportStock from '../hooks/use-import-stock';
+import RefreshButton from '@/shared/common/components/refresh-button';
 
 export default function ImportStockScreen() {
   const {
@@ -45,6 +46,8 @@ export default function ImportStockScreen() {
             Import Book Stock
           </span>
         </h2>
+
+        <RefreshButton onRefresh={loadBooks} loading={loadingBooks} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,28rem)_minmax(0,1fr)] lg:items-start">

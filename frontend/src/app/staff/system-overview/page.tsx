@@ -12,7 +12,6 @@ import {
   Clock3,
   PackageCheck,
   PackageX,
-  RefreshCw,
   ShoppingBag,
   ShoppingCart,
   Truck,
@@ -22,6 +21,7 @@ import {
 import useStaffDashboard from './hooks/use-staff-dashboard';
 import { OrderStatus, PaymentStatus } from '../orders/types';
 import { QuickAction, RecentOrder } from './types';
+import RefreshButton from '@/shared/common/components/refresh-button';
 
 const statusLabel: Record<OrderStatus, string> = {
   pending: 'Pending',
@@ -164,15 +164,7 @@ export default function StaffSystemOverviewPage() {
           </h2>
         </div>
 
-        <button
-          type="button"
-          onClick={refetch}
-          disabled={loading}
-          className="inline-flex h-12 items-center gap-2 rounded-full bg-[#2d6a4f] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#166244] disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          <RefreshCw className={`w-4 ${loading ? 'animate-spin' : ''}`} />
-          Refresh
-        </button>
+        <RefreshButton onRefresh={refetch} loading={loading} />
       </div>
 
       {error ? (

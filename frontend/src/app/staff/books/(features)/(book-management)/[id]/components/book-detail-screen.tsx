@@ -7,17 +7,11 @@ import useBookDetail from '../../hooks/use-book-detail';
 import BookFormNavigate from '../../../../components/book-form-navigate';
 import BookDetailHeader from '../ui/book-detail-header';
 import BasicInformation from '../ui/basic-information';
-import {
-  Plus,
-  Minus,
-  RefreshCcw,
-  TrendingUp,
-  Trash2,
-  Boxes,
-} from 'lucide-react';
+import { Plus, Minus, TrendingUp, Trash2, Boxes } from 'lucide-react';
 import useBookPriceUpdate from '../hooks/use-book-price-update';
 import useBookStockAdjust from '../hooks/use-book-stock-adjust';
 import useBookCoverManager from '../hooks/use-book-cover-manager';
+import RefreshButton from '@/shared/common/components/refresh-button';
 
 export default function BookDetailScreen({ id }: { id: string }) {
   const { book, loading, errors, refetch } = useBookDetail(id);
@@ -118,7 +112,10 @@ export default function BookDetailScreen({ id }: { id: string }) {
       {/* unchanged UI */}
       <div className="flex flex-col gap-6 mb-12">
         <BookFormNavigate label="Book Detail" />
-        <BookDetailHeader book={book} />
+        <BookDetailHeader
+          book={book}
+          action={<RefreshButton onRefresh={refetch} loading={loading} />}
+        />
       </div>
       <div className="grid grid-cols-12 gap-8">
         <div className="col-span-12 lg:col-span-4 flex flex-col gap-8">
@@ -284,14 +281,6 @@ export default function BookDetailScreen({ id }: { id: string }) {
                   {statusLabel}
                 </span>
               </div>
-              <button
-                type="button"
-                onClick={() => window.location.reload()}
-                className="rounded-full p-1 text-[#58615b] transition-colors hover:bg-[#f2f5f3]"
-                title="Reload page"
-              >
-                <RefreshCcw size={18} className="text-[#58615b]" />
-              </button>
             </div>
           </div>
         </div>

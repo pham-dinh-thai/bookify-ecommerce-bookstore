@@ -9,9 +9,9 @@ import {
   UserCheck,
   Globe,
   Book,
-  RefreshCw,
 } from 'lucide-react';
 import useAdminDashboard from './hooks/use-admin-dashboard';
+import RefreshButton from '@/shared/common/components/refresh-button';
 
 export default function SystemOverview() {
   const { dashboard, loading, error, refetch } = useAdminDashboard();
@@ -89,15 +89,7 @@ export default function SystemOverview() {
           </span>
         </h2>
 
-        <button
-          type="button"
-          onClick={refetch}
-          disabled={loading}
-          className="inline-flex h-12 items-center gap-2 rounded-full bg-[#2d6a4f] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#166244] disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          <RefreshCw className={`w-4 ${loading ? 'animate-spin' : ''}`} />
-          Refresh
-        </button>
+        <RefreshButton onRefresh={refetch} loading={loading} />
       </div>
 
       {error ? (

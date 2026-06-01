@@ -1,4 +1,10 @@
-export default function LanguageManagementHeader() {
+import type { ReactNode } from 'react';
+
+export default function LanguageManagementHeader({
+  action,
+}: {
+  action?: ReactNode;
+}) {
   return (
     <div className="flex items-end justify-between mb-6">
       <h2
@@ -9,6 +15,7 @@ export default function LanguageManagementHeader() {
           Language Management
         </span>
       </h2>
+      {action}
     </div>
   );
 }

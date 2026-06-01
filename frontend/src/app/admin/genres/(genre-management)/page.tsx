@@ -11,6 +11,7 @@ import { createGenreService } from './services/create-genre.service';
 import Paginate from '@/shared/common/components/pagination/paginate';
 import GenreManagementHeader from './ui/genre-management-header';
 import ToolBar from '@/shared/common/components/tool-bar/tool-bar';
+import RefreshButton from '@/shared/common/components/refresh-button';
 
 export default function GenreManagement() {
   const pageSize = 10;
@@ -100,7 +101,9 @@ export default function GenreManagement() {
   return (
     <div>
       <div className="p-12">
-        <GenreManagementHeader />
+        <GenreManagementHeader
+          action={<RefreshButton onRefresh={refetch} loading={loading} />}
+        />
 
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-8">

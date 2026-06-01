@@ -11,8 +11,10 @@ export default function useCustomers(
 ) {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const fetchCustomers = async () => {
+    setLoading(true);
     try {
       if (!getAccessToken()) {
         await refreshAccessToken();
@@ -48,6 +50,8 @@ export default function useCustomers(
       console.error(err);
       setCustomers([]);
       setTotal(0);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -55,5 +59,5 @@ export default function useCustomers(
     fetchCustomers();
   }, [page, limit, isActive, search]);
 
-  return { customers, total, refetch: fetchCustomers };
+  return { customers, total, loading, refetch: fetchCustomers };
 }

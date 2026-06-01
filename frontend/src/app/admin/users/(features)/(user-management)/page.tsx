@@ -18,6 +18,7 @@ import { activateUserService } from './services/activate-user.service';
 import { useEffect, useRef, useState } from 'react';
 import FilterDropdown from './components/filter-dropdown';
 import ToolBar from '@/shared/common/components/tool-bar/tool-bar';
+import RefreshButton from '@/shared/common/components/refresh-button';
 
 export default function UserManagement() {
   const [search, setSearch] = useState('');
@@ -101,15 +102,16 @@ export default function UserManagement() {
   return (
     <div>
       <div className="p-12">
-        <div>
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <h2
-            className="text-5xl font-extrabold tracking-tighter mb-6 leading-[1.1]"
+            className="text-5xl font-extrabold tracking-tighter leading-[1.1]"
             style={{ color: '#2b352f' }}
           >
             <span className="italic" style={{ color: '#335b48' }}>
               User Management
             </span>
           </h2>
+          <RefreshButton onRefresh={refetch} loading={loading} />
         </div>
 
         <div className="mb-4">

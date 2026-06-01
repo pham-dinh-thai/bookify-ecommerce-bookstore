@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ExternalLink, RefreshCw } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import Table from '@/shared/common/components/table/table';
 import ToolBar from '@/shared/common/components/tool-bar/tool-bar';
 import Paginate from '@/shared/common/components/pagination/paginate';
 import OrderManagementHeader from './ui/order-management-header';
 import useOrders from './hooks/use-orders';
 import { Order, OrderStatus, PaymentMethod, PaymentStatus } from './types';
+import RefreshButton from '@/shared/common/components/refresh-button';
 
 const pageSize = 10;
 
@@ -140,7 +141,9 @@ export default function OrderManagementPage() {
   return (
     <div>
       <div className="p-12">
-        <OrderManagementHeader />
+        <OrderManagementHeader
+          action={<RefreshButton onRefresh={refetch} loading={loading} />}
+        />
 
         <div className="mb-4">
           <ToolBar
@@ -149,17 +152,7 @@ export default function OrderManagementPage() {
               setSearch(value);
               setPage(1);
             }}
-            actions={
-              <button
-                type="button"
-                onClick={refetch}
-                disabled={loading}
-                className="inline-flex h-12 items-center gap-2 rounded-full bg-[#2d6a4f] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#166244] disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                <RefreshCw className={`w-4 ${loading ? 'animate-spin' : ''}`} />
-                Refresh
-              </button>
-            }
+            actions={<></>}
             variant="minimal"
             placeHolder="Search by order code, status, payment..."
           />
