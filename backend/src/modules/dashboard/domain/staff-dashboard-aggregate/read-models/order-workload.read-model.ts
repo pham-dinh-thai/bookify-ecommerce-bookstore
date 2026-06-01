@@ -4,5 +4,6 @@ export class OrderWorkloadReadModel {
     public readonly confirmedOrders: number,
     public readonly deliveringOrders: number,
     public readonly unpaidCodOrders: number,
+    public readonly unpaidCompleteCodOrders: number,
   ) {}
 }
