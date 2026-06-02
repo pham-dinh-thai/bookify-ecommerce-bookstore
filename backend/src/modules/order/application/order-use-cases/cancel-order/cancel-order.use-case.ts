@@ -13,6 +13,11 @@ import {
   type IAuditLogCommandRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
 import { OrderNotFoundException } from '../../../domain/order-aggregate/exceptions/order-not-found.exception';
+import { Book } from '../../../../book-management/domain/book-aggregate/book.aggregate';
+import {
+  BOOKS_COMMAND_REPOSITORY,
+  type IBooksCommandRepository,
+} from '../../../../book-management/domain/book-aggregate/repositories/books-command.repository.interface';
 
 /**
  * Cancels a customer-owned order.
@@ -28,6 +33,9 @@ export class CancelOrderUseCase {
   public constructor(
     @Inject(ORDERS_COMMAND_REPOSITORY)
     private readonly ordersCommandRepository: IOrdersCommandRepository,
+
+    @Inject(BOOKS_COMMAND_REPOSITORY)
+    private readonly bookCommandRepository: IBooksCommandRepository,
 
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogCommandRepository: IAuditLogCommandRepository,
@@ -47,6 +55,16 @@ export class CancelOrderUseCase {
 
     await this.unitOfWork.execute(async () => {
       await this.ordersCommandRepository.save(order);
+
+      for (const item of order.getItems()) {
+        const book: Book = await this.bookCommandRepository.findOne(
+          item.getProductId(),
+        );
+
+        book.increaseQuantity(item.getQuantity());
+
+        await this.bookCommandRepository.save(book);
+      }
 
       await this.auditLogCommandRepository.write(
         'CANCEL_ORDER',
