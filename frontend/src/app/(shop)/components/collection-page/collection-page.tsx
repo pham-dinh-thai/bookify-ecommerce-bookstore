@@ -15,6 +15,25 @@ type ApiBook = {
   covers?: { url: string; isPrimary: boolean }[];
 };
 
+type TopGenre = {
+  genreId: string;
+  genreName: string;
+  unitsSold: number;
+  revenue: number;
+};
+
+type TopAuthor = {
+  authorId: string;
+  authorName: string;
+  unitsSold: number;
+  revenue: number;
+};
+
+type ShopNavigation = {
+  topGenres: TopGenre[];
+  topAuthors: TopAuthor[];
+};
+
 type CollectionType = 'genre' | 'on-sales' | 'new-arrivals';
 
 type CollectionPageProps = {
@@ -110,6 +129,28 @@ async function getBooks(
   }
 }
 
+async function getShopNavigation(): Promise<ShopNavigation> {
+  try {
+    const apiBase = getApiBaseUrl();
+    const response = await fetch(`${apiBase}/shop-navigation`, {
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      return { topGenres: [], topAuthors: [] };
+    }
+
+    const data = await response.json();
+
+    return {
+      topGenres: Array.isArray(data?.topGenres) ? data.topGenres : [],
+      topAuthors: Array.isArray(data?.topAuthors) ? data.topAuthors : [],
+    };
+  } catch {
+    return { topGenres: [], topAuthors: [] };
+  }
+}
+
 export default async function CollectionPage({
   type,
   heading,
@@ -117,9 +158,36 @@ export default async function CollectionPage({
   genreSlug,
   searchQuery,
 }: CollectionPageProps) {
-  const books = await getBooks(type, genreSlug, searchQuery);
+  const [books, shopNavigation] = await Promise.all([
+    getBooks(type, genreSlug, searchQuery),
+    getShopNavigation(),
+  ]);
   const pageSize = 20;
   const displayBooks = books.slice(0, pageSize);
+  const fallbackGenres = Array.from(
+    new Set(books.flatMap((book) => book.genres || [])),
+  )
+    .slice(0, 5)
+    .map((genre) => ({ genreId: normalize(genre), genreName: genre }));
+  const fallbackAuthors = Array.from(
+    new Set(books.flatMap((book) => book.authors || [])),
+  )
+    .slice(0, 5)
+    .map((author) => ({ authorId: normalize(author), authorName: author }));
+  const sidebarGenres =
+    shopNavigation.topGenres.length > 0
+      ? shopNavigation.topGenres
+      : fallbackGenres;
+  const sidebarAuthors =
+    shopNavigation.topAuthors.length > 0
+      ? shopNavigation.topAuthors
+      : fallbackAuthors;
+  const collectionLinks = [
+    { label: 'All books', href: '/books' },
+    { label: 'Best seller', href: '/best-seller' },
+    { label: 'New Arrivals', href: '/new-arrivals' },
+    { label: 'On Sales', href: '/on-sales' },
+  ];
 
   return (
     <section className="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container">
@@ -140,15 +208,16 @@ export default async function CollectionPage({
                 Collection
               </h3>
               <ul className="space-y-4">
-                <li className="text-sm font-medium text-on-surface-variant">
-                  All books
-                </li>
-                <li className="text-sm font-medium text-on-surface-variant">
-                  Best sellers
-                </li>
-                <li className="text-sm font-semibold text-primary">
-                  Curated picks
-                </li>
+                {collectionLinks.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="text-sm font-medium text-on-surface-variant hover:text-primary transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </section>
 
@@ -157,16 +226,16 @@ export default async function CollectionPage({
                 Genre
               </h3>
               <ul className="space-y-4">
-                {Array.from(new Set(books.flatMap((book) => book.genres || [])))
-                  .slice(0, 5)
-                  .map((genre) => (
-                    <li
-                      key={genre}
-                      className="text-sm font-medium text-on-surface-variant"
+                {sidebarGenres.map((genre) => (
+                  <li key={genre.genreId}>
+                    <Link
+                      href={`/genres/${normalize(genre.genreName)}`}
+                      className="text-sm font-medium text-on-surface-variant hover:text-primary transition-colors"
                     >
-                      {genre}
-                    </li>
-                  ))}
+                      {genre.genreName}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </section>
 
@@ -175,18 +244,16 @@ export default async function CollectionPage({
                 Author
               </h3>
               <ul className="space-y-4">
-                {Array.from(
-                  new Set(books.flatMap((book) => book.authors || [])),
-                )
-                  .slice(0, 5)
-                  .map((author) => (
-                    <li
-                      key={author}
-                      className="text-sm font-medium text-on-surface-variant"
+                {sidebarAuthors.map((author) => (
+                  <li key={author.authorId}>
+                    <Link
+                      href={`/books?q=${encodeURIComponent(author.authorName)}`}
+                      className="text-sm font-medium text-on-surface-variant hover:text-primary transition-colors"
                     >
-                      {author}
-                    </li>
-                  ))}
+                      {author.authorName}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </section>
           </aside>
@@ -247,7 +314,7 @@ export default async function CollectionPage({
                       <Link
                         key={bookId}
                         href={`/books/${bookId}`}
-                        className="group"
+                        className="group min-w-0"
                       >
                         <div className="bg-surface-container-lowest transition-all duration-500 group-hover:-translate-y-2 shadow-[0px_20px_40px_rgba(43,53,47,0.04)] overflow-hidden relative aspect-[3/4]">
                           <img
@@ -261,17 +328,17 @@ export default async function CollectionPage({
                           />
                           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
                         </div>
-                        <div className="mt-4">
-                          <span className="text-[10px] font-bold tracking-[0.1em] uppercase text-on-surface-variant block mb-1">
+                        <div className="mt-4 min-w-0">
+                          <span className="text-[10px] font-bold tracking-[0.1em] uppercase text-on-surface-variant block mb-1 truncate">
                             {(book.genres && book.genres[0]) || 'Collection'}
                           </span>
-                          <h2 className="text-lg font-bold tracking-tight text-on-surface group-hover:text-primary transition-colors leading-tight line-clamp-2">
+                          <h2 className="text-lg font-bold tracking-tight text-on-surface group-hover:text-primary transition-colors leading-tight truncate">
                             {book.title}
                           </h2>
-                          <p className="text-sm text-on-surface-variant mb-2 line-clamp-1">
+                          <p className="text-sm text-on-surface-variant mb-2 truncate">
                             {book.authors?.join(', ') || 'Unknown author'}
                           </p>
-                          <span className="text-sm font-bold text-on-surface">
+                          <span className="block text-sm font-bold text-on-surface truncate">
                             {formatCurrency(displayPrice)}
                           </span>
                         </div>
