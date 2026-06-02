@@ -22,9 +22,10 @@ import {
 /**
  * Cancels a customer-owned order.
  *
- * Business logic: Customers can only cancel their own orders while the order is
- * still in a cancellable lifecycle state, preventing disruption once fulfillment
- * has moved too far operationally.
+ * Business logic: Customers can only cancel their own orders while the order
+ * remains in a cancellable lifecycle state. Because stock is reserved when an
+ * order is placed, cancellation returns each ordered quantity to book inventory
+ * in the same transaction that marks the order as canceled.
  *
  * Every cancellation is recorded in the audit log for traceability.
  */

@@ -31,15 +31,18 @@ import {
   type IBooksCommandRepository,
 } from '../../../../book-management/domain/book-aggregate/repositories/books-command.repository.interface';
 import { Book } from '../../../../book-management/domain/book-aggregate/book.aggregate';
+import { InsufficientStockException } from '../../../domain/order-aggregate/exceptions/insufficient-stock.exception';
 
 /**
  * Places a new customer order.
  *
- * Business logic: The customer must have fulfillment-ready profile data before
- * checkout. Delivery details and product prices are captured as order snapshots
- * so the transaction keeps the exact state the customer agreed to buy.
+ * Business logic: The customer must have enough fulfillment information before
+ * checkout. The order captures delivery details and item prices as immutable
+ * purchase snapshots, then reserves inventory by decreasing each book quantity
+ * in the same transaction that creates the order.
  *
- * Every order placement is recorded in the audit log for traceability.
+ * The placement is rejected when any ordered book does not have enough stock,
+ * and every successful placement is recorded in the audit log for traceability.
  */
 @Injectable()
 export class PlaceOrderUseCase {
@@ -110,6 +113,14 @@ export class PlaceOrderUseCase {
 
         if (!book) {
           throw new BookNotFoundException();
+        }
+
+        if (book.getQuantity() < item.quantity) {
+          throw new InsufficientStockException(
+            item.productId,
+            item.quantity,
+            book.getQuantity(),
+          );
         }
 
         order.addItem({
