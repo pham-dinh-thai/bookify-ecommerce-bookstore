@@ -13,9 +13,15 @@ import { GenresModule } from '../catalog-management/genres.module';
 import { PublishersModule } from '../catalog-management/publishers.module';
 import { AuthorsModule } from '../catalog-management/authors.module';
 import { LanguagesModule } from '../catalog-management/languages.module';
+import { ShopNavigationController } from './presentation/shop-navigation/shop-navigation.controller';
+import { GetShopNavigationUseCase } from './application/dashboard-use-cases/get-shop-navigation/get-shop-navigation.use-case';
 
 @Module({
-  controllers: [AdminDashboardController, StaffDashboardController],
+  controllers: [
+    AdminDashboardController,
+    StaffDashboardController,
+    ShopNavigationController,
+  ],
   imports: [
     AuthenticationModule,
     OrderModule,
@@ -28,6 +34,10 @@ import { LanguagesModule } from '../catalog-management/languages.module';
     AuthorsModule,
     LanguagesModule,
   ],
-  providers: [GetStaffDashboardUseCase, GetAdminDashboardUseCase],
+  providers: [
+    GetStaffDashboardUseCase,
+    GetAdminDashboardUseCase,
+    GetShopNavigationUseCase,
+  ],
 })
 export class DashboardModule {}
