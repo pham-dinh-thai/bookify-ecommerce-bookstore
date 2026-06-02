@@ -25,21 +25,24 @@ import {
   type IOrdersCommandRepository,
   ORDERS_COMMAND_REPOSITORY,
 } from '../../../domain/order-aggregate/repositories/orders-command.repository.interface';
-import {
-  BOOKS_QUERY_REPOSITORY,
-  type IBooksQueryRepository,
-} from '../../../../book-management/domain/book-aggregate/repositories/books-query.repository.interface';
-import { BookReadModel } from '../../../../book-management/domain/book-aggregate/read-models/book.read-model';
 import { BookNotFoundException } from '../../../../book-management/domain/book-aggregate/exceptions/book-not-found.exception';
+import {
+  BOOKS_COMMAND_REPOSITORY,
+  type IBooksCommandRepository,
+} from '../../../../book-management/domain/book-aggregate/repositories/books-command.repository.interface';
+import { Book } from '../../../../book-management/domain/book-aggregate/book.aggregate';
+import { InsufficientStockException } from '../../../domain/order-aggregate/exceptions/insufficient-stock.exception';
 
 /**
  * Places a new customer order.
  *
- * Business logic: The customer must have fulfillment-ready profile data before
- * checkout. Delivery details and product prices are captured as order snapshots
- * so the transaction keeps the exact state the customer agreed to buy.
+ * Business logic: The customer must have enough fulfillment information before
+ * checkout. The order captures delivery details and item prices as immutable
+ * purchase snapshots, then reserves inventory by decreasing each book quantity
+ * in the same transaction that creates the order.
  *
- * Every order placement is recorded in the audit log for traceability.
+ * The placement is rejected when any ordered book does not have enough stock,
+ * and every successful placement is recorded in the audit log for traceability.
  */
 @Injectable()
 export class PlaceOrderUseCase {
@@ -50,8 +53,8 @@ export class PlaceOrderUseCase {
     @Inject(CUSTOMERS_QUERY_REPOSITORY)
     private readonly customersQueryRepository: ICustomersQueryRepository,
 
-    @Inject(BOOKS_QUERY_REPOSITORY)
-    private readonly booksQueryRepository: IBooksQueryRepository,
+    @Inject(BOOKS_COMMAND_REPOSITORY)
+    private readonly booksCommandRepository: IBooksCommandRepository,
 
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogCommandRepository: IAuditLogCommandRepository,
@@ -102,24 +105,36 @@ export class PlaceOrderUseCase {
       phoneNumber: phoneNumber,
     });
 
-    for (const item of request.items) {
-      const book: BookReadModel | null = await this.booksQueryRepository.findOne(
-        item.productId,
-      );
+    await this.unitOfWork.execute(async () => {
+      for (const item of request.items) {
+        const book: Book = await this.booksCommandRepository.findOne(
+          item.productId,
+        );
 
-      if (!book) {
-        throw new BookNotFoundException();
+        if (!book) {
+          throw new BookNotFoundException();
+        }
+
+        if (book.getQuantity() < item.quantity) {
+          throw new InsufficientStockException(
+            item.productId,
+            item.quantity,
+            book.getQuantity(),
+          );
+        }
+
+        order.addItem({
+          id: this.uuidGenerator.generate(),
+          productId: item.productId,
+          quantity: item.quantity,
+          price: book.getOriginalPrice(),
+        });
+
+        book.decreaseQuantity(item.quantity);
+
+        await this.booksCommandRepository.save(book);
       }
 
-      order.addItem({
-        id: this.uuidGenerator.generate(),
-        productId: item.productId,
-        quantity: item.quantity,
-        price: book.originalPrice,
-      });
-    }
-
-    await this.unitOfWork.execute(async () => {
       await this.ordersCommandRepository.insert(order);
 
       await this.auditLogCommandRepository.write(

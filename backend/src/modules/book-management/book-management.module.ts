@@ -84,6 +84,11 @@ import { BookIsbnDuplicateChecker } from './infrastructure/services/books/book-i
       useClass: BookIsbnDuplicateChecker,
     },
   ],
-  exports: [BOOKS_QUERY_REPOSITORY, BOOK_EXISTS_CHECKER, BOOK_VALIDATION],
+  exports: [
+    BOOKS_QUERY_REPOSITORY,
+    BOOKS_COMMAND_REPOSITORY,
+    BOOK_EXISTS_CHECKER,
+    BOOK_VALIDATION,
+  ],
 })
 export class BookManagementModule {}
