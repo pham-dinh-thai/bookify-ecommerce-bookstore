@@ -34,9 +34,11 @@ import { FileStorageModule } from '../file-storage/file-storage.module';
 import { ChangePrimaryBookCoverUseCase } from './application/book-use-cases/change-primary-book-cover/change-primary-book-cover.use-case';
 import { BOOK_ISBN_DUPLICATE_CHECKER } from './domain/book-aggregate/services/book-isbn-duplicate-checker.service';
 import { BookIsbnDuplicateChecker } from './infrastructure/services/books/book-isbn-duplicate-checker.service';
+import { ShopCollectionsController } from './presentation/shop-collections/shop-collections.controller';
+import { FindShopCollectionBooksUseCase } from './application/book-use-cases/find-shop-collection-books/find-shop-collection-books.use-case';
 
 @Module({
-  controllers: [BooksController],
+  controllers: [BooksController, ShopCollectionsController],
   imports: [
     TypeOrmModule.forFeature([BookTypeOrm, BookCoverTypeOrm]),
     SharedCacheModule,
@@ -62,6 +64,7 @@ import { BookIsbnDuplicateChecker } from './infrastructure/services/books/book-i
     AdjustBookStockUseCase,
     DeleteBookUseCase,
     ChangePrimaryBookCoverUseCase,
+    FindShopCollectionBooksUseCase,
     {
       provide: BOOKS_QUERY_REPOSITORY,
       useClass: TypeormBooksQueryRepository,

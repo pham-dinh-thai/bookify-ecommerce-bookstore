@@ -3,12 +3,16 @@ import { IBooksQueryRepository } from '../../../domain/book-aggregate/repositori
 import { InjectRepository } from '@nestjs/typeorm';
 import { BookTypeOrm } from '../../entities/book.entity';
 import { Repository } from 'typeorm/repository/Repository.js';
+import { In } from 'typeorm';
 import { BookReadModel } from '../../../domain/book-aggregate/read-models/book.read-model';
 import { BooksMapper } from '../../mappers/books.mapper';
 import {
   BookStockAlertsReadModel,
   LowStockBookReadModel,
 } from '../../../domain/book-aggregate/read-models/book-stock-alerts.read-model';
+import { OrderItemTypeOrm } from '../../../../order/infrastructure/entities/order-item.entity';
+import { OrderTypeOrm } from '../../../../order/infrastructure/entities/order.entity';
+import { OrderStatus } from '../../../../order/domain/order-aggregate/enums/order-status.enum';
 
 @Injectable()
 export class TypeormBooksQueryRepository implements IBooksQueryRepository {
@@ -74,6 +78,54 @@ export class TypeormBooksQueryRepository implements IBooksQueryRepository {
     return query.getCount() ?? 0;
   }
 
+  public async findBestSellers(
+    page: number,
+    limit: number,
+  ): Promise<BookReadModel[]> {
+    const rows = await this.repository
+      .createQueryBuilder('book')
+      .innerJoin(OrderItemTypeOrm, 'orderItem', 'orderItem.productId = book.id')
+      .innerJoin(OrderTypeOrm, 'orderEntity', 'orderEntity.id = orderItem.orderId')
+      .select('book.id', 'bookId')
+      .addSelect('SUM(orderItem.quantity)', 'unitsSold')
+      .where('orderEntity.status != :canceled', {
+        canceled: OrderStatus.CANCELED,
+      })
+      .groupBy('book.id')
+      .orderBy('unitsSold', 'DESC')
+      .addOrderBy('book.createdAt', 'DESC')
+      .offset((page - 1) * limit)
+      .limit(limit)
+      .getRawMany<{ bookId: string; unitsSold: string | number }>();
+
+    return this.findByIdsInOrder(rows.map((row) => row.bookId));
+  }
+
+  public async findNewArrivals(
+    page: number,
+    limit: number,
+  ): Promise<BookReadModel[]> {
+    const booksTypeOrm = await this.createBookReadQuery()
+      .orderBy('book.createdAt', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getMany();
+
+    return booksTypeOrm.map((book) => BooksMapper.toReadModel(book));
+  }
+
+  public async findOnSales(
+    page: number,
+    limit: number,
+  ): Promise<BookReadModel[]> {
+    void page;
+    void limit;
+
+    // Sale metadata is not modeled on books yet, so this endpoint stays empty
+    // until sale pricing or a sale flag is added to the catalog.
+    return [];
+  }
+
   public async findStockAlerts(
     lowStockThreshold: number,
     lowStockBookLimit: number,
@@ -112,5 +164,42 @@ export class TypeormBooksQueryRepository implements IBooksQueryRepository {
           ),
       ),
     );
+  }
+
+  private createBookReadQuery() {
+    return this.repository
+      .createQueryBuilder('book')
+      .leftJoinAndSelect('book.language', 'language')
+      .leftJoinAndSelect('book.publisher', 'publisher')
+      .leftJoinAndSelect('book.bookAuthors', 'bookAuthors')
+      .leftJoinAndSelect('bookAuthors.author', 'author')
+      .leftJoinAndSelect('book.bookGenres', 'bookGenres')
+      .leftJoinAndSelect('bookGenres.genre', 'genre')
+      .leftJoinAndSelect('book.covers', 'covers');
+  }
+
+  private async findByIdsInOrder(ids: string[]): Promise<BookReadModel[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+
+    const booksTypeOrm = await this.repository.find({
+      where: { id: In(ids) },
+      relations: [
+        'language',
+        'publisher',
+        'bookAuthors',
+        'bookAuthors.author',
+        'bookGenres',
+        'bookGenres.genre',
+        'covers',
+      ],
+    });
+    const booksById = new Map(booksTypeOrm.map((book) => [book.id, book]));
+
+    return ids
+      .map((id) => booksById.get(id))
+      .filter((book): book is BookTypeOrm => Boolean(book))
+      .map((book) => BooksMapper.toReadModel(book));
   }
 }
