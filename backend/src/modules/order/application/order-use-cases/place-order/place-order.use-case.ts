@@ -25,12 +25,12 @@ import {
   type IOrdersCommandRepository,
   ORDERS_COMMAND_REPOSITORY,
 } from '../../../domain/order-aggregate/repositories/orders-command.repository.interface';
-import {
-  BOOKS_QUERY_REPOSITORY,
-  type IBooksQueryRepository,
-} from '../../../../book-management/domain/book-aggregate/repositories/books-query.repository.interface';
-import { BookReadModel } from '../../../../book-management/domain/book-aggregate/read-models/book.read-model';
 import { BookNotFoundException } from '../../../../book-management/domain/book-aggregate/exceptions/book-not-found.exception';
+import {
+  BOOKS_COMMAND_REPOSITORY,
+  type IBooksCommandRepository,
+} from '../../../../book-management/domain/book-aggregate/repositories/books-command.repository.interface';
+import { Book } from '../../../../book-management/domain/book-aggregate/book.aggregate';
 
 /**
  * Places a new customer order.
@@ -50,8 +50,8 @@ export class PlaceOrderUseCase {
     @Inject(CUSTOMERS_QUERY_REPOSITORY)
     private readonly customersQueryRepository: ICustomersQueryRepository,
 
-    @Inject(BOOKS_QUERY_REPOSITORY)
-    private readonly booksQueryRepository: IBooksQueryRepository,
+    @Inject(BOOKS_COMMAND_REPOSITORY)
+    private readonly booksCommandRepository: IBooksCommandRepository,
 
     @Inject(AUDIT_LOG_COMMAND_REPOSITORY)
     private readonly auditLogCommandRepository: IAuditLogCommandRepository,
@@ -102,24 +102,28 @@ export class PlaceOrderUseCase {
       phoneNumber: phoneNumber,
     });
 
-    for (const item of request.items) {
-      const book: BookReadModel | null = await this.booksQueryRepository.findOne(
-        item.productId,
-      );
+    await this.unitOfWork.execute(async () => {
+      for (const item of request.items) {
+        const book: Book = await this.booksCommandRepository.findOne(
+          item.productId,
+        );
 
-      if (!book) {
-        throw new BookNotFoundException();
+        if (!book) {
+          throw new BookNotFoundException();
+        }
+
+        order.addItem({
+          id: this.uuidGenerator.generate(),
+          productId: item.productId,
+          quantity: item.quantity,
+          price: book.getOriginalPrice(),
+        });
+
+        book.decreaseQuantity(item.quantity);
+
+        await this.booksCommandRepository.save(book);
       }
 
-      order.addItem({
-        id: this.uuidGenerator.generate(),
-        productId: item.productId,
-        quantity: item.quantity,
-        price: book.originalPrice,
-      });
-    }
-
-    await this.unitOfWork.execute(async () => {
       await this.ordersCommandRepository.insert(order);
 
       await this.auditLogCommandRepository.write(
