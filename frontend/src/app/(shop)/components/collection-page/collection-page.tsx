@@ -74,7 +74,13 @@ async function getBooks(
 ): Promise<ApiBook[]> {
   try {
     const apiBase = getApiBaseUrl();
-    const response = await fetch(`${apiBase}/books?page=1&limit=50`, {
+    const endpoint =
+      type === 'on-sales'
+        ? 'on-sales'
+        : type === 'new-arrivals'
+          ? 'new-arrivals'
+          : 'books';
+    const response = await fetch(`${apiBase}/${endpoint}?page=1&limit=50`, {
       cache: 'no-store',
     });
 
@@ -82,18 +88,6 @@ async function getBooks(
 
     const data = await response.json();
     const books: ApiBook[] = Array.isArray(data?.books) ? data.books : [];
-
-    if (type === 'on-sales') {
-      const onSaleBooks = books.filter(
-        (book) => book.isOnSale || Number(book.salePrice) > 0,
-      );
-      return onSaleBooks.length > 0 ? onSaleBooks : books;
-    }
-
-    if (type === 'new-arrivals') {
-      const newArrivalBooks = books.filter((book) => book.isNewArrival);
-      return newArrivalBooks.length > 0 ? newArrivalBooks : books;
-    }
 
     let filteredBooks = books;
 

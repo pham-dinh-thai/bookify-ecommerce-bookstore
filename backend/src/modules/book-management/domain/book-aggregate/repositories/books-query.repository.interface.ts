@@ -12,6 +12,12 @@ export interface IBooksQueryRepository {
 
   count(search?: string): Promise<number>;
 
+  findBestSellers(page: number, limit: number): Promise<BookReadModel[]>;
+
+  findNewArrivals(page: number, limit: number): Promise<BookReadModel[]>;
+
+  findOnSales(page: number, limit: number): Promise<BookReadModel[]>;
+
   findStockAlerts(
     lowStockThreshold: number,
     lowStockBookLimit: number,

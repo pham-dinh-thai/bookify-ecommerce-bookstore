@@ -36,7 +36,7 @@ function getApiBaseUrl(): string {
 async function getBestSellerBooks(): Promise<BestSellerBook[]> {
   try {
     const apiBase = getApiBaseUrl();
-    const response = await fetch(`${apiBase}/books?page=1&limit=100`, {
+    const response = await fetch(`${apiBase}/best-seller?page=1&limit=10`, {
       cache: 'no-store',
     });
 
@@ -73,7 +73,6 @@ async function getBestSellerBooks(): Promise<BestSellerBook[]> {
             (Number(book.originalPrice) || 0) * (Number(book.quantity) || 0),
         };
       })
-      .sort((a, b) => b.estimatedRevenue - a.estimatedRevenue)
       .slice(0, 10);
   } catch (error) {
     console.error('Failed to fetch best seller books:', error);

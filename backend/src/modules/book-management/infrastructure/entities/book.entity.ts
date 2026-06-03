@@ -34,6 +34,15 @@ export class BookTypeOrm {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   originalPrice!: number;
 
+  @Column({
+    type: 'decimal',
+    precision: 5,
+    scale: 2,
+    default: 0,
+    unsigned: true,
+  })
+  discountPercentage!: number;
+
   @Column({ type: 'int' })
   quantity!: number;
 
