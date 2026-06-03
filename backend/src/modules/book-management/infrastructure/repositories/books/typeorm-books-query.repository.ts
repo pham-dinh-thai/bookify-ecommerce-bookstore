@@ -118,12 +118,15 @@ export class TypeormBooksQueryRepository implements IBooksQueryRepository {
     page: number,
     limit: number,
   ): Promise<BookReadModel[]> {
-    void page;
-    void limit;
+    const booksTypeOrm = await this.createBookReadQuery()
+      .where('book.discountPercentage > 0')
+      .orderBy('book.discountPercentage', 'DESC')
+      .addOrderBy('book.createdAt', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getMany();
 
-    // Sale metadata is not modeled on books yet, so this endpoint stays empty
-    // until sale pricing or a sale flag is added to the catalog.
-    return [];
+    return booksTypeOrm.map((book) => BooksMapper.toReadModel(book));
   }
 
   public async findStockAlerts(
