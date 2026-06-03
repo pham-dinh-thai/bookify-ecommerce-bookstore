@@ -12,6 +12,7 @@ type ApiBook = {
   _id?: string;
   title: string;
   originalPrice: number;
+  discountPercentage?: number;
   authors?: string[];
   covers?: { url: string; isPrimary: boolean }[];
   publisher?: string;
@@ -29,6 +30,8 @@ type HomepageBook = {
   title: string;
   author: string;
   price: string;
+  originalPrice?: string;
+  discountPercentage?: number;
   cover: string;
   publisher?: string;
   description?: string;
@@ -55,6 +58,17 @@ function getApiBaseUrl(): string {
   return '/api';
 }
 
+function getDiscountedPrice(originalPrice: number, discountPercentage: number) {
+  return Math.max(0, originalPrice * (1 - discountPercentage / 100));
+}
+
+function formatVnd(value: number): string {
+  return `${Number(value || 0).toLocaleString('vi-VN', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })} VNĐ`;
+}
+
 async function getHomepageBooks(): Promise<HomepageBook[]> {
   try {
     const apiBase = getApiBaseUrl();
@@ -77,15 +91,20 @@ async function getHomepageBooks(): Promise<HomepageBook[]> {
       .map((book) => {
         const primaryCover = book.covers?.find((cover) => cover.isPrimary)?.url;
         const fallbackCover = book.covers?.[0]?.url;
+        const originalPrice = Number(book.originalPrice) || 0;
+        const discountPercentage = Number(book.discountPercentage || 0);
+        const hasDiscount = discountPercentage > 0;
+        const price = hasDiscount
+          ? getDiscountedPrice(originalPrice, discountPercentage)
+          : originalPrice;
 
         return {
           id: book.id || book._id || '',
           title: book.title,
           author: book.authors?.join(', ') || 'Unknown author',
-          price: `${Number(book.originalPrice).toLocaleString('vi-VN', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })} VNĐ`,
+          price: formatVnd(price),
+          originalPrice: hasDiscount ? formatVnd(originalPrice) : undefined,
+          discountPercentage: hasDiscount ? discountPercentage : undefined,
           cover:
             primaryCover ||
             fallbackCover ||

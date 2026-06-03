@@ -6,6 +6,7 @@ type ApiBook = {
   _id?: string;
   title: string;
   originalPrice: number;
+  discountPercentage?: number;
   quantity: number;
   authors?: string[];
   covers?: { url: string; isPrimary: boolean }[];
@@ -19,6 +20,8 @@ type BestSellerBook = {
   cover: string;
   publisher: string;
   originalPrice: number;
+  discountPercentage: number;
+  price: number;
   quantity: number;
   estimatedRevenue: number;
 };
@@ -57,6 +60,12 @@ async function getBestSellerBooks(): Promise<BestSellerBook[]> {
       .map((book) => {
         const primaryCover = book.covers?.find((cover) => cover.isPrimary)?.url;
         const fallbackCover = book.covers?.[0]?.url;
+        const originalPrice = Number(book.originalPrice) || 0;
+        const discountPercentage = Number(book.discountPercentage || 0);
+        const price =
+          discountPercentage > 0
+            ? getDiscountedPrice(originalPrice, discountPercentage)
+            : originalPrice;
 
         return {
           id: book.id || book._id || '',
@@ -67,10 +76,11 @@ async function getBestSellerBooks(): Promise<BestSellerBook[]> {
             fallbackCover ||
             'https://via.placeholder.com/300x450?text=No+Cover',
           publisher: book.publisher || 'Independent',
-          originalPrice: Number(book.originalPrice) || 0,
+          originalPrice,
+          discountPercentage,
+          price,
           quantity: Number(book.quantity) || 0,
-          estimatedRevenue:
-            (Number(book.originalPrice) || 0) * (Number(book.quantity) || 0),
+          estimatedRevenue: price * (Number(book.quantity) || 0),
         };
       })
       .slice(0, 10);
@@ -82,6 +92,10 @@ async function getBestSellerBooks(): Promise<BestSellerBook[]> {
 
 function formatVnd(value: number) {
   return `${value.toLocaleString('vi-VN')} VNĐ`;
+}
+
+function getDiscountedPrice(originalPrice: number, discountPercentage: number) {
+  return Math.max(0, originalPrice * (1 - discountPercentage / 100));
 }
 
 export default async function BestSellerPage() {
@@ -143,15 +157,25 @@ export default async function BestSellerPage() {
 
                   <div className="shrink-0 text-right">
                     <p className="text-base font-extrabold text-[#1b4332] md:text-lg">
-                      {formatVnd(book.originalPrice)}
+                      {formatVnd(book.price)}
                     </p>
+                    {book.discountPercentage > 0 && (
+                      <div className="mb-2 flex flex-wrap items-center justify-end gap-1.5 text-xs">
+                        <span className="text-[#8b948f] line-through">
+                          {formatVnd(book.originalPrice)}
+                        </span>
+                        <span className="rounded-full bg-[#fff3e8] px-2 py-0.5 font-bold text-[#9a5524]">
+                          -{book.discountPercentage}%
+                        </span>
+                      </div>
+                    )}
                     <AddToCartButton
                       item={{
                         id: book.id,
                         title: book.title,
                         author: book.author,
                         edition: book.publisher,
-                        price: book.originalPrice,
+                        price: book.price,
                         quantity: 1,
                         stock: book.quantity,
                         cover: book.cover,

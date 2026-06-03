@@ -290,6 +290,13 @@ export class Book {
     return this.originalPrice.getValue();
   }
 
+  public getCurrentPrice(): number {
+    const originalPrice = this.originalPrice.getValue();
+    const discountPercentage = this.discountPercentage.getValue();
+
+    return Math.max(0, originalPrice * (1 - discountPercentage / 100));
+  }
+
   public getDiscountPercentage(): number {
     return this.discountPercentage.getValue();
   }

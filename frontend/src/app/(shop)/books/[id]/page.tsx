@@ -14,6 +14,7 @@ type ApiBookDetail = {
   authors?: string[];
   publisher?: string;
   originalPrice: number;
+  discountPercentage?: number;
   quantity?: number;
   pageCount?: number;
   isInStock?: boolean;
@@ -28,6 +29,7 @@ type ApiBookListItem = {
   title: string;
   authors?: string[];
   originalPrice: number;
+  discountPercentage?: number;
   covers?: { url: string; isPrimary: boolean }[];
   publisher?: string;
 };
@@ -40,7 +42,10 @@ type BookDetail = {
   authors: string;
   publisher?: string;
   price: string;
+  originalPriceLabel?: string;
+  discountPercentage: number;
   originalPrice: number;
+  currentPrice: number;
   quantity: number;
   pageCount: number;
   isInStock: boolean;
@@ -54,6 +59,8 @@ type BookCard = {
   title: string;
   author: string;
   price: string;
+  originalPrice?: string;
+  discountPercentage?: number;
   cover: string;
   publisher?: string;
 };
@@ -74,6 +81,10 @@ function formatVnd(value: number) {
   })} VNĐ`;
 }
 
+function getDiscountedPrice(originalPrice: number, discountPercentage: number) {
+  return Math.max(0, originalPrice * (1 - discountPercentage / 100));
+}
+
 async function getBookDetail(id: string): Promise<BookDetail | null> {
   try {
     const apiBase = getApiBaseUrl();
@@ -92,6 +103,12 @@ async function getBookDetail(id: string): Promise<BookDetail | null> {
 
     const primaryCover = data.covers?.find((cover) => cover.isPrimary)?.url;
     const fallbackCover = data.covers?.[0]?.url;
+    const originalPrice = Number(data.originalPrice) || 0;
+    const discountPercentage = Number(data.discountPercentage || 0);
+    const currentPrice =
+      discountPercentage > 0
+        ? getDiscountedPrice(originalPrice, discountPercentage)
+        : originalPrice;
 
     return {
       id: data.id,
@@ -100,8 +117,12 @@ async function getBookDetail(id: string): Promise<BookDetail | null> {
       description: data.description || 'No description available.',
       authors: data.authors?.join(', ') || 'Unknown author',
       publisher: data.publisher || 'Unknown publisher',
-      price: formatVnd(data.originalPrice),
-      originalPrice: Number(data.originalPrice) || 0,
+      price: formatVnd(currentPrice),
+      originalPriceLabel:
+        discountPercentage > 0 ? formatVnd(originalPrice) : undefined,
+      discountPercentage,
+      originalPrice,
+      currentPrice,
       quantity: data.quantity ?? 0,
       pageCount: data.pageCount ?? 0,
       isInStock: data.isInStock ?? false,
@@ -137,11 +158,20 @@ async function getRelatedBooks(excludeId: string): Promise<BookCard[]> {
       .map((b) => {
         const primaryCover = b.covers?.find((c) => c.isPrimary)?.url;
         const fallbackCover = b.covers?.[0]?.url;
+        const originalPrice = Number(b.originalPrice) || 0;
+        const discountPercentage = Number(b.discountPercentage || 0);
+        const hasDiscount = discountPercentage > 0;
+        const price = hasDiscount
+          ? getDiscountedPrice(originalPrice, discountPercentage)
+          : originalPrice;
+
         return {
           id: b.id ?? b._id ?? '',
           title: b.title,
           author: b.authors?.join(', ') || 'Unknown author',
-          price: formatVnd(b.originalPrice),
+          price: formatVnd(price),
+          originalPrice: hasDiscount ? formatVnd(originalPrice) : undefined,
+          discountPercentage: hasDiscount ? discountPercentage : undefined,
           cover:
             primaryCover ||
             fallbackCover ||
@@ -264,6 +294,12 @@ export default async function BookDetailPage({
                 </h3>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Meta label="Price" value={book.price} />
+                  {book.originalPriceLabel && (
+                    <Meta
+                      label="Original Price"
+                      value={`${book.originalPriceLabel} (-${book.discountPercentage}%)`}
+                    />
+                  )}
                   <Meta
                     label="Quantity"
                     value={`${book.quantity} ${book.quantity === 1 ? 'copy' : 'copies'} available`}
@@ -279,7 +315,7 @@ export default async function BookDetailPage({
                   title: book.title,
                   author: book.authors,
                   edition: book.publisher || 'Unknown publisher',
-                  price: book.originalPrice,
+                  price: book.currentPrice,
                   stock: book.quantity,
                   cover: book.cover,
                   isAvailable: book.isInStock && book.quantity > 0,

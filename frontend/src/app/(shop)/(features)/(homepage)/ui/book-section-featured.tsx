@@ -8,6 +8,8 @@ type Book = {
   title: string;
   author: string;
   price: string;
+  originalPrice?: string;
+  discountPercentage?: number;
   cover: string;
   publisher?: string;
   description?: string;
@@ -96,10 +98,22 @@ export function BookSectionHighlight({
             <br />
             <br />
 
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-1">
               <span className="text-2xl font-bold text-[#2d6a4f]">
                 {featured.price}
               </span>
+              {featured.originalPrice && (
+                <div className="flex flex-wrap items-center gap-2 text-xs">
+                  <span className="text-[#8b948f] line-through">
+                    {featured.originalPrice}
+                  </span>
+                  {featured.discountPercentage ? (
+                    <span className="rounded-full bg-[#fff3e8] px-2 py-0.5 font-bold text-[#9a5524]">
+                      -{featured.discountPercentage}%
+                    </span>
+                  ) : null}
+                </div>
+              )}
             </div>
           </div>
         </Link>
@@ -145,9 +159,23 @@ export function BookSectionHighlight({
                     mollitia.
                   </p>
                 )}
-                <span className="text-sm font-bold text-[#2d6a4f]">
-                  {book.price}
-                </span>
+                <div className="mt-1 flex flex-col gap-0.5">
+                  <span className="text-sm font-bold text-[#2d6a4f]">
+                    {book.price}
+                  </span>
+                  {book.originalPrice && (
+                    <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
+                      <span className="text-[#8b948f] line-through">
+                        {book.originalPrice}
+                      </span>
+                      {book.discountPercentage ? (
+                        <span className="rounded-full bg-[#fff3e8] px-1.5 py-0.5 font-bold text-[#9a5524]">
+                          -{book.discountPercentage}%
+                        </span>
+                      ) : null}
+                    </div>
+                  )}
+                </div>
               </div>
             </Link>
           ))}
