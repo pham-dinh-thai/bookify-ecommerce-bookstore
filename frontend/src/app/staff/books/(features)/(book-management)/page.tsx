@@ -14,6 +14,17 @@ import { deleteBookService } from './services/delete-book.service';
 import ConfirmDeleteModal from './components/confirm-delete-modal';
 import RefreshButton from '@/shared/common/components/refresh-button';
 
+function formatVnd(value: number): string {
+  return `${Number(value || 0).toLocaleString('vi-VN', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })} VNĐ`;
+}
+
+function getDiscountedPrice(originalPrice: number, discountPercentage: number) {
+  return Math.max(0, originalPrice * (1 - discountPercentage / 100));
+}
+
 export default function BookManagementPage() {
   const pageSize = 10;
   const [page, setPage] = useState(1);
@@ -102,18 +113,36 @@ export default function BookManagementPage() {
       },
     },
     {
-      key: 'originalPrice',
-      label: 'Original Price',
+      key: 'price',
+      label: 'Price',
       className: 'text-[#4f6553] w-46',
-      render: (item: Book) => (
-        <span>
-          {Number(item.originalPrice).toLocaleString('vi-VN', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}{' '}
-          VNĐ
-        </span>
-      ),
+      render: (item: Book) => {
+        const originalPrice = Number(item.originalPrice || 0);
+        const discountPercentage = Number(item.discountPercentage || 0);
+        const hasDiscount = discountPercentage > 0;
+        const discountedPrice = getDiscountedPrice(
+          originalPrice,
+          discountPercentage,
+        );
+
+        return (
+          <div className="flex flex-col gap-1">
+            <span className="font-semibold text-[#2b352f]">
+              {formatVnd(hasDiscount ? discountedPrice : originalPrice)}
+            </span>
+            {hasDiscount && (
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                <span className="text-[#8b918d] line-through">
+                  {formatVnd(originalPrice)}
+                </span>
+                <span className="rounded-full bg-[#fff3e8] px-2 py-0.5 font-semibold text-[#9a5524]">
+                  -{discountPercentage}%
+                </span>
+              </div>
+            )}
+          </div>
+        );
+      },
     },
     {
       key: 'status',

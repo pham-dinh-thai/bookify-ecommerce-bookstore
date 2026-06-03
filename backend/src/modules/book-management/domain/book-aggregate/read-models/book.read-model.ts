@@ -5,6 +5,7 @@ export class BookReadModel {
     public readonly title: string,
     public readonly description: string,
     public readonly originalPrice: number,
+    public readonly discountPercentage: number,
     public readonly quantity: number,
     public readonly pageCount: number,
     public readonly isInStock: boolean,

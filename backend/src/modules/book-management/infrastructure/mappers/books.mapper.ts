@@ -55,6 +55,7 @@ export class BooksMapper {
       bookTypeOrm.title,
       bookTypeOrm.description,
       bookTypeOrm.originalPrice,
+      bookTypeOrm.discountPercentage,
       bookTypeOrm.quantity,
       bookTypeOrm.pageCount,
       bookTypeOrm.quantity > 0,
