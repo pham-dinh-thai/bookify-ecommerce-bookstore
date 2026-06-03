@@ -18,6 +18,7 @@ export class BooksMapper {
       genreIds: bookTypeOrm.bookGenres.map((bookGenre) => bookGenre.genreId),
       description: bookTypeOrm.description,
       originalPrice: bookTypeOrm.originalPrice,
+      discountPercentage: bookTypeOrm.discountPercentage,
       quantity: bookTypeOrm.quantity,
       bookCovers: (bookTypeOrm.covers ?? []).map((cover) => ({
         id: cover.id,
@@ -39,6 +40,7 @@ export class BooksMapper {
     bookTypeOrm.publisherId = book.getPublisherId();
     bookTypeOrm.description = book.getDescription();
     bookTypeOrm.originalPrice = book.getOriginalPrice();
+    bookTypeOrm.discountPercentage = book.getDiscountPercentage();
     bookTypeOrm.quantity = book.getQuantity();
     bookTypeOrm.languageId = book.getLanguageId();
     bookTypeOrm.pageCount = book.getPageCount();

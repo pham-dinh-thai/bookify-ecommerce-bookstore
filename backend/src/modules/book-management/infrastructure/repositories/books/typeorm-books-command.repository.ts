@@ -47,7 +47,7 @@ export class TypeormBooksCommandRepository implements IBooksCommandRepository {
   }
 
   /**
-   * Updates book details except price and quantity,
+   * Updates book details except price, discount, and quantity,
    * which have dedicated methods.
    */
   public async update(book: Book): Promise<void> {
