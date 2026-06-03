@@ -7,6 +7,8 @@ type ApiBook = {
   title: string;
   originalPrice: number;
   discountPercentage?: number;
+  currentPrice?: number;
+  isOnSale?: boolean;
   quantity: number;
   authors?: string[];
   covers?: { url: string; isPrimary: boolean }[];
@@ -62,10 +64,13 @@ async function getBestSellerBooks(): Promise<BestSellerBook[]> {
         const fallbackCover = book.covers?.[0]?.url;
         const originalPrice = Number(book.originalPrice) || 0;
         const discountPercentage = Number(book.discountPercentage || 0);
+        const hasDiscount = Boolean(book.isOnSale ?? discountPercentage > 0);
         const price =
-          discountPercentage > 0
-            ? getDiscountedPrice(originalPrice, discountPercentage)
-            : originalPrice;
+          book.currentPrice !== undefined && book.currentPrice !== null
+            ? Number(book.currentPrice)
+            : hasDiscount
+              ? getDiscountedPrice(originalPrice, discountPercentage)
+              : originalPrice;
 
         return {
           id: book.id || book._id || '',

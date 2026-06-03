@@ -8,6 +8,7 @@ type ApiBook = {
   title: string;
   originalPrice: number;
   salePrice?: number;
+  currentPrice?: number;
   discountPercentage?: number;
   isOnSale?: boolean;
   isNewArrival?: boolean;
@@ -306,15 +307,20 @@ export default async function CollectionPage({
                     const discountPercentage = Number(
                       book.discountPercentage || 0,
                     );
-                    const hasDiscount = discountPercentage > 0;
+                    const hasDiscount = Boolean(
+                      book.isOnSale ?? discountPercentage > 0,
+                    );
                     const displayPrice =
                       book.salePrice ??
-                      (hasDiscount
-                        ? getDiscountedPrice(
-                            originalPrice,
-                            discountPercentage,
-                          )
-                        : originalPrice);
+                      (book.currentPrice !== undefined &&
+                      book.currentPrice !== null
+                        ? Number(book.currentPrice)
+                        : hasDiscount
+                          ? getDiscountedPrice(
+                              originalPrice,
+                              discountPercentage,
+                            )
+                          : originalPrice);
 
                     if (!bookId) return null;
 

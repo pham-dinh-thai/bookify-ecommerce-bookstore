@@ -119,16 +119,18 @@ export default function BookManagementPage() {
       render: (item: Book) => {
         const originalPrice = Number(item.originalPrice || 0);
         const discountPercentage = Number(item.discountPercentage || 0);
-        const hasDiscount = discountPercentage > 0;
-        const discountedPrice = getDiscountedPrice(
-          originalPrice,
-          discountPercentage,
-        );
+        const hasDiscount = Boolean(item.isOnSale ?? discountPercentage > 0);
+        const currentPrice =
+          item.currentPrice !== undefined && item.currentPrice !== null
+            ? Number(item.currentPrice)
+            : hasDiscount
+              ? getDiscountedPrice(originalPrice, discountPercentage)
+              : originalPrice;
 
         return (
           <div className="flex flex-col gap-1">
             <span className="font-semibold text-[#2b352f]">
-              {formatVnd(hasDiscount ? discountedPrice : originalPrice)}
+              {formatVnd(currentPrice)}
             </span>
             {hasDiscount && (
               <div className="flex flex-wrap items-center gap-2 text-xs">

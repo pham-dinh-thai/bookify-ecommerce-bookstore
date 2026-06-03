@@ -49,13 +49,22 @@ export class BooksMapper {
   }
 
   public static toReadModel(bookTypeOrm: BookTypeOrm): BookReadModel {
+    const originalPrice = Number(bookTypeOrm.originalPrice);
+    const discountPercentage = Number(bookTypeOrm.discountPercentage || 0);
+    const currentPrice = Math.max(
+      0,
+      originalPrice * (1 - discountPercentage / 100),
+    );
+
     return new BookReadModel(
       bookTypeOrm.id,
       bookTypeOrm.isbn,
       bookTypeOrm.title,
       bookTypeOrm.description,
-      bookTypeOrm.originalPrice,
-      bookTypeOrm.discountPercentage,
+      originalPrice,
+      discountPercentage,
+      currentPrice,
+      discountPercentage > 0,
       bookTypeOrm.quantity,
       bookTypeOrm.pageCount,
       bookTypeOrm.quantity > 0,

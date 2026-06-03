@@ -13,6 +13,8 @@ export type Book = {
   publisher: string;
   originalPrice: number;
   discountPercentage?: number;
+  currentPrice?: number;
+  isOnSale?: boolean;
   covers: BookCover[];
   isInStock: boolean;
   status: string;
@@ -39,6 +41,8 @@ export type BookDetail = {
   description: string;
   originalPrice: number;
   discountPercentage: number;
+  currentPrice: number;
+  isOnSale: boolean;
   quantity: number;
   pageCount: number;
   isInStock: boolean;

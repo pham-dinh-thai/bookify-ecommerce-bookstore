@@ -15,6 +15,8 @@ type ApiBookDetail = {
   publisher?: string;
   originalPrice: number;
   discountPercentage?: number;
+  currentPrice?: number;
+  isOnSale?: boolean;
   quantity?: number;
   pageCount?: number;
   isInStock?: boolean;
@@ -30,6 +32,8 @@ type ApiBookListItem = {
   authors?: string[];
   originalPrice: number;
   discountPercentage?: number;
+  currentPrice?: number;
+  isOnSale?: boolean;
   covers?: { url: string; isPrimary: boolean }[];
   publisher?: string;
 };
@@ -105,10 +109,13 @@ async function getBookDetail(id: string): Promise<BookDetail | null> {
     const fallbackCover = data.covers?.[0]?.url;
     const originalPrice = Number(data.originalPrice) || 0;
     const discountPercentage = Number(data.discountPercentage || 0);
+    const isOnSale = Boolean(data.isOnSale ?? discountPercentage > 0);
     const currentPrice =
-      discountPercentage > 0
-        ? getDiscountedPrice(originalPrice, discountPercentage)
-        : originalPrice;
+      data.currentPrice !== undefined && data.currentPrice !== null
+        ? Number(data.currentPrice)
+        : isOnSale
+          ? getDiscountedPrice(originalPrice, discountPercentage)
+          : originalPrice;
 
     return {
       id: data.id,
@@ -118,8 +125,7 @@ async function getBookDetail(id: string): Promise<BookDetail | null> {
       authors: data.authors?.join(', ') || 'Unknown author',
       publisher: data.publisher || 'Unknown publisher',
       price: formatVnd(currentPrice),
-      originalPriceLabel:
-        discountPercentage > 0 ? formatVnd(originalPrice) : undefined,
+      originalPriceLabel: isOnSale ? formatVnd(originalPrice) : undefined,
       discountPercentage,
       originalPrice,
       currentPrice,
@@ -160,10 +166,13 @@ async function getRelatedBooks(excludeId: string): Promise<BookCard[]> {
         const fallbackCover = b.covers?.[0]?.url;
         const originalPrice = Number(b.originalPrice) || 0;
         const discountPercentage = Number(b.discountPercentage || 0);
-        const hasDiscount = discountPercentage > 0;
-        const price = hasDiscount
-          ? getDiscountedPrice(originalPrice, discountPercentage)
-          : originalPrice;
+        const hasDiscount = Boolean(b.isOnSale ?? discountPercentage > 0);
+        const price =
+          b.currentPrice !== undefined && b.currentPrice !== null
+            ? Number(b.currentPrice)
+            : hasDiscount
+              ? getDiscountedPrice(originalPrice, discountPercentage)
+              : originalPrice;
 
         return {
           id: b.id ?? b._id ?? '',

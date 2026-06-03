@@ -71,10 +71,11 @@ export default function BookDetailScreen({ id }: { id: string }) {
     const originalPrice = Number(book?.originalPrice ?? 0);
     const discountPercentage = Number(discountPercentageInput || 0);
 
-    return Math.max(
-      0,
-      originalPrice * (1 - Math.min(discountPercentage, 100) / 100),
-    );
+    if (discountPercentage === Number(book?.discountPercentage ?? 0)) {
+      return Number(book?.currentPrice ?? originalPrice);
+    }
+
+    return Math.max(0, originalPrice * (1 - discountPercentage / 100));
   }, [book?.originalPrice, discountPercentageInput]);
 
   const sortedCovers = useMemo(() => {

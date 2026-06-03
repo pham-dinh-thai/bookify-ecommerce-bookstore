@@ -13,6 +13,8 @@ type ApiBook = {
   title: string;
   originalPrice: number;
   discountPercentage?: number;
+  currentPrice?: number;
+  isOnSale?: boolean;
   authors?: string[];
   covers?: { url: string; isPrimary: boolean }[];
   publisher?: string;
@@ -58,15 +60,15 @@ function getApiBaseUrl(): string {
   return '/api';
 }
 
-function getDiscountedPrice(originalPrice: number, discountPercentage: number) {
-  return Math.max(0, originalPrice * (1 - discountPercentage / 100));
-}
-
 function formatVnd(value: number): string {
   return `${Number(value || 0).toLocaleString('vi-VN', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })} VNĐ`;
+}
+
+function getDiscountedPrice(originalPrice: number, discountPercentage: number) {
+  return Math.max(0, originalPrice * (1 - discountPercentage / 100));
 }
 
 async function getHomepageBooks(
@@ -101,10 +103,13 @@ async function getHomepageBooks(
         const fallbackCover = book.covers?.[0]?.url;
         const originalPrice = Number(book.originalPrice) || 0;
         const discountPercentage = Number(book.discountPercentage || 0);
-        const hasDiscount = discountPercentage > 0;
-        const price = hasDiscount
-          ? getDiscountedPrice(originalPrice, discountPercentage)
-          : originalPrice;
+        const hasDiscount = Boolean(book.isOnSale ?? discountPercentage > 0);
+        const price =
+          book.currentPrice !== undefined && book.currentPrice !== null
+            ? Number(book.currentPrice)
+            : hasDiscount
+              ? getDiscountedPrice(originalPrice, discountPercentage)
+              : originalPrice;
 
         return {
           id: book.id || book._id || '',
