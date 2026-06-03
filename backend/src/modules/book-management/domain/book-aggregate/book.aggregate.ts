@@ -17,6 +17,7 @@ import {
 import { BookPrice } from './value-objects/book-price.value-object';
 import { BookQuantity } from './value-objects/book-quantity.value-object';
 import { CreateBookCoverProps } from './entities/book-cover/types';
+import { BookDiscountPercentage } from './value-objects/book-discount-percentage.value-object';
 
 /**
  * Book aggregate root.
@@ -29,6 +30,8 @@ import { CreateBookCoverProps } from './entities/book-cover/types';
  * - Cannot have duplicate display orders across covers
  * - First cover added is automatically set as primary
  * - Quantity cannot be negative
+ * - Discount percentage must be between 0 and 100
+ * - Price, discount, and stock changes are managed through dedicated methods
  */
 export class Book {
   private constructor(
@@ -40,6 +43,7 @@ export class Book {
     private genreIds: string[],
     private description: string,
     private originalPrice: BookPrice,
+    private discountPercentage: BookDiscountPercentage,
     private quantity: BookQuantity,
     private bookCovers: BookCover[],
     private languageId: string,
@@ -87,6 +91,7 @@ export class Book {
       props.genreIds,
       props.description,
       BookPrice.create(props.originalPrice),
+      BookDiscountPercentage.create(0),
       BookQuantity.create(props.quantity),
       [],
       props.languageId,
@@ -107,6 +112,7 @@ export class Book {
       props.genreIds,
       props.description,
       BookPrice.create(props.originalPrice),
+      BookDiscountPercentage.create(props.discountPercentage ?? 0),
       BookQuantity.create(props.quantity),
       (props.bookCovers ?? []).map((cover) => BookCover.fromPersistent(cover)),
       props.languageId,
@@ -115,7 +121,7 @@ export class Book {
   }
 
   /**
-   * Replaces all mutable book details except price and quantity,
+   * Replaces all mutable book details except price, discount, and quantity,
    * which have dedicated methods for auditability.
    */
   public updateDetails(props: UpdateBookProps): void {
@@ -230,6 +236,12 @@ export class Book {
     this.originalPrice = this.originalPrice.updatePrice(newPrice);
   }
 
+  public updateDiscountPercentage(newDiscountPercentage: number): void {
+    this.discountPercentage = this.discountPercentage.update(
+      newDiscountPercentage,
+    );
+  }
+
   public adjustQuantity(quantity: number): void {
     this.quantity = this.quantity.update(quantity);
   }
@@ -276,6 +288,17 @@ export class Book {
 
   public getOriginalPrice(): number {
     return this.originalPrice.getValue();
+  }
+
+  public getCurrentPrice(): number {
+    const originalPrice = this.originalPrice.getValue();
+    const discountPercentage = this.discountPercentage.getValue();
+
+    return Math.max(0, originalPrice * (1 - discountPercentage / 100));
+  }
+
+  public getDiscountPercentage(): number {
+    return this.discountPercentage.getValue();
   }
 
   public getQuantity(): number {

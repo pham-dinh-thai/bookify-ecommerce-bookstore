@@ -34,6 +34,8 @@ import { AdjustBookStockUseCase } from '../../application/book-use-cases/adjust-
 import { DeleteBookUseCase } from '../../application/book-use-cases/delete-book/delete-book.use-case';
 import { FindBooksResponse } from '../../application/book-use-cases/find-books/find-books.response';
 import { ChangePrimaryBookCoverUseCase } from '../../application/book-use-cases/change-primary-book-cover/change-primary-book-cover.use-case';
+import { UpdateBookDiscountPercentageRequest } from './requests/update-book-discount-percentage.request';
+import { UpdateBookDiscountPercentageUseCase } from '../../application/book-use-cases/update-book-discount-percentage/update-book-discount-percentage.use-case';
 
 @Controller('books')
 export class BooksController {
@@ -46,6 +48,7 @@ export class BooksController {
     private readonly removeBookCoverUseCase: RemoveBookCoverUseCase,
     private readonly changePrimaryBookCoverUseCase: ChangePrimaryBookCoverUseCase,
     private readonly updateBookPriceUseCase: UpdateBookPriceUseCase,
+    private readonly updateBookDiscountPercentageUseCase: UpdateBookDiscountPercentageUseCase,
     private readonly importBookStockUseCase: ImportBookStockUseCase,
     private readonly adjustBookStockUseCase: AdjustBookStockUseCase,
     private readonly deleteBookUseCase: DeleteBookUseCase,
@@ -135,6 +138,21 @@ export class BooksController {
     @CurrentUser('userId') actorId: string,
   ): Promise<void> {
     await this.updateBookPriceUseCase.execute(id, request, actorId);
+  }
+
+  @Patch(':id/discount-percentage')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles('admin', 'staff')
+  public async updateBookDiscountPercentage(
+    @Param('id') id: string,
+    @Body() request: UpdateBookDiscountPercentageRequest,
+    @CurrentUser('userId') actorId: string,
+  ): Promise<void> {
+    await this.updateBookDiscountPercentageUseCase.execute(
+      request,
+      id,
+      actorId,
+    );
   }
 
   @Patch(':id/stock/import')

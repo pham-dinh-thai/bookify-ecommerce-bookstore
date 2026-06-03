@@ -9,6 +9,8 @@ type Book = {
   title: string;
   author: string;
   price: string;
+  originalPrice?: string;
+  discountPercentage?: number;
   cover: string;
   publisher?: string;
   edition?: string;
@@ -127,9 +129,23 @@ export function BookSection({
                   <p className="text-xs text-[#58615b] mb-1 line-clamp-1">
                     {book.author}
                   </p>
-                  <h3 className="text-md font-black text-[#2d6a4f]">
-                    {book.price}
-                  </h3>
+                  <div className="flex flex-col gap-0.5">
+                    <h3 className="text-md font-black text-[#2d6a4f]">
+                      {book.price}
+                    </h3>
+                    {book.originalPrice && (
+                      <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
+                        <span className="text-[#8b948f] line-through">
+                          {book.originalPrice}
+                        </span>
+                        {book.discountPercentage ? (
+                          <span className="rounded-full bg-[#fff3e8] px-1.5 py-0.5 font-bold text-[#9a5524]">
+                            -{book.discountPercentage}%
+                          </span>
+                        ) : null}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </Link>
             </div>

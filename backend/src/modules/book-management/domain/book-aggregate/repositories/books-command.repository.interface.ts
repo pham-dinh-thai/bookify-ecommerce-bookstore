@@ -10,6 +10,11 @@ export interface IBooksCommandRepository {
 
   updateQuantity(id: string, quantity: number): Promise<void>;
 
+  updateDiscountPercentage(
+    id: string,
+    discountPercentage: number,
+  ): Promise<void>;
+
   updatePrice(id: string, price: number): Promise<void>;
 
   save(book: Book): Promise<void>;

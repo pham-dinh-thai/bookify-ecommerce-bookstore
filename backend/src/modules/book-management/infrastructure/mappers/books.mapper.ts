@@ -18,6 +18,7 @@ export class BooksMapper {
       genreIds: bookTypeOrm.bookGenres.map((bookGenre) => bookGenre.genreId),
       description: bookTypeOrm.description,
       originalPrice: bookTypeOrm.originalPrice,
+      discountPercentage: bookTypeOrm.discountPercentage,
       quantity: bookTypeOrm.quantity,
       bookCovers: (bookTypeOrm.covers ?? []).map((cover) => ({
         id: cover.id,
@@ -39,6 +40,7 @@ export class BooksMapper {
     bookTypeOrm.publisherId = book.getPublisherId();
     bookTypeOrm.description = book.getDescription();
     bookTypeOrm.originalPrice = book.getOriginalPrice();
+    bookTypeOrm.discountPercentage = book.getDiscountPercentage();
     bookTypeOrm.quantity = book.getQuantity();
     bookTypeOrm.languageId = book.getLanguageId();
     bookTypeOrm.pageCount = book.getPageCount();
@@ -47,12 +49,22 @@ export class BooksMapper {
   }
 
   public static toReadModel(bookTypeOrm: BookTypeOrm): BookReadModel {
+    const originalPrice = Number(bookTypeOrm.originalPrice);
+    const discountPercentage = Number(bookTypeOrm.discountPercentage || 0);
+    const currentPrice = Math.max(
+      0,
+      originalPrice * (1 - discountPercentage / 100),
+    );
+
     return new BookReadModel(
       bookTypeOrm.id,
       bookTypeOrm.isbn,
       bookTypeOrm.title,
       bookTypeOrm.description,
-      bookTypeOrm.originalPrice,
+      originalPrice,
+      discountPercentage,
+      currentPrice,
+      discountPercentage > 0,
       bookTypeOrm.quantity,
       bookTypeOrm.pageCount,
       bookTypeOrm.quantity > 0,

@@ -47,7 +47,7 @@ export class TypeormBooksCommandRepository implements IBooksCommandRepository {
   }
 
   /**
-   * Updates book details except price and quantity,
+   * Updates book details except price, discount, and quantity,
    * which have dedicated methods.
    */
   public async update(book: Book): Promise<void> {
@@ -89,6 +89,15 @@ export class TypeormBooksCommandRepository implements IBooksCommandRepository {
     await this.unitOfWork
       .getManager()
       .update(BookTypeOrm, { id }, { quantity });
+  }
+
+  public async updateDiscountPercentage(
+    id: string,
+    discountPercentage: number,
+  ): Promise<void> {
+    await this.unitOfWork
+      .getManager()
+      .update(BookTypeOrm, { id }, { discountPercentage });
   }
 
   public async updatePrice(id: string, price: number): Promise<void> {

@@ -7,8 +7,9 @@ import useBookDetail from '../../hooks/use-book-detail';
 import BookFormNavigate from '../../../../components/book-form-navigate';
 import BookDetailHeader from '../ui/book-detail-header';
 import BasicInformation from '../ui/basic-information';
-import { Plus, Minus, TrendingUp, Trash2, Boxes } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import useBookPriceUpdate from '../hooks/use-book-price-update';
+import useBookDiscountPercentageUpdate from '../hooks/use-book-discount-percentage-update';
 import useBookStockAdjust from '../hooks/use-book-stock-adjust';
 import useBookCoverManager from '../hooks/use-book-cover-manager';
 import RefreshButton from '@/shared/common/components/refresh-button';
@@ -17,6 +18,12 @@ export default function BookDetailScreen({ id }: { id: string }) {
   const { book, loading, errors, refetch } = useBookDetail(id);
   const { updatingPrice, priceInput, setPriceInput, handleUpdatePrice } =
     useBookPriceUpdate({ book, bookId: id, refetch });
+  const {
+    updatingDiscountPercentage,
+    discountPercentageInput,
+    setDiscountPercentageInput,
+    handleUpdateDiscountPercentage,
+  } = useBookDiscountPercentageUpdate({ book, bookId: id, refetch });
   const { adjustingStock, handleAdjustStock } = useBookStockAdjust({
     bookId: id,
     refetch,
@@ -41,12 +48,6 @@ export default function BookDetailScreen({ id }: { id: string }) {
     setQuantityInput(numValue || '0');
   };
 
-  const handleAdjustQuantity = (delta: number) => {
-    const current = Number(quantityInput ?? book?.quantity ?? 0);
-    const newValue = Math.max(0, current + delta);
-    setQuantityInput(String(newValue));
-  };
-
   const handleUpdateQuantity = async () => {
     const newQuantity = Number(quantityInput ?? book?.quantity ?? 0);
     if (newQuantity === (book?.quantity || 0)) return;
@@ -66,6 +67,16 @@ export default function BookDetailScreen({ id }: { id: string }) {
   }, [book]);
 
   const displayQuantity = quantityInput ?? String(book?.quantity || 0);
+  const salePrice = useMemo(() => {
+    const originalPrice = Number(book?.originalPrice ?? 0);
+    const discountPercentage = Number(discountPercentageInput || 0);
+
+    if (discountPercentage === Number(book?.discountPercentage ?? 0)) {
+      return Number(book?.currentPrice ?? originalPrice);
+    }
+
+    return Math.max(0, originalPrice * (1 - discountPercentage / 100));
+  }, [book?.originalPrice, discountPercentageInput]);
 
   const sortedCovers = useMemo(() => {
     if (!book?.covers?.length) return [];
@@ -286,82 +297,87 @@ export default function BookDetailScreen({ id }: { id: string }) {
         </div>
         <div className="col-span-12 lg:col-span-8 flex flex-col gap-8">
           <BasicInformation book={book} onUpdated={refetch} />
-          <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <section className="grid grid-cols-1 xl:grid-cols-3 gap-8">
             <div className="rounded-3xl bg-[#f7faf5] p-8 shadow-sm border-l-4 border-[#3f6754]">
               <h3 className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#58615b] mb-6">
                 Unit price (VND)
               </h3>
-              <div className="flex items-center gap-4">
-                <div className="relative flex-1">
-                  <input
-                    value={priceInput}
-                    onChange={(event) =>
-                      setPriceInput(event.target.value.replace(/\D/g, ''))
+              <div className="relative">
+                <input
+                  value={priceInput}
+                  onChange={(event) =>
+                    setPriceInput(event.target.value.replace(/\D/g, ''))
+                  }
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      event.preventDefault();
+                      handleUpdatePrice();
                     }
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    title="Only numbers are allowed"
-                    className="w-full rounded-3xl bg-white p-4 pl-5 text-xl font-black text-[#2b352f] ring-1 ring-[#c1ecd4] focus:outline-none"
-                  />
-                </div>
-                <button
-                  type="button"
-                  onClick={handleUpdatePrice}
+                  }}
                   disabled={updatingPrice}
-                  className="h-14 w-14 rounded-3xl bg-[#c1ecd4] text-[#325947] transition-colors hover:bg-[#b3dec6] disabled:cursor-not-allowed disabled:opacity-70 flex items-center justify-center"
-                >
-                  <TrendingUp size={20} />
-                </button>
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  title="Only numbers are allowed"
+                  className="w-full rounded-3xl bg-white p-4 pl-5 text-base font-black text-[#2b352f] ring-1 ring-[#c1ecd4] focus:outline-none disabled:cursor-not-allowed disabled:opacity-70"
+                />
               </div>
               <p className="mt-4 text-[10px] italic text-[#58615b]">
                 Current price may change depending on active campaigns.
+              </p>
+            </div>
+            <div className="rounded-3xl bg-[#f7faf5] p-8 shadow-sm border-l-4 border-[#a35f2a]">
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#58615b] mb-6">
+                Discount percentage
+              </h3>
+              <div className="relative">
+                <input
+                  value={discountPercentageInput}
+                  onChange={(event) =>
+                    setDiscountPercentageInput(
+                      event.target.value.replace(/[^0-9.]/g, ''),
+                    )
+                  }
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      event.preventDefault();
+                      handleUpdateDiscountPercentage();
+                    }
+                  }}
+                  disabled={updatingDiscountPercentage}
+                  inputMode="decimal"
+                  title="Enter a percentage from 0 to 100"
+                  className="w-full rounded-3xl bg-white p-4 pl-5 pr-10 text-base font-black text-[#2b352f] ring-1 ring-[#f0d1b9] focus:outline-none disabled:cursor-not-allowed disabled:opacity-70"
+                />
+                <span className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-sm font-black text-[#8a4f21]">
+                  %
+                </span>
+              </div>
+              <p className="mt-4 text-[10px] italic text-[#58615b]">
+                Sale price preview: {salePrice.toLocaleString('vi-VN')} VND
               </p>
             </div>
             <div className="rounded-3xl bg-[#f7faf5] p-8 shadow-sm border-l-4 border-[#3c6091]">
               <h3 className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#58615b] mb-6">
                 Stock quantity
               </h3>
-              <div className="flex items-center gap-4">
-                <div className="flex h-14 flex-1 items-center justify-between overflow-hidden rounded-3xl bg-white ring-1 ring-[#c1ecd4]">
-                  <button
-                    type="button"
-                    onClick={() => handleAdjustQuantity(-1)}
-                    disabled={adjustingStock}
-                    className="h-full w-14 transition-colors hover:bg-[#f1f1f1] disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    <Minus size={18} className="text-[#2b352f]" />
-                  </button>
-                  <input
-                    value={displayQuantity}
-                    onChange={(event) =>
-                      handleQuantityInputChange(event.target.value)
-                    }
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    title="Only numbers are allowed"
-                    className="w-full border-none bg-transparent text-center text-xl font-black text-[#2b352f] focus:outline-none"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleAdjustQuantity(1)}
-                    disabled={adjustingStock}
-                    className="h-full w-14 transition-colors hover:bg-[#f1f1f1] disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    <Plus size={18} className="text-[#2b352f]" />
-                  </button>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleUpdateQuantity}
-                  disabled={
-                    adjustingStock ||
-                    Number(displayQuantity) === (book?.quantity || 0)
+              <div className="relative">
+                <input
+                  value={displayQuantity}
+                  onChange={(event) =>
+                    handleQuantityInputChange(event.target.value)
                   }
-                  className="h-14 w-14 rounded-3xl bg-[#d4e3ff] text-[#2d5383] transition-colors hover:bg-[#c5d9ff] disabled:cursor-not-allowed disabled:opacity-60 flex items-center justify-center"
-                  title="Save quantity"
-                >
-                  <Boxes size={20} />
-                </button>
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      event.preventDefault();
+                      handleUpdateQuantity();
+                    }
+                  }}
+                  disabled={adjustingStock}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  title="Only numbers are allowed"
+                  className="w-full rounded-3xl bg-white p-4 pl-5 text-base font-black text-[#2b352f] ring-1 ring-[#c1ecd4] focus:outline-none disabled:cursor-not-allowed disabled:opacity-70"
+                />
               </div>
               <p className="mt-4 text-[10px] italic text-[#58615b]">
                 Stock level:{' '}

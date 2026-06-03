@@ -5,7 +5,7 @@ Bookify is an ecommerce bookstore application built as a full-stack monorepo. It
 ## Tech Stack
 
 - **Architecture:** Domain Driven Design, Clean Architecture, Modular Monolith
-- **Backend:** NestJS, TypeScript, TypeORM, CQRS, JWT authentication
+- **Backend:** NestJS, TypeScript, TypeORM, JWT authentication
 - **Frontend:** Next.js, React, TypeScript, Tailwind CSS
 - **Database:** MySQL 8.0
 - **Cache:** Redis
@@ -230,45 +230,6 @@ The frontend is organized by application area:
 - Admin management pages
 - Staff operational pages
 - Shared auth and common UI utilities
-
-## Key Workflows
-
-### Customer Shopping And Orders
-
-- Browse books and add selected books to the cart.
-- Use `Buy now` from a book detail page to start checkout immediately.
-- Use `Proceed to Checkout` from the cart with selected items.
-- Confirm checkout information on `/checkout`, including:
-  - Read-only phone number loaded from account contact information
-  - Saved shipping address or a custom shipping address
-  - Payment method
-  - Order summary with quantity, unit price, line total, and total amount
-- Place orders through `POST /api/my-orders`.
-- View orders on `/account/orders` with status tabs:
-  - All
-  - Pending
-  - Confirmed
-  - Delivering
-  - Delivered
-  - Completed
-  - Canceled
-  - Refunded
-- View customer order details on `/account/orders/[id]`.
-- Cancel customer orders while they are still in a cancellable status.
-
-### Staff Order Management
-
-- View all orders from `/staff/orders`.
-- Search and paginate orders through the backend.
-- View staff order details on `/staff/orders/[id]`.
-- Move order status through the fulfillment lifecycle:
-  - Pending
-  - Confirmed
-  - Delivering
-  - Delivered
-  - Completed
-- Mark an order as paid, including cash-on-delivery orders after staff confirms payment.
-- The order domain prevents completing an order until its payment status is `paid`.
 
 ## Nginx Routing
 

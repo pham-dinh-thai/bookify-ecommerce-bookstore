@@ -9,6 +9,8 @@ type Book = {
   title: string;
   author: string;
   price: string;
+  originalPrice?: string;
+  discountPercentage?: number;
   cover: string;
   publisher?: string;
   edition?: string;
@@ -106,9 +108,23 @@ export function BookSectionHorizontal({
                 <p className="text-xs text-[#c1ecd4]/70 mb-1 line-clamp-1">
                   {book.author}
                 </p>
-                <h3 className="text-md font-black text-[#c1ecd4]">
-                  {book.price}
-                </h3>
+                <div className="flex flex-col gap-0.5">
+                  <h3 className="text-md font-black text-[#c1ecd4]">
+                    {book.price}
+                  </h3>
+                  {book.originalPrice && (
+                    <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
+                      <span className="text-white/45 line-through">
+                        {book.originalPrice}
+                      </span>
+                      {book.discountPercentage ? (
+                        <span className="rounded-full bg-white/10 px-1.5 py-0.5 font-bold text-[#c1ecd4]">
+                          -{book.discountPercentage}%
+                        </span>
+                      ) : null}
+                    </div>
+                  )}
+                </div>
               </Link>
             </div>
           ))}

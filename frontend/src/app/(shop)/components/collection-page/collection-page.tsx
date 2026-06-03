@@ -8,6 +8,8 @@ type ApiBook = {
   title: string;
   originalPrice: number;
   salePrice?: number;
+  currentPrice?: number;
+  discountPercentage?: number;
   isOnSale?: boolean;
   isNewArrival?: boolean;
   genres?: string[];
@@ -65,6 +67,10 @@ function normalize(text: string): string {
 
 function formatCurrency(amount: number): string {
   return `${Number(amount || 0).toLocaleString('vi-VN')} VNĐ`;
+}
+
+function getDiscountedPrice(originalPrice: number, discountPercentage: number) {
+  return Math.max(0, originalPrice * (1 - discountPercentage / 100));
 }
 
 async function getBooks(
@@ -297,10 +303,24 @@ export default async function CollectionPage({
                     )?.url;
                     const fallbackCover = book.covers?.[0]?.url;
                     const bookId = book.id || book._id;
+                    const originalPrice = Number(book.originalPrice || 0);
+                    const discountPercentage = Number(
+                      book.discountPercentage || 0,
+                    );
+                    const hasDiscount = Boolean(
+                      book.isOnSale ?? discountPercentage > 0,
+                    );
                     const displayPrice =
-                      type === 'on-sales' && book.salePrice
-                        ? book.salePrice
-                        : book.originalPrice;
+                      book.salePrice ??
+                      (book.currentPrice !== undefined &&
+                      book.currentPrice !== null
+                        ? Number(book.currentPrice)
+                        : hasDiscount
+                          ? getDiscountedPrice(
+                              originalPrice,
+                              discountPercentage,
+                            )
+                          : originalPrice);
 
                     if (!bookId) return null;
 
@@ -332,9 +352,21 @@ export default async function CollectionPage({
                           <p className="text-sm text-on-surface-variant mb-2 truncate">
                             {book.authors?.join(', ') || 'Unknown author'}
                           </p>
-                          <span className="block text-sm font-bold text-on-surface truncate">
-                            {formatCurrency(displayPrice)}
-                          </span>
+                          <div className="flex flex-col gap-0.5">
+                            <span className="block text-sm font-bold text-on-surface truncate">
+                              {formatCurrency(displayPrice)}
+                            </span>
+                            {hasDiscount && (
+                              <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
+                                <span className="text-on-surface-variant line-through">
+                                  {formatCurrency(originalPrice)}
+                                </span>
+                                <span className="rounded-full bg-[#fff3e8] px-1.5 py-0.5 font-bold text-[#9a5524]">
+                                  -{discountPercentage}%
+                                </span>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </Link>
                     );

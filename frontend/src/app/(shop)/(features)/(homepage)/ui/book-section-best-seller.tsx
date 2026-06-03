@@ -8,6 +8,8 @@ type Book = {
   title: string;
   author: string;
   price: string;
+  originalPrice?: string;
+  discountPercentage?: number;
   cover: string;
   description?: string;
 };
@@ -75,9 +77,23 @@ export function BookSectionBestSeller({
                 </p>
               )}
               <div className="flex justify-between items-center mt-auto">
-                <span className="text-lg font-black text-[#2d6a4f] group-hover:text-white transition-colors">
-                  {first.price}
-                </span>
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-lg font-black text-[#2d6a4f] group-hover:text-white transition-colors">
+                    {first.price}
+                  </span>
+                  {first.originalPrice && (
+                    <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
+                      <span className="text-[#8b948f] line-through group-hover:text-white/55">
+                        {first.originalPrice}
+                      </span>
+                      {first.discountPercentage ? (
+                        <span className="rounded-full bg-[#fff3e8] px-1.5 py-0.5 font-bold text-[#9a5524] group-hover:bg-white/10 group-hover:text-white">
+                          -{first.discountPercentage}%
+                        </span>
+                      ) : null}
+                    </div>
+                  )}
+                </div>
                 <ShoppingCart
                   size={20}
                   className="text-white opacity-0 group-hover:opacity-100 transition-opacity"
@@ -113,9 +129,23 @@ export function BookSectionBestSeller({
                   <p className="text-[10px] text-[#58615b] mb-2">
                     {book.author}
                   </p>
-                  <p className="text-sm font-black text-[#2d6a4f]">
-                    {book.price}
-                  </p>
+                  <div className="flex flex-col gap-0.5">
+                    <p className="text-sm font-black text-[#2d6a4f]">
+                      {book.price}
+                    </p>
+                    {book.originalPrice && (
+                      <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
+                        <span className="text-[#8b948f] line-through">
+                          {book.originalPrice}
+                        </span>
+                        {book.discountPercentage ? (
+                          <span className="rounded-full bg-[#fff3e8] px-1.5 py-0.5 font-bold text-[#9a5524]">
+                            -{book.discountPercentage}%
+                          </span>
+                        ) : null}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </Link>

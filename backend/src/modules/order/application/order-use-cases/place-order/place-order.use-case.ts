@@ -127,7 +127,7 @@ export class PlaceOrderUseCase {
           id: this.uuidGenerator.generate(),
           productId: item.productId,
           quantity: item.quantity,
-          price: book.getOriginalPrice(),
+          price: book.getCurrentPrice(),
         });
 
         book.decreaseQuantity(item.quantity);
