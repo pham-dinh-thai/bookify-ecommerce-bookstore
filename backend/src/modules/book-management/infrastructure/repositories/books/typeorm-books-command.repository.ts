@@ -91,6 +91,15 @@ export class TypeormBooksCommandRepository implements IBooksCommandRepository {
       .update(BookTypeOrm, { id }, { quantity });
   }
 
+  public async updateDiscountPercentage(
+    id: string,
+    discountPercentage: number,
+  ): Promise<void> {
+    await this.unitOfWork
+      .getManager()
+      .update(BookTypeOrm, { id }, { discountPercentage });
+  }
+
   public async updatePrice(id: string, price: number): Promise<void> {
     await this.unitOfWork
       .getManager()

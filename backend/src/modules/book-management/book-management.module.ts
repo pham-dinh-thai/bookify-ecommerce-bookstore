@@ -36,6 +36,7 @@ import { BOOK_ISBN_DUPLICATE_CHECKER } from './domain/book-aggregate/services/bo
 import { BookIsbnDuplicateChecker } from './infrastructure/services/books/book-isbn-duplicate-checker.service';
 import { ShopCollectionsController } from './presentation/shop-collections/shop-collections.controller';
 import { FindShopCollectionBooksUseCase } from './application/book-use-cases/find-shop-collection-books/find-shop-collection-books.use-case';
+import { UpdateBookDiscountPercentageUseCase } from './application/book-use-cases/update-book-discount-percentage/update-book-discount-percentage.use-case';
 
 @Module({
   controllers: [BooksController, ShopCollectionsController],
@@ -65,6 +66,7 @@ import { FindShopCollectionBooksUseCase } from './application/book-use-cases/fin
     DeleteBookUseCase,
     ChangePrimaryBookCoverUseCase,
     FindShopCollectionBooksUseCase,
+    UpdateBookDiscountPercentageUseCase,
     {
       provide: BOOKS_QUERY_REPOSITORY,
       useClass: TypeormBooksQueryRepository,
