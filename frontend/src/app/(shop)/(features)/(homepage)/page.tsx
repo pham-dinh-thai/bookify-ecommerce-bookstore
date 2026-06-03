@@ -69,14 +69,22 @@ function formatVnd(value: number): string {
   })} VNĐ`;
 }
 
-async function getHomepageBooks(): Promise<HomepageBook[]> {
+async function getHomepageBooks(
+  endpoint: 'best-seller' | 'new-arrivals' | 'on-sales',
+  limit = 10,
+): Promise<HomepageBook[]> {
   try {
     const apiBase = getApiBaseUrl();
-    const response = await fetch(`${apiBase}/books?page=1&limit=10`);
+    const response = await fetch(
+      `${apiBase}/${endpoint}?page=1&limit=${limit}`,
+      {
+        cache: 'no-store',
+      },
+    );
 
     if (!response.ok) {
       console.error(
-        'Homepage books request failed:',
+        `Homepage ${endpoint} request failed:`,
         response.status,
         response.statusText,
       );
@@ -160,10 +168,13 @@ async function getHomepageGenres(): Promise<HomepageGenre[]> {
 }
 
 export default async function Homepage() {
-  const [books, genres] = await Promise.all([
-    getHomepageBooks(),
-    getHomepageGenres(),
-  ]);
+  const [bestSellerBooks, newArrivalBooks, onSaleBooks, genres] =
+    await Promise.all([
+      getHomepageBooks('best-seller', 4),
+      getHomepageBooks('new-arrivals', 5),
+      getHomepageBooks('on-sales', 10),
+      getHomepageGenres(),
+    ]);
 
   return (
     <>
@@ -225,27 +236,31 @@ export default async function Homepage() {
 
       <Category genres={genres} />
 
-      {books.length > 0 && (
-        <>
-          <BookSectionHighlight
-            label="Crowd Favorites"
-            title="CURRENT BEST SELLER"
-            books={books}
-          />
-          <BookSectionHorizontal
-            label="Just In"
-            title="NEW ARRIVALS"
-            books={books}
-            viewAllHref="/new-arrivals"
-          />
-          <BookSection
-            label="Limited Time"
-            title="ON SALES"
-            books={books}
-            visible={10}
-            viewAllHref="/on-sales"
-          />
-        </>
+      {bestSellerBooks.length > 0 && (
+        <BookSectionHighlight
+          label="Crowd Favorites"
+          title="CURRENT BEST SELLER"
+          books={bestSellerBooks}
+        />
+      )}
+
+      {newArrivalBooks.length > 0 && (
+        <BookSectionHorizontal
+          label="Just In"
+          title="NEW ARRIVALS"
+          books={newArrivalBooks}
+          viewAllHref="/new-arrivals"
+        />
+      )}
+
+      {onSaleBooks.length > 0 && (
+        <BookSection
+          label="Limited Time"
+          title="ON SALES"
+          books={onSaleBooks}
+          visible={10}
+          viewAllHref="/on-sales"
+        />
       )}
 
       <br />
