@@ -21,6 +21,7 @@ import { MyAccountModule } from './modules/my-account/my-account.module';
 import { OrderModule } from './modules/order/order.module';
 import { OrderManagementModule } from './modules/order-management/order-management.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { EmailModule } from './modules/email/email.module';
 
 @Module({
   imports: [
@@ -71,6 +72,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     OrderModule,
     OrderManagementModule,
     DashboardModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
