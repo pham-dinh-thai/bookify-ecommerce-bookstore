@@ -22,6 +22,7 @@ import { RegisterUseCase } from './application/use-cases/register/register.use-c
 import { LogoutUseCase } from './application/use-cases/logout/logout.use-case';
 import { RefreshTokenUseCase } from './application/use-cases/refresh-token/refresh-token.use-case';
 import { SharedJwtModule } from '../../shared/modules/jwt/shared-jwt.module';
+import { EventDispatcherModule } from '../../shared/modules/event-dispatcher/event-dispatcher.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { SharedJwtModule } from '../../shared/modules/jwt/shared-jwt.module';
       signOptions: { expiresIn: '1d' },
     }),
     SharedJwtModule,
+    EventDispatcherModule,
   ],
   providers: [
     JwtStrategy,

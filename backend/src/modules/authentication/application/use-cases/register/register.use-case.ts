@@ -22,6 +22,10 @@ import {
   type ISignTokenService,
   SIGN_TOKEN_SERVICE,
 } from '../../../domain/authenticable-user-aggregate/services/sign-token.service';
+import {
+  EVENT_DISPATCHER,
+  type IEventDispatcher,
+} from '../../../../../shared/domain/event-dispatcher.interface';
 
 @Injectable()
 export class RegisterUseCase {
@@ -40,6 +44,9 @@ export class RegisterUseCase {
 
     @Inject(SIGN_TOKEN_SERVICE)
     private readonly signTokenService: ISignTokenService,
+
+    @Inject(EVENT_DISPATCHER)
+    private readonly eventDispatcher: IEventDispatcher,
   ) {}
 
   public async execute(
@@ -62,9 +69,14 @@ export class RegisterUseCase {
       request.passwordConfirmation,
     );
 
+    const events = authUser.getDomainEvents();
+
     await this.unitOfWork.execute(async () => {
       await this.repository.register(authUser);
     });
+
+    await this.eventDispatcher.dispatch(events);
+    authUser.clearDomainEvents();
 
     const tempToken = this.signTokenService.sign(
       {

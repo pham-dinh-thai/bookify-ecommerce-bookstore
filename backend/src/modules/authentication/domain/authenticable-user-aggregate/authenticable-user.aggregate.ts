@@ -1,4 +1,5 @@
 import { AggregateRoot } from '../../../../shared/domain/aggregate-root';
+import { Gender } from '../../../../shared/domain/enums/gender.enum';
 import { Email } from '../../../../shared/domain/value-objects/email/email.value-object';
 import { Password } from '../../../../shared/domain/value-objects/password/password.value-object';
 import { UserRegistered } from './events/user-registered.event';
@@ -10,9 +11,9 @@ export class AuthenticableUser extends AggregateRoot {
     private firstName: string,
     private lastName: string,
     private email: Email,
-    private gender: string = 'other', // Customers can choose gender later
+    private gender: Gender = Gender.OTHER, // Customers can choose gender later
     private password: Password,
-    private isActive: boolean = true,
+    private isActive: boolean = false,
     private roleId: string = 'user', // When customer register an account, it will be user
   ) {
     super();
@@ -35,15 +36,44 @@ export class AuthenticableUser extends AggregateRoot {
       firstName,
       lastName,
       Email.create(email),
-      'other',
+      Gender.OTHER,
       await Password.create(password),
-      true,
+      false,
       'user',
     );
 
-    user.addDomainEvent(new UserRegistered(id));
+    user.addDomainEvent(new UserRegistered(id, email, lastName));
 
     return user;
+  }
+
+  public static fromPersistent(
+    id: string,
+    firstName: string,
+    lastName: string,
+    email: string,
+    gender: Gender,
+    password: string,
+    isActive: boolean,
+  ) {
+    return new AuthenticableUser(
+      id,
+      firstName,
+      lastName,
+      Email.create(email),
+      gender,
+      Password.fromHashed(password),
+      isActive,
+      'user',
+    );
+  }
+
+  public activate(): void {
+    this.isActive = true;
+  }
+
+  public inactivate(): void {
+    this.isActive = false;
   }
 
   public getIsActive(): boolean {
@@ -70,7 +100,7 @@ export class AuthenticableUser extends AggregateRoot {
     return this.lastName;
   }
 
-  public getGender(): string {
+  public getGender(): Gender {
     return this.gender;
   }
 
