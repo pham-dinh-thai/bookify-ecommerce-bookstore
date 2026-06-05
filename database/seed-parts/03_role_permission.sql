@@ -1,0 +1,26 @@
+INSERT INTO `role_permission` (`roleId`, `permissionId`) VALUES
+  ('admin', 'roles.read'),
+  ('admin', 'roles.write'),
+  ('admin', 'roles.delete'),
+  ('admin', 'permissions.read'),
+  ('admin', 'permissions.write'),
+  ('admin', 'permissions.delete'),
+  ('admin', 'users.read'),
+  ('admin', 'users.write'),
+  ('admin', 'users.delete'),
+  ('admin', 'customers.read'),
+  ('admin', 'customers.write'),
+  ('admin', 'customers.delete'),
+  ('admin', 'genres.read'),
+  ('admin', 'genres.write'),
+  ('admin', 'genres.delete'),
+  ('admin', 'addresses.read'),
+  ('admin', 'addresses.write'),
+  ('admin', 'addresses.delete'),
+  ('staff', 'users.read'),
+  ('staff', 'customers.read'),
+  ('staff', 'customers.write'),
+  ('staff', 'genres.read'),
+  ('staff', 'addresses.read')
+ON DUPLICATE KEY UPDATE
+  `permissionId` = VALUES(`permissionId`);

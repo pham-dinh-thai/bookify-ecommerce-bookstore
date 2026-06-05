@@ -18,8 +18,8 @@ export default function NavLinks({ navLinks, genres }: NavLinksProps) {
           <ChevronDown className="w-3.5 h-3.5" />
         </button>
 
-        <div className="absolute left-0 top-full z-20 hidden min-w-[190px] pt-2 group-hover:block">
-          <ul className="rounded-2xl border border-[#0478571a] bg-white/95 p-2 shadow-lg backdrop-blur-sm">
+        <div className="absolute left-0 top-full z-20 hidden min-w-[220px] pt-2 group-hover:block">
+          <ul className="max-h-[360px] overflow-y-auto rounded-2xl border border-[#0478571a] bg-white/95 p-2 shadow-lg backdrop-blur-sm">
             {genres.map((genre) => (
               <li key={genre.label}>
                 <Link
@@ -30,6 +30,14 @@ export default function NavLinks({ navLinks, genres }: NavLinksProps) {
                 </Link>
               </li>
             ))}
+            <li className="mt-1 border-t border-[#0478571a] pt-1">
+              <Link
+                href="/books"
+                className="block rounded-xl px-3 py-2 text-[13px] font-medium text-[#047857] hover:bg-[#f0f7f3]"
+              >
+                View all books
+              </Link>
+            </li>
           </ul>
         </div>
       </li>

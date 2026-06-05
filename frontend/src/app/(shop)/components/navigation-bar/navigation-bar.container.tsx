@@ -4,6 +4,8 @@ import NavigationBarPresenter from './navigation-bar.presenter';
 import { useEffect, useState } from 'react';
 import { allGenreService } from '@/app/admin/genres/(genre-management)/services/all-genre.service';
 
+const NAVBAR_GENRE_LIMIT = 12;
+
 function createSlug(value: string): string {
   return value
     .trim()
@@ -19,7 +21,7 @@ export default function NavigationBarContainer() {
   useEffect(() => {
     const fetchGenres = async () => {
       try {
-        const response = await allGenreService(1, 1000, '');
+        const response = await allGenreService(1, NAVBAR_GENRE_LIMIT, '');
         const genreLinks = (response?.genres || []).map(
           (genre: { name: string }) => ({
             label: genre.name,

@@ -7,7 +7,6 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: bookify_backend
-    restart: always
     env_file:
       - ./backend/.env
     environment:
@@ -27,7 +26,6 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: bookify_frontend
-    restart: always
     env_file:
       - ./frontend/.env
     environment:
@@ -42,7 +40,6 @@ services:
   nginx:
     image: nginx:alpine
     container_name: bookify_nginx
-    restart: always
     ports:
       - "80:80"
     volumes:
@@ -55,7 +52,6 @@ services:
   mysql_db:
     image: mysql:8.0
     container_name: bookify_mysql
-    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
