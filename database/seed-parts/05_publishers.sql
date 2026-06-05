@@ -1,0 +1,8 @@
+INSERT INTO `publishers` (`id`, `name`) VALUES
+  ('01973002-0000-7000-8000-000000000001', 'Pragmatic Bookshelf'),
+  ('01973002-0000-7000-8000-000000000002', 'O Reilly Media'),
+  ('01973002-0000-7000-8000-000000000003', 'No Starch Press'),
+  ('01973002-0000-7000-8000-000000000004', 'Addison-Wesley'),
+  ('01973002-0000-7000-8000-000000000005', 'Manning Publications')
+ON DUPLICATE KEY UPDATE
+  `name` = VALUES(`name`);
