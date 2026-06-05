@@ -42,9 +42,11 @@
     "keyv": "^5.6.0",
     "multer": "^2.1.1",
     "mysql2": "^3.22.1",
+    "otp-generator": "^4.0.1",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
+    "resend": "^6.12.4",
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.28",
     "uuid": "^14.0.0"
@@ -98,10 +100,16 @@
     "testEnvironment": "node"
   },
   "pnpm": {
-    "onlyBuiltDependencies": [
-      "@nestjs/core",
-      "bcrypt",
-      "unrs-resolver"
+    "allowBuild": [
+      {
+        "name": "@nestjs/core"
+      },
+      {
+        "name": "bcrypt"
+      },
+      {
+        "name": "unrs-resolver"
+      }
     ]
   }
 }

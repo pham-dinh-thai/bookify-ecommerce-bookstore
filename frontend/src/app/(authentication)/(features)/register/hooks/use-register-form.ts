@@ -37,7 +37,12 @@ export default function useRegisterForm() {
         passwordConfirmation: form.confirmPassword,
       });
 
-      router.push(`/account/complete-information?token=${tempToken}`);
+      const params = new URLSearchParams({
+        email: form.email,
+        token: tempToken,
+      });
+
+      router.push(`/verify-email?${params.toString()}`);
     } catch (error) {
       setErrorMessage(
         error instanceof Error
