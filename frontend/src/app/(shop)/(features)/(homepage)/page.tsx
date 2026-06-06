@@ -223,17 +223,6 @@ export default async function Homepage() {
                   className="w-full h-[620px] object-cover"
                 />
               </div>
-              <div className="absolute bottom-1 left-[-24px] bg-white rounded-2xl shadow-xl px-6 py-6 flex flex-col gap-1 min-w-[200px] min-h-[80px] -rotate-2">
-                <span className="text-[9px] uppercase tracking-widest text-[#58615b] font-bold">
-                  UTC+7. 2026
-                </span>
-                <span className="text-[#1a3d2b] text-sm font-bold">
-                  Bookify
-                </span>
-                <span className="text-[#58615b] text-[11px]">
-                  Hanoi, Vietnam
-                </span>
-              </div>
             </div>
           </div>
         </div>
