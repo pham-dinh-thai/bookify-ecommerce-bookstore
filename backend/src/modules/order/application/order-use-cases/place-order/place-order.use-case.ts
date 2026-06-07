@@ -32,6 +32,7 @@ import {
 } from '../../../../book-management/domain/book-aggregate/repositories/books-command.repository.interface';
 import { Book } from '../../../../book-management/domain/book-aggregate/book.aggregate';
 import { InsufficientStockException } from '../../../domain/order-aggregate/exceptions/insufficient-stock.exception';
+import { PlaceOrderResponse } from './place-order.response';
 
 /**
  * Places a new customer order.
@@ -69,7 +70,7 @@ export class PlaceOrderUseCase {
   public async execute(
     request: IPlaceOrderRequest,
     userId: string,
-  ): Promise<void> {
+  ): Promise<PlaceOrderResponse> {
     const customer: CustomerReadModel | null =
       await this.customersQueryRepository.findByUserId(userId);
 
@@ -147,6 +148,8 @@ export class PlaceOrderUseCase {
         },
       );
     });
+
+    return new PlaceOrderResponse(order.getId());
   }
 
   private generateOrderCode(orderId: string): string {

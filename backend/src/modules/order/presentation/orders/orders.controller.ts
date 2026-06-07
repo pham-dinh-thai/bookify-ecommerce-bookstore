@@ -16,6 +16,7 @@ import { FindMyOrdersResponse } from '../../application/order-use-cases/find-my-
 import { CancelOrderUseCase } from '../../application/order-use-cases/cancel-order/cancel-order.use-case';
 import { OrderDetailReadModel } from '../../domain/order-aggregate/read-models/order-detail.read-model';
 import { ViewOrderDetailUseCase } from '../../application/order-use-cases/view-order-detail/view-order-detail.use-case';
+import { PlaceOrderResponse } from '../../application/order-use-cases/place-order/place-order.response';
 
 @Controller('my-orders')
 @UseGuards(JwtAuthGuard)
@@ -42,7 +43,7 @@ export class OrdersController {
     @Param('id') id: string,
     @CurrentUser('userId') userId: string,
   ): Promise<OrderDetailReadModel> {
-    const response = this.viewOrderDetailUseCase.execute(id, userId);
+    const response = await this.viewOrderDetailUseCase.execute(id, userId);
 
     return response;
   }
@@ -51,8 +52,10 @@ export class OrdersController {
   public async placeOrder(
     @Body() request: PlaceOrderRequest,
     @CurrentUser('userId') userId: string,
-  ): Promise<void> {
-    await this.placeOrderUseCase.execute(request, userId);
+  ): Promise<PlaceOrderResponse> {
+    const response = await this.placeOrderUseCase.execute(request, userId);
+
+    return response;
   }
 
   @Patch(':id/cancel')
