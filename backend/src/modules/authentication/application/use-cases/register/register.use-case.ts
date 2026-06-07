@@ -54,11 +54,11 @@ export class RegisterUseCase {
   ): Promise<{ tempToken: string }> {
     const existingUser = await this.queryRepository.findByEmail(request.email);
 
-    if (existingUser) {
+    if (existingUser?.isActive) {
       throw new EmailHasBeenUseException();
     }
 
-    const id = this.uuid.generate();
+    const id = existingUser?.id ?? this.uuid.generate();
 
     const authUser = await AuthenticableUser.register(
       id,
