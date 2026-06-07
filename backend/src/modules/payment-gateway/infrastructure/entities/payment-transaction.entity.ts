@@ -31,7 +31,7 @@ export class PaymentTransactionTypeOrm {
   @Column({ type: 'decimal', precision: 12, scale: 2 })
   amount!: number;
 
-  @Column({ type: 'varchar', length: 3, default: 'VNĐ' })
+  @Column({ type: 'varchar', length: 3, default: 'VND' })
   currency!: string;
 
   @Column({ type: 'varchar', length: 100 })
@@ -45,7 +45,7 @@ export class PaymentTransactionTypeOrm {
   payUrl!: string | null;
 
   @Column({ type: 'json', nullable: true })
-  rawResponse!: Record<string, unknown> | null;
+  rawResponse!: Record<string, any> | null;
 
   @CreateDateColumn()
   createdAt!: Date;
