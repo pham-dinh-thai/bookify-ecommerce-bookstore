@@ -31,7 +31,7 @@ export class PaymentTransactionTypeOrm {
   @Column({ type: 'decimal', precision: 12, scale: 2 })
   amount!: number;
 
-  @Column({ type: 'varchar', length: 3, default: 'VND' })
+  @Column({ type: 'varchar', length: 3, default: 'VNĐ' })
   currency!: string;
 
   @Column({ type: 'varchar', length: 100 })
