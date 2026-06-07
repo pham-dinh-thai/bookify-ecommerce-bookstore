@@ -1,11 +1,7 @@
 import { refreshAccessToken } from '@/shared/auth/lib/refresh';
 import { getAccessToken } from '@/shared/auth/lib/token-storage';
 
-export type PaymentMethod =
-  | 'cash_on_delivery'
-  | 'bank_transfer'
-  | 'card'
-  | 'e_wallet';
+export type PaymentMethod = 'cash_on_delivery' | 'e_wallet';
 
 export type PlaceOrderPayload = {
   paymentMethod: PaymentMethod;
@@ -15,6 +11,16 @@ export type PlaceOrderPayload = {
     productId: string;
     quantity: number;
   }[];
+};
+
+export type PlaceOrderResponse = {
+  orderId: string;
+};
+
+export type CreateMockPaymentResponse = {
+  transactionId: string;
+  providerOrderId: string;
+  payUrl: string;
 };
 
 async function getErrorMessage(response: Response): Promise<string> {
@@ -57,7 +63,7 @@ async function postOrder(
 
 export async function placeOrderService(
   payload: PlaceOrderPayload,
-): Promise<void> {
+): Promise<PlaceOrderResponse> {
   const accessToken = await getRequiredAccessToken();
   let response = await postOrder(payload, accessToken);
 
@@ -67,6 +73,98 @@ export async function placeOrderService(
       response = await postOrder(payload, refreshedToken);
     }
   }
+
+  if (!response.ok) {
+    throw new Error(await getErrorMessage(response));
+  }
+
+  return response.json() as Promise<PlaceOrderResponse>;
+}
+
+async function postMockPayment(
+  orderId: string,
+  accessToken: string,
+): Promise<Response> {
+  return fetch(`/api/payment/orders/${orderId}/mock`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}
+
+export async function createMockPaymentService(
+  orderId: string,
+): Promise<CreateMockPaymentResponse> {
+  const accessToken = await getRequiredAccessToken();
+  let response = await postMockPayment(orderId, accessToken);
+
+  if (response.status === 401) {
+    const refreshedToken = await refreshAccessToken();
+    if (refreshedToken) {
+      response = await postMockPayment(orderId, refreshedToken);
+    }
+  }
+
+  if (!response.ok) {
+    throw new Error(await getErrorMessage(response));
+  }
+
+  return response.json() as Promise<CreateMockPaymentResponse>;
+}
+
+async function postMockPaymentResult(
+  transactionId: string,
+  result: 'succeed' | 'fail',
+  accessToken: string,
+): Promise<Response> {
+  return fetch(`/api/payment/mock/${transactionId}/${result}`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}
+
+export async function completeMockPaymentService(
+  transactionId: string,
+  result: 'succeed' | 'fail',
+): Promise<void> {
+  const accessToken = await getRequiredAccessToken();
+  let response = await postMockPaymentResult(
+    transactionId,
+    result,
+    accessToken,
+  );
+
+  if (response.status === 401) {
+    const refreshedToken = await refreshAccessToken();
+    if (refreshedToken) {
+      response = await postMockPaymentResult(
+        transactionId,
+        result,
+        refreshedToken,
+      );
+    }
+  }
+
+  if (!response.ok) {
+    throw new Error(await getErrorMessage(response));
+  }
+}
+
+export async function scanSucceedMockPaymentService(
+  transactionId: string,
+): Promise<void> {
+  const response = await fetch(
+    `/api/payment/mock/${transactionId}/scan/succeed`,
+    {
+      method: 'GET',
+      credentials: 'include',
+    },
+  );
 
   if (!response.ok) {
     throw new Error(await getErrorMessage(response));

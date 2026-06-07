@@ -8,6 +8,8 @@ import {
 export interface IPaymentTransactionCommandRepository {
   create(props: CreatePaymentTransactionProps): Promise<void>;
 
+  findById(id: string): Promise<PaymentTransactionReadModel | null>;
+
   findLatestByOrderId(
     orderId: string,
     provider: PaymentProvider,

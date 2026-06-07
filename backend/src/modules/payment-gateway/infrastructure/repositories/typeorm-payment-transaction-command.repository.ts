@@ -24,6 +24,18 @@ export class TypeOrmPaymentTransactionCommandRepository implements IPaymentTrans
       );
   }
 
+  public async findById(
+    id: string,
+  ): Promise<PaymentTransactionReadModel | null> {
+    const transaction = await this.unitOfWork
+      .getManager()
+      .findOne(PaymentTransactionTypeOrm, { where: { id } });
+
+    return transaction
+      ? PaymentTransactionsMapper.toReadModel(transaction)
+      : null;
+  }
+
   public async findLatestByOrderId(
     orderId: string,
     provider: PaymentProvider,
