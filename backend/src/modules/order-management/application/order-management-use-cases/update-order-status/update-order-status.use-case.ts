@@ -1,5 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import {
+  EVENT_DISPATCHER,
+  type IEventDispatcher,
+} from '../../../../../shared/domain/event-dispatcher.interface';
+import {
   type IOrdersCommandRepository,
   ORDERS_COMMAND_REPOSITORY,
 } from '../../../../order/domain/order-aggregate/repositories/orders-command.repository.interface';
@@ -15,6 +19,10 @@ import { Order } from '../../../../order/domain/order-aggregate/order.aggregate'
 import { IUpdateOrderStatusRequest } from './update-order-status.request';
 import { OrderStatus } from '../../../../order/domain/order-aggregate/enums/order-status.enum';
 import { OrderStatusCanNotBeUpdatedException } from '../../../../order/domain/order-aggregate/exceptions/order-status-can-not-be-updated.exception';
+import {
+  CUSTOMERS_QUERY_REPOSITORY,
+  type ICustomersQueryRepository,
+} from '../../../../customer-management/domain/customer-aggregate/repositories/customers-query.repository.interface';
 
 @Injectable()
 export class UpdateOrderStatusUseCase {
@@ -27,6 +35,12 @@ export class UpdateOrderStatusUseCase {
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
+
+    @Inject(CUSTOMERS_QUERY_REPOSITORY)
+    private readonly customersQueryRepository: ICustomersQueryRepository,
+
+    @Inject(EVENT_DISPATCHER)
+    private readonly eventDispatcher: IEventDispatcher,
   ) {}
 
   public async execute(
@@ -35,6 +49,9 @@ export class UpdateOrderStatusUseCase {
     performedBy: string,
   ): Promise<void> {
     const order: Order = await this.ordersCommandRepository.findOne(id);
+    const customer = await this.customersQueryRepository.findByUserId(
+      order.getUserId(),
+    );
 
     const update = this.getStatusHandler(order, request.status);
 
@@ -51,6 +68,15 @@ export class UpdateOrderStatusUseCase {
         { order },
       );
     });
+
+    if (customer) {
+      this.recordStatusEvent(order, request.status, {
+        email: customer.email,
+        name: `${customer.firstName} ${customer.lastName}`.trim(),
+      });
+      await this.eventDispatcher.dispatch(order.getDomainEvents());
+      order.clearDomainEvents();
+    }
   }
 
   private getStatusHandler(order: Order, status: OrderStatus): () => void {
@@ -67,5 +93,34 @@ export class UpdateOrderStatusUseCase {
     }
 
     return handler;
+  }
+
+  private recordStatusEvent(
+    order: Order,
+    status: OrderStatus,
+    customer: { email: string; name: string },
+  ): void {
+    const eventProps = {
+      customerEmail: customer.email,
+      customerName: customer.name,
+    };
+
+    const recorders: Record<OrderStatus, () => void> = {
+      [OrderStatus.PENDING]: () => {
+        throw new OrderStatusCanNotBeUpdatedException();
+      },
+      [OrderStatus.CONFIRMED]: () => order.recordConfirmed(eventProps),
+      [OrderStatus.DELIVERING]: () => order.recordDeliveryStarted(eventProps),
+      [OrderStatus.DELIVERED]: () => order.recordDelivered(eventProps),
+      [OrderStatus.COMPLETED]: () => order.recordCompleted(eventProps),
+      [OrderStatus.CANCELED]: () => {
+        throw new OrderStatusCanNotBeUpdatedException();
+      },
+      [OrderStatus.REFUNDED]: () => {
+        throw new OrderStatusCanNotBeUpdatedException();
+      },
+    };
+
+    recorders[status]();
   }
 }

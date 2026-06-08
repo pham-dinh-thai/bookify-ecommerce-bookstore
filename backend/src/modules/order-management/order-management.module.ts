@@ -8,6 +8,8 @@ import { AuthenticationModule } from '../authentication/authentication.module';
 import { FindOrdersUseCase } from './application/order-management-use-cases/find-orders/find-orders.use-case';
 import { FindOrderDetailUseCase } from './application/order-management-use-cases/find-order-detail/find-order-detail.use-case';
 import { MarkOrderAsPaidUseCase } from './application/order-management-use-cases/mark-order-as-paid/mark-order-as-paid.use-case';
+import { CustomerManagementModule } from '../customer-management/customer-management.module';
+import { EventDispatcherModule } from '../../shared/modules/event-dispatcher/event-dispatcher.module';
 
 @Module({
   controllers: [OrderManagementController],
@@ -16,6 +18,8 @@ import { MarkOrderAsPaidUseCase } from './application/order-management-use-cases
     AuditLogModule,
     UnitOfWorkModule,
     AuthenticationModule,
+    CustomerManagementModule,
+    EventDispatcherModule,
   ],
   providers: [
     FindOrdersUseCase,
