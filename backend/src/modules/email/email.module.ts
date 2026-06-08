@@ -8,6 +8,7 @@ import { SendOrderConfirmedEmailHandler } from './application/event-handlers/sen
 import { SendOrderDeliveryStartedEmailHandler } from './application/event-handlers/send-order-delivery-started-email.handler';
 import { SendOrderDeliveredEmailHandler } from './application/event-handlers/send-order-delivered-email.handler';
 import { SendOrderCompletedEmailHandler } from './application/event-handlers/send-order-completed-email.handler';
+import { SendOrderCanceledEmailHandler } from './application/event-handlers/send-order-canceled-email.handler';
 import { EVENT_DISPATCHER } from '../../shared/domain/event-dispatcher.interface';
 import { type IEventDispatcher } from '../../shared/domain/event-dispatcher.interface';
 import { UserRegistered } from '../authentication/domain/authenticable-user-aggregate/events/user-registered.event';
@@ -16,6 +17,7 @@ import { OrderConfirmed } from '../order/domain/order-aggregate/events/order-con
 import { OrderDeliveryStarted } from '../order/domain/order-aggregate/events/order-delivery-started.event';
 import { OrderDelivered } from '../order/domain/order-aggregate/events/order-delivered.event';
 import { OrderCompleted } from '../order/domain/order-aggregate/events/order-completed.event';
+import { OrderCanceled } from '../order/domain/order-aggregate/events/order-canceled.event';
 import { EventDispatcherModule } from '../../shared/modules/event-dispatcher/event-dispatcher.module';
 import { SharedCacheModule } from '../../shared/modules/cache/cache.module';
 import { VerifyEmailUseCase } from './application/use-cases/verify-email.use-case';
@@ -35,6 +37,7 @@ import { AuthenticationModule } from '../authentication/authentication.module';
     SendOrderDeliveryStartedEmailHandler,
     SendOrderDeliveredEmailHandler,
     SendOrderCompletedEmailHandler,
+    SendOrderCanceledEmailHandler,
     VerifyEmailUseCase,
   ],
 })
@@ -48,6 +51,7 @@ export class EmailModule implements OnModuleInit {
     private readonly orderDeliveryStartedEmailHandler: SendOrderDeliveryStartedEmailHandler,
     private readonly orderDeliveredEmailHandler: SendOrderDeliveredEmailHandler,
     private readonly orderCompletedEmailHandler: SendOrderCompletedEmailHandler,
+    private readonly orderCanceledEmailHandler: SendOrderCanceledEmailHandler,
   ) {}
 
   onModuleInit() {
@@ -74,6 +78,10 @@ export class EmailModule implements OnModuleInit {
     this.eventDispatcher.register(
       OrderCompleted.name,
       this.orderCompletedEmailHandler,
+    );
+    this.eventDispatcher.register(
+      OrderCanceled.name,
+      this.orderCanceledEmailHandler,
     );
   }
 }

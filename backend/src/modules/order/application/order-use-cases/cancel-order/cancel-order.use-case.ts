@@ -1,5 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import {
+  EVENT_DISPATCHER,
+  type IEventDispatcher,
+} from '../../../../../shared/domain/event-dispatcher.interface';
+import {
   type IOrdersCommandRepository,
   ORDERS_COMMAND_REPOSITORY,
 } from '../../../domain/order-aggregate/repositories/orders-command.repository.interface';
@@ -18,6 +22,10 @@ import {
   BOOKS_COMMAND_REPOSITORY,
   type IBooksCommandRepository,
 } from '../../../../book-management/domain/book-aggregate/repositories/books-command.repository.interface';
+import {
+  CUSTOMERS_QUERY_REPOSITORY,
+  type ICustomersQueryRepository,
+} from '../../../../customer-management/domain/customer-aggregate/repositories/customers-query.repository.interface';
 
 /**
  * Cancels a customer-owned order.
@@ -43,6 +51,12 @@ export class CancelOrderUseCase {
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
+
+    @Inject(CUSTOMERS_QUERY_REPOSITORY)
+    private readonly customersQueryRepository: ICustomersQueryRepository,
+
+    @Inject(EVENT_DISPATCHER)
+    private readonly eventDispatcher: IEventDispatcher,
   ) {}
 
   public async execute(id: string, performedBy: string): Promise<void> {
@@ -53,6 +67,9 @@ export class CancelOrderUseCase {
     }
 
     order.cancel();
+    const customer = await this.customersQueryRepository.findByUserId(
+      order.getUserId(),
+    );
 
     await this.unitOfWork.execute(async () => {
       await this.ordersCommandRepository.save(order);
@@ -77,5 +94,14 @@ export class CancelOrderUseCase {
         },
       );
     });
+
+    if (customer) {
+      order.recordCanceled({
+        customerEmail: customer.email,
+        customerName: `${customer.firstName} ${customer.lastName}`.trim(),
+      });
+      await this.eventDispatcher.dispatch(order.getDomainEvents());
+      order.clearDomainEvents();
+    }
   }
 }

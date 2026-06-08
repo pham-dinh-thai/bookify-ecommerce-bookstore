@@ -4,6 +4,7 @@ import { CreateOrderItemProps } from './entities/types';
 import { OrderStatus } from './enums/order-status.enum';
 import { PaymentMethod } from './enums/payment-method.enum';
 import { PaymentStatus } from './enums/payment-status.enum';
+import { OrderCanceled } from './events/order-canceled.event';
 import { OrderCompleted } from './events/order-completed.event';
 import { OrderConfirmed } from './events/order-confirmed.event';
 import { OrderDelivered } from './events/order-delivered.event';
@@ -271,6 +272,20 @@ export class Order extends AggregateRoot {
   }): void {
     this.addDomainEvent(
       new OrderCompleted(
+        this.id,
+        this.orderCode,
+        props.customerEmail,
+        props.customerName,
+      ),
+    );
+  }
+
+  public recordCanceled(props: {
+    customerEmail: string;
+    customerName: string;
+  }): void {
+    this.addDomainEvent(
+      new OrderCanceled(
         this.id,
         this.orderCode,
         props.customerEmail,
