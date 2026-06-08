@@ -26,9 +26,11 @@ Bookify is an ecommerce bookstore application built as a full-stack monorepo. It
 |   |   |   |-- cart-management/
 |   |   |   |-- catalog-management/
 |   |   |   |-- customer-management/
+|   |   |   |-- email/
 |   |   |   |-- file-storage/
 |   |   |   |-- order/
 |   |   |   |-- order-management/
+|   |   |   |-- payment-gateway/
 |   |   |   |-- user-management/
 |   |   |   `-- audit-log/
 |   |   `-- shared/          # Shared domain, HTTP, infrastructure, and modules
@@ -105,6 +107,12 @@ REDIS_PORT=6379
 JWT_SECRET=change_this_access_token_secret
 TEMP_TOKEN_SECRET=change_this_temp_token_secret
 JWT_REFRESH_SECRET=change_this_refresh_token_secret
+
+RESEND_API_KEY=your_resend_api_key
+EMAIL_DELIVERY_MODE=dev-inbox
+DEV_EMAIL_INBOX=your_resend_account_email
+EMAIL_FROM=onboarding@resend.dev
+EMAIL_REPLY_TO=onboarding@resend.dev
 ```
 
 ```env
@@ -214,11 +222,44 @@ Main modules:
 - `cart-management`
 - `catalog-management`
 - `customer-management`
+- `email`
 - `file-storage`
 - `order`
 - `order-management`
+- `payment-gateway`
 - `user-management`
 - `audit-log`
+
+## Email Notifications
+
+The backend uses the `email` module and the configured email sender to send transactional email from domain events.
+
+Email delivery is configured in `backend/.env`:
+
+```env
+RESEND_API_KEY=your_resend_api_key
+EMAIL_DELIVERY_MODE=dev-inbox
+DEV_EMAIL_INBOX=your_resend_account_email
+EMAIL_FROM=onboarding@resend.dev
+EMAIL_REPLY_TO=onboarding@resend.dev
+```
+
+Supported delivery modes:
+
+- `resend`: send email directly to the real recipient through Resend.
+- `dev-inbox`: redirect all outgoing email to `DEV_EMAIL_INBOX`.
+- `log`: do not send email; log the email payload instead.
+
+Order lifecycle emails:
+
+- `OrderPlaced`: sent when a customer places an order.
+- `OrderConfirmed`: sent when staff confirms a pending order.
+- `OrderDeliveryStarted`: sent when staff starts delivery.
+- `OrderDelivered`: sent when staff marks the order as delivered.
+- `OrderCompleted`: sent when staff completes the order.
+- `OrderCanceled`: sent when a customer cancels their order.
+
+Order emails are dispatched only after the related order transaction succeeds.
 
 ## Frontend Areas
 
