@@ -58,12 +58,15 @@ export class TypeOrmCustomersQueryRepository implements ICustomersQueryRepositor
   public async findByUserId(userId: string): Promise<CustomerReadModel | null> {
     const customerTypeOrm = await this.repository.findOne({
       where: { userId },
-      relations: { addresses: true },
+      relations: { addresses: true, user: true },
     });
 
     return customerTypeOrm
       ? new CustomerReadModel(
           customerTypeOrm.id,
+          customerTypeOrm.user.firstName,
+          customerTypeOrm.user.lastName,
+          customerTypeOrm.user.email,
           customerTypeOrm?.phoneNumber ?? null,
           customerTypeOrm.addresses.map(
             (addressTypeOrm) =>

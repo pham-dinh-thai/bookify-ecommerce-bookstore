@@ -2,7 +2,13 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, CheckCircle2, CreditCard, MapPin, Phone } from 'lucide-react';
+import {
+  ArrowLeft,
+  CheckCircle2,
+  CreditCard,
+  MapPin,
+  Phone,
+} from 'lucide-react';
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { useToast } from '@/shared/common/toast/toast';
 import { refreshAccessToken } from '@/shared/auth/lib/refresh';
@@ -14,12 +20,10 @@ import {
 } from '../cart/cart-storage';
 import { findMyContactInfoService } from '../account/services/contact-info.service';
 import { MyAddress, MyContactInfo } from '../account/types';
-import {
-  clearCheckoutItems,
-  readCheckoutItems,
-} from './checkout-storage';
+import { clearCheckoutItems, readCheckoutItems } from './checkout-storage';
 import {
   PaymentMethod,
+  createMockPaymentService,
   placeOrderService,
 } from './checkout.service';
 
@@ -27,14 +31,13 @@ type AddressMode = 'saved' | 'custom';
 
 const paymentOptions: { value: PaymentMethod; label: string }[] = [
   { value: 'cash_on_delivery', label: 'Cash On Delivery' },
-  { value: 'bank_transfer', label: 'Bank Transfer' },
-  { value: 'card', label: 'Card' },
-  { value: 'e_wallet', label: 'E-Wallet' },
+  { value: 'e_wallet', label: 'MoMo' },
 ];
 
 const phoneNumberRegex = /^(\+84|0)[3-9]\d{8}$/;
 
-const formatCurrency = (value: number) => `${value.toLocaleString('vi-VN')} VNĐ`;
+const formatCurrency = (value: number) =>
+  `${value.toLocaleString('vi-VN')} VNĐ`;
 
 const formatAddress = (address: MyAddress) =>
   `${address.street}, ${address.wardName}, ${address.provinceName}`;
@@ -151,7 +154,7 @@ export default function CheckoutPage() {
     setError(null);
 
     try {
-      await placeOrderService({
+      const order = await placeOrderService({
         paymentMethod,
         phoneNumber: phoneNumber.trim(),
         shippingAddress,
@@ -166,6 +169,13 @@ export default function CheckoutPage() {
         readCartItems().filter((item) => !orderedIds.has(item.id)),
       );
       clearCheckoutItems();
+
+      if (paymentMethod === 'e_wallet') {
+        const payment = await createMockPaymentService(order.orderId);
+        toast?.addToast('Order placed. Redirecting to payment...', 'success');
+        window.location.href = payment.payUrl;
+        return;
+      }
 
       toast?.addToast('Order placed successfully', 'success');
       router.push('/account/orders');

@@ -56,9 +56,7 @@ const paymentStatusClassName: Record<PaymentStatus, string> = {
 
 const paymentMethodLabel: Record<PaymentMethod, string> = {
   cash_on_delivery: 'Cash On Delivery',
-  bank_transfer: 'Bank Transfer',
-  card: 'Card',
-  e_wallet: 'E-Wallet',
+  e_wallet: 'MoMo',
 };
 
 const formatDateTime = (value?: string) => {
@@ -221,7 +219,10 @@ function OrderDetailContent({ order }: { order: MyOrderDetail }) {
         <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Info label="Updated At" value={formatDateTime(order.updatedAt)} />
           <Info label="Total Items" value={String(order.totalItems)} />
-          <Info label="Payment" value={paymentMethodLabel[order.paymentMethod]} />
+          <Info
+            label="Payment"
+            value={paymentMethodLabel[order.paymentMethod]}
+          />
           <Info label="Total Amount" value={formatVnd(order.totalAmount)} />
         </div>
       </section>
@@ -274,8 +275,14 @@ function OrderDetailContent({ order }: { order: MyOrderDetail }) {
                 </div>
 
                 <LineMetric label="Qty" value={String(item.quantity)} />
-                <LineMetric label="Unit Price" value={formatVnd(item.unitPrice)} />
-                <LineMetric label="Line Total" value={formatVnd(item.lineTotal)} />
+                <LineMetric
+                  label="Unit Price"
+                  value={formatVnd(item.unitPrice)}
+                />
+                <LineMetric
+                  label="Line Total"
+                  value={formatVnd(item.lineTotal)}
+                />
               </div>
             ))
           )}

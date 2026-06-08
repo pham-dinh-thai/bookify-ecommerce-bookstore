@@ -1,8 +1,15 @@
+import { AggregateRoot } from '../../../../shared/domain/aggregate-root';
 import { OrderItem } from './entities/order-item.entity';
 import { CreateOrderItemProps } from './entities/types';
 import { OrderStatus } from './enums/order-status.enum';
 import { PaymentMethod } from './enums/payment-method.enum';
 import { PaymentStatus } from './enums/payment-status.enum';
+import { OrderCanceled } from './events/order-canceled.event';
+import { OrderCompleted } from './events/order-completed.event';
+import { OrderConfirmed } from './events/order-confirmed.event';
+import { OrderDelivered } from './events/order-delivered.event';
+import { OrderDeliveryStarted } from './events/order-delivery-started.event';
+import { OrderPlaced, OrderPlacedItem } from './events/order-placed.event';
 import { OrderIdEmptyException } from './exceptions/order-id-empty.exception';
 import { OrderItemNotFoundException } from './exceptions/order-item-not-found.exception';
 import { OrderPaymentNeedsToBePaidException } from './exceptions/order-payment-needs-to-be-paid.exception';
@@ -22,7 +29,7 @@ import { CreateOrderProps, FromPersistentOrderProps } from './types';
  * - Canceled and delivered orders can be refunded
  * - Order total is calculated from the current order items
  */
-export class Order {
+export class Order extends AggregateRoot {
   private constructor(
     private readonly id: string,
     private readonly orderCode: string,
@@ -33,7 +40,9 @@ export class Order {
     private readonly paymentMethod: PaymentMethod,
     private readonly shippingAddress: string,
     private readonly phoneNumber: string,
-  ) {}
+  ) {
+    super();
+  }
 
   /**
    * Creates a new order shell with no items yet and initializes lifecycle state
@@ -192,6 +201,97 @@ export class Order {
    */
   public markAsRefunded(): void {
     this.paymentStatus = PaymentStatus.REFUNDED;
+  }
+
+  public recordPlaced(props: {
+    customerEmail: string;
+    customerName: string;
+    items: OrderPlacedItem[];
+  }): void {
+    this.addDomainEvent(
+      new OrderPlaced(
+        this.id,
+        this.orderCode,
+        props.customerEmail,
+        props.customerName,
+        this.paymentMethod,
+        this.paymentStatus,
+        this.shippingAddress,
+        this.phoneNumber,
+        this.getTotalPrice(),
+        props.items,
+      ),
+    );
+  }
+
+  public recordConfirmed(props: {
+    customerEmail: string;
+    customerName: string;
+  }): void {
+    this.addDomainEvent(
+      new OrderConfirmed(
+        this.id,
+        this.orderCode,
+        props.customerEmail,
+        props.customerName,
+      ),
+    );
+  }
+
+  public recordDeliveryStarted(props: {
+    customerEmail: string;
+    customerName: string;
+  }): void {
+    this.addDomainEvent(
+      new OrderDeliveryStarted(
+        this.id,
+        this.orderCode,
+        props.customerEmail,
+        props.customerName,
+      ),
+    );
+  }
+
+  public recordDelivered(props: {
+    customerEmail: string;
+    customerName: string;
+  }): void {
+    this.addDomainEvent(
+      new OrderDelivered(
+        this.id,
+        this.orderCode,
+        props.customerEmail,
+        props.customerName,
+      ),
+    );
+  }
+
+  public recordCompleted(props: {
+    customerEmail: string;
+    customerName: string;
+  }): void {
+    this.addDomainEvent(
+      new OrderCompleted(
+        this.id,
+        this.orderCode,
+        props.customerEmail,
+        props.customerName,
+      ),
+    );
+  }
+
+  public recordCanceled(props: {
+    customerEmail: string;
+    customerName: string;
+  }): void {
+    this.addDomainEvent(
+      new OrderCanceled(
+        this.id,
+        this.orderCode,
+        props.customerEmail,
+        props.customerName,
+      ),
+    );
   }
 
   /**

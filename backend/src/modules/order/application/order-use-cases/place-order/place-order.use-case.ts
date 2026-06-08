@@ -1,4 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
+import {
+  EVENT_DISPATCHER,
+  type IEventDispatcher,
+} from '../../../../../shared/domain/event-dispatcher.interface';
 import { IPlaceOrderRequest } from './place-order.request';
 import { Order } from '../../../domain/order-aggregate/order.aggregate';
 import {
@@ -33,6 +37,7 @@ import {
 import { Book } from '../../../../book-management/domain/book-aggregate/book.aggregate';
 import { InsufficientStockException } from '../../../domain/order-aggregate/exceptions/insufficient-stock.exception';
 import { PlaceOrderResponse } from './place-order.response';
+import { OrderPlacedItem } from '../../../domain/order-aggregate/events/order-placed.event';
 
 /**
  * Places a new customer order.
@@ -65,6 +70,9 @@ export class PlaceOrderUseCase {
 
     @Inject(UUID_GENERATOR)
     private readonly uuidGenerator: IUuidGenerator,
+
+    @Inject(EVENT_DISPATCHER)
+    private readonly eventDispatcher: IEventDispatcher,
   ) {}
 
   public async execute(
@@ -105,6 +113,7 @@ export class PlaceOrderUseCase {
       shippingAddress: shippingAddress,
       phoneNumber: phoneNumber,
     });
+    const orderedItems: OrderPlacedItem[] = [];
 
     await this.unitOfWork.execute(async () => {
       for (const item of request.items) {
@@ -130,6 +139,13 @@ export class PlaceOrderUseCase {
           quantity: item.quantity,
           price: book.getCurrentPrice(),
         });
+        orderedItems.push({
+          productId: item.productId,
+          title: book.getTitle(),
+          quantity: item.quantity,
+          unitPrice: book.getCurrentPrice(),
+          lineTotal: book.getCurrentPrice() * item.quantity,
+        });
 
         book.decreaseQuantity(item.quantity);
 
@@ -148,6 +164,13 @@ export class PlaceOrderUseCase {
         },
       );
     });
+    order.recordPlaced({
+      customerEmail: customer.email,
+      customerName: `${customer.firstName} ${customer.lastName}`.trim(),
+      items: orderedItems,
+    });
+    await this.eventDispatcher.dispatch(order.getDomainEvents());
+    order.clearDomainEvents();
 
     return new PlaceOrderResponse(order.getId());
   }

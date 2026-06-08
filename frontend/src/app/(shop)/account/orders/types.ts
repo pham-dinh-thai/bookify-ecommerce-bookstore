@@ -14,11 +14,7 @@ export type PaymentStatus =
   | 'failed'
   | 'refunded';
 
-export type PaymentMethod =
-  | 'cash_on_delivery'
-  | 'bank_transfer'
-  | 'card'
-  | 'e_wallet';
+export type PaymentMethod = 'cash_on_delivery' | 'e_wallet';
 
 export type MyOrderPreviewItem = {
   id: string;
