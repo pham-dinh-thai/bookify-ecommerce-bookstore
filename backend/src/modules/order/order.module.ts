@@ -17,6 +17,7 @@ import { FindMyOrdersUseCase } from './application/order-use-cases/find-my-order
 import { CancelOrderUseCase } from './application/order-use-cases/cancel-order/cancel-order.use-case';
 import { ViewOrderDetailUseCase } from './application/order-use-cases/view-order-detail/view-order-detail.use-case';
 import { BookManagementModule } from '../book-management/book-management.module';
+import { EventDispatcherModule } from '../../shared/modules/event-dispatcher/event-dispatcher.module';
 
 @Module({
   controllers: [OrdersController],
@@ -28,6 +29,7 @@ import { BookManagementModule } from '../book-management/book-management.module'
     UuidModule,
     CustomerManagementModule,
     BookManagementModule,
+    EventDispatcherModule,
   ],
   providers: [
     PlaceOrderUseCase,

@@ -25,7 +25,9 @@ export class EmailSenderService implements IEmailSenderService {
     }
 
     if (!process.env.RESEND_API_KEY) {
-      throw new InternalServerErrorException('RESEND_API_KEY is not configured');
+      throw new InternalServerErrorException(
+        'RESEND_API_KEY is not configured',
+      );
     }
 
     const to =
@@ -45,7 +47,7 @@ export class EmailSenderService implements IEmailSenderService {
 
     if (error) {
       this.logger.error(`Failed to send email: ${this.formatError(error)}`);
-      throw new InternalServerErrorException('Failed to send verification email');
+      throw new InternalServerErrorException('Failed to send email');
     }
 
     this.logger.log(`Email ${data.id} has been sent`);
@@ -53,7 +55,9 @@ export class EmailSenderService implements IEmailSenderService {
 
   private getDevInboxRecipient(originalRecipient: string): string {
     if (!process.env.DEV_EMAIL_INBOX) {
-      throw new InternalServerErrorException('DEV_EMAIL_INBOX is not configured');
+      throw new InternalServerErrorException(
+        'DEV_EMAIL_INBOX is not configured',
+      );
     }
 
     this.logger.warn(
