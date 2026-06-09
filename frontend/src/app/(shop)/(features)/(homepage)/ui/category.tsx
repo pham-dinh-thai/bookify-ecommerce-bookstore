@@ -1,4 +1,10 @@
-import { ArrowRight, BookOpen, LibraryBig, PenLine, Sparkles } from 'lucide-react';
+import {
+  ArrowRight,
+  BookOpen,
+  LibraryBig,
+  PenLine,
+  Sparkles,
+} from 'lucide-react';
 import img from '../assets/img7.jpg';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -28,7 +34,7 @@ export default function Category({ genres }: CategoryProps) {
             {featuredGenre.name.toUpperCase()}
           </h2>
           <p className="text-[#f7faf5]">
-            Explore books by the first genres from our live collection.
+            Explore books by the most popular genres in our live collection.
           </p>
         </div>
 
