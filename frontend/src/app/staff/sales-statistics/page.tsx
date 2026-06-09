@@ -1,24 +1,13 @@
 'use client';
 
-import {
-  ArrowUpRight,
-  BarChart3,
-  BookOpen,
-  CircleDollarSign,
-  CreditCard,
-  PackageCheck,
-  ReceiptText,
-  TrendingUp,
-} from 'lucide-react';
-import { useState, type ElementType } from 'react';
+import { useState } from 'react';
 import {
   PaymentChannel,
   SalesPeriod,
-  salesPeriodSelections,
-  salesPeriodOptions,
   SalesTrendPoint,
   TopSellingBook,
-} from './data/mock-sales-statistics';
+} from './types';
+import { salesPeriodOptions, salesPeriodSelections } from './period-options';
 import useSalesStatistics from './hooks/use-sales-statistics';
 
 const formatVnd = (value: number) =>
@@ -33,29 +22,28 @@ const formatCompactVnd = (value: number) =>
     maximumFractionDigits: 1,
   }).format(value) + 'đ';
 
-const formatDateTime = (value: string) =>
-  new Intl.DateTimeFormat('en-US', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-    timeZone: 'Asia/Ho_Chi_Minh',
-  }).format(new Date(value));
-
 export default function StaffSalesStatisticsPage() {
   const [selectedPeriod, setSelectedPeriod] = useState<SalesPeriod>('month');
-  const [selectedSelection, setSelectedSelection] = useState('2026-06');
+  const [selectedSelection, setSelectedSelection] = useState(
+    salesPeriodSelections.month[0].value,
+  );
   const selectionOptions = salesPeriodSelections[selectedPeriod];
-  const { statistics, loading, error, usingFallback } = useSalesStatistics(
+  const selectedLabel =
+    selectionOptions.find((option) => option.value === selectedSelection)
+      ?.label ?? selectionOptions[0].label;
+  const { statistics, loading, error } = useSalesStatistics(
     selectedPeriod,
     selectedSelection,
   );
   const maxRevenue = Math.max(
-    ...statistics.trend.map((point) => point.revenue),
+    0,
+    ...(statistics?.trend ?? []).map((point) => point.revenue),
   );
-  const totalChannelRevenue = statistics.paymentChannels.reduce(
+  const totalChannelRevenue = (statistics?.paymentChannels ?? []).reduce(
     (sum, channel) => sum + channel.revenue,
     0,
   );
-  const totalCategoryRevenue = statistics.categories.reduce(
+  const totalCategoryRevenue = (statistics?.categories ?? []).reduce(
     (sum, category) => sum + category.revenue,
     0,
   );
@@ -63,30 +51,26 @@ export default function StaffSalesStatisticsPage() {
   const summaryCards = [
     {
       label: 'Total Revenue',
-      value: formatVnd(statistics.summary.revenue),
-      change: statistics.summary.revenueGrowth,
-      icon: CircleDollarSign,
+      value: formatVnd(statistics?.summary.revenue ?? 0),
+      change: statistics?.summary.revenueGrowth ?? 0,
       className: 'bg-[#eef8f1] text-[#2d6a4f]',
     },
     {
       label: 'Orders',
-      value: statistics.summary.orders.toLocaleString('vi-VN'),
-      change: statistics.summary.orderGrowth,
-      icon: ReceiptText,
+      value: (statistics?.summary.orders ?? 0).toLocaleString('vi-VN'),
+      change: statistics?.summary.orderGrowth ?? 0,
       className: 'bg-[#eef6ff] text-[#204877]',
     },
     {
       label: 'Books Sold',
-      value: statistics.summary.booksSold.toLocaleString('vi-VN'),
-      change: statistics.summary.booksSoldGrowth,
-      icon: BookOpen,
+      value: (statistics?.summary.booksSold ?? 0).toLocaleString('vi-VN'),
+      change: statistics?.summary.booksSoldGrowth ?? 0,
       className: 'bg-[#fff8e6] text-[#7a5800]',
     },
     {
       label: 'Average Order Value',
-      value: formatVnd(statistics.summary.averageOrderValue),
-      change: statistics.summary.averageOrderValueGrowth,
-      icon: PackageCheck,
+      value: formatVnd(statistics?.summary.averageOrderValue ?? 0),
+      change: statistics?.summary.averageOrderValueGrowth ?? 0,
       className: 'bg-[#f4f0ff] text-[#5b21b6]',
     },
   ];
@@ -96,7 +80,7 @@ export default function StaffSalesStatisticsPage() {
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="mb-2 text-sm font-bold uppercase tracking-widest text-[#6d7f72]">
-            {statistics.periodLabel}
+            {statistics?.periodLabel ?? selectedLabel}
           </p>
           <h2
             className="text-5xl font-extrabold tracking-tighter leading-[1.1]"
@@ -150,23 +134,18 @@ export default function StaffSalesStatisticsPage() {
               </option>
             ))}
           </select>
-
-          <div className="rounded-2xl border border-[#e8ede9] bg-white px-4 py-3 text-right shadow-sm">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#7b8d80]">
-              {usingFallback ? 'Mock data' : 'Live data'}
-            </p>
-            <p className="text-sm font-semibold text-[#22352b]">
-              {loading
-                ? 'Loading...'
-                : `Updated ${formatDateTime(statistics.generatedAt)}`}
-            </p>
-          </div>
         </div>
       </div>
 
       {error ? (
-        <div className="mb-6 rounded-2xl bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
-          Backend statistics unavailable, showing fake preview data.
+        <div className="mb-6 rounded-2xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          Unable to load sales statistics from the backend.
+        </div>
+      ) : null}
+
+      {loading && !statistics ? (
+        <div className="mb-6 rounded-2xl border border-[#e8ede9] bg-white px-4 py-3 text-sm font-medium text-[#55735f]">
+          Loading sales statistics...
         </div>
       ) : null}
 
@@ -183,26 +162,27 @@ export default function StaffSalesStatisticsPage() {
               <h3 className="text-sm font-bold uppercase tracking-widest text-[#6d7f72]">
                 Revenue Trend
               </h3>
-              <p className="mt-1 text-sm text-[#6d7f72]">
-                Fake revenue and order volume for{' '}
-                {statistics.periodLabel.toLowerCase()}.
-              </p>
             </div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-[#eef8f1] px-3 py-1.5 text-sm font-bold text-[#2d6a4f]">
-              <TrendingUp className="h-4 w-4" />+
-              {statistics.summary.revenueGrowth}%
+            <div className="rounded-full bg-[#eef8f1] px-3 py-1.5 text-sm font-bold text-[#2d6a4f]">
+              +{statistics?.summary.revenueGrowth ?? 0}%
             </div>
           </div>
 
           <div className="overflow-x-auto">
             <div className="flex min-w-[760px] items-end gap-3 border-b border-[#e8ede9] pb-4">
-              {statistics.trend.map((point) => (
-                <TrendBar
-                  key={point.label}
-                  point={point}
-                  height={(point.revenue / maxRevenue) * 100}
-                />
-              ))}
+              {statistics?.trend.length ? (
+                statistics.trend.map((point) => (
+                  <TrendBar
+                    key={point.label}
+                    point={point}
+                    height={
+                      maxRevenue > 0 ? (point.revenue / maxRevenue) * 100 : 0
+                    }
+                  />
+                ))
+              ) : (
+                <EmptyPanel text="No revenue data for this period." />
+              )}
             </div>
           </div>
         </section>
@@ -212,17 +192,20 @@ export default function StaffSalesStatisticsPage() {
             <h3 className="text-sm font-bold uppercase tracking-widest text-[#6d7f72]">
               Payment Channels
             </h3>
-            <CreditCard className="h-5 w-5 text-[#2d6a4f]" />
           </div>
 
           <div className="space-y-4">
-            {statistics.paymentChannels.map((channel) => (
-              <PaymentChannelRow
-                key={channel.name}
-                channel={channel}
-                totalRevenue={totalChannelRevenue}
-              />
-            ))}
+            {statistics?.paymentChannels.length ? (
+              statistics.paymentChannels.map((channel) => (
+                <PaymentChannelRow
+                  key={channel.name}
+                  channel={channel}
+                  totalRevenue={totalChannelRevenue}
+                />
+              ))
+            ) : (
+              <EmptyPanel text="No payment data for this period." />
+            )}
           </div>
         </section>
       </div>
@@ -233,41 +216,44 @@ export default function StaffSalesStatisticsPage() {
             <h3 className="text-sm font-bold uppercase tracking-widest text-[#6d7f72]">
               Category Revenue
             </h3>
-            <BarChart3 className="h-5 w-5 text-[#204877]" />
           </div>
 
           <div className="space-y-3">
-            {statistics.categories.map((category) => {
-              const percentage =
-                totalCategoryRevenue > 0
-                  ? (category.revenue / totalCategoryRevenue) * 100
-                  : 0;
+            {statistics?.categories.length ? (
+              statistics.categories.map((category) => {
+                const percentage =
+                  totalCategoryRevenue > 0
+                    ? (category.revenue / totalCategoryRevenue) * 100
+                    : 0;
 
-              return (
-                <div key={category.name}>
-                  <div className="mb-1.5 flex items-center justify-between gap-3 text-sm">
-                    <span className="font-semibold text-[#22352b]">
-                      {category.name}
-                    </span>
-                    <span className="text-[#6d7f72]">
-                      {formatCompactVnd(category.revenue)}
-                    </span>
+                return (
+                  <div key={category.name}>
+                    <div className="mb-1.5 flex items-center justify-between gap-3 text-sm">
+                      <span className="font-semibold text-[#22352b]">
+                        {category.name}
+                      </span>
+                      <span className="text-[#6d7f72]">
+                        {formatCompactVnd(category.revenue)}
+                      </span>
+                    </div>
+                    <div className="h-2.5 rounded-full bg-[#f1f5ef]">
+                      <div
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${percentage}%`,
+                          backgroundColor: category.color,
+                        }}
+                      />
+                    </div>
+                    <p className="mt-1 text-xs font-medium text-[#7b8d80]">
+                      {category.units.toLocaleString('vi-VN')} books sold
+                    </p>
                   </div>
-                  <div className="h-2.5 rounded-full bg-[#f1f5ef]">
-                    <div
-                      className="h-full rounded-full"
-                      style={{
-                        width: `${percentage}%`,
-                        backgroundColor: category.color,
-                      }}
-                    />
-                  </div>
-                  <p className="mt-1 text-xs font-medium text-[#7b8d80]">
-                    {category.units.toLocaleString('vi-VN')} books sold
-                  </p>
-                </div>
-              );
-            })}
+                );
+              })
+            ) : (
+              <EmptyPanel text="No category data for this period." />
+            )}
           </div>
         </section>
 
@@ -277,13 +263,7 @@ export default function StaffSalesStatisticsPage() {
               <h3 className="text-sm font-bold uppercase tracking-widest text-[#6d7f72]">
                 Top Selling Books
               </h3>
-              <p className="mt-1 text-sm text-[#6d7f72]">
-                Ranked by mock sales revenue.
-              </p>
             </div>
-            <span className="rounded-full bg-[#f7faf5] px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#55735f]">
-              Fake preview
-            </span>
           </div>
 
           <div className="overflow-x-auto rounded-xl border border-[#eef2ea]">
@@ -296,9 +276,19 @@ export default function StaffSalesStatisticsPage() {
                 <span>Growth</span>
               </div>
 
-              {statistics.topSellingBooks.map((book, index) => (
-                <TopSellingBookRow key={book.id} book={book} rank={index + 1} />
-              ))}
+              {statistics?.topSellingBooks.length ? (
+                statistics.topSellingBooks.map((book, index) => (
+                  <TopSellingBookRow
+                    key={book.id}
+                    book={book}
+                    rank={index + 1}
+                  />
+                ))
+              ) : (
+                <div className="border-t border-[#eef2ea] px-4 py-5">
+                  <EmptyPanel text="No book sales for this period." />
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -307,34 +297,34 @@ export default function StaffSalesStatisticsPage() {
   );
 }
 
+function EmptyPanel({ text }: { text: string }) {
+  return (
+    <div className="w-full rounded-xl bg-[#f7faf5] px-4 py-5 text-sm font-medium text-[#6d7f72]">
+      {text}
+    </div>
+  );
+}
+
 function SummaryCard({
   label,
   value,
   change,
-  icon: Icon,
   className,
 }: {
   label: string;
   value: string;
   change: number;
-  icon: ElementType;
   className: string;
 }) {
   return (
     <div className={`rounded-2xl p-6 ${className}`}>
-      <div className="mb-5 flex items-start justify-between gap-3">
-        <span className="text-sm font-bold uppercase tracking-wide">
-          {label}
-        </span>
-        <Icon className="h-5 w-5 shrink-0" />
+      <div className="mb-5 text-sm font-bold uppercase tracking-wide">
+        {label}
       </div>
       <p className="break-words text-3xl font-extrabold leading-tight">
         {value}
       </p>
-      <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold">
-        <ArrowUpRight className="h-4 w-4" />
-        {change}% vs previous period
-      </p>
+      <p className="mt-3 text-sm font-bold">{change}% vs previous period</p>
     </div>
   );
 }
@@ -423,7 +413,6 @@ function TopSellingBookRow({
         {formatVnd(book.revenue)}
       </span>
       <span className="inline-flex w-fit items-center gap-1 rounded-full bg-[#eef8f1] px-2.5 py-0.5 text-xs font-bold text-[#2d6a4f]">
-        <ArrowUpRight className="h-3.5 w-3.5" />
         {book.growth}%
       </span>
     </div>

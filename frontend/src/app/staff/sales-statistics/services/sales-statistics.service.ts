@@ -1,5 +1,5 @@
 import { getAccessToken } from '@/shared/auth/lib/token-storage';
-import { SalesPeriod, SalesStatistics } from '../data/mock-sales-statistics';
+import { SalesPeriod, SalesStatistics } from '../types';
 
 export default async function salesStatisticsService(
   period: SalesPeriod,

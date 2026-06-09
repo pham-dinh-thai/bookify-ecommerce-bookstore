@@ -188,6 +188,11 @@ export class TypeOrmSalesStatisticsQueryRepository implements ISalesStatisticsQu
         revenue: string | number;
       }>();
 
+    const previousRevenueByBookId = await this.getPreviousBookRevenueByBookId(
+      range,
+      rows.map((row) => row.id),
+    );
+
     return rows.map(
       (row) =>
         new TopSellingBookReadModel(
@@ -196,8 +201,38 @@ export class TypeOrmSalesStatisticsQueryRepository implements ISalesStatisticsQu
           row.author,
           Number(row.units) || 0,
           Number(row.revenue) || 0,
-          0,
+          this.calculateGrowth(
+            Number(row.revenue) || 0,
+            previousRevenueByBookId.get(row.id) ?? 0,
+          ),
         ),
+    );
+  }
+
+  private async getPreviousBookRevenueByBookId(
+    range: SalesPeriodRange,
+    bookIds: string[],
+  ): Promise<Map<string, number>> {
+    if (bookIds.length === 0) {
+      return new Map();
+    }
+
+    const rows = await this.baseSalesQuery()
+      .innerJoin('item.product', 'book')
+      .select(['book.id AS id', 'SUM(item.quantity * item.price) AS revenue'])
+      .andWhere('orderEntity.createdAt >= :start', {
+        start: range.previousStart,
+      })
+      .andWhere('orderEntity.createdAt < :end', { end: range.previousEnd })
+      .andWhere('book.id IN (:...bookIds)', { bookIds })
+      .groupBy('book.id')
+      .getRawMany<{
+        id: string;
+        revenue: string | number;
+      }>();
+
+    return new Map(
+      rows.map((row) => [row.id, Number(row.revenue) || 0] as const),
     );
   }
 
@@ -264,5 +299,13 @@ export class TypeOrmSalesStatisticsQueryRepository implements ISalesStatisticsQu
     }
 
     return `DATE(orderEntity.createdAt)`;
+  }
+
+  private calculateGrowth(current: number, previous: number): number {
+    if (previous <= 0) {
+      return current > 0 ? 100 : 0;
+    }
+
+    return Number((((current - previous) / previous) * 100).toFixed(1));
   }
 }

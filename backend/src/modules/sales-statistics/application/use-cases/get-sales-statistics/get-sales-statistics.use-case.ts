@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import {
   SALES_STATISTICS_QUERY_REPOSITORY,
   SalesPeriodRange,
-  SalesSummaryTotals,
   type ISalesStatisticsQueryRepository,
 } from '../../../domain/repositories/sales-statistics-query.repository.interface';
 import {
@@ -63,10 +62,7 @@ export class GetSalesStatisticsUseCase {
       trend,
       paymentChannels,
       categories,
-      topSellingBooks.map((book) => ({
-        ...book,
-        growth: this.calculateBookGrowth(book, previousSummary),
-      })),
+      topSellingBooks,
     );
   }
 
@@ -76,17 +72,6 @@ export class GetSalesStatisticsUseCase {
     }
 
     return Number((((current - previous) / previous) * 100).toFixed(1));
-  }
-
-  private calculateBookGrowth(
-    book: { revenue: number },
-    previousSummary: SalesSummaryTotals,
-  ): number {
-    if (previousSummary.revenue <= 0 || book.revenue <= 0) {
-      return 0;
-    }
-
-    return Number(((book.revenue / previousSummary.revenue) * 100).toFixed(1));
   }
 
   private getRange(period: SalesPeriod, value?: string): SalesPeriodRange {
