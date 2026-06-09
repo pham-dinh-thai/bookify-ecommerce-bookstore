@@ -23,6 +23,7 @@ import { OrderManagementModule } from './modules/order-management/order-manageme
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { EmailModule } from './modules/email/email.module';
 import { PaymentGatewayModule } from './modules/payment-gateway/payment-gateway.module';
+import { SalesStatisticsModule } from './modules/sales-statistics/sales-statistics.module';
 
 @Module({
   imports: [
@@ -75,6 +76,7 @@ import { PaymentGatewayModule } from './modules/payment-gateway/payment-gateway.
     DashboardModule,
     EmailModule,
     PaymentGatewayModule,
+    SalesStatisticsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

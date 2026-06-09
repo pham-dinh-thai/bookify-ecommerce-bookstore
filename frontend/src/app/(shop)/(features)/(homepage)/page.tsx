@@ -27,6 +27,12 @@ type ApiGenre = {
   name: string;
 };
 
+type ApiTopGenre = {
+  genreId: string;
+  genreName: string;
+  unitsSold: number;
+};
+
 type HomepageBook = {
   id: string;
   title: string;
@@ -141,8 +147,43 @@ function createSlug(value: string): string {
 }
 
 async function getHomepageGenres(): Promise<HomepageGenre[]> {
+  const apiBase = getApiBaseUrl();
+
   try {
-    const apiBase = getApiBaseUrl();
+    const response = await fetch(`${apiBase}/shop-navigation`, {
+      cache: 'no-store',
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const topGenres: ApiTopGenre[] = Array.isArray(data?.topGenres)
+        ? data.topGenres
+        : [];
+      const popularGenres = topGenres
+        .filter((genre) => Boolean(genre.genreName))
+        .sort((a, b) => Number(b.unitsSold) - Number(a.unitsSold))
+        .slice(0, 4)
+        .map((genre) => ({
+          id: genre.genreId,
+          name: genre.genreName,
+          slug: createSlug(genre.genreName),
+        }));
+
+      if (popularGenres.length > 0) {
+        return popularGenres;
+      }
+    } else {
+      console.error(
+        'Homepage popular genres request failed:',
+        response.status,
+        response.statusText,
+      );
+    }
+  } catch {
+    // Fall back to the genre list below when sales navigation is unavailable.
+  }
+
+  try {
     const response = await fetch(`${apiBase}/genres?page=1&limit=4`, {
       cache: 'no-store',
     });

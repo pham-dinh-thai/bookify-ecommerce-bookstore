@@ -3,6 +3,7 @@
 import {
   ArrowUp01,
   Book,
+  ChartNoAxesCombined,
   LayoutDashboard,
   ShoppingBag,
   ShoppingCart,
@@ -19,6 +20,11 @@ const navItems = [
     path: '/staff/system-overview',
   },
 
+  {
+    label: 'Sales Statistics',
+    icon: ChartNoAxesCombined,
+    path: '/staff/sales-statistics',
+  },
   { label: 'Book Management', icon: Book, path: '/staff/books' },
   { label: 'Import Stock', icon: ArrowUp01, path: '/staff/stock' },
   { label: 'Order Management', icon: ShoppingBag, path: '/staff/orders' },
