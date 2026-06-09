@@ -2,6 +2,16 @@
 
 Bookify is an ecommerce bookstore application built as a full-stack monorepo. It includes a NestJS API, a Next.js storefront/admin interface, MySQL persistence, Redis caching, Nginx reverse proxying, and Docker-based local orchestration.
 
+## Highlighted Features
+
+- **Customer storefront:** Browse best sellers, new arrivals, on-sale books, genre collections, product details, cart, checkout, mock payment, and customer order history.
+- **Popularity-aware navigation:** Homepage category cards and navbar genre links prioritize the most popular genres from recent sales, with catalog fallback when sales data is not available.
+- **Staff operations:** Staff can manage books, import stock, handle orders, inspect customer records, and monitor operational dashboard metrics.
+- **Sales statistics:** Staff reporting supports monthly, quarterly, and yearly filters from the reporting start period, using real order and order item aggregates for revenue, orders, books sold, average order value, payment channels, category revenue, and top-selling books.
+- **Admin management:** Admin pages cover users, genres, publishers, authors, languages, roles, permissions, and system overview metrics.
+- **Order lifecycle:** Orders support placement, confirmation, delivery progress, completion, cancellation, payment status tracking, audit logging, and transactional email notifications.
+- **Seed data:** Database seeds include roles, permissions, catalog data, admin/staff accounts, plus realistic Vietnamese customer and staff users with customer profiles and default addresses for development testing.
+
 ## Tech Stack
 
 - **Architecture:** Domain Driven Design, Clean Architecture, Modular Monolith
@@ -26,11 +36,13 @@ Bookify is an ecommerce bookstore application built as a full-stack monorepo. It
 |   |   |   |-- cart-management/
 |   |   |   |-- catalog-management/
 |   |   |   |-- customer-management/
+|   |   |   |-- dashboard/
 |   |   |   |-- email/
 |   |   |   |-- file-storage/
 |   |   |   |-- order/
 |   |   |   |-- order-management/
 |   |   |   |-- payment-gateway/
+|   |   |   |-- sales-statistics/
 |   |   |   |-- user-management/
 |   |   |   `-- audit-log/
 |   |   `-- shared/          # Shared domain, HTTP, infrastructure, and modules
@@ -222,11 +234,13 @@ Main modules:
 - `cart-management`
 - `catalog-management`
 - `customer-management`
+- `dashboard`
 - `email`
 - `file-storage`
 - `order`
 - `order-management`
 - `payment-gateway`
+- `sales-statistics`
 - `user-management`
 - `audit-log`
 
