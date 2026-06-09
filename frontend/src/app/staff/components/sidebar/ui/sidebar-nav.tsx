@@ -1,8 +1,9 @@
 import Link from 'next/link';
+import type { ElementType } from 'react';
 
 type NavItem = {
   label: string;
-  icon: any;
+  icon: ElementType;
   path: string;
 };
 
@@ -15,7 +16,7 @@ export default function SidebarNav({ navItems, pathname }: SidebarNavProps) {
   return (
     <nav className="flex flex-col gap-0.5 flex-1">
       {navItems.map(({ label, icon: Icon, path }) => {
-        const isActive = pathname === path;
+        const isActive = pathname === path || pathname.startsWith(`${path}/`);
         return (
           <Link
             key={path}
