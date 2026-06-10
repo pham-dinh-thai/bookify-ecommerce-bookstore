@@ -1,202 +1,207 @@
 # Module Dependency Diagram
 
-This diagram summarizes NestJS module-level dependencies. It focuses on module
-imports and shared services, not every controller, use case, repository, or
-entity class.
+This page splits module dependencies into smaller diagrams so the relationships
+are readable. `AppModule` imports every business module, so the detailed
+diagrams below focus on the dependencies that matter for understanding feature
+coupling.
+
+## 1. High-Level Composition
 
 ```mermaid
-flowchart TD
-  AppModule["AppModule"]
+flowchart LR
+  App["AppModule"]
 
-  subgraph Platform["Platform configuration"]
-    Config["ConfigModule"]
-    TypeORM["TypeOrmModule\nMySQL"]
-    CacheManager["Nest CacheModule\nRedis Keyv store"]
-    Cqrs["CqrsModule"]
-  end
+  Platform["Platform\nConfig, TypeORM, Cache, CQRS"]
+  Shared["Shared modules\nUnit of work, UUID, cache, JWT, events"]
+  Identity["Identity and access\nAuth, authorization, users, customers"]
+  Catalog["Catalog and inventory\nCatalog metadata, books, files"]
+  Commerce["Commerce\nCart, orders, payments"]
+  Operations["Operations\nDashboard, statistics, audit, email"]
 
-  subgraph Shared["Shared modules"]
-    UnitOfWork["UnitOfWorkModule"]
-    Uuid["UuidModule"]
-    SharedCache["SharedCacheModule"]
-    SharedJwt["SharedJwtModule"]
-    EventDispatcher["EventDispatcherModule"]
-  end
+  App --> Platform
+  App --> Shared
+  App --> Identity
+  App --> Catalog
+  App --> Commerce
+  App --> Operations
 
-  subgraph Identity["Identity and access"]
-    Authentication["AuthenticationModule"]
-    Authorization["AuthorizationModule"]
-    Roles["RolesModule"]
-    Permissions["PermissionsModule"]
-    RolePermission["RolePermissionModule"]
-    UserManagement["UserManagementModule"]
-    CustomerManagement["CustomerManagementModule"]
-    MyAccount["MyAccountModule"]
-  end
+  Identity --> Shared
+  Catalog --> Identity
+  Catalog --> Shared
+  Commerce --> Identity
+  Commerce --> Catalog
+  Commerce --> Shared
+  Operations --> Identity
+  Operations --> Catalog
+  Operations --> Commerce
+  Operations --> Shared
+```
 
-  subgraph Catalog["Catalog and inventory"]
-    CatalogManagement["CatalogManagementModule"]
-    Genres["GenresModule"]
-    Authors["AuthorsModule"]
-    Languages["LanguagesModule"]
-    Publishers["PublishersModule"]
-    BookManagement["BookManagementModule"]
-    FileStorage["FileStorageModule"]
-  end
+## 2. Shared Module Usage
 
-  subgraph Commerce["Commerce"]
-    CartManagement["CartManagementModule"]
-    Order["OrderModule"]
-    OrderManagement["OrderManagementModule"]
-    PaymentGateway["PaymentGatewayModule"]
-  end
+Most modules share the same technical dependencies. These are omitted from the
+feature diagrams unless they are central to the relationship.
 
-  subgraph Operations["Operations and integrations"]
-    Dashboard["DashboardModule"]
-    SalesStatistics["SalesStatisticsModule"]
-    AuditLog["AuditLogModule"]
-    Email["EmailModule"]
-  end
+```mermaid
+flowchart LR
+  UnitOfWork["UnitOfWorkModule"]
+  Uuid["UuidModule"]
+  SharedCache["SharedCacheModule"]
+  SharedJwt["SharedJwtModule"]
+  EventDispatcher["EventDispatcherModule"]
 
-  AppModule --> Config
-  AppModule --> TypeORM
-  AppModule --> CacheManager
-  AppModule --> Cqrs
-  AppModule --> Authentication
-  AppModule --> Authorization
-  AppModule --> UserManagement
-  AppModule --> CustomerManagement
-  AppModule --> CatalogManagement
-  AppModule --> BookManagement
-  AppModule --> FileStorage
-  AppModule --> CartManagement
-  AppModule --> MyAccount
-  AppModule --> Order
-  AppModule --> OrderManagement
-  AppModule --> PaymentGateway
-  AppModule --> Dashboard
-  AppModule --> SalesStatistics
-  AppModule --> AuditLog
-  AppModule --> Email
-  AppModule --> SharedCache
+  FeatureModules["Feature modules\nuse cases and repositories"]
+  Auth["AuthenticationModule"]
+  Order["OrderModule"]
+  Email["EmailModule"]
 
-  Authorization --> Permissions
+  FeatureModules --> UnitOfWork
+  FeatureModules --> Uuid
+  FeatureModules --> SharedCache
+  Auth --> SharedJwt
+  Auth --> EventDispatcher
+  Order --> EventDispatcher
+  Email --> EventDispatcher
+
+```
+
+## 3. Identity And Access
+
+```mermaid
+flowchart LR
+  Authentication["AuthenticationModule"]
+  Authorization["AuthorizationModule"]
+  Roles["RolesModule"]
+  Permissions["PermissionsModule"]
+  RolePermission["RolePermissionModule"]
+  UserManagement["UserManagementModule"]
+  CustomerManagement["CustomerManagementModule"]
+  MyAccount["MyAccountModule"]
+  AuditLog["AuditLogModule"]
+
   Authorization --> Roles
+  Authorization --> Permissions
+
   Roles --> Permissions
   Roles --> RolePermission
-  Roles --> AuditLog
   Roles --> Authentication
+  Roles --> AuditLog
+
   Permissions --> RolePermission
-  Permissions --> AuditLog
   Permissions --> Authentication
-  Permissions --> SharedCache
-  Permissions --> UnitOfWork
-  RolePermission --> UnitOfWork
+  Permissions --> AuditLog
 
   UserManagement --> Roles
   UserManagement --> Authentication
   UserManagement --> AuditLog
+
   CustomerManagement --> UserManagement
   CustomerManagement --> Authentication
   CustomerManagement --> AuditLog
-  CustomerManagement --> SharedJwt
+
   MyAccount --> UserManagement
   MyAccount --> CustomerManagement
   MyAccount --> Authentication
   MyAccount --> AuditLog
 
+  AuditLog --> Authentication
+```
+
+## 4. Catalog And Inventory
+
+```mermaid
+flowchart LR
+  CatalogManagement["CatalogManagementModule"]
+  Genres["GenresModule"]
+  Authors["AuthorsModule"]
+  Languages["LanguagesModule"]
+  Publishers["PublishersModule"]
+  BookManagement["BookManagementModule"]
+  FileStorage["FileStorageModule"]
+  Authentication["AuthenticationModule"]
+  Roles["RolesModule"]
+  AuditLog["AuditLogModule"]
+
   CatalogManagement --> Genres
   CatalogManagement --> Authors
   CatalogManagement --> Languages
   CatalogManagement --> Publishers
+
   Genres --> Roles
-  Genres --> AuditLog
   Genres --> Authentication
-  Genres --> SharedCache
-  Genres --> UnitOfWork
-  Genres --> Uuid
-  Authors --> AuditLog
+  Genres --> AuditLog
+
   Authors --> Authentication
-  Authors --> SharedCache
-  Authors --> UnitOfWork
-  Authors --> Uuid
-  Languages --> AuditLog
+  Authors --> AuditLog
   Languages --> Authentication
-  Languages --> SharedCache
-  Languages --> UnitOfWork
-  Publishers --> AuditLog
+  Languages --> AuditLog
   Publishers --> Authentication
-  Publishers --> SharedCache
-  Publishers --> UnitOfWork
-  Publishers --> Uuid
+  Publishers --> AuditLog
 
   BookManagement --> Genres
   BookManagement --> Authors
   BookManagement --> Languages
   BookManagement --> Publishers
   BookManagement --> FileStorage
-  BookManagement --> AuditLog
   BookManagement --> Authentication
-  BookManagement --> SharedCache
+  BookManagement --> AuditLog
+```
+
+## 5. Commerce And Operations
+
+```mermaid
+flowchart LR
+  Authentication["AuthenticationModule"]
+  CustomerManagement["CustomerManagementModule"]
+  BookManagement["BookManagementModule"]
+  Order["OrderModule"]
+  CartManagement["CartManagementModule"]
+  OrderManagement["OrderManagementModule"]
+  PaymentGateway["PaymentGatewayModule"]
+  Dashboard["DashboardModule"]
+  SalesStatistics["SalesStatisticsModule"]
+  AuditLog["AuditLogModule"]
+  Email["EmailModule"]
+  EventDispatcher["EventDispatcherModule"]
+  CatalogMetadata["Catalog metadata modules"]
 
   CartManagement --> Authentication
+
+  Order --> Authentication
   Order --> CustomerManagement
   Order --> BookManagement
   Order --> AuditLog
-  Order --> Authentication
   Order --> EventDispatcher
+
+  OrderManagement --> Authentication
   OrderManagement --> Order
   OrderManagement --> CustomerManagement
   OrderManagement --> AuditLog
-  OrderManagement --> Authentication
   OrderManagement --> EventDispatcher
+
   PaymentGateway --> Order
 
+  Dashboard --> Authentication
   Dashboard --> Order
   Dashboard --> BookManagement
-  Dashboard --> UserManagement
   Dashboard --> CustomerManagement
-  Dashboard --> Genres
-  Dashboard --> Authors
-  Dashboard --> Languages
-  Dashboard --> Publishers
+  Dashboard --> CatalogMetadata
   Dashboard --> AuditLog
-  Dashboard --> Authentication
 
   SalesStatistics --> Authentication
-  SalesStatistics -. reads order and order item entities .-> Order
-  Email --> EventDispatcher
-  Email --> SharedCache
-  Email --> Authentication
-  Email -. handles auth and order domain events .-> Authentication
-  Email -. handles order lifecycle events .-> Order
-  AuditLog --> Authentication
+  SalesStatistics --> Order
 
-  Authentication --> UnitOfWork
-  Authentication --> Uuid
-  Authentication --> SharedCache
-  Authentication --> SharedJwt
-  Authentication --> EventDispatcher
-  UserManagement --> UnitOfWork
-  UserManagement --> Uuid
-  UserManagement --> SharedCache
-  CustomerManagement --> UnitOfWork
-  CustomerManagement --> Uuid
-  CustomerManagement --> SharedCache
-  BookManagement --> UnitOfWork
-  BookManagement --> Uuid
-  CartManagement --> UnitOfWork
-  CartManagement --> Uuid
-  Order --> UnitOfWork
-  Order --> Uuid
-  OrderManagement --> UnitOfWork
-  PaymentGateway --> UnitOfWork
-  PaymentGateway --> Uuid
-  AuditLog --> UnitOfWork
-  AuditLog --> Uuid
-  AuditLog --> SharedCache
-  MyAccount --> UnitOfWork
-  MyAccount --> Uuid
-  MyAccount --> SharedCache
-  FileStorage --> Uuid
+  Email --> Authentication
+  Email --> EventDispatcher
+  Email --> Order
 ```
+
+## Notes
+
+- Arrows mean "imports or depends on exported providers from".
+- The diagrams hide direct `TypeOrmModule.forFeature(...)` imports because those
+  are persistence wiring, not feature-to-feature dependencies.
+- `AuditLogModule` imports `AuthenticationModule`, while many feature modules
+  also import `AuditLogModule`. That is a real Nest module wiring cycle in the
+  current implementation, so identity and audit concerns should be handled with
+  care during refactors.
