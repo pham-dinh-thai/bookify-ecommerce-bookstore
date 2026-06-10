@@ -1,5 +1,9 @@
-export const validateBookForm = (formData: any) => {
-  const newErrors: FormErrors = {};
+import type { CreateBookForm, CreateBookFormErrors } from '../../../types';
+
+export const validateBookForm = (
+  formData: CreateBookForm,
+): CreateBookFormErrors => {
+  const newErrors: CreateBookFormErrors = {};
 
   if (!formData.isbn.trim()) {
     newErrors.isbn = 'ISBN is required';

@@ -76,9 +76,9 @@ export async function addCartItemService(item: StoredCartItem): Promise<void> {
   let response = await postCartItem(payload, accessToken);
 
   if (response.status === 401) {
-    accessToken = await refreshAccessToken();
-    if (accessToken) {
-      response = await postCartItem(payload, accessToken);
+    const refreshedAccessToken = await refreshAccessToken();
+    if (refreshedAccessToken) {
+      response = await postCartItem(payload, refreshedAccessToken);
     }
   }
 
@@ -92,9 +92,9 @@ export async function removeCartItemService(productId: string): Promise<void> {
   let response = await deleteCartItem(productId, accessToken);
 
   if (response.status === 401) {
-    accessToken = await refreshAccessToken();
-    if (accessToken) {
-      response = await deleteCartItem(productId, accessToken);
+    const refreshedAccessToken = await refreshAccessToken();
+    if (refreshedAccessToken) {
+      response = await deleteCartItem(productId, refreshedAccessToken);
     }
   }
 

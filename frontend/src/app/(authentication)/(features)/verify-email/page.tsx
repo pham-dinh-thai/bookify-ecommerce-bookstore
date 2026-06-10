@@ -4,10 +4,10 @@ import ErrorMessage from '@/shared/common/components/error-message';
 import { ArrowRight, KeyRound, LoaderCircle, MailCheck } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { Suspense, useMemo, useState } from 'react';
 import { verifyEmailService } from './services/verify-email.service';
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email') ?? '';
@@ -125,5 +125,13 @@ export default function VerifyEmailPage() {
         </p>
       </form>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={null}>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }

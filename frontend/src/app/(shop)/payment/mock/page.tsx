@@ -11,12 +11,12 @@ import {
   Smartphone,
   XCircle,
 } from 'lucide-react';
-import { useMemo, useState, useSyncExternalStore } from 'react';
+import { Suspense, useMemo, useState, useSyncExternalStore } from 'react';
 import { useToast } from '@/shared/common/toast/toast';
 import { completeMockPaymentService } from '../../checkout/checkout.service';
 import { createQrSvgPath, type QrSvgPath } from './qr';
 
-export default function MockPaymentPage() {
+function MockPaymentContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const toast = useToast();
@@ -204,6 +204,14 @@ export default function MockPaymentPage() {
         </aside>
       </div>
     </section>
+  );
+}
+
+export default function MockPaymentPage() {
+  return (
+    <Suspense fallback={null}>
+      <MockPaymentContent />
+    </Suspense>
   );
 }
 
