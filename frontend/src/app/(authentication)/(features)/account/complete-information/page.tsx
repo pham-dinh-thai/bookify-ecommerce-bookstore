@@ -4,7 +4,7 @@ import useForm from '@/shared/common/hooks/use-form';
 import { ArrowBigRight, MapPin, MapPinIcon, Phone, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { completeInformationService } from './services/complete-information.service';
 import ErrorMessage from '@/shared/common/components/error-message';
 import { getProvinces, getWardsByProvince } from './services/provinces.service';
@@ -12,7 +12,7 @@ import { getProvinces, getWardsByProvince } from './services/provinces.service';
 type Province = { code: string; name: string };
 type Ward = { code: string; name: string };
 
-export default function CompleteInformation() {
+function CompleteInformationContent() {
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -209,5 +209,13 @@ export default function CompleteInformation() {
         </p>
       </form>
     </div>
+  );
+}
+
+export default function CompleteInformation() {
+  return (
+    <Suspense fallback={null}>
+      <CompleteInformationContent />
+    </Suspense>
   );
 }

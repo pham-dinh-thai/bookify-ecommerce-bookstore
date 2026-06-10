@@ -2,10 +2,10 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CheckCircle2, LoaderCircle } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { scanSucceedMockPaymentService } from '../../../checkout/checkout.service';
 
-export default function MockPaymentScanPage() {
+function MockPaymentScanContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const transactionId = searchParams.get('transactionId') ?? '';
@@ -67,5 +67,13 @@ export default function MockPaymentScanPage() {
         )}
       </div>
     </section>
+  );
+}
+
+export default function MockPaymentScanPage() {
+  return (
+    <Suspense fallback={null}>
+      <MockPaymentScanContent />
+    </Suspense>
   );
 }
