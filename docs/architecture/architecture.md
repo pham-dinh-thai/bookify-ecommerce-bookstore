@@ -146,12 +146,16 @@ district address lookup.
 
 ## Dependency Notes
 
-The module dependency diagram is a practical map of Nest module imports. It is
-not a strict acyclic domain dependency graph. Some infrastructure-level imports,
-especially `AuditLogModule` importing `AuthenticationModule` while many modules
-also import `AuditLogModule`, create cycles at the Nest module wiring level.
-Those cycles are part of the current implementation and should be considered
-when refactoring shared guards, audit logging, or identity concerns.
+The module dependency diagram maps feature folders under
+`backend/src/modules/*`, not NestJS `SomethingModule` classes. It is based on
+source imports between feature folders and excludes Nest module wiring files and
+tests so it reflects business-code coupling rather than dependency-injection
+setup.
+
+Some current folder-level dependencies are worth treating carefully:
+`catalog-management` and `book-management` reference each other through
+infrastructure entities, `book-management` reads `order` data for sales-aware
+queries, and `order` imports dashboard read models for top catalog statistics.
 
 New feature work should prefer existing module boundaries and shared provider
 tokens. Cross-module access should go through exported repository interfaces,

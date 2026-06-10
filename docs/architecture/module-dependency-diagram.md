@@ -1,207 +1,192 @@
 # Module Dependency Diagram
 
-This page splits module dependencies into smaller diagrams so the relationships
-are readable. `AppModule` imports every business module, so the detailed
-diagrams below focus on the dependencies that matter for understanding feature
-coupling.
+This diagram is about feature folders under `backend/src/modules/*`, not NestJS
+`SomethingModule` classes. Arrows mean the source folder imports code from the
+target folder.
 
-## 1. High-Level Composition
+Scope used for this diagram:
 
-```mermaid
-flowchart LR
-  App["AppModule"]
+- Included: TypeScript imports inside `backend/src/modules/*`.
+- Excluded: `*.module.ts` Nest wiring files and `*.spec.ts` tests.
+- Excluded: shared technical modules under `backend/src/shared`.
 
-  Platform["Platform\nConfig, TypeORM, Cache, CQRS"]
-  Shared["Shared modules\nUnit of work, UUID, cache, JWT, events"]
-  Identity["Identity and access\nAuth, authorization, users, customers"]
-  Catalog["Catalog and inventory\nCatalog metadata, books, files"]
-  Commerce["Commerce\nCart, orders, payments"]
-  Operations["Operations\nDashboard, statistics, audit, email"]
-
-  App --> Platform
-  App --> Shared
-  App --> Identity
-  App --> Catalog
-  App --> Commerce
-  App --> Operations
-
-  Identity --> Shared
-  Catalog --> Identity
-  Catalog --> Shared
-  Commerce --> Identity
-  Commerce --> Catalog
-  Commerce --> Shared
-  Operations --> Identity
-  Operations --> Catalog
-  Operations --> Commerce
-  Operations --> Shared
-```
-
-## 2. Shared Module Usage
-
-Most modules share the same technical dependencies. These are omitted from the
-feature diagrams unless they are central to the relationship.
+## 1. Module Groups
 
 ```mermaid
 flowchart LR
-  UnitOfWork["UnitOfWorkModule"]
-  Uuid["UuidModule"]
-  SharedCache["SharedCacheModule"]
-  SharedJwt["SharedJwtModule"]
-  EventDispatcher["EventDispatcherModule"]
+  subgraph Identity["identity"]
+    authentication["authentication"]
+    authorization["authorization"]
+    userManagement["user-management"]
+    customerManagement["customer-management"]
+    myAccount["my-account"]
+  end
 
-  FeatureModules["Feature modules\nuse cases and repositories"]
-  Auth["AuthenticationModule"]
-  Order["OrderModule"]
-  Email["EmailModule"]
+  subgraph Catalog["catalog and inventory"]
+    catalogManagement["catalog-management"]
+    bookManagement["book-management"]
+    fileStorage["file-storage"]
+    cartManagement["cart-management"]
+  end
 
-  FeatureModules --> UnitOfWork
-  FeatureModules --> Uuid
-  FeatureModules --> SharedCache
-  Auth --> SharedJwt
-  Auth --> EventDispatcher
-  Order --> EventDispatcher
-  Email --> EventDispatcher
+  subgraph Commerce["commerce"]
+    order["order"]
+    orderManagement["order-management"]
+    paymentGateway["payment-gateway"]
+  end
 
+  subgraph Operations["operations"]
+    auditLog["audit-log"]
+    dashboard["dashboard"]
+    salesStatistics["sales-statistics"]
+    email["email"]
+  end
+
+  customerManagement --> userManagement
+  myAccount --> userManagement
+  myAccount --> customerManagement
+  userManagement --> authorization
+
+  bookManagement --> catalogManagement
+  bookManagement --> fileStorage
+  cartManagement --> bookManagement
+  order --> bookManagement
+  order --> customerManagement
+
+  orderManagement --> order
+  paymentGateway --> order
+  salesStatistics --> order
+  dashboard --> order
+  dashboard --> bookManagement
+  email --> order
+
+  authorization --> auditLog
+  userManagement --> auditLog
+  customerManagement --> auditLog
+  catalogManagement --> auditLog
+  bookManagement --> auditLog
+  order --> auditLog
+  orderManagement --> auditLog
+  myAccount --> auditLog
 ```
 
-## 3. Identity And Access
+## 2. Identity Dependencies
 
 ```mermaid
 flowchart LR
-  Authentication["AuthenticationModule"]
-  Authorization["AuthorizationModule"]
-  Roles["RolesModule"]
-  Permissions["PermissionsModule"]
-  RolePermission["RolePermissionModule"]
-  UserManagement["UserManagementModule"]
-  CustomerManagement["CustomerManagementModule"]
-  MyAccount["MyAccountModule"]
-  AuditLog["AuditLogModule"]
+  authentication["authentication"]
+  authorization["authorization"]
+  userManagement["user-management"]
+  customerManagement["customer-management"]
+  myAccount["my-account"]
+  auditLog["audit-log"]
 
-  Authorization --> Roles
-  Authorization --> Permissions
+  authentication --> userManagement
 
-  Roles --> Permissions
-  Roles --> RolePermission
-  Roles --> Authentication
-  Roles --> AuditLog
+  userManagement --> authorization
+  userManagement --> auditLog
 
-  Permissions --> RolePermission
-  Permissions --> Authentication
-  Permissions --> AuditLog
+  customerManagement --> userManagement
+  customerManagement --> auditLog
 
-  UserManagement --> Roles
-  UserManagement --> Authentication
-  UserManagement --> AuditLog
+  myAccount --> userManagement
+  myAccount --> customerManagement
+  myAccount --> auditLog
 
-  CustomerManagement --> UserManagement
-  CustomerManagement --> Authentication
-  CustomerManagement --> AuditLog
-
-  MyAccount --> UserManagement
-  MyAccount --> CustomerManagement
-  MyAccount --> Authentication
-  MyAccount --> AuditLog
-
-  AuditLog --> Authentication
+  authorization --> auditLog
 ```
 
-## 4. Catalog And Inventory
+## 3. Catalog And Inventory Dependencies
 
 ```mermaid
 flowchart LR
-  CatalogManagement["CatalogManagementModule"]
-  Genres["GenresModule"]
-  Authors["AuthorsModule"]
-  Languages["LanguagesModule"]
-  Publishers["PublishersModule"]
-  BookManagement["BookManagementModule"]
-  FileStorage["FileStorageModule"]
-  Authentication["AuthenticationModule"]
-  Roles["RolesModule"]
-  AuditLog["AuditLogModule"]
+  catalogManagement["catalog-management"]
+  bookManagement["book-management"]
+  fileStorage["file-storage"]
+  cartManagement["cart-management"]
+  userManagement["user-management"]
+  auditLog["audit-log"]
+  order["order"]
 
-  CatalogManagement --> Genres
-  CatalogManagement --> Authors
-  CatalogManagement --> Languages
-  CatalogManagement --> Publishers
+  catalogManagement --> auditLog
+  catalogManagement --> bookManagement
 
-  Genres --> Roles
-  Genres --> Authentication
-  Genres --> AuditLog
+  bookManagement --> catalogManagement
+  bookManagement --> fileStorage
+  bookManagement --> auditLog
+  bookManagement --> order
 
-  Authors --> Authentication
-  Authors --> AuditLog
-  Languages --> Authentication
-  Languages --> AuditLog
-  Publishers --> Authentication
-  Publishers --> AuditLog
-
-  BookManagement --> Genres
-  BookManagement --> Authors
-  BookManagement --> Languages
-  BookManagement --> Publishers
-  BookManagement --> FileStorage
-  BookManagement --> Authentication
-  BookManagement --> AuditLog
+  cartManagement --> bookManagement
+  cartManagement --> userManagement
 ```
 
-## 5. Commerce And Operations
+## 4. Commerce Dependencies
 
 ```mermaid
 flowchart LR
-  Authentication["AuthenticationModule"]
-  CustomerManagement["CustomerManagementModule"]
-  BookManagement["BookManagementModule"]
-  Order["OrderModule"]
-  CartManagement["CartManagementModule"]
-  OrderManagement["OrderManagementModule"]
-  PaymentGateway["PaymentGatewayModule"]
-  Dashboard["DashboardModule"]
-  SalesStatistics["SalesStatisticsModule"]
-  AuditLog["AuditLogModule"]
-  Email["EmailModule"]
-  EventDispatcher["EventDispatcherModule"]
-  CatalogMetadata["Catalog metadata modules"]
+  order["order"]
+  orderManagement["order-management"]
+  paymentGateway["payment-gateway"]
+  bookManagement["book-management"]
+  customerManagement["customer-management"]
+  userManagement["user-management"]
+  auditLog["audit-log"]
+  dashboard["dashboard"]
 
-  CartManagement --> Authentication
+  order --> bookManagement
+  order --> customerManagement
+  order --> userManagement
+  order --> auditLog
+  order --> dashboard
 
-  Order --> Authentication
-  Order --> CustomerManagement
-  Order --> BookManagement
-  Order --> AuditLog
-  Order --> EventDispatcher
+  orderManagement --> order
+  orderManagement --> customerManagement
+  orderManagement --> auditLog
 
-  OrderManagement --> Authentication
-  OrderManagement --> Order
-  OrderManagement --> CustomerManagement
-  OrderManagement --> AuditLog
-  OrderManagement --> EventDispatcher
-
-  PaymentGateway --> Order
-
-  Dashboard --> Authentication
-  Dashboard --> Order
-  Dashboard --> BookManagement
-  Dashboard --> CustomerManagement
-  Dashboard --> CatalogMetadata
-  Dashboard --> AuditLog
-
-  SalesStatistics --> Authentication
-  SalesStatistics --> Order
-
-  Email --> Authentication
-  Email --> EventDispatcher
-  Email --> Order
+  paymentGateway --> order
 ```
 
-## Notes
+## 5. Operations Dependencies
 
-- Arrows mean "imports or depends on exported providers from".
-- The diagrams hide direct `TypeOrmModule.forFeature(...)` imports because those
-  are persistence wiring, not feature-to-feature dependencies.
-- `AuditLogModule` imports `AuthenticationModule`, while many feature modules
-  also import `AuditLogModule`. That is a real Nest module wiring cycle in the
-  current implementation, so identity and audit concerns should be handled with
-  care during refactors.
+```mermaid
+flowchart LR
+  dashboard["dashboard"]
+  salesStatistics["sales-statistics"]
+  email["email"]
+  order["order"]
+  bookManagement["book-management"]
+  catalogManagement["catalog-management"]
+  customerManagement["customer-management"]
+  userManagement["user-management"]
+  auditLog["audit-log"]
+  authentication["authentication"]
+
+  dashboard --> order
+  dashboard --> bookManagement
+  dashboard --> catalogManagement
+  dashboard --> customerManagement
+  dashboard --> userManagement
+  dashboard --> auditLog
+
+  salesStatistics --> order
+
+  email --> authentication
+  email --> order
+```
+
+## Coupling Notes
+
+These dependencies are worth knowing because they are stronger than simple
+application-service composition:
+
+- `catalog-management <-> book-management`: bidirectional infrastructure entity
+  references for catalog/book relations.
+- `book-management -> order`: book query infrastructure reads order/order-item
+  data for sales-aware book queries.
+- `order -> dashboard`: order query interfaces and implementations import
+  dashboard read models for top catalog statistics.
+- `cart-management -> user-management` and `order -> user-management`: cart and
+  order persistence entities reference user entities.
+
+If these areas are refactored, prefer moving shared read models or persistence
+relations to a neutral boundary instead of adding more cross-folder imports.
