@@ -71,6 +71,13 @@ services:
       - redis_data:/data
     restart: unless-stopped
 
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARED_TUNNEL_TOKEN}
+    depends_on:
+      - nginx
+    restart: unless-stopped
+
 volumes:
   mysql_data:
     name: bookify-ecommerce-bookstore_mysql_data
