@@ -6,7 +6,7 @@ export const uploadBookCoverService = async (file: File) => {
   const formData = new FormData();
   formData.append('file', file);
 
-  const res = await fetch('http://localhost/api/files/upload', {
+  const res = await fetch('/api/files/upload', {
     method: 'POST',
     credentials: 'include',
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
