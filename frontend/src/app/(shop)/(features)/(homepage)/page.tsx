@@ -225,9 +225,9 @@ export default async function Homepage() {
   return (
     <>
       <section className="min-h-screen bg-[#f7faf5] flex items-center px-8 md:px-16 lg:px-24">
-        <div className="max-w-8xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center py-20">
+        <div className="max-w-8xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center py-12 md:py-20">
           <div className="flex flex-col gap-6">
-            <h1 className="text-5xl md:text-6xl font-bold text-[#1a3d2b] leading-tight tracking-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#1a3d2b] leading-tight tracking-tight">
               Literature without{' '}
               <span className="italic text-[#2d6a4f]">borders.</span>
             </h1>
@@ -239,10 +239,10 @@ export default async function Homepage() {
               one language, endless perspectives, infinite worlds to explore.
             </p>
 
-            <div className="flex items-center gap-6 mt-2">
+            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mt-2">
               <Link
                 href="/new-arrivals"
-                className="bg-[#2d6a4f] text-white text-sm font-semibold px-6 py-3 rounded-xl hover:bg-[#1a3d2b] transition-colors"
+                className="bg-[#2d6a4f] text-white text-sm font-semibold px-6 py-3 rounded-xl hover:bg-[#1a3d2b] transition-colors w-full sm:w-auto text-center"
               >
                 Browse New Arrivals
               </Link>
@@ -261,7 +261,7 @@ export default async function Homepage() {
                 <Image
                   src={mainImg}
                   alt="Stack of books"
-                  className="w-full h-[620px] object-cover"
+                  className="w-full h-[300px] sm:h-[400px] md:h-[620px] object-cover"
                 />
               </div>
             </div>
@@ -300,7 +300,7 @@ export default async function Homepage() {
 
       <br />
       <br />
-      <section className="max-w-7xl mx-auto px-6 lg:px-8 mb-32">
+      <section className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 mb-16 md:mb-32">
         <div className="relative rounded-3xl overflow-hidden">
           <Image
             src={bgImg}
@@ -312,8 +312,8 @@ export default async function Homepage() {
 
           <div className="absolute inset-0 bg-black/40"></div>
 
-          <div className="relative z-10 p-12 lg:p-24 max-w-3xl text-white">
-            <h2 className="text-4xl font-bold tracking-tight mb-6">
+          <div className="relative z-10 p-8 md:p-12 lg:p-24 max-w-3xl text-white">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">
               Find Your Next Favorite Book.
             </h2>
             <p className="text-white/80 text-lg mb-10 leading-relaxed">

@@ -191,18 +191,60 @@ export default async function CollectionPage({
 
   return (
     <section className="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container">
-      <div className="max-w-7xl mx-auto px-6 md:px-8 py-14 md:py-16">
-        <header className="mb-12">
-          <h1 className="text-5xl font-extrabold tracking-tighter text-on-surface mb-4 leading-tight">
+      <div className="max-w-7xl mx-auto px-6 md:px-8 py-10 md:py-16">
+        <header className="mb-8 md:mb-12">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tighter text-on-surface mb-4 leading-tight">
             {heading}
           </h1>
-          <p className="text-on-surface-variant max-w-2xl text-lg leading-relaxed">
+          <p className="text-on-surface-variant max-w-2xl text-sm md:text-lg leading-relaxed">
             {description}
           </p>
         </header>
 
-        <div className="flex flex-col md:flex-row gap-12">
-          <aside className="w-full md:w-64 space-y-10 shrink-0">
+        {/* Mobile horizontal scroll filters */}
+        <div className="md:hidden mb-6 -mx-6 overflow-x-auto scrollbar-none">
+          <div className="flex items-center gap-2 px-6 pb-2 min-w-max">
+            <span className="text-[10px] font-bold tracking-[0.08em] uppercase text-on-surface-variant shrink-0 mr-1">
+              Collection
+            </span>
+            {collectionLinks.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="shrink-0 rounded-full border border-[#d6ded4] bg-white px-3.5 py-1.5 text-[12px] font-medium text-on-surface-variant hover:bg-[#f5fbf5] hover:text-primary transition-colors whitespace-nowrap"
+              >
+                {item.label}
+              </Link>
+            ))}
+            <span className="text-[10px] font-bold tracking-[0.08em] uppercase text-on-surface-variant shrink-0 ml-2 mr-1">
+              Genre
+            </span>
+            {sidebarGenres.map((genre) => (
+              <Link
+                key={genre.genreId}
+                href={`/genres/${normalize(genre.genreName)}`}
+                className="shrink-0 rounded-full border border-[#d6ded4] bg-white px-3.5 py-1.5 text-[12px] font-medium text-on-surface-variant hover:bg-[#f5fbf5] hover:text-primary transition-colors whitespace-nowrap"
+              >
+                {genre.genreName}
+              </Link>
+            ))}
+            <span className="text-[10px] font-bold tracking-[0.08em] uppercase text-on-surface-variant shrink-0 ml-2 mr-1">
+              Author
+            </span>
+            {sidebarAuthors.map((author) => (
+              <Link
+                key={author.authorId}
+                href={`/books?q=${encodeURIComponent(author.authorName)}`}
+                className="shrink-0 rounded-full border border-[#d6ded4] bg-white px-3.5 py-1.5 text-[12px] font-medium text-on-surface-variant hover:bg-[#f5fbf5] hover:text-primary transition-colors whitespace-nowrap"
+              >
+                {author.authorName}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-8 md:gap-12">
+          <aside className="hidden md:block w-64 space-y-10 shrink-0">
             <section>
               <h3 className="text-xs font-bold tracking-[0.05em] uppercase text-on-surface mb-6">
                 Collection
@@ -259,7 +301,7 @@ export default async function CollectionPage({
           </aside>
 
           <div className="flex-1">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4 ">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 md:mb-10 gap-4 ">
               <p className="text-sm font-medium text-on-surface-variant">
                 Showing{' '}
                 <span className="text-on-surface font-bold">
@@ -289,14 +331,14 @@ export default async function CollectionPage({
             </div>
 
             {displayBooks.length === 0 ? (
-              <div className="rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-10 text-center">
+              <div className="rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-6 md:p-10 text-center">
                 <p className="text-on-surface-variant">
                   No books found for this collection.
                 </p>
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 md:gap-x-8 gap-y-8 md:gap-y-12">
                   {displayBooks.map((book) => {
                     const primaryCover = book.covers?.find(
                       (cover) => cover.isPrimary,
@@ -346,10 +388,10 @@ export default async function CollectionPage({
                           <span className="text-[10px] font-bold tracking-[0.1em] uppercase text-on-surface-variant block mb-1 truncate">
                             {(book.genres && book.genres[0]) || 'Collection'}
                           </span>
-                          <h2 className="text-lg font-bold tracking-tight text-on-surface group-hover:text-primary transition-colors leading-tight truncate">
+                          <h2 className="text-base sm:text-lg font-bold tracking-tight text-on-surface group-hover:text-primary transition-colors leading-tight truncate">
                             {book.title}
                           </h2>
-                          <p className="text-sm text-on-surface-variant mb-2 truncate">
+                          <p className="text-xs sm:text-sm text-on-surface-variant mb-2 truncate">
                             {book.authors?.join(', ') || 'Unknown author'}
                           </p>
                           <div className="flex flex-col gap-0.5">
@@ -373,7 +415,7 @@ export default async function CollectionPage({
                   })}
                 </div>
 
-                <div className="mt-20 flex justify-center items-center gap-4">
+                <div className="mt-12 md:mt-20 flex justify-center items-center gap-4">
                   <CollectionPagePagination
                     pageSize={pageSize}
                     total={books.length}

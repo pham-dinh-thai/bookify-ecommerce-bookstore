@@ -59,8 +59,8 @@ export function PriceAndQuantity({ price }: { price: string }) {
   const { quantity, canBuy, helperText, decrease, increase } = usePurchase();
 
   return (
-    <div className="flex flex-wrap items-center gap-4">
-      <div className="rounded-xl py-2.5 text-2xl font-extrabold tracking-tight text-[#1B4332]">
+    <div className="flex flex-wrap items-center gap-3 md:gap-4">
+      <div className="rounded-xl py-2.5 text-xl md:text-2xl font-extrabold tracking-tight text-[#1B4332]">
         {price}
       </div>
 
@@ -133,12 +133,12 @@ export function PurchaseButtons({ book }: PurchaseButtonsProps) {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-col sm:flex-row items-center gap-2">
       <button
         type="button"
         onClick={handleBuyNow}
         disabled={!canBuy || submitting}
-        className="rounded-xl bg-[#2d6a4f] px-6 py-2.5 text-sm font-bold text-[#e6ffef] transition-all enabled:hover:bg-[#245740] enabled:active:scale-95 disabled:cursor-not-allowed disabled:bg-[#a7b9ad]"
+        className="w-full sm:w-auto rounded-xl bg-[#2d6a4f] px-6 py-2.5 text-sm font-bold text-[#e6ffef] transition-all enabled:hover:bg-[#245740] enabled:active:scale-95 disabled:cursor-not-allowed disabled:bg-[#a7b9ad]"
       >
         Buy now
       </button>
@@ -147,7 +147,7 @@ export function PurchaseButtons({ book }: PurchaseButtonsProps) {
         onClick={handleAddToCart}
         disabled={!canBuy || submitting}
         aria-label={`Add ${quantity} item${quantity > 1 ? 's' : ''} to cart`}
-        className="inline-flex h-10 items-center justify-center gap-2 rounded-xl px-3 text-sm font-semibold text-[#1b4332] transition-colors enabled:hover:bg-[#eff5ef] disabled:cursor-not-allowed disabled:text-[#9aa59f]"
+        className="w-full sm:w-auto inline-flex h-10 items-center justify-center gap-2 rounded-xl px-3 text-sm font-semibold text-[#1b4332] transition-colors enabled:hover:bg-[#eff5ef] disabled:cursor-not-allowed disabled:text-[#9aa59f]"
       >
         <ShoppingCart size={20} strokeWidth={2} />
         <span>{submitting ? 'Adding' : added ? 'Added' : 'Cart'}</span>

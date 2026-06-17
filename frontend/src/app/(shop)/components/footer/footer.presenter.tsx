@@ -23,9 +23,9 @@ export default function FooterPresenter({
   copyright,
 }: FooterProps) {
   return (
-    <footer className="bg-[#dff0e0] px-16 pt-12 pb-8">
+    <footer className="bg-[#dff0e0] px-6 md:px-16 pt-10 md:pt-12 pb-8">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           <FooterDescription appName={appName} description={description} />
 
           <FooterInformation information={information} infoLinks={infoLinks} />

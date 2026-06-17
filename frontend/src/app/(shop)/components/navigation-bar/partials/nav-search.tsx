@@ -26,7 +26,7 @@ export default function NavSearch({}: NavSearchProps) {
   return (
     <form
       onSubmit={handleSearch}
-      className="flex items-center gap-2 bg-[#eff5ef] rounded-full px-4 h-9 w-[clamp(50px,50%,600px)] min-w-0"
+      className="flex items-center gap-2 bg-[#eff5ef] rounded-full px-3 md:px-4 h-9 w-auto md:w-[clamp(50px,50%,600px)] min-w-0 flex-1 md:flex-initial max-w-[160px] md:max-w-none"
     >
       <Search
         size={14}
@@ -35,10 +35,10 @@ export default function NavSearch({}: NavSearchProps) {
       />
       <input
         type="text"
-        placeholder="Search books by title, author,..."
+        placeholder="Search..."
         value={keyword}
         onChange={(event) => setKeyword(event.target.value)}
-        className="bg-transparent border-none outline-none text-[13px] text-[#2b352f] placeholder:text-[#aab4ad] w-full"
+        className="bg-transparent border-none outline-none text-[13px] text-[#2b352f] placeholder:text-[#aab4ad] w-full hidden md:inline"
       />
     </form>
   );

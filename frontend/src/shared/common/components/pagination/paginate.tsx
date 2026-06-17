@@ -59,13 +59,18 @@ export default function Paginate({
         <div>{`Showing ${fromRecord} to ${toRecord} of ${totalEntries} entries`}</div>
       ) : null}
 
-      <div className="flex items-center flex-wrap gap-2">
-        <PaginateButton onClick={handleFirst} disabled={page === 1}>
+      <div className="flex items-center justify-center flex-wrap gap-1.5 md:gap-2">
+        <PaginateButton
+          onClick={handleFirst}
+          disabled={page === 1}
+          className="hidden md:inline-flex"
+        >
           First
         </PaginateButton>
 
         <PaginateButton onClick={handlePrevious} disabled={page === 1}>
-          Previous
+          <span className="hidden md:inline">Previous</span>
+          <span className="md:hidden">&lt;</span>
         </PaginateButton>
 
         {getPageNumbers().map((pageNumber) => (
@@ -73,7 +78,7 @@ export default function Paginate({
             key={pageNumber}
             type="button"
             onClick={() => onPageChange(pageNumber)}
-            className={`inline-flex h-10 min-w-[38px] items-center justify-center rounded-full border px-3 text-sm font-semibold ${
+            className={`inline-flex h-8 md:h-10 min-w-[30px] md:min-w-[38px] items-center justify-center rounded-full border px-1.5 md:px-3 text-[11px] md:text-sm font-semibold ${
               pageNumber === page
                 ? 'border-[#2d6a4e] bg-[#2d6a4e] text-white'
                 : 'border-[#d6ded4] bg-white text-[#4f6553] hover:bg-[#f5fbf5]'
@@ -84,10 +89,15 @@ export default function Paginate({
         ))}
 
         <PaginateButton onClick={handleNext} disabled={page === totalPages}>
-          Next
+          <span className="hidden md:inline">Next</span>
+          <span className="md:hidden">&gt;</span>
         </PaginateButton>
 
-        <PaginateButton onClick={handleLast} disabled={page === totalPages}>
+        <PaginateButton
+          onClick={handleLast}
+          disabled={page === totalPages}
+          className="hidden md:inline-flex"
+        >
           Last
         </PaginateButton>
       </div>

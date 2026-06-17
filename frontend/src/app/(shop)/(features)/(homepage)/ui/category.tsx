@@ -27,10 +27,10 @@ export default function Category({ genres }: CategoryProps) {
   const [featuredGenre, ...secondaryGenres] = genres;
 
   return (
-    <section className="bg-[#2d6a4f] py-24">
+    <section className="bg-[#2d6a4f] py-16 md:py-24">
       <div className="max-w-8xl mx-auto px-6 lg:px-24">
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-[#f7faf5] tracking-tight mb-4">
+        <div className="mb-10 md:mb-16">
+          <h2 className="text-2xl md:text-3xl font-bold text-[#f7faf5] tracking-tight mb-4">
             {featuredGenre.name.toUpperCase()}
           </h2>
           <p className="text-[#f7faf5]">
@@ -41,7 +41,7 @@ export default function Category({ genres }: CategoryProps) {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
           <Link
             href={`/genres/${encodeURIComponent(featuredGenre.slug)}`}
-            className="bg-white p-8 rounded-[2rem] shadow-sm group cursor-pointer overflow-hidden relative min-h-[400px] md:col-span-2 md:row-span-2"
+            className="bg-white p-6 md:p-8 rounded-[2rem] shadow-sm group cursor-pointer overflow-hidden relative min-h-[300px] md:min-h-[400px] md:col-span-2 md:row-span-2"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent z-[1]" />
 
@@ -78,11 +78,11 @@ export default function Category({ genres }: CategoryProps) {
                   isWide
                     ? 'md:col-span-2 bg-[#d4e3ff] text-[#2d5383]'
                     : 'bg-[#dbe5dd] text-[#1a3d2b]'
-                } p-8 rounded-[2rem] group cursor-pointer relative overflow-hidden transition-transform hover:-translate-y-1`}
+                } p-6 md:p-8 rounded-[2rem] group cursor-pointer relative overflow-hidden transition-transform hover:-translate-y-1`}
               >
                 <div className="flex h-full min-h-[168px] justify-between gap-6">
                   <div>
-                    <h3 className="text-2xl font-bold mb-2">{genre.name}</h3>
+                    <h3 className="text-xl md:text-2xl font-bold mb-2">{genre.name}</h3>
                     <p
                       className={`text-sm max-w-xs ${
                         isWide ? 'text-[#2d5383]/80' : 'text-[#58615b]'

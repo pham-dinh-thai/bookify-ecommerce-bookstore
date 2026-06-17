@@ -9,7 +9,7 @@ export default function AuthHeaderPresenter({
   appName,
 }: AuthHeaderPresenterProps) {
   return (
-    <header className="flex items-center justify-between px-8 py-5">
+    <header className="flex items-center justify-between px-4 md:px-8 py-4 md:py-5">
       <Link
         href="/"
         className="flex items-center gap-1 text-sm font-bold tracking-tight shrink-0 text-[#2d6a4f]"

@@ -2,7 +2,6 @@
 
 import ErrorMessage from '@/shared/common/components/error-message';
 import { Mail, EyeOff, Eye, Lock, LoaderCircle } from 'lucide-react';
-import Link from 'next/link';
 import { useState } from 'react';
 import { useLoginForm } from '../hooks/use-login-form';
 
@@ -61,13 +60,18 @@ export default function LoginForm({}: LoginFormProps) {
 
       <ErrorMessage message={errorMessage} />
 
-      <div className="flex items-center justify-end mb-5">
-        <Link
-          href="/forgot-password"
-          className="text-[12px] font-semibold text-[#2d6a4f] hover:opacity-70"
-        >
-          Forgot password?
-        </Link>
+      <div className="flex items-center mb-5">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={form.remember}
+            onChange={(e) => setForm({ ...form, remember: e.target.checked })}
+            className="w-4 h-4 rounded border-[#e8ede9] text-[#2d6a4f] accent-[#2d6a4f] focus:ring-[#2d6a4f] cursor-pointer"
+          />
+          <span className="text-[12px] font-medium text-[#58615b]">
+            Remember me
+          </span>
+        </label>
       </div>
 
       <button
