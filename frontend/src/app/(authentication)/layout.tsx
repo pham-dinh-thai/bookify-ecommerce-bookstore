@@ -11,7 +11,7 @@ export default function ShopLayout({
     <div className="min-h-screen bg-[#f7faf5] flex flex-col">
       <AuthHeaderContainer />
 
-      <main className="flex-1 flex flex-col items-center justify-center px-6 py-8">
+      <main className="flex-1 flex flex-col items-center justify-center px-4 md:px-6 py-8">
         {children}
       </main>
 

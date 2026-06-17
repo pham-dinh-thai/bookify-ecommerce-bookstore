@@ -13,7 +13,7 @@ export default function ShopLayout({
       <ToastProvider>
         <SessionRestore />
         <NavigationBarContainer />
-        <main className="flex-1 pt-[76px]">{children}</main>
+        <main className="flex-1 pt-[68px] md:pt-[80px]">{children}</main>
         <FooterContainer />
       </ToastProvider>
     </div>

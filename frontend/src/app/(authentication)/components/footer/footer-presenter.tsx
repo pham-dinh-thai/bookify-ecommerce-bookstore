@@ -12,7 +12,7 @@ export default function AuthFooterPresenter({
 }: AuthFooterPresenterProps) {
   return (
     <footer className="flex flex-col items-center gap-3 py-5">
-      <div className="flex gap-4">
+      <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 px-4">
         {links.map((link) => (
           <a
             key={link.label}
