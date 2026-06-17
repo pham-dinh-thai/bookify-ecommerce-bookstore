@@ -107,23 +107,23 @@ export default async function BestSellerPage() {
   const books = await getBestSellerBooks();
 
   return (
-    <section className="bg-[#f7faf5] px-6 pt-16 pb-20 text-[#2b352f] md:px-10 lg:px-16">
+    <section className="bg-[#f7faf5] px-6 pt-10 md:pt-16 pb-16 md:pb-20 text-[#2b352f] md:px-10 lg:px-16">
       <div className="mx-auto max-w-5xl">
-        <div className="mb-16 text-center">
+        <div className="mb-12 md:mb-16 text-center">
           <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.4em] text-[#1b4332]">
             Archive Vol. IV • 2024
           </p>
-          <h1 className="mb-5 text-5xl font-extrabold tracking-tight md:text-7xl">
+          <h1 className="mb-5 text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight">
             The Best Sellers
           </h1>
-          <p className="mx-auto max-w-2xl text-base font-light text-[#58615b] md:text-lg">
+          <p className="mx-auto max-w-2xl text-sm md:text-base lg:text-lg font-light text-[#58615b]">
             A definitive ranking of our top 10 literary acquisitions. Structured
             by intellectual depth and aesthetic permanence.
           </p>
         </div>
 
         {books.length === 0 ? (
-          <div className="rounded-xl border border-[#aab4ad]/20 bg-white p-10 text-center">
+          <div className="rounded-xl border border-[#aab4ad]/20 bg-white p-6 md:p-10 text-center">
             <p className="text-[#58615b]">
               No ranking data is available yet. Please check back soon.
             </p>
@@ -132,13 +132,13 @@ export default async function BestSellerPage() {
           <div className="divide-y divide-[#aab4ad]/20">
             {books.map((book, index) => (
               <Link key={book.id} href={`/books/${book.id}`} className="block">
-                <article className="group -mx-4 flex items-center gap-5 rounded-xl px-4 py-8 transition-all duration-300 hover:bg-[#1b4332]/[0.04] cursor-pointer md:gap-10 md:py-10">
-                  <span className="w-16 shrink-0 text-4xl font-black tabular-nums text-[#1b4332]/15 md:w-24 md:text-6xl">
+                <article className="group -mx-3 md:-mx-4 flex items-center gap-3 md:gap-5 lg:gap-10 rounded-xl px-3 md:px-4 py-6 md:py-10 transition-all duration-300 hover:bg-[#1b4332]/[0.04] cursor-pointer">
+                  <span className="w-10 md:w-16 lg:w-24 shrink-0 text-2xl md:text-4xl lg:text-6xl font-black tabular-nums text-[#1b4332]/15">
                     {String(index + 1).padStart(2, '0')}
                   </span>
 
                   <div
-                    className="w-14 shrink-0 overflow-hidden bg-[#e8f0e9] shadow-sm transition-shadow group-hover:shadow-md md:w-20"
+                    className="w-10 md:w-14 lg:w-20 shrink-0 overflow-hidden bg-[#e8f0e9] shadow-sm transition-shadow group-hover:shadow-md"
                     style={{ aspectRatio: '2/3' }}
                   >
                     <img
@@ -149,27 +149,27 @@ export default async function BestSellerPage() {
                   </div>
 
                   <div className="min-w-0 flex-1">
-                    <h2 className="truncate text-lg font-bold tracking-tight text-[#2b352f] md:text-2xl">
+                    <h2 className="truncate text-sm md:text-lg lg:text-2xl font-bold tracking-tight text-[#2b352f]">
                       {book.title}
                     </h2>
-                    <p className="truncate text-sm font-light italic text-[#58615b] md:text-base">
+                    <p className="truncate text-xs md:text-sm lg:text-base font-light italic text-[#58615b]">
                       {book.author}
                     </p>
-                    <p className="mt-1 text-xs uppercase tracking-[0.12em] text-[#58615b]">
+                    <p className="mt-1 text-[10px] md:text-xs uppercase tracking-[0.12em] text-[#58615b]">
                       {book.publisher}
                     </p>
                   </div>
 
                   <div className="shrink-0 text-right">
-                    <p className="text-base font-extrabold text-[#1b4332] md:text-lg">
+                    <p className="text-sm md:text-base lg:text-lg font-extrabold text-[#1b4332]">
                       {formatVnd(book.price)}
                     </p>
                     {book.discountPercentage > 0 && (
-                      <div className="mb-2 flex flex-wrap items-center justify-end gap-1.5 text-xs">
+                      <div className="mb-2 flex flex-wrap items-center justify-end gap-1.5 text-[10px] md:text-xs">
                         <span className="text-[#8b948f] line-through">
                           {formatVnd(book.originalPrice)}
                         </span>
-                        <span className="rounded-full bg-[#fff3e8] px-2 py-0.5 font-bold text-[#9a5524]">
+                        <span className="rounded-full bg-[#fff3e8] px-1.5 md:px-2 py-0.5 font-bold text-[#9a5524]">
                           -{book.discountPercentage}%
                         </span>
                       </div>
@@ -194,7 +194,7 @@ export default async function BestSellerPage() {
           </div>
         )}
 
-        <div className="mt-16 text-center">
+        <div className="mt-12 md:mt-16 text-center">
           <Link
             href="/books"
             className="inline-flex items-center gap-2 text-sm font-extrabold uppercase tracking-[0.2em] text-[#1b4332]"
