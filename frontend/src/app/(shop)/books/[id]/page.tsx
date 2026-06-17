@@ -208,8 +208,8 @@ export default async function BookDetailPage({
 
   if (!book) {
     return (
-      <section className="flex min-h-screen items-center justify-center bg-[#f7faf5] px-8">
-        <div className="rounded-2xl bg-white p-10 text-center shadow-xl">
+      <section className="flex min-h-screen items-center justify-center bg-[#f7faf5] px-6 md:px-8">
+        <div className="rounded-2xl bg-white p-6 md:p-10 text-center shadow-xl">
           <h1 className="mb-3 text-2xl font-bold text-[#1a3d2b]">
             Book not found
           </h1>
@@ -230,20 +230,20 @@ export default async function BookDetailPage({
   return (
     <BookPurchaseProvider stock={book.quantity} isInStock={book.isInStock}>
       {/* Main detail section */}
-      <section className="bg-[#f7faf5] px-5 pb-12 pt-8 md:px-10">
+      <section className="bg-[#f7faf5] px-5 pb-12 pt-4 md:pt-8 md:px-10">
         <div className="mx-auto max-w-7xl">
-          <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12">
+          <div className="grid grid-cols-1 items-start gap-8 lg:gap-10 lg:grid-cols-12 lg:gap-12">
             {/* Left column: cover + buttons + shipping */}
             <div className="space-y-5 lg:col-span-5 lg:top-20">
               <div className="overflow-hidden bg-white shadow-[0px_18px_36px_rgba(43,53,47,0.18)]">
                 <img
                   src={book.cover}
                   alt={book.title}
-                  className="h-[560px] w-full object-cover object-center transition-transform duration-700 hover:scale-105 md:h-[640px]"
+                  className="h-[400px] w-full object-cover object-center transition-transform duration-700 hover:scale-105 md:h-[640px]"
                 />
               </div>
 
-              <div className="grid gap-3 rounded-xl border border-[#aab4ad]/30 bg-[#e8f0e9] p-5 sm:grid-cols-2">
+              <div className="hidden lg:grid gap-3 rounded-xl border border-[#aab4ad]/30 bg-[#e8f0e9] p-4 md:p-5 sm:grid-cols-2">
                 <div>
                   <p className="text-sm font-bold text-[#2b352f]">
                     Shipping Information
@@ -270,34 +270,31 @@ export default async function BookDetailPage({
             <div className="space-y-6 lg:col-span-7">
               <header className="space-y-4">
                 <div className="space-y-1.5">
-                  <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#3f6754]">
+                  <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-[#3f6754]">
                     Rare Limited Collection
                   </span>
-                  <h1 className="text-4xl font-extrabold leading-snug tracking-tight text-[#2b352f] md:text-[2.75rem]">
+                  <h1 className="text-2xl md:text-4xl font-extrabold leading-snug tracking-tight text-[#2b352f] md:text-[2.75rem]">
                     {book.title}
                   </h1>
                 </div>
               </header>
 
-              <section className="rounded-xl bg-[#eff5ef] p-6">
-                <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.15em] text-[#737d76]">
-                  Technical Specifications
-                </h3>
-                <div className="grid grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-3">
-                  <Meta label="Author" value={book.authors} />
-                  <Meta
-                    label="Publisher"
-                    value={book.publisher || 'Unknown publisher'}
-                  />
-                  <Meta label="Genre" value={book.genres} />
-                  <Meta label="Language" value={book.language} />
-                  <Meta label="ISBN" value={book.isbn} />
-                  <Meta label="Pages" value={String(book.pageCount)} />
-                </div>
-              </section>
+              <PriceAndQuantity price={book.price} />
 
+              <PurchaseButtons
+                book={{
+                  id: book.id,
+                  title: book.title,
+                  author: book.authors,
+                  edition: book.publisher || 'Unknown publisher',
+                  price: book.currentPrice,
+                  stock: book.quantity,
+                  cover: book.cover,
+                  isAvailable: book.isInStock && book.quantity > 0,
+                }}
+              />
 
-              <section className="rounded-xl border border-[#d4dfd7] bg-white p-6">
+              <section className="rounded-xl border border-[#d4dfd7] bg-white p-5 md:p-6">
                 <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.15em] text-[#737d76]">
                   Book Details
                 </h3>
@@ -316,20 +313,22 @@ export default async function BookDetailPage({
                 </div>
               </section>
 
-              <PriceAndQuantity price={book.price} />
-
-              <PurchaseButtons
-                book={{
-                  id: book.id,
-                  title: book.title,
-                  author: book.authors,
-                  edition: book.publisher || 'Unknown publisher',
-                  price: book.currentPrice,
-                  stock: book.quantity,
-                  cover: book.cover,
-                  isAvailable: book.isInStock && book.quantity > 0,
-                }}
-              />
+              <section className="rounded-xl bg-[#eff5ef] p-5 md:p-6">
+                <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.15em] text-[#737d76]">
+                  Technical Specifications
+                </h3>
+                <div className="grid grid-cols-2 gap-x-4 md:gap-x-8 gap-y-3 md:gap-y-4 sm:grid-cols-3">
+                  <Meta label="Author" value={book.authors} />
+                  <Meta
+                    label="Publisher"
+                    value={book.publisher || 'Unknown publisher'}
+                  />
+                  <Meta label="Genre" value={book.genres} />
+                  <Meta label="Language" value={book.language} />
+                  <Meta label="ISBN" value={book.isbn} />
+                  <Meta label="Pages" value={String(book.pageCount)} />
+                </div>
+              </section>
 
               <section className="space-y-2.5">
                 <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-[#737d76]">
@@ -339,6 +338,28 @@ export default async function BookDetailPage({
                   {book.description}
                 </p>
               </section>
+
+              <div className="lg:hidden grid gap-3 rounded-xl border border-[#aab4ad]/30 bg-[#e8f0e9] p-4 sm:grid-cols-2">
+                <div>
+                  <p className="text-sm font-bold text-[#2b352f]">
+                    Shipping Information
+                  </p>
+                  <p className="mt-0.5 text-xs leading-snug text-[#58615b]">
+                    Standard delivery: 3-5 business days.
+                  </p>
+                  <p className="text-xs font-semibold text-[#3f6754]">
+                    Free for orders over 500.000 VNĐ
+                  </p>
+                </div>
+                <div className="border-t border-[#aab4ad]/30 pt-3 sm:border-l sm:border-t-0 sm:pl-5 sm:pt-0">
+                  <p className="text-sm font-bold text-[#2b352f]">
+                    Collector&apos;s Guarantee
+                  </p>
+                  <p className="mt-0.5 text-xs leading-snug text-[#58615b]">
+                    Archival-grade packaging. Authenticity certificate included.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
