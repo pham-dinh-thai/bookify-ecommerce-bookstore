@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
@@ -31,7 +31,15 @@ export function BookSectionHorizontal({
 }: BookSectionProps) {
   const [start, setStart] = useState(0);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const visible = 5;
+  const [visible, setVisible] = useState(5);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    setVisible(mq.matches ? 4 : 5);
+    const handler = (e: MediaQueryListEvent) => setVisible(e.matches ? 4 : 5);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   const prev = () => setStart((s) => Math.max(0, s - 1));
   const next = () => setStart((s) => Math.min(books.length - visible, s + 1));
@@ -39,7 +47,7 @@ export function BookSectionHorizontal({
   const visibleBooks = books.slice(start, start + visible);
 
   return (
-    <section className="relative py-20 px-8 md:px-16 lg:px-24 bg-[#1a3d2b] overflow-hidden">
+    <section className="relative py-12 md:py-20 px-8 md:px-16 lg:px-24 bg-[#1a3d2b] overflow-hidden">
       <div className="max-w-8xl mx-auto relative">
         <div className="flex items-end justify-between mb-12">
           <div>
@@ -48,7 +56,7 @@ export function BookSectionHorizontal({
                 {label}
               </span>
             )}
-            <h2 className="text-4xl font-black text-white tracking-tight">
+            <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
               {title}
             </h2>
           </div>
@@ -66,7 +74,7 @@ export function BookSectionHorizontal({
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-10">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-10">
           {visibleBooks.map((book) => (
             <div
               key={book.id}

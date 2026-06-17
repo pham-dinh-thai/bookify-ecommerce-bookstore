@@ -32,7 +32,7 @@ export function BookSectionHighlight({
   const rest = books.slice(1, 4);
 
   return (
-    <section className="max-w-8xl mx-auto px-8 md:px-16 lg:px-24 py-20 mb-8">
+    <section className="max-w-8xl mx-auto px-8 md:px-16 lg:px-24 py-12 md:py-20 mb-8">
       {/* Header */}
       <div className="flex justify-between items-end mb-12">
         <div>
@@ -41,7 +41,7 @@ export function BookSectionHighlight({
               {label}
             </span>
           )}
-          <h2 className="text-4xl font-bold tracking-tight text-[#1a3d2b]">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-[#1a3d2b]">
             {title}
           </h2>
         </div>
@@ -61,7 +61,7 @@ export function BookSectionHighlight({
         {/* Large Feature Highlight */}
         <Link
           href={`/books/${featured.id}`}
-          className="lg:col-span-7 bg-[#eff5ef] rounded-[2.5rem] p-10 flex flex-col md:flex-row gap-10 items-center group cursor-pointer hover:bg-[#e8f0e9] transition-colors duration-500"
+          className="lg:col-span-7 bg-[#eff5ef] rounded-[2.5rem] p-6 md:p-10 flex flex-col md:flex-row gap-6 md:gap-10 items-center group cursor-pointer hover:bg-[#e8f0e9] transition-colors duration-500"
         >
           <div className="w-full md:w-1/2 aspect-[2/3] overflow-hidden shadow-2xl transition-transform">
             <img
@@ -80,7 +80,7 @@ export function BookSectionHighlight({
                 Penguin Classics
               </span>
             )}
-            <h3 className="text-3xl font-bold mb-4 leading-tight text-[#1a3d2b]">
+            <h3 className="text-2xl md:text-3xl font-bold mb-4 leading-tight text-[#1a3d2b]">
               {featured.title}
             </h3>
             {featured.description ? (
@@ -99,7 +99,7 @@ export function BookSectionHighlight({
             <br />
 
             <div className="flex flex-col gap-1">
-              <span className="text-2xl font-bold text-[#2d6a4f]">
+              <span className="text-xl md:text-2xl font-bold text-[#2d6a4f]">
                 {featured.price}
               </span>
               {featured.originalPrice && (

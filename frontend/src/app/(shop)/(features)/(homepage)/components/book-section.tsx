@@ -40,7 +40,7 @@ export function BookSection({
   const visibleBooks = books.slice(start, start + visible);
 
   return (
-    <section className="relative py-20 px-8 md:px-16 lg:px-24 bg-[#f7faf5] overflow-hidden">
+    <section className="relative py-12 md:py-20 px-8 md:px-16 lg:px-24 bg-[#f7faf5] overflow-hidden">
       <div className="max-w-8xl mx-auto relative">
         <div className="text-center">
           {label && (
@@ -48,7 +48,7 @@ export function BookSection({
               {label}
             </span>
           )}
-          <h2 className="text-4xl font-black tracking-tight text-[#1a3d2b] mb-4">
+          <h2 className="text-3xl md:text-4xl font-black tracking-tight text-[#1a3d2b] mb-4">
             {title}
           </h2>
           <div className="h-1 w-20 bg-[#2d6a4f] mx-auto rounded-full" />
@@ -67,7 +67,7 @@ export function BookSection({
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-10">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-10">
           {visibleBooks.map((book) => (
             <div
               key={book.id}
