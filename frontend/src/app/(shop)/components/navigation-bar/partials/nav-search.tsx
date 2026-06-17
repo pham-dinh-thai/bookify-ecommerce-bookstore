@@ -35,7 +35,7 @@ export default function NavSearch({}: NavSearchProps) {
       {/* Desktop search bar */}
       <form
         onSubmit={handleSearch}
-        className="hidden md:flex items-center gap-2 bg-[#eff5ef] rounded-full px-4 h-9 w-[clamp(50px,50%,600px)] min-w-0 flex-1 max-w-none"
+        className="hidden md:flex items-center gap-2 bg-[#eff5ef] rounded-full px-4 h-9 w-[clamp(50px,50%,600px)] min-w-0 md:flex-initial"
       >
         <Search
           size={14}
