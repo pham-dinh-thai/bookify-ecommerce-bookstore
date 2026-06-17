@@ -45,7 +45,7 @@ export default function AccountSidebar({ activeItem }: AccountSidebarProps) {
         <p className="mb-5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#58615b]/70">
           My Account
         </p>
-        <nav className="flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
+        <nav className="flex gap-2 overflow-x-scroll pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = item.id === activeItem;

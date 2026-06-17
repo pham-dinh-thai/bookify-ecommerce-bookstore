@@ -42,7 +42,7 @@ export function AddToCartButton({ item }: AddToCartButtonProps) {
       type="button"
       disabled={!item.isAvailable || submitting}
       onClick={handleAddToCart}
-      className="mt-2 flex items-center gap-1.5 rounded-lg border border-[#2d6a4f] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.15em] text-[#1b4332] transition-colors hover:bg-[#2d6a4f] hover:text-white"
+      className="mt-1 md:mt-2 flex items-center gap-1 rounded-lg border border-[#2d6a4f] px-2 md:px-3 py-1 md:py-1.5 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.15em] text-[#1b4332] transition-colors hover:bg-[#2d6a4f] hover:text-white"
     >
       <ShoppingCart size={13} strokeWidth={2.5} />
       {submitting
