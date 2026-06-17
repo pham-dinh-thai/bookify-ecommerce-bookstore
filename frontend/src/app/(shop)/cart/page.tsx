@@ -144,7 +144,7 @@ export default function CartPage() {
             <p className="mb-2 text-xs font-bold uppercase tracking-[0.24em] text-[#1b4332]/55">
               Shopping Archive
             </p>
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
               My Cart ({items.length} books)
             </h1>
           </div>
@@ -156,7 +156,7 @@ export default function CartPage() {
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-12">
           <div className="space-y-6 lg:col-span-8">
             {items.length > 0 && (
-              <div className="flex items-center justify-between rounded-lg bg-white p-5 shadow-sm">
+              <div className="flex items-center justify-between rounded-lg bg-white p-4 sm:p-5 shadow-sm">
                 <label className="group flex cursor-pointer items-center gap-3">
                   <span className="relative flex items-center justify-center">
                     <input
@@ -182,7 +182,7 @@ export default function CartPage() {
             )}
 
             {items.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-[#1b4332]/20 bg-white p-10 text-center">
+              <div className="rounded-lg border border-dashed border-[#1b4332]/20 bg-white p-6 sm:p-10 text-center">
                 <ShoppingBag
                   className="mx-auto mb-4 text-[#1b4332]/45"
                   size={38}
@@ -214,7 +214,7 @@ export default function CartPage() {
                   }}
                   className="cursor-pointer rounded-lg border border-[#1b4332]/10 bg-white p-4 shadow-sm transition-colors hover:border-[#1b4332]/30 focus:outline-none focus:ring-2 focus:ring-[#1b4332]/25 sm:p-6"
                 >
-                  <div className="grid grid-cols-[auto_88px_1fr] gap-4 sm:grid-cols-[auto_128px_1fr] sm:gap-6">
+                  <div className="grid grid-cols-[auto_80px_1fr] gap-3 sm:grid-cols-[auto_128px_1fr] sm:gap-6">
                     <div
                       className="flex items-center"
                       onClick={(event) => event.stopPropagation()}
@@ -249,7 +249,7 @@ export default function CartPage() {
                     <div className="min-w-0">
                       <div>
                         <h2
-                          className={`text-lg font-bold leading-tight sm:text-xl ${
+                          className={`text-base sm:text-lg font-bold leading-tight sm:text-xl ${
                             item.isAvailable
                               ? ''
                               : 'text-[#1b4332]/50 line-through'
@@ -258,7 +258,7 @@ export default function CartPage() {
                           {item.title}
                         </h2>
                         <p
-                          className={`mt-1 text-sm ${
+                          className={`mt-1 text-xs sm:text-sm ${
                             item.isAvailable
                               ? 'text-[#1b4332]/60'
                               : 'text-[#1b4332]/40'
@@ -273,8 +273,8 @@ export default function CartPage() {
                         )}
                       </div>
 
-                      <div
-                        className={`mt-6 flex flex-col gap-4 border-t border-[#1b4332]/5 pt-4 sm:flex-row sm:items-center sm:justify-between ${
+                        <div
+                        className={`mt-4 sm:mt-6 flex flex-col gap-3 sm:gap-4 border-t border-[#1b4332]/5 pt-3 sm:pt-4 sm:flex-row sm:items-center sm:justify-between ${
                           item.isAvailable
                             ? ''
                             : 'pointer-events-none opacity-50 grayscale'
@@ -289,11 +289,11 @@ export default function CartPage() {
                             }}
                             disabled={item.quantity <= 1}
                             aria-label={`Decrease ${item.title} quantity`}
-                            className="flex h-9 w-9 items-center justify-center transition-colors enabled:hover:bg-[#e7f2ea] disabled:cursor-not-allowed disabled:text-[#1b4332]/30"
+                            className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center transition-colors enabled:hover:bg-[#e7f2ea] disabled:cursor-not-allowed disabled:text-[#1b4332]/30"
                           >
-                            <Minus size={15} />
+                            <Minus size={14} />
                           </button>
-                          <span className="flex h-9 min-w-11 items-center justify-center border-x border-[#1b4332]/10 px-3 text-sm font-semibold">
+                          <span className="flex h-8 sm:h-9 min-w-10 sm:min-w-11 items-center justify-center border-x border-[#1b4332]/10 px-2 sm:px-3 text-sm font-semibold">
                             {item.quantity}
                           </span>
                           <button
@@ -304,19 +304,19 @@ export default function CartPage() {
                             }}
                             disabled={item.quantity >= item.stock}
                             aria-label={`Increase ${item.title} quantity`}
-                            className="flex h-9 w-9 items-center justify-center transition-colors enabled:hover:bg-[#e7f2ea] disabled:cursor-not-allowed disabled:text-[#1b4332]/30"
+                            className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center transition-colors enabled:hover:bg-[#e7f2ea] disabled:cursor-not-allowed disabled:text-[#1b4332]/30"
                           >
-                            <Plus size={15} />
+                            <Plus size={14} />
                           </button>
                         </div>
-                        <p className="text-lg font-bold">
+                        <p className="text-base sm:text-lg font-bold">
                           {formatCurrency(
                             item.price * Math.max(item.quantity, 1),
                           )}
                         </p>
                       </div>
 
-                      <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+                      <div className="mt-4 sm:mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
                         <button
                           type="button"
                           onClick={(event) => {
@@ -340,18 +340,18 @@ export default function CartPage() {
           </div>
 
           <aside className="space-y-6 lg:col-span-4">
-            <section className="rounded-lg bg-[#1b4332] p-6 text-white shadow-xl sm:p-8">
-              <h2 className="mb-8 border-b border-white/20 pb-4 text-lg font-bold uppercase tracking-[0.18em] sm:text-xl">
+            <section className="rounded-lg bg-[#1b4332] p-5 text-white shadow-xl sm:p-8">
+              <h2 className="mb-6 sm:mb-8 border-b border-white/20 pb-3 sm:pb-4 text-base sm:text-lg font-bold uppercase tracking-[0.18em] sm:text-xl">
                 Acquisition Summary
               </h2>
-              <div className="mb-8 space-y-4">
+              <div className="mb-6 sm:mb-8 space-y-3 sm:space-y-4">
                 <div className="flex justify-between text-white/70">
                   <span>Subtotal</span>
                   <span>{formatCurrency(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-white/70">
-                  <span className="flex items-center gap-2">
-                    Eco-Shipping <Info size={13} />
+                  <span className="flex items-center gap-1.5">
+                    Eco-Shipping <Info size={12} />
                   </span>
                   <span>
                     {subtotal > 0 ? formatCurrency(shippingFee) : '—'}
@@ -362,16 +362,16 @@ export default function CartPage() {
                   <span>{subtotal > 0 ? formatCurrency(taxFee) : '—'}</span>
                 </div>
                 <div className="flex items-baseline justify-between border-t border-white/20 pt-4">
-                  <span className="text-lg font-bold uppercase tracking-[0.16em]">
+                  <span className="text-sm sm:text-lg font-bold uppercase tracking-[0.16em]">
                     Total
                   </span>
-                  <span className="text-3xl font-extrabold">
+                  <span className="text-2xl sm:text-3xl font-extrabold">
                     {formatCurrency(total)}
                   </span>
                 </div>
               </div>
 
-              <div className="mb-8 flex items-center justify-center gap-3 rounded-md border border-white/5 bg-white/10 p-3">
+              <div className="mb-6 sm:mb-8 flex items-center justify-center gap-3 rounded-md border border-white/5 bg-white/10 p-3">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#52b788]">
                   <Check size={15} className="text-[#1b4332]" strokeWidth={3} />
                 </span>
