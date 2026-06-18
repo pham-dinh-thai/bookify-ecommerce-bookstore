@@ -12,7 +12,7 @@ Bookify is an ecommerce bookstore application built as a full-stack monorepo. It
 - **Sales statistics:** Staff reporting supports monthly, quarterly, and yearly filters from the reporting start period, using real order and order item aggregates for revenue, orders, books sold, average order value, payment channels, category revenue, and top-selling books.
 - **Admin management:** Admin pages cover users, genres, publishers, authors, languages, roles, permissions, and system overview metrics.
 - **Order lifecycle:** Orders support placement, confirmation, delivery progress, completion, cancellation, payment status tracking, audit logging, and transactional email notifications.
-- **Seed data:** Database seeds include roles, permissions, catalog data, admin/staff accounts, plus realistic Vietnamese customer and staff users with customer profiles and default addresses for development testing.
+- **Email notifications:** Automated email delivery via Resend for account verification (OTP) and order lifecycle events (confirmation, delivery, completion, cancellation).
 
 ## Tech Stack
 
