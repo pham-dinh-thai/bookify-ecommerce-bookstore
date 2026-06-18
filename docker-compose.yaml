@@ -11,10 +11,6 @@ services:
       - CI=true
       - DB_HOST=mysql_db
       - REDIS_HOST=redis_cache
-      - EMAIL_DELIVERY_MODE=dev-inbox
-      - DEV_EMAIL_INBOX=phamdinhthai2005@gmail.com
-      - EMAIL_FROM=onboarding@resend.dev
-      - EMAIL_REPLY_TO=onboarding@resend.dev
     volumes:
       - ./backend:/app
       - backend_node_modules:/app/node_modules
