@@ -61,5 +61,6 @@ export class UpdateBookDiscountPercentageUseCase {
     });
 
     await this.cacheRepository.delByPattern('books:*');
+    await this.cacheRepository.delByPattern('shop-collections:*');
   }
 }

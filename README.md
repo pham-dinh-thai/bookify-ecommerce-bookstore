@@ -2,6 +2,8 @@
 
 Bookify is an ecommerce bookstore application built as a full-stack monorepo. It includes a NestJS API, a Next.js storefront/admin interface, MySQL persistence, Redis caching, Nginx reverse proxying, and Docker-based local orchestration.
 
+![Homepage](docs/images/homepage.png)
+
 ## Highlighted Features
 
 - **Customer storefront:** Browse best sellers, new arrivals, on-sale books, genre collections, product details, cart, checkout, mock payment, and customer order history.
@@ -14,7 +16,6 @@ Bookify is an ecommerce bookstore application built as a full-stack monorepo. It
 
 ## Tech Stack
 
-- **Architecture:** Domain Driven Design, Clean Architecture, Modular Monolith
 - **Backend:** NestJS, TypeScript, TypeORM, JWT authentication
 - **Frontend:** Next.js, React, TypeScript, Tailwind CSS
 - **Database:** MySQL 8.0

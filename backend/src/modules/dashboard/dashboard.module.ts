@@ -15,6 +15,7 @@ import { AuthorsModule } from '../catalog-management/authors.module';
 import { LanguagesModule } from '../catalog-management/languages.module';
 import { ShopNavigationController } from './presentation/shop-navigation/shop-navigation.controller';
 import { GetShopNavigationUseCase } from './application/dashboard-use-cases/get-shop-navigation/get-shop-navigation.use-case';
+import { SharedCacheModule } from '../../shared/modules/cache/cache.module';
 
 @Module({
   controllers: [
@@ -33,6 +34,7 @@ import { GetShopNavigationUseCase } from './application/dashboard-use-cases/get-
     PublishersModule,
     AuthorsModule,
     LanguagesModule,
+    SharedCacheModule,
   ],
   providers: [
     GetStaffDashboardUseCase,
