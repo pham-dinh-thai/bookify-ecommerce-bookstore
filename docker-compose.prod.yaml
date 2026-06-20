@@ -5,6 +5,12 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
+    user: "node"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
     env_file:
       - ./backend/.env
     environment:
@@ -26,6 +32,12 @@ services:
       args:
         NEXT_PUBLIC_API_URL: /api
         NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-}
+    user: "node"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
     env_file:
       - ./frontend/.env
     environment:
@@ -42,6 +54,8 @@ services:
     image: nginx:alpine
     ports:
       - "80:80"
+    security_opt:
+      - no-new-privileges:true
     ulimits:
       nofile:
         soft: 65535
