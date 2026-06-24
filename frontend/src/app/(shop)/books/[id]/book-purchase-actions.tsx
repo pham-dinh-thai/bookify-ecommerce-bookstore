@@ -4,6 +4,8 @@ import { ShoppingCart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState, createContext, useContext } from 'react';
 import { useToast } from '@/shared/common/toast/toast';
+import AuthModal from '@/shared/auth/components/auth-modal';
+import { getAccessToken } from '@/shared/auth/lib/token-storage';
 import { addCartItem, StoredCartItem } from '../../cart/cart-storage';
 import { addCartItemService } from '../../cart/cart.service';
 import { writeCheckoutItems } from '../../checkout/checkout-storage';
@@ -101,6 +103,7 @@ export function PurchaseButtons({ book }: PurchaseButtonsProps) {
   const toast = useToast();
   const [added, setAdded] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const cartItem: StoredCartItem = {
     ...book,
@@ -126,14 +129,31 @@ export function PurchaseButtons({ book }: PurchaseButtonsProps) {
     }
   };
 
-  const handleBuyNow = async () => {
+  const handleBuyNow = () => {
+    if (!getAccessToken()) {
+      setShowAuthModal(true);
+      return;
+    }
+    setSubmitting(true);
+    writeCheckoutItems([cartItem]);
+    router.push('/checkout');
+  };
+
+  const handleAuthSuccess = () => {
+    setShowAuthModal(false);
     setSubmitting(true);
     writeCheckoutItems([cartItem]);
     router.push('/checkout');
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-center gap-2">
+    <>
+      <AuthModal
+        open={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onSuccess={handleAuthSuccess}
+      />
+      <div className="flex flex-col sm:flex-row items-center gap-2">
       <button
         type="button"
         onClick={handleBuyNow}
@@ -152,6 +172,7 @@ export function PurchaseButtons({ book }: PurchaseButtonsProps) {
         <ShoppingCart size={20} strokeWidth={2} />
         <span>{submitting ? 'Adding' : added ? 'Added' : 'Cart'}</span>
       </button>
-    </div>
+      </div>
+    </>
   );
 }

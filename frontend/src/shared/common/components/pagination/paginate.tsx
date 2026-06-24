@@ -59,7 +59,7 @@ export default function Paginate({
         <div>{`Showing ${fromRecord} to ${toRecord} of ${totalEntries} entries`}</div>
       ) : null}
 
-      <div className="flex items-center justify-center flex-wrap gap-1.5 md:gap-2">
+      <div className="flex items-center justify-center gap-1.5 md:gap-2 overflow-x-auto scrollbar-none">
         <PaginateButton
           onClick={handleFirst}
           disabled={page === 1}

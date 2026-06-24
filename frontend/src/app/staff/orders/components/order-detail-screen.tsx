@@ -66,7 +66,7 @@ const paymentStatusClassName: Record<PaymentStatus, string> = {
 
 const paymentMethodLabel: Record<PaymentMethod, string> = {
   cash_on_delivery: 'Cash On Delivery',
-  e_wallet: 'MoMo',
+  e_wallet: 'VNPay',
 };
 
 const formatVnd = (value: number) =>

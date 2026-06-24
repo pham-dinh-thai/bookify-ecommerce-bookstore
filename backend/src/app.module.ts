@@ -60,6 +60,7 @@ import { SalesStatisticsModule } from './modules/sales-statistics/sales-statisti
     }),
 
     CqrsModule.forRoot(),
+
     AuthorizationModule,
     AuthenticationModule,
     SharedCacheModule,

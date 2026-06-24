@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { Check, Info, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
 import { useToast } from '@/shared/common/toast/toast';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import AuthModal from '@/shared/auth/components/auth-modal';
+import { getAccessToken } from '@/shared/auth/lib/token-storage';
 import { readCartItems, StoredCartItem, writeCartItems } from './cart-storage';
 import { removeCartItemService } from './cart.service';
 import { writeCheckoutItems } from '../checkout/checkout-storage';
@@ -24,6 +26,7 @@ export default function CartPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [checkoutMessage, setCheckoutMessage] = useState<string | null>(null);
   const [removingIds, setRemovingIds] = useState<string[]>([]);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   useEffect(() => {
     let isActive = true;
@@ -131,13 +134,31 @@ export default function CartPage() {
   const checkout = (): void => {
     if (selectedAvailableItems.length === 0) return;
 
+    if (!getAccessToken()) {
+      setShowAuthModal(true);
+      return;
+    }
+
+    writeCheckoutItems(selectedAvailableItems);
+    setCheckoutMessage(null);
+    router.push('/checkout');
+  };
+
+  const handleAuthSuccess = (): void => {
+    setShowAuthModal(false);
     writeCheckoutItems(selectedAvailableItems);
     setCheckoutMessage(null);
     router.push('/checkout');
   };
 
   return (
-    <section className="min-h-screen bg-[#fdfcf8] text-[#1b4332]">
+    <>
+      <AuthModal
+        open={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onSuccess={handleAuthSuccess}
+      />
+      <section className="min-h-screen bg-[#fdfcf8] text-[#1b4332]">
       <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
         <header className="mb-8 flex flex-col gap-3 border-b border-[#1b4332]/10 pb-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -398,5 +419,6 @@ export default function CartPage() {
         </div>
       </div>
     </section>
+    </>
   );
 }

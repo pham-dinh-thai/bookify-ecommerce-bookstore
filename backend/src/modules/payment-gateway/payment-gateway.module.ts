@@ -1,16 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PaymentTransactionTypeOrm } from './infrastructure/entities/payment-transaction.entity';
 import { UnitOfWorkModule } from '../../shared/modules/unit-of-work/unit-of-work.module';
 import { UuidModule } from '../../shared/modules/uuid/uuid.module';
 import { OrderModule } from '../order/order.module';
 import { CompleteMockPaymentUseCase } from './application/use-cases/complete-mock-payment/complete-mock-payment.use-case';
+import { CompleteVnpayPaymentUseCase } from './application/use-cases/complete-vnpay-payment/complete-vnpay-payment.use-case';
 import { CreateMockPaymentUseCase } from './application/use-cases/create-mock-payment/create-mock-payment.use-case';
 import { CreatePaymentUseCase } from './application/use-cases/create-payment/create-payment.use-case';
 import { PAYMENT_GATEWAY_SERVICE } from './domain/payment-gateway.service';
 import { PAYMENT_TRANSACTION_COMMAND_REPOSITORY } from './domain/payment-transaction-aggregate/repositories/payment-transaction-command.repository.interface';
-import { PaymentTransactionTypeOrm } from './infrastructure/entities/payment-transaction.entity';
 import { TypeOrmPaymentTransactionCommandRepository } from './infrastructure/repositories/typeorm-payment-transaction-command.repository';
-import { MomoPaymentGatewayService } from './infrastructure/services/momo-payment-gateway.service';
+import { VnpayPaymentGatewayService } from './infrastructure/services/vnpay-payment-gateway.service';
 import { PaymentController } from './presentation/payment/payment.controller';
 
 @Module({
@@ -25,9 +26,11 @@ import { PaymentController } from './presentation/payment/payment.controller';
     CreatePaymentUseCase,
     CreateMockPaymentUseCase,
     CompleteMockPaymentUseCase,
+    CompleteVnpayPaymentUseCase,
+    VnpayPaymentGatewayService,
     {
       provide: PAYMENT_GATEWAY_SERVICE,
-      useClass: MomoPaymentGatewayService,
+      useExisting: VnpayPaymentGatewayService,
     },
     {
       provide: PAYMENT_TRANSACTION_COMMAND_REPOSITORY,

@@ -45,6 +45,7 @@ export class CreatePaymentUseCase {
   public async execute(
     orderId: string,
     userId: string,
+    origin?: string,
   ): Promise<CreatePaymentResponse> {
     const order: Order = await this.ordersCommandRepository.findOne(orderId);
 
@@ -62,23 +63,20 @@ export class CreatePaymentUseCase {
 
     const amount = Math.round(order.getTotalPrice());
 
-    if (amount < 1000) {
-      throw new BadRequestException(
-        'MoMo payment amount must be at least 1000 VND',
-      );
-    }
+    const baseUrl = origin ?? process.env.VNPAY_RETURN_URL ?? `http://localhost`;
 
     const gatewayPayment = await this.paymentGatewayService.createPayment({
       orderId: order.getOrderCode(),
       amount,
       orderInfo: `Payment for Bookify order ${order.getOrderCode()}`,
+      returnUrl: `${baseUrl}/api/payment/vnpay/return`,
     });
     const transactionId = this.uuidGenerator.generate();
 
     await this.paymentTransactionRepository.create({
       id: transactionId,
       orderId: order.getId(),
-      provider: PaymentProvider.MOMO,
+      provider: PaymentProvider.VNPAY,
       amount,
       providerOrderId: gatewayPayment.providerOrderId,
       payUrl: gatewayPayment.payUrl,

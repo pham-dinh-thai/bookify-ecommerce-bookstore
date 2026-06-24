@@ -2,7 +2,7 @@ import useForm from '@/shared/common/hooks/use-form';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { loginService } from '../services/login.service';
-import { setAccessToken } from '@/shared/auth/lib/token-storage';
+import { signIn } from '@/shared/auth/lib/token-storage';
 import { jwtDecode } from 'jwt-decode';
 import { JwtPayload } from '@/shared/auth/lib/auth';
 
@@ -45,7 +45,7 @@ export function useLoginForm() {
         password: form.password,
       });
 
-      setAccessToken(accessToken);
+      signIn(accessToken);
       router.replace(getPostLoginRedirectPath(accessToken));
       router.refresh();
     } catch (error) {

@@ -81,6 +81,39 @@ export async function placeOrderService(
   return response.json() as Promise<PlaceOrderResponse>;
 }
 
+async function postVnpayPayment(
+  orderId: string,
+  accessToken: string,
+): Promise<Response> {
+  return fetch(`/api/payment/orders/${orderId}/vnpay`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}
+
+export async function createVnpayPaymentService(
+  orderId: string,
+): Promise<CreateMockPaymentResponse> {
+  const accessToken = await getRequiredAccessToken();
+  let response = await postVnpayPayment(orderId, accessToken);
+
+  if (response.status === 401) {
+    const refreshedToken = await refreshAccessToken();
+    if (refreshedToken) {
+      response = await postVnpayPayment(orderId, refreshedToken);
+    }
+  }
+
+  if (!response.ok) {
+    throw new Error(await getErrorMessage(response));
+  }
+
+  return response.json() as Promise<CreateMockPaymentResponse>;
+}
+
 async function postMockPayment(
   orderId: string,
   accessToken: string,

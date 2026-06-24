@@ -1,5 +1,5 @@
+import { getAccessToken, isExplicitLogin } from '@/shared/auth/lib/token-storage';
 import { refreshAccessToken } from '@/shared/auth/lib/refresh';
-import { getAccessToken } from '@/shared/auth/lib/token-storage';
 import type { StoredCartItem } from './cart-storage';
 
 const CART_ENDPOINT = '/api/carts';
@@ -59,21 +59,12 @@ async function deleteCartItem(
   });
 }
 
-async function getRequiredAccessToken(): Promise<string> {
-  const accessToken = getAccessToken() ?? (await refreshAccessToken());
-
-  if (!accessToken) {
-    throw new Error('Please sign in to manage your cart.');
-  }
-
-  return accessToken;
-}
-
 export async function addCartItemService(item: StoredCartItem): Promise<void> {
-  const payload = toAddCartItemPayload(item);
-  let accessToken = await getRequiredAccessToken();
+  if (!getAccessToken() || !isExplicitLogin()) return;
 
-  let response = await postCartItem(payload, accessToken);
+  const payload = toAddCartItemPayload(item);
+
+  let response = await postCartItem(payload, getAccessToken()!);
 
   if (response.status === 401) {
     const refreshedAccessToken = await refreshAccessToken();
@@ -88,8 +79,9 @@ export async function addCartItemService(item: StoredCartItem): Promise<void> {
 }
 
 export async function removeCartItemService(productId: string): Promise<void> {
-  let accessToken = await getRequiredAccessToken();
-  let response = await deleteCartItem(productId, accessToken);
+  if (!getAccessToken() || !isExplicitLogin()) return;
+
+  let response = await deleteCartItem(productId, getAccessToken()!);
 
   if (response.status === 401) {
     const refreshedAccessToken = await refreshAccessToken();

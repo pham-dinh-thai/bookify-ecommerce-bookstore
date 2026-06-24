@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { LanguagesController } from './presentation/languages/languages.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LanguageTypeOrm } from './infrastructure/entities/language.entity';
+import { LanguagesController } from './presentation/languages/languages.controller';
 import { UnitOfWorkModule } from '../../shared/modules/unit-of-work/unit-of-work.module';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { SharedCacheModule } from '../../shared/modules/cache/cache.module';
