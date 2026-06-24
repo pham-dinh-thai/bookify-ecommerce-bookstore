@@ -1,6 +1,5 @@
 import Link from 'next/link';
-import { ChevronDown } from 'lucide-react';
-import CollectionPagePagination from './collection-page-pagination';
+import CollectionPageContent from './collection-page-content';
 
 type ApiBook = {
   id?: string;
@@ -63,14 +62,6 @@ function normalize(text: string): string {
     .replace(/&/g, ' and ')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
-}
-
-function formatCurrency(amount: number): string {
-  return `${Number(amount || 0).toLocaleString('vi-VN')} VNĐ`;
-}
-
-function getDiscountedPrice(originalPrice: number, discountPercentage: number) {
-  return Math.max(0, originalPrice * (1 - discountPercentage / 100));
 }
 
 async function getBooks(
@@ -163,7 +154,6 @@ export default async function CollectionPage({
     getShopNavigation(),
   ]);
   const pageSize = 20;
-  const displayBooks = books.slice(0, pageSize);
   const fallbackGenres = Array.from(
     new Set(books.flatMap((book) => book.genres || [])),
   )
@@ -300,131 +290,7 @@ export default async function CollectionPage({
             </section>
           </aside>
 
-          <div className="flex-1">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 md:mb-10 gap-4 ">
-              <p className="text-sm font-medium text-on-surface-variant">
-                Showing{' '}
-                <span className="text-on-surface font-bold">
-                  {displayBooks.length}
-                </span>{' '}
-                of{' '}
-                <span className="text-on-surface font-bold">
-                  {books.length}
-                </span>{' '}
-                volumes
-              </p>
-              <div className="flex items-center gap-6">
-                <button
-                  type="button"
-                  className="flex items-center gap-2 group cursor-pointer"
-                  aria-label="Sort books by newest"
-                >
-                  <span className="text-xs font-bold tracking-widest uppercase text-on-surface-variant group-hover:text-primary transition-colors">
-                    Sort: Newest
-                  </span>
-                  <ChevronDown
-                    size={16}
-                    className="text-on-surface-variant group-hover:text-primary transition-colors"
-                  />
-                </button>
-              </div>
-            </div>
-
-            {displayBooks.length === 0 ? (
-              <div className="rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-6 md:p-10 text-center">
-                <p className="text-on-surface-variant">
-                  No books found for this collection.
-                </p>
-              </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 md:gap-x-8 gap-y-8 md:gap-y-12">
-                  {displayBooks.map((book) => {
-                    const primaryCover = book.covers?.find(
-                      (cover) => cover.isPrimary,
-                    )?.url;
-                    const fallbackCover = book.covers?.[0]?.url;
-                    const bookId = book.id || book._id;
-                    const originalPrice = Number(book.originalPrice || 0);
-                    const discountPercentage = Number(
-                      book.discountPercentage || 0,
-                    );
-                    const hasDiscount = Boolean(
-                      book.isOnSale ?? discountPercentage > 0,
-                    );
-                    const displayPrice =
-                      book.salePrice ??
-                      (book.currentPrice !== undefined &&
-                      book.currentPrice !== null
-                        ? Number(book.currentPrice)
-                        : hasDiscount
-                          ? getDiscountedPrice(
-                              originalPrice,
-                              discountPercentage,
-                            )
-                          : originalPrice);
-
-                    if (!bookId) return null;
-
-                    return (
-                      <Link
-                        key={bookId}
-                        href={`/books/${bookId}`}
-                        className="group min-w-0"
-                      >
-                        <div className="bg-surface-container-lowest transition-all duration-500 group-hover:-translate-y-2 shadow-[0px_20px_40px_rgba(43,53,47,0.04)] overflow-hidden relative aspect-[3/4]">
-                          <img
-                            alt={`${book.title} cover`}
-                            className="w-full h-full object-cover"
-                            src={
-                              primaryCover ||
-                              fallbackCover ||
-                              'https://via.placeholder.com/300x450?text=No+Cover'
-                            }
-                          />
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
-                        </div>
-                        <div className="mt-4 min-w-0">
-                          <span className="text-[10px] font-bold tracking-[0.1em] uppercase text-on-surface-variant block mb-1 truncate">
-                            {(book.genres && book.genres[0]) || 'Collection'}
-                          </span>
-                          <h2 className="text-base sm:text-lg font-bold tracking-tight text-on-surface group-hover:text-primary transition-colors leading-tight truncate">
-                            {book.title}
-                          </h2>
-                          <p className="text-xs sm:text-sm text-on-surface-variant mb-2 truncate">
-                            {book.authors?.join(', ') || 'Unknown author'}
-                          </p>
-                          <div className="flex flex-col gap-0.5">
-                            <span className="block text-sm font-bold text-on-surface truncate">
-                              {formatCurrency(displayPrice)}
-                            </span>
-                            {hasDiscount && (
-                              <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
-                                <span className="text-on-surface-variant line-through">
-                                  {formatCurrency(originalPrice)}
-                                </span>
-                                <span className="rounded-full bg-[#fff3e8] px-1.5 py-0.5 font-bold text-[#9a5524]">
-                                  -{discountPercentage}%
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-
-                <div className="mt-12 md:mt-20 flex justify-center items-center gap-4">
-                  <CollectionPagePagination
-                    pageSize={pageSize}
-                    total={books.length}
-                    showTotal={false}
-                  />
-                </div>
-              </>
-            )}
-          </div>
+          <CollectionPageContent key={`${type}-${genreSlug || ''}-${searchQuery || ''}`} books={books} pageSize={pageSize} />
         </div>
       </div>
     </section>

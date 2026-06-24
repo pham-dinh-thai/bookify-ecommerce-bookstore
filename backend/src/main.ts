@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
@@ -7,8 +8,9 @@ import { GlobalExceptionFilter } from './shared/domain/exception/global-exceptio
 import { BadRequestDomainException } from './shared/domain/exception/domain.exception';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  app.set('trust proxy', true);
   app.setGlobalPrefix('api');
 
   app.use(cookieParser());

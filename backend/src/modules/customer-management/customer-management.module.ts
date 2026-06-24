@@ -43,7 +43,6 @@ import { UserManagementModule } from '../user-management/user-management.module'
       provide: CUSTOMERS_COMMAND_REPOSITORY,
       useClass: TypeOrmCustomersCommandRepository,
     },
-
     {
       provide: PHONE_NUMBER_EXISTS_CHECKER,
       useClass: PhoneNumberExistsCheckerService,

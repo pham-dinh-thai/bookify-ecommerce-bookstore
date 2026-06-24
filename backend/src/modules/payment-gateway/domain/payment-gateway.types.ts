@@ -2,6 +2,7 @@ export type CreateGatewayPaymentRequest = {
   orderId: string;
   amount: number;
   orderInfo: string;
+  returnUrl: string;
 };
 
 export type CreateGatewayPaymentResponse = {

@@ -16,7 +16,7 @@ export class CustomersController {
   ) {}
 
   @UseGuards(JwtAuthGuard, RoleGuard)
-  @Roles('admin')
+  @Roles('admin', 'staff')
   @Get()
   public async findAll(
     @Query('page') page: string = '1',

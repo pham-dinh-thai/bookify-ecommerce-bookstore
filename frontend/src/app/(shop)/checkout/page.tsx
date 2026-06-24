@@ -23,7 +23,7 @@ import { MyAddress, MyContactInfo } from '../account/types';
 import { clearCheckoutItems, readCheckoutItems } from './checkout-storage';
 import {
   PaymentMethod,
-  createMockPaymentService,
+  createVnpayPaymentService,
   placeOrderService,
 } from './checkout.service';
 
@@ -31,7 +31,7 @@ type AddressMode = 'saved' | 'custom';
 
 const paymentOptions: { value: PaymentMethod; label: string }[] = [
   { value: 'cash_on_delivery', label: 'Cash On Delivery' },
-  { value: 'e_wallet', label: 'MoMo' },
+  { value: 'e_wallet', label: 'VNPay' },
 ];
 
 const phoneNumberRegex = /^(\+84|0)[3-9]\d{8}$/;
@@ -171,7 +171,7 @@ export default function CheckoutPage() {
       clearCheckoutItems();
 
       if (paymentMethod === 'e_wallet') {
-        const payment = await createMockPaymentService(order.orderId);
+        const payment = await createVnpayPaymentService(order.orderId);
         toast?.addToast('Order placed. Redirecting to payment...', 'success');
         window.location.href = payment.payUrl;
         return;

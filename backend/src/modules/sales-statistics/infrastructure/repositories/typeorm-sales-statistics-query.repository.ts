@@ -38,7 +38,8 @@ const categoryColors = [
 
 @Injectable()
 export class TypeOrmSalesStatisticsQueryRepository implements ISalesStatisticsQueryRepository {
-  private static readonly TOP_LIMIT = 5;
+  private static readonly TOP_BOOKS_LIMIT = 10;
+  private static readonly TOP_CATEGORIES_LIMIT = 5;
 
   public constructor(
     @InjectRepository(OrderTypeOrm)
@@ -141,7 +142,7 @@ export class TypeOrmSalesStatisticsQueryRepository implements ISalesStatisticsQu
       .groupBy('genre.id')
       .addGroupBy('genre.name')
       .orderBy('revenue', 'DESC')
-      .limit(TypeOrmSalesStatisticsQueryRepository.TOP_LIMIT + 1)
+      .limit(TypeOrmSalesStatisticsQueryRepository.TOP_CATEGORIES_LIMIT)
       .getRawMany<{
         name: string;
         revenue: string | number;
@@ -179,7 +180,7 @@ export class TypeOrmSalesStatisticsQueryRepository implements ISalesStatisticsQu
       .addGroupBy('book.title')
       .orderBy('units', 'DESC')
       .addOrderBy('revenue', 'DESC')
-      .limit(TypeOrmSalesStatisticsQueryRepository.TOP_LIMIT)
+      .limit(TypeOrmSalesStatisticsQueryRepository.TOP_BOOKS_LIMIT)
       .getRawMany<{
         id: string;
         title: string;
