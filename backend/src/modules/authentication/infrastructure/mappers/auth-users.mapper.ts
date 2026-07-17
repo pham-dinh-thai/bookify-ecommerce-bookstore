@@ -13,6 +13,8 @@ export class AuthUsersMapper {
     userTypeOrm.password = authUser.getPassword();
     userTypeOrm.roleId = authUser.getRoleId();
     userTypeOrm.isActive = authUser.getIsActive();
+    userTypeOrm.provider = authUser.getProvider();
+    userTypeOrm.providerId = authUser.getProviderId();
 
     return userTypeOrm;
   }

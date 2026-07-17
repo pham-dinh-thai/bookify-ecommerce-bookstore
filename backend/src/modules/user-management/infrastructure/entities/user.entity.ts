@@ -25,8 +25,14 @@ export class UserTypeOrm {
   @Column({ type: 'enum', enum: ['male', 'female', 'other'] })
   gender!: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  password!: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  password!: string | null;
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  provider!: string | null;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  providerId!: string | null;
 
   @Column({ type: 'boolean', default: true })
   isActive!: boolean;

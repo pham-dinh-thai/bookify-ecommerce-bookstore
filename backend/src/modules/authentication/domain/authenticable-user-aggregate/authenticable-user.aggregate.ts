@@ -11,10 +11,12 @@ export class AuthenticableUser extends AggregateRoot {
     private firstName: string,
     private lastName: string,
     private email: Email,
-    private gender: Gender = Gender.OTHER, // Customers can choose gender later
-    private password: Password,
+    private gender: Gender = Gender.OTHER,
+    private password: Password | null,
     private isActive: boolean = false,
-    private roleId: string = 'user', // When customer register an account, it will be user
+    private roleId: string = 'user',
+    private readonly provider: string | null = null,
+    private readonly providerId: string | null = null,
   ) {
     super();
   }
@@ -47,14 +49,38 @@ export class AuthenticableUser extends AggregateRoot {
     return user;
   }
 
+  public static registerWithOAuth(
+    id: string,
+    firstName: string,
+    lastName: string,
+    email: string,
+    provider: string,
+    providerId: string,
+  ): AuthenticableUser {
+    return new AuthenticableUser(
+      id,
+      firstName,
+      lastName,
+      Email.create(email),
+      Gender.OTHER,
+      null,
+      true,
+      'user',
+      provider,
+      providerId,
+    );
+  }
+
   public static fromPersistent(
     id: string,
     firstName: string,
     lastName: string,
     email: string,
     gender: Gender,
-    password: string,
+    password: string | null,
     isActive: boolean,
+    provider: string | null = null,
+    providerId: string | null = null,
   ) {
     return new AuthenticableUser(
       id,
@@ -62,9 +88,11 @@ export class AuthenticableUser extends AggregateRoot {
       lastName,
       Email.create(email),
       gender,
-      Password.fromHashed(password),
+      password ? Password.fromHashed(password) : null,
       isActive,
       'user',
+      provider,
+      providerId,
     );
   }
 
@@ -80,8 +108,8 @@ export class AuthenticableUser extends AggregateRoot {
     return this.isActive;
   }
 
-  public getPassword(): string {
-    return this.password.getValue();
+  public getPassword(): string | null {
+    return this.password?.getValue() ?? null;
   }
 
   public getId(): string {
@@ -106,5 +134,13 @@ export class AuthenticableUser extends AggregateRoot {
 
   public getRoleId(): string {
     return this.roleId;
+  }
+
+  public getProvider(): string | null {
+    return this.provider;
+  }
+
+  public getProviderId(): string | null {
+    return this.providerId;
   }
 }

@@ -52,13 +52,15 @@ export class LoginUseCase {
   } | null> {
     const authUser = await this.repository.findByEmail(request.email);
 
-    const password = authUser ? authUser.password : LoginUseCase.DUMMY_HASH;
+    if (!authUser || !authUser.password) {
+      throw new LoginFailedException();
+    }
 
-    const isVerify = await Password.fromHashed(password).compare(
+    const isVerify = await Password.fromHashed(authUser.password).compare(
       request.password,
     );
 
-    if (!isVerify || !authUser) {
+    if (!isVerify) {
       throw new LoginFailedException();
     }
 

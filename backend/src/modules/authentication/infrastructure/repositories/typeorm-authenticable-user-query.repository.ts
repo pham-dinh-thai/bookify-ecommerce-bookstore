@@ -25,6 +25,31 @@ export class TypeOrmAuthenticableUserQueryRepository implements IAuthenticableUs
       authenticableUser.password,
       authenticableUser.roleId,
       authenticableUser.isActive,
+      authenticableUser.provider,
+      authenticableUser.providerId,
+    );
+  }
+
+  public async findByProvider(
+    provider: string,
+    providerId: string,
+  ): Promise<AuthenticableUserReadModel | null> {
+    const authenticableUser = await this.unitOfWork
+      .getManager()
+      .findOne(UserTypeOrm, { where: { provider, providerId } });
+
+    if (!authenticableUser) {
+      return null;
+    }
+
+    return new AuthenticableUserReadModel(
+      authenticableUser.id,
+      authenticableUser.email,
+      authenticableUser.password,
+      authenticableUser.roleId,
+      authenticableUser.isActive,
+      authenticableUser.provider,
+      authenticableUser.providerId,
     );
   }
 }

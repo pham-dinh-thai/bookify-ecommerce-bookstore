@@ -10,7 +10,7 @@ export class UsersMapper {
       lastName: userTypeOrm.lastName,
       email: userTypeOrm.email,
       gender: userTypeOrm.gender,
-      password: userTypeOrm.password,
+      password: userTypeOrm.password!,
       isActive: userTypeOrm.isActive,
       roleId: userTypeOrm.roleId,
     });
