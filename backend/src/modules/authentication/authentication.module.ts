@@ -21,6 +21,8 @@ import { TypeOrmAuthenticableUserCommandRepository } from './infrastructure/repo
 import { RegisterUseCase } from './application/use-cases/register/register.use-case';
 import { LogoutUseCase } from './application/use-cases/logout/logout.use-case';
 import { RefreshTokenUseCase } from './application/use-cases/refresh-token/refresh-token.use-case';
+import { OAuthLoginUseCase } from './application/use-cases/oauth-login/oauth-login.use-case';
+import { GoogleStrategy } from './infrastructure/strategies/google.strategy';
 import { SharedJwtModule } from '../../shared/modules/jwt/shared-jwt.module';
 import { EventDispatcherModule } from '../../shared/modules/event-dispatcher/event-dispatcher.module';
 
@@ -48,10 +50,12 @@ import { EventDispatcherModule } from '../../shared/modules/event-dispatcher/eve
   ],
   providers: [
     JwtStrategy,
+    GoogleStrategy,
     LoginUseCase,
     RegisterUseCase,
     LogoutUseCase,
     RefreshTokenUseCase,
+    OAuthLoginUseCase,
     {
       provide: AUTHENTICABLE_USER_QUERY_REPOSITORY,
       useClass: TypeOrmAuthenticableUserQueryRepository,
