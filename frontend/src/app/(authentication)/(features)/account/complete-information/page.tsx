@@ -1,5 +1,6 @@
 'use client';
 
+import { signIn } from '@/shared/auth/lib/token-storage';
 import useForm from '@/shared/common/hooks/use-form';
 import { ArrowBigRight, MapPin, MapPinIcon, Phone, User } from 'lucide-react';
 import Link from 'next/link';
@@ -58,7 +59,13 @@ function CompleteInformationContent() {
           street: form.street,
         },
       });
-      router.push('/login');
+
+      if (token) {
+        signIn(token);
+        router.push('/');
+      } else {
+        router.push('/login');
+      }
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Failed');
     }
@@ -199,13 +206,27 @@ function CompleteInformationContent() {
         </button>
 
         <p className="text-center text-[13px] text-[#58615b] mt-4">
-          <Link
-            href="/login"
-            className="text-[#2d6a4f] font-bold hover:opacity-70"
-          >
-            I would like to complete information later{' '}
-            <ArrowBigRight size={14} className="inline-block ml-1" /> Login
-          </Link>
+          {token ? (
+            <button
+              type="button"
+              onClick={() => {
+                signIn(token);
+                router.push('/');
+              }}
+              className="text-[#2d6a4f] font-bold hover:opacity-70"
+            >
+              I would like to complete information later{' '}
+              <ArrowBigRight size={14} className="inline-block ml-1" /> Continue
+            </button>
+          ) : (
+            <Link
+              href="/login"
+              className="text-[#2d6a4f] font-bold hover:opacity-70"
+            >
+              I would like to complete information later{' '}
+              <ArrowBigRight size={14} className="inline-block ml-1" /> Login
+            </Link>
+          )}
         </p>
       </form>
     </div>

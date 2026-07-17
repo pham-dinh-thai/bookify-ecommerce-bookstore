@@ -79,12 +79,14 @@ export class CompleteInformationUseCase {
     token: string,
     request: ICompleteInformationRequest,
   ): Promise<void> {
-    const payload = this.jwtService.verify(
-      token,
-      process.env.TEMP_TOKEN_SECRET!,
-    );
+    let payload: Record<string, unknown>;
+    try {
+      payload = this.jwtService.verify(token, process.env.TEMP_TOKEN_SECRET!);
+    } catch {
+      payload = this.jwtService.verify(token, process.env.JWT_SECRET!);
+    }
 
-    const userId = payload.userId as string;
+    const userId = (payload.userId ?? payload.sub) as string;
 
     const isPhoneExists = await this.phoneNumberExistsChecker.exists(
       request.phoneNumber,

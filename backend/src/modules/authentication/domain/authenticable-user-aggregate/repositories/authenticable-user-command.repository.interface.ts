@@ -6,6 +6,17 @@ export interface IAuthenticableUserCommandRepository {
   verifyAndActivateUser(authUser: AuthenticableUser): Promise<void>;
 
   findByEmail(email: string): Promise<AuthenticableUser>;
+
+  findByProvider(
+    provider: string,
+    providerId: string,
+  ): Promise<AuthenticableUser | null>;
+
+  linkProvider(
+    userId: string,
+    provider: string,
+    providerId: string,
+  ): Promise<void>;
 }
 
 export const AUTHENTICABLE_USER_COMMAND_REPOSITORY =

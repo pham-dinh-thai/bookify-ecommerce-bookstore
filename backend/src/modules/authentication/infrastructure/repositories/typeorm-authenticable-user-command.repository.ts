@@ -36,6 +36,8 @@ export class TypeOrmAuthenticableUserCommandRepository implements IAuthenticable
       userTypeOrm.gender as Gender,
       userTypeOrm.password,
       userTypeOrm.isActive,
+      userTypeOrm.provider,
+      userTypeOrm.providerId,
     );
   }
 
@@ -56,5 +58,40 @@ export class TypeOrmAuthenticableUserCommandRepository implements IAuthenticable
     userTypeOrm.isActive = true;
 
     await this.unitOfWork.getManager().save(UserTypeOrm, userTypeOrm);
+  }
+
+  public async findByProvider(
+    provider: string,
+    providerId: string,
+  ): Promise<AuthenticableUser | null> {
+    const userTypeOrm = await this.unitOfWork.getManager().findOne(UserTypeOrm, {
+      where: { provider, providerId },
+    });
+
+    if (!userTypeOrm) {
+      return null;
+    }
+
+    return AuthenticableUser.fromPersistent(
+      userTypeOrm.id,
+      userTypeOrm.firstName,
+      userTypeOrm.lastName,
+      userTypeOrm.email,
+      userTypeOrm.gender as Gender,
+      userTypeOrm.password,
+      userTypeOrm.isActive,
+      userTypeOrm.provider,
+      userTypeOrm.providerId,
+    );
+  }
+
+  public async linkProvider(
+    userId: string,
+    provider: string,
+    providerId: string,
+  ): Promise<void> {
+    await this.unitOfWork
+      .getManager()
+      .update(UserTypeOrm, { id: userId }, { provider, providerId });
   }
 }
