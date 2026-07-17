@@ -33,12 +33,14 @@ export class VerifyEmailUseCase {
       throw new InvalidOtpException();
     }
 
-    const user: AuthenticableUser =
+    const authUser: AuthenticableUser =
       await this.authenticableUserCommandRepository.findByEmail(email);
 
-    user.activate();
+    authUser.activate();
 
-    await this.authenticableUserCommandRepository.activateUser(user.getId());
+    await this.authenticableUserCommandRepository.verifyAndActivateUser(
+      authUser,
+    );
 
     await this.cacheRepository.del(`email_verification_otp:${email}`);
   }

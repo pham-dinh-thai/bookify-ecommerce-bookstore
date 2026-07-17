@@ -3,7 +3,7 @@ import { AuthenticableUser } from '../authenticable-user.aggregate';
 export interface IAuthenticableUserCommandRepository {
   register(authUser: AuthenticableUser): Promise<void>;
 
-  activateUser(userId: string): Promise<void>;
+  verifyAndActivateUser(authUser: AuthenticableUser): Promise<void>;
 
   findByEmail(email: string): Promise<AuthenticableUser>;
 }
