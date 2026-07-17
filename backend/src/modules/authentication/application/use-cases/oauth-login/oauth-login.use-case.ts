@@ -61,28 +61,42 @@ export class OAuthLoginUseCase {
     );
 
     if (!authUser) {
-      isNewUser = true;
-
-      const newUser = AuthenticableUser.registerWithOAuth(
-        this.uuid.generate(),
-        request.firstName,
-        request.lastName,
+      const existingUser = await this.authenticableUserQueryRepository.findByEmail(
         request.email,
-        request.provider,
-        request.providerId,
       );
 
-      await this.authenticableUserCommandRepository.register(newUser);
+      if (existingUser) {
+        await this.authenticableUserCommandRepository.linkProvider(
+          existingUser.id,
+          request.provider,
+          request.providerId,
+        );
 
-      authUser = new AuthenticableUserReadModel(
-        newUser.getId(),
-        newUser.getEmail(),
-        newUser.getPassword(),
-        newUser.getRoleId(),
-        newUser.getIsActive(),
-        newUser.getProvider(),
-        newUser.getProviderId(),
-      );
+        authUser = existingUser;
+      } else {
+        isNewUser = true;
+
+        const newUser = AuthenticableUser.registerWithOAuth(
+          this.uuid.generate(),
+          request.firstName,
+          request.lastName,
+          request.email,
+          request.provider,
+          request.providerId,
+        );
+
+        await this.authenticableUserCommandRepository.register(newUser);
+
+        authUser = new AuthenticableUserReadModel(
+          newUser.getId(),
+          newUser.getEmail(),
+          newUser.getPassword(),
+          newUser.getRoleId(),
+          newUser.getIsActive(),
+          newUser.getProvider(),
+          newUser.getProviderId(),
+        );
+      }
     }
 
     const accessTokenId = this.uuid.generate();

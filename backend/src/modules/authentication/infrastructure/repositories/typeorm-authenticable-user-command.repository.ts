@@ -84,4 +84,14 @@ export class TypeOrmAuthenticableUserCommandRepository implements IAuthenticable
       userTypeOrm.providerId,
     );
   }
+
+  public async linkProvider(
+    userId: string,
+    provider: string,
+    providerId: string,
+  ): Promise<void> {
+    await this.unitOfWork
+      .getManager()
+      .update(UserTypeOrm, { id: userId }, { provider, providerId });
+  }
 }

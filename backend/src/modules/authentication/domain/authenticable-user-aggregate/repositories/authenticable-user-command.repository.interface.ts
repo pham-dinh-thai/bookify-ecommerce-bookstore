@@ -11,6 +11,12 @@ export interface IAuthenticableUserCommandRepository {
     provider: string,
     providerId: string,
   ): Promise<AuthenticableUser | null>;
+
+  linkProvider(
+    userId: string,
+    provider: string,
+    providerId: string,
+  ): Promise<void>;
 }
 
 export const AUTHENTICABLE_USER_COMMAND_REPOSITORY =
