@@ -34,6 +34,9 @@ export class UserTypeOrm {
   @Column({ type: 'varchar', length: 50 })
   roleId!: string;
 
+  @Column({ type: 'timestamp', nullable: true })
+  emailVerifiedAt!: Date | null;
+
   @ManyToOne(() => RoleTypeOrm)
   @JoinColumn({ name: 'roleId' })
   role!: RoleTypeOrm;

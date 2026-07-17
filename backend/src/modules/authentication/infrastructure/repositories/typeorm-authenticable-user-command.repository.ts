@@ -18,36 +18,43 @@ export class TypeOrmAuthenticableUserCommandRepository implements IAuthenticable
   }
 
   public async findByEmail(email: string): Promise<AuthenticableUser> {
-    const user = await this.unitOfWork.getManager().findOne(UserTypeOrm, {
-      where: { email },
-    });
+    const userTypeOrm = await this.unitOfWork
+      .getManager()
+      .findOne(UserTypeOrm, {
+        where: { email },
+      });
 
-    if (!user) {
+    if (!userTypeOrm) {
       throw new UserNotFoundException();
     }
 
     return AuthenticableUser.fromPersistent(
-      user.id,
-      user.firstName,
-      user.lastName,
-      user.email,
-      user.gender as Gender,
-      user.password,
-      user.isActive,
+      userTypeOrm.id,
+      userTypeOrm.firstName,
+      userTypeOrm.lastName,
+      userTypeOrm.email,
+      userTypeOrm.gender as Gender,
+      userTypeOrm.password,
+      userTypeOrm.isActive,
     );
   }
 
-  public async activateUser(userId: string): Promise<void> {
-    const user = await this.unitOfWork.getManager().findOne(UserTypeOrm, {
-      where: { id: userId },
-    });
+  public async verifyAndActivateUser(
+    authUser: AuthenticableUser,
+  ): Promise<void> {
+    const userTypeOrm = await this.unitOfWork
+      .getManager()
+      .findOne(UserTypeOrm, {
+        where: { id: authUser.getId() },
+      });
 
-    if (!user) {
+    if (!userTypeOrm) {
       throw new UserNotFoundException();
     }
 
-    user.isActive = true;
+    userTypeOrm.emailVerifiedAt = new Date();
+    userTypeOrm.isActive = true;
 
-    await this.unitOfWork.getManager().save(UserTypeOrm, user);
+    await this.unitOfWork.getManager().save(UserTypeOrm, userTypeOrm);
   }
 }
