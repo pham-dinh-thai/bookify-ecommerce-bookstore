@@ -53,12 +53,16 @@ export class OAuthLoginUseCase {
   public async execute(
     request: IOAuthLoginRequest,
   ): Promise<OauthLoginResponse | null> {
+    let isNewUser = false;
+
     let authUser = await this.authenticableUserQueryRepository.findByProvider(
       request.provider,
       request.providerId,
     );
 
     if (!authUser) {
+      isNewUser = true;
+
       const newUser = AuthenticableUser.registerWithOAuth(
         this.uuid.generate(),
         request.firstName,
@@ -114,6 +118,11 @@ export class OAuthLoginUseCase {
       7 * 24 * 60 * 60 * 1000,
     );
 
-    return new OauthLoginResponse(accessToken, refreshToken, authUser.roleId);
+    return new OauthLoginResponse(
+      accessToken,
+      refreshToken,
+      authUser.roleId,
+      isNewUser,
+    );
   }
 }

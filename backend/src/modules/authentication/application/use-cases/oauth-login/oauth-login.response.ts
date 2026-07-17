@@ -3,5 +3,6 @@ export class OauthLoginResponse {
     public readonly accessToken: string,
     public readonly refreshToken: string,
     public readonly roleId: string,
+    public readonly isNewUser: boolean,
   ) {}
 }

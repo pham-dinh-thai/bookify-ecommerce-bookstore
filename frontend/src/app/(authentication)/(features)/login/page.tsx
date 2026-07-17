@@ -1,4 +1,5 @@
 import DontHaveAnAccount from './ui/dont-have-an-account';
+import GoogleLoginButton from './ui/google-login-button';
 import LoginForm from './ui/login-form';
 import LoginHeader from './ui/login-header';
 
@@ -14,6 +15,16 @@ export default function Login({}: LoginProps) {
         <LoginHeader />
 
         <LoginForm />
+
+        <div className="flex items-center gap-3 my-5">
+          <div className="flex-1 h-px bg-[#e8ede9]" />
+          <span className="text-[11px] font-medium text-[#aab4ad] uppercase tracking-wider">
+            or
+          </span>
+          <div className="flex-1 h-px bg-[#e8ede9]" />
+        </div>
+
+        <GoogleLoginButton />
 
         <DontHaveAnAccount path="/register" />
       </div>

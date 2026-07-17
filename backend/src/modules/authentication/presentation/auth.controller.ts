@@ -110,7 +110,7 @@ export class AuthController {
       return response.status(401).json({ message: 'OAuth login failed' });
     }
 
-    const { accessToken, refreshToken, roleId } = result;
+    const { accessToken, refreshToken, roleId, isNewUser } = result;
 
     response.cookie('refresh_token', refreshToken, {
       httpOnly: true,
@@ -126,7 +126,16 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return response.json({ accessToken });
+    const frontendUrl =
+      process.env.FRONTEND_URL || 'http://localhost:3000';
+
+    if (isNewUser) {
+      return response.redirect(
+        `${frontendUrl}/account/complete-information?token=${accessToken}`,
+      );
+    }
+
+    return response.redirect(`${frontendUrl}/?token=${accessToken}`);
   }
 
   @Post('/refresh')
