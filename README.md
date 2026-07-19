@@ -7,6 +7,7 @@ Bookify is an ecommerce bookstore application built as a full-stack monorepo. It
 ## Highlighted Features
 
 - **Customer storefront:** Browse best sellers, new arrivals, on-sale books, genre collections, product details, cart, checkout, mock payment, and customer order history.
+- **Authentication:** Email/password login, JWT refresh sessions, Google OAuth login, and profile completion for newly created OAuth users.
 - **Popularity-aware navigation:** Homepage category cards and navbar genre links prioritize the most popular genres from recent sales, with catalog fallback when sales data is not available.
 - **Staff operations:** Staff can manage books, import stock, handle orders, inspect customer records, and monitor operational dashboard metrics.
 - **Sales statistics:** Staff reporting supports monthly, quarterly, and yearly filters from the reporting start period, using real order and order item aggregates for revenue, orders, books sold, average order value, payment channels, category revenue, and top-selling books.
@@ -16,7 +17,7 @@ Bookify is an ecommerce bookstore application built as a full-stack monorepo. It
 
 ## Tech Stack
 
-- **Backend:** NestJS, TypeScript, TypeORM, JWT authentication
+- **Backend:** NestJS, TypeScript, TypeORM, JWT authentication, Passport Google OAuth
 - **Frontend:** Next.js, React, TypeScript, Tailwind CSS
 - **Database:** MySQL 8.0
 - **Cache:** Redis
@@ -126,12 +127,25 @@ EMAIL_DELIVERY_MODE=dev-inbox
 DEV_EMAIL_INBOX=your_resend_account_email
 EMAIL_FROM=onboarding@resend.dev
 EMAIL_REPLY_TO=onboarding@resend.dev
+
+FRONTEND_URL=http://localhost
+
+VNPAY_TMN_CODE=your_vnpay_tmn_code
+VNPAY_HASH_SECRET=your_vnpay_hash_secret
+VNPAY_ENDPOINT=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+VNPAY_RETURN_URL=http://localhost/api/payment/vnpay/return
+MOCK_PAYMENT_URL=http://localhost/payment/mock
+
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_CALLBACK_URL=http://localhost/api/auth/google/callback
 ```
 
 ```env
 # frontend/.env
 NEXT_PUBLIC_API_URL=/api
 API_INTERNAL_URL=http://backend_app:3000/api
+NEXT_PUBLIC_APP_URL=http://localhost
 ```
 
 For local development without Docker, replace `mysql_db`, `redis_cache`, and `backend_app` with localhost-based addresses that match your running services.
@@ -191,10 +205,18 @@ pnpm dev
 When running the backend locally on port `3001`, set:
 
 ```env
+# backend/.env
+FRONTEND_URL=http://localhost:3000
+GOOGLE_CALLBACK_URL=http://localhost:3001/api/auth/google/callback
+VNPAY_RETURN_URL=http://localhost:3001/api/payment/vnpay/return
+
 # frontend/.env
 NEXT_PUBLIC_API_URL=http://localhost:3001/api
 API_INTERNAL_URL=http://localhost:3001/api
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
+
+For Google OAuth, register the matching callback URL in Google Cloud Console. In Docker/Nginx development the redirect URI is usually `http://localhost/api/auth/google/callback`; in local backend development on port `3001`, use `http://localhost:3001/api/auth/google/callback`.
 
 Then open http://localhost:3000.
 

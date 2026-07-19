@@ -29,6 +29,10 @@ The frontend lives under `frontend/src/app` and is split by user surface:
 Browser-side frontend calls use relative `/api/...` endpoints. Server-side
 fetches can use `API_INTERNAL_URL` to call the backend container directly in
 Docker, while `NEXT_PUBLIC_API_URL` is used for public API base selection.
+The login page can also redirect the browser to `/api/auth/google` for Google
+OAuth. The backend callback sets session cookies and redirects back to the
+frontend with a short-lived access token query parameter, which the frontend
+stores and then removes from the URL.
 
 The backend is a NestJS application with a global `/api` prefix. `main.ts`
 configures cookie parsing, Helmet, validation with a global `ValidationPipe`,
@@ -57,8 +61,10 @@ cache, JWT, and event dispatcher.
 ## Backend Module Responsibilities
 
 `AuthenticationModule` handles register, login, logout, refresh token, JWT
-strategy wiring, token signing, refresh token hashing, cache usage, and user
-registration events.
+strategy wiring, Google OAuth login, token signing, refresh token hashing,
+cache usage, and user registration events. OAuth login links an existing user
+by email when possible; otherwise it creates an active user account and
+sends the user through profile completion.
 
 `AuthorizationModule` groups `RolesModule`, `PermissionsModule`, and
 `RolePermissionModule`. These modules manage role and permission records,
@@ -87,7 +93,7 @@ order details, stock checks through book dependencies, and order domain events.
 orders as paid.
 
 `PaymentGatewayModule` owns payment transaction persistence and payment
-creation. It supports a mock flow and a MoMo gateway adapter.
+creation. It supports a mock flow and a VNPay gateway adapter.
 
 `MyAccountModule` composes user and customer capabilities for self-service
 profile, contact, password, email, and address operations.
@@ -138,8 +144,14 @@ Uploaded files are written by the backend to `/storage/uploads`, mounted from
 Transactional email is sent through Resend. Development can redirect all email
 to a configured inbox through `EMAIL_DELIVERY_MODE=dev-inbox`.
 
-Payment creation uses the MoMo test gateway when the provider flow is used, and
-the application also includes mock payment endpoints for local checkout flows.
+Google OAuth is handled through Passport's Google strategy. The backend uses
+`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `GOOGLE_CALLBACK_URL`; the
+callback URL must include the `/api/auth/google/callback` route exposed by the
+backend.
+
+Payment creation uses the VNPay sandbox gateway when the provider flow is used,
+and the application also includes mock payment endpoints for local checkout
+flows.
 
 The frontend calls `https://provinces.open-api.vn` directly for province and
 district address lookup.

@@ -96,7 +96,7 @@ function MockPaymentContent() {
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/75">
-                  Mock MoMo Wallet
+                  Mock VNPay Gateway
                 </p>
                 <h1 className="mt-2 text-3xl font-extrabold">Scan QR to Pay</h1>
               </div>
@@ -120,7 +120,7 @@ function MockPaymentContent() {
             <div className="flex flex-col justify-center">
               <div className="space-y-4">
                 <InfoRow label="Merchant" value="Bookify Bookstore" />
-                <InfoRow label="Payment method" value="MoMo QR" />
+                <InfoRow label="Payment method" value="VNPay QR" />
                 <InfoRow label="Amount" value="Mock checkout amount" strong />
                 <div className="rounded-lg bg-[#f7faf5] p-4">
                   <div className="flex items-start justify-between gap-3">
@@ -180,7 +180,7 @@ function MockPaymentContent() {
           <div className="mt-5 space-y-4">
             <Instruction
               icon={<Smartphone size={18} strokeWidth={2.2} />}
-              title="Open MoMo"
+              title="Open VNPay"
               text="Use the scan feature in your wallet app."
             />
             <Instruction
