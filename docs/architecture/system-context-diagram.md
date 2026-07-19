@@ -20,7 +20,8 @@ flowchart LR
   MySQL[("MySQL 8.0\nbusiness data")]
   Redis[("Redis\ncache and token state")]
   Resend["Resend Email API"]
-  Momo["MoMo payment gateway\nplus mock payment flow"]
+  Google["Google OAuth 2.0"]
+  Vnpay["VNPay payment gateway\nplus mock payment flow"]
   Provinces["Vietnam Provinces API\nprovince and district data"]
 
   Customer -->|storefront and account| Nginx
@@ -39,5 +40,6 @@ flowchart LR
   Backend -->|cache repository and Keyv store| Redis
   Backend -->|book cover upload/delete| Uploads
   Backend -->|transactional email| Resend
-  Backend -->|create provider payment| Momo
+  Backend -->|OAuth redirect and profile callback| Google
+  Backend -->|create provider payment| Vnpay
 ```

@@ -18,7 +18,7 @@ import {
 } from '../../domain/repositories/sales-statistics-query.repository.interface';
 
 const paymentMethodLabel: Record<PaymentMethod, string> = {
-  [PaymentMethod.E_WALLET]: 'MoMo',
+  [PaymentMethod.E_WALLET]: 'VNPay',
   [PaymentMethod.CASH_ON_DELIVERY]: 'Cash On Delivery',
 };
 

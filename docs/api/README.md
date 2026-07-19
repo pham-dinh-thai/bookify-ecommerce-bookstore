@@ -22,6 +22,8 @@ Auth legend:
 | POST | `/api/auth/login` | Public | Logs in with credentials, returns an access token, and sets refresh/user-role cookies. |
 | POST | `/api/auth/register` | Public | Registers a new account and returns a temporary token for account completion/verification flow. |
 | POST | `/api/auth/logout` | Auth | Invalidates the current session and clears auth cookies. |
+| GET | `/api/auth/google` | Public | Starts the Google OAuth login redirect using the configured Google strategy. |
+| GET | `/api/auth/google/callback` | Public | Handles the Google OAuth callback, sets session cookies, and redirects existing users to `/?token=...` or new users to `/account/complete-information?token=...`. |
 | POST | `/api/auth/refresh` | Public | Uses the `refresh_token` cookie to issue a fresh access token. |
 | PATCH | `/api/email/:email/verify` | Public | Verifies an email address using the verification payload in the request body. |
 
@@ -129,7 +131,7 @@ Auth legend:
 | GET | `/api/orders/:id` | Admin/Staff | Returns one order detail for staff/admin. |
 | PATCH | `/api/orders/:id/status` | Admin/Staff | Updates an order lifecycle status. |
 | PATCH | `/api/orders/:id/payment-status/paid` | Admin/Staff | Marks an order payment status as paid. |
-| POST | `/api/payment/orders/:orderId/momo` | Auth | Creates a MoMo payment transaction for an order. |
+| POST | `/api/payment/orders/:orderId/vnpay` | Auth | Creates a VNPay payment transaction for an order. |
 | POST | `/api/payment/orders/:orderId/mock` | Auth | Creates a mock payment transaction for local checkout flow. |
 | POST | `/api/payment/mock/:transactionId/succeed` | Auth | Marks a mock payment transaction as succeeded for the current user. |
 | POST | `/api/payment/mock/:transactionId/fail` | Auth | Marks a mock payment transaction as failed for the current user. |
