@@ -1,9 +1,11 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-google-oauth20';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
+  private readonly logger = new Logger(GoogleStrategy.name);
+
   constructor() {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID!,
@@ -11,6 +13,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       callbackURL: process.env.GOOGLE_CALLBACK_URL!,
       scope: ['email', 'profile'],
     });
+
+    this.logger.log(`Google OAuth initialized with callbackURL: ${process.env.GOOGLE_CALLBACK_URL}`);
   }
 
   async validate(

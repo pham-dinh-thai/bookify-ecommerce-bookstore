@@ -17,6 +17,7 @@ import { LogoutUseCase } from '../application/use-cases/logout/logout.use-case';
 import { type Request, type Response } from 'express';
 import { RefreshTokenUseCase } from '../application/use-cases/refresh-token/refresh-token.use-case';
 import { OAuthLoginUseCase } from '../application/use-cases/oauth-login/oauth-login.use-case';
+import { GoogleOAuthCallbackGuard } from './google-oauth-callback.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -91,7 +92,7 @@ export class AuthController {
   public async googleAuth(): Promise<void> {}
 
   @Get('google/callback')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleOAuthCallbackGuard)
   public async googleAuthCallback(
     @Req() request: Request,
     @Res() response: Response,
@@ -126,8 +127,7 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    const frontendUrl =
-      process.env.FRONTEND_URL || 'http://localhost:3000';
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost';
 
     if (isNewUser) {
       return response.redirect(
