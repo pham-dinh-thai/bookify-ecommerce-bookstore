@@ -16,6 +16,7 @@ import { CompleteVnpayPaymentUseCase } from '../../application/use-cases/complet
 import { CreateMockPaymentUseCase } from '../../application/use-cases/create-mock-payment/create-mock-payment.use-case';
 import { CreatePaymentResponse } from '../../application/use-cases/create-payment/create-payment.response';
 import { CreatePaymentUseCase } from '../../application/use-cases/create-payment/create-payment.use-case';
+import { RetryPaymentUseCase } from '../../application/use-cases/retry-payment/retry-payment.use-case';
 import { VnpayPaymentGatewayService } from '../../infrastructure/services/vnpay-payment-gateway.service';
 
 @Controller('payment')
@@ -25,6 +26,7 @@ export class PaymentController {
     private readonly createMockPaymentUseCase: CreateMockPaymentUseCase,
     private readonly completeMockPaymentUseCase: CompleteMockPaymentUseCase,
     private readonly completeVnpayPaymentUseCase: CompleteVnpayPaymentUseCase,
+    private readonly retryPaymentUseCase: RetryPaymentUseCase,
     private readonly vnpayPaymentGatewayService: VnpayPaymentGatewayService,
   ) {}
 
@@ -38,6 +40,18 @@ export class PaymentController {
     const proto = req.headers['x-forwarded-proto'] || req.protocol;
     const origin = `${proto}://${req.get('host')}`;
     return this.createPaymentUseCase.execute(orderId, userId, origin);
+  }
+
+  @Post('orders/:orderId/vnpay/retry')
+  @UseGuards(JwtAuthGuard)
+  public async retryVnpayPayment(
+    @Param('orderId') orderId: string,
+    @CurrentUser('userId') userId: string,
+    @Req() req: Request,
+  ): Promise<CreatePaymentResponse> {
+    const proto = req.headers['x-forwarded-proto'] || req.protocol;
+    const origin = `${proto}://${req.get('host')}`;
+    return this.retryPaymentUseCase.execute(orderId, userId, origin);
   }
 
   @Post('orders/:orderId/mock')
@@ -97,8 +111,9 @@ export class PaymentController {
       return;
     }
 
+    const providerOrderId = query['vnp_TxnRef'];
+
     if (responseCode === '00') {
-      const providerOrderId = query['vnp_TxnRef'];
       const providerTransactionId = query['vnp_TransactionNo'];
 
       if (providerOrderId && providerTransactionId) {
@@ -115,6 +130,14 @@ export class PaymentController {
 
       res.redirect(`${frontendUrl}/account/orders?payment=success`);
       return;
+    }
+
+    if (providerOrderId) {
+      try {
+        await this.completeVnpayPaymentUseCase.fail(providerOrderId);
+      } catch {
+        // Best-effort: still redirect to fail even if marking failed errors out
+      }
     }
 
     res.redirect(`${frontendUrl}/account/orders?payment=fail`);

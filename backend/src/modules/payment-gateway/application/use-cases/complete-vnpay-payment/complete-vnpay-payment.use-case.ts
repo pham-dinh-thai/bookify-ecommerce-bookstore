@@ -67,4 +67,31 @@ export class CompleteVnpayPaymentUseCase {
       });
     });
   }
+
+  public async fail(providerOrderId: string): Promise<void> {
+    const transaction = await this.paymentTransactionRepository.findByProviderOrderId(
+      PaymentProvider.VNPAY,
+      providerOrderId,
+    );
+
+    if (!transaction) {
+      return;
+    }
+
+    const order: Order = await this.ordersCommandRepository.findOne(
+      transaction.orderId,
+    );
+
+    if (order.getPaymentStatus() !== PaymentStatus.PENDING) {
+      return;
+    }
+
+    await this.unitOfWork.execute(async () => {
+      order.markAsFailed();
+      await this.ordersCommandRepository.save(order);
+      await this.paymentTransactionRepository.markAsFailed(transaction.id, {
+        rawResponse: { provider: PaymentProvider.VNPAY },
+      });
+    });
+  }
 }

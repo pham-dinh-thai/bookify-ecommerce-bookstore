@@ -8,6 +8,7 @@ import { CompleteMockPaymentUseCase } from './application/use-cases/complete-moc
 import { CompleteVnpayPaymentUseCase } from './application/use-cases/complete-vnpay-payment/complete-vnpay-payment.use-case';
 import { CreateMockPaymentUseCase } from './application/use-cases/create-mock-payment/create-mock-payment.use-case';
 import { CreatePaymentUseCase } from './application/use-cases/create-payment/create-payment.use-case';
+import { RetryPaymentUseCase } from './application/use-cases/retry-payment/retry-payment.use-case';
 import { PAYMENT_GATEWAY_SERVICE } from './domain/payment-gateway.service';
 import { PAYMENT_TRANSACTION_COMMAND_REPOSITORY } from './domain/payment-transaction-aggregate/repositories/payment-transaction-command.repository.interface';
 import { TypeOrmPaymentTransactionCommandRepository } from './infrastructure/repositories/typeorm-payment-transaction-command.repository';
@@ -27,6 +28,7 @@ import { PaymentController } from './presentation/payment/payment.controller';
     CreateMockPaymentUseCase,
     CompleteMockPaymentUseCase,
     CompleteVnpayPaymentUseCase,
+    RetryPaymentUseCase,
     VnpayPaymentGatewayService,
     {
       provide: PAYMENT_GATEWAY_SERVICE,

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import {
   ExternalLink,
   PackageSearch,
@@ -8,7 +9,7 @@ import {
   ShoppingBag,
   XCircle,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useToast } from '@/shared/common/toast/toast';
 import AccountSidebar from '../../components/account-sidebar';
 import { cancelMyOrderService } from '../services/my-orders.service';
@@ -80,6 +81,25 @@ export default function MyOrdersScreen() {
   const [activeStatus, setActiveStatus] = useState<OrderStatusFilter>('all');
   const [cancelingId, setCancelingId] = useState<string | null>(null);
   const toast = useToast();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const payment = searchParams.get('payment');
+
+    if (payment === 'fail') {
+      toast?.addToast(
+        'Payment failed. You can retry payment from the order detail page.',
+        'error',
+      );
+    } else if (payment === 'success') {
+      toast?.addToast('Payment completed successfully!', 'success');
+    } else if (payment === 'error') {
+      toast?.addToast(
+        'An error occurred during payment processing.',
+        'error',
+      );
+    }
+  }, [searchParams, toast]);
 
   const statusCounts = useMemo(() => {
     const counts: Record<OrderStatusFilter, number> = {

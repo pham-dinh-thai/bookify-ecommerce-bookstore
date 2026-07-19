@@ -1,3 +1,4 @@
+import { refreshAccessToken } from '@/shared/auth/lib/refresh';
 import { getAccessToken } from '@/shared/auth/lib/token-storage';
 import { MyOrder, MyOrderDetail } from '../types';
 
@@ -20,6 +21,16 @@ function getAuthHeaders(): HeadersInit {
   const token = getAccessToken();
 
   return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+async function ensureAccessToken(): Promise<string> {
+  const accessToken = getAccessToken() ?? (await refreshAccessToken());
+
+  if (!accessToken) {
+    throw new Error('Please sign in to continue.');
+  }
+
+  return accessToken;
 }
 
 export async function findMyOrdersService(): Promise<MyOrder[]> {
@@ -62,4 +73,43 @@ export async function cancelMyOrderService(orderId: string): Promise<void> {
   if (!response.ok) {
     throw new Error(await getErrorMessage(response));
   }
+}
+
+export type RetryPaymentResponse = {
+  transactionId: string;
+  providerOrderId: string;
+  payUrl: string;
+};
+
+async function postRetryPayment(
+  orderId: string,
+  accessToken: string,
+): Promise<Response> {
+  return fetch(`/api/payment/orders/${orderId}/vnpay/retry`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}
+
+export async function retryVnpayPaymentService(
+  orderId: string,
+): Promise<RetryPaymentResponse> {
+  const accessToken = await ensureAccessToken();
+  let response = await postRetryPayment(orderId, accessToken);
+
+  if (response.status === 401) {
+    const refreshedToken = await refreshAccessToken();
+    if (refreshedToken) {
+      response = await postRetryPayment(orderId, refreshedToken);
+    }
+  }
+
+  if (!response.ok) {
+    throw new Error(await getErrorMessage(response));
+  }
+
+  return response.json() as Promise<RetryPaymentResponse>;
 }
