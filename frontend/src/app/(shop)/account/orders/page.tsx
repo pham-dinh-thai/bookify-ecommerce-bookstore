@@ -1,5 +1,10 @@
+import { Suspense } from 'react';
 import MyOrdersScreen from './components/my-orders-screen';
 
 export default function MyOrdersPage() {
-  return <MyOrdersScreen />;
+  return (
+    <Suspense>
+      <MyOrdersScreen />
+    </Suspense>
+  );
 }

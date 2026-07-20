@@ -13,6 +13,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
+    if (response.headersSent) {
+      return;
+    }
+
     if (exception instanceof DomainException) {
       response.status(exception.statusCode).json({
         code: exception.code,

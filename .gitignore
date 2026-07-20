@@ -32,4 +32,7 @@
 .temp
 .tmp
 
+# local planning notes
+docs/planning/
+
 storage/uploads/*

@@ -151,17 +151,19 @@ export default function AccountContactInformation() {
                 </div>
               </form>
 
-              <form
-                className="rounded-lg bg-[#eff5ef] p-5 shadow-sm sm:p-8"
-                onSubmit={handleAddressSubmit}
-              >
-                <div className="mb-6 flex items-center gap-3">
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-white text-[#3f6754]">
-                    <MapPin size={19} strokeWidth={2.2} />
+              <div className="rounded-lg bg-[#eff5ef] p-5 shadow-sm sm:p-8">
+                <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-white text-[#3f6754]">
+                      <MapPin size={19} strokeWidth={2.2} />
+                    </span>
+                    <h2 className="text-xl font-bold text-[#2b352f]">
+                      Addresses
+                    </h2>
+                  </div>
+                  <span className="w-fit rounded-full bg-white px-3 py-1 text-xs font-bold text-[#58615b]">
+                    {contact?.addresses.length ?? 0} saved
                   </span>
-                  <h2 className="text-xl font-bold text-[#2b352f]">
-                    Add Address
-                  </h2>
                 </div>
 
                 {(addressError || locationError) && (
@@ -170,103 +172,16 @@ export default function AccountContactInformation() {
                   </div>
                 )}
 
-                <div className="grid gap-5 md:grid-cols-2">
-                  <label className="block space-y-2">
-                    <span className="block text-[10px] font-bold uppercase tracking-[0.14em] text-[#58615b]">
-                      Province
-                    </span>
-                    <select
-                      value={addressForm.provinceCode}
-                      onChange={(event) =>
-                        updateAddressField('provinceCode', event.target.value)
-                      }
-                      className="w-full rounded-lg border-0 bg-[#e2eae3] px-4 py-3 text-[#2b352f] outline-none transition-shadow focus:ring-2 focus:ring-[#3f6754]/35"
-                    >
-                      <option value="">Select province</option>
-                      {provinces.map((province) => (
-                        <option key={province.code} value={province.code}>
-                          {province.name}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-
-                  <label className="block space-y-2">
-                    <span className="block text-[10px] font-bold uppercase tracking-[0.14em] text-[#58615b]">
-                      Ward
-                    </span>
-                    <select
-                      value={addressForm.wardCode}
-                      onChange={(event) =>
-                        updateAddressField('wardCode', event.target.value)
-                      }
-                      disabled={!addressForm.provinceCode || loadingWards}
-                      className="w-full rounded-lg border-0 bg-[#e2eae3] px-4 py-3 text-[#2b352f] outline-none transition-shadow focus:ring-2 focus:ring-[#3f6754]/35 disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      <option value="">
-                        {loadingWards ? 'Loading wards...' : 'Select ward'}
-                      </option>
-                      {wards.map((ward) => (
-                        <option key={ward.code} value={ward.code}>
-                          {ward.name}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-
-                  <label className="block space-y-2 md:col-span-2">
-                    <span className="block text-[10px] font-bold uppercase tracking-[0.14em] text-[#58615b]">
-                      Street
-                    </span>
-                    <input
-                      value={addressForm.street}
-                      onChange={(event) =>
-                        updateAddressField('street', event.target.value)
-                      }
-                      className="w-full rounded-lg border-0 bg-[#e2eae3] px-4 py-3 text-[#2b352f] outline-none transition-shadow placeholder:text-[#58615b]/50 focus:ring-2 focus:ring-[#3f6754]/35"
-                      placeholder="House number and street"
-                      type="text"
-                    />
-                  </label>
-                </div>
-
-                <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                  <button
-                    type="button"
-                    onClick={resetAddressForm}
-                    disabled={addingAddress}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-[#3f6754] ring-1 ring-[#3f6754]/20 transition-colors hover:bg-[#f7faf5] disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <RotateCcw size={16} strokeWidth={2.2} />
-                    Reset
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={addingAddress}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#3f6754] px-6 py-3 text-sm font-bold text-[#e6ffef] shadow-sm transition-colors hover:bg-[#335b48] disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <Plus size={16} strokeWidth={2.2} />
-                    {addingAddress ? 'Adding...' : 'Add Address'}
-                  </button>
-                </div>
-              </form>
-
-              <div className="rounded-lg bg-[#eff5ef] p-5 shadow-sm sm:p-8">
-                <div className="mb-6 flex items-center justify-between gap-4">
-                  <h2 className="text-xl font-bold text-[#2b352f]">
-                    Saved Addresses
-                  </h2>
-                  <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-[#58615b]">
-                    {contact?.addresses.length ?? 0}
-                  </span>
-                </div>
-
                 {contact?.addresses.length ? (
                   <div className="space-y-4">
                     {contact.addresses.map((address) => (
                       <article
                         key={address.id}
-                        className="rounded-lg bg-white p-4 ring-1 ring-[#d7e3d8]"
+                        className={`rounded-lg p-4 ring-1 ${
+                          address.isDefault
+                            ? 'bg-[#f7faf5] ring-[#3f6754]/25'
+                            : 'bg-white ring-[#d7e3d8]'
+                        }`}
                       >
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                           <div className="min-w-0">
@@ -274,7 +189,7 @@ export default function AccountContactInformation() {
                               {address.isDefault && (
                                 <span className="inline-flex items-center gap-1 rounded-full bg-[#c1ecd4] px-3 py-1 text-xs font-bold text-[#325947]">
                                   <CheckCircle2 size={13} strokeWidth={2.2} />
-                                  Default
+                                  Default address
                                 </span>
                               )}
                               <span className="text-xs font-semibold text-[#58615b]">
@@ -295,7 +210,7 @@ export default function AccountContactInformation() {
                                 settingDefaultAddressId === address.id ||
                                 Boolean(deletingAddressId)
                               }
-                              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#f7faf5] text-[#3f6754] transition-colors hover:bg-[#c1ecd4] disabled:cursor-not-allowed disabled:opacity-50"
+                              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#3f6754] transition-colors hover:bg-[#c1ecd4] disabled:cursor-not-allowed disabled:opacity-50"
                               aria-label="Set default address"
                               title="Set default address"
                             >
@@ -324,6 +239,97 @@ export default function AccountContactInformation() {
                     No saved addresses yet.
                   </div>
                 )}
+
+                <form className="mt-8" onSubmit={handleAddressSubmit}>
+                  <div className="mb-5 flex items-center gap-3">
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-white text-[#3f6754]">
+                      <Plus size={18} strokeWidth={2.2} />
+                    </span>
+                    <h2 className="text-xl font-bold text-[#2b352f]">
+                      Add New Address
+                    </h2>
+                  </div>
+
+                  <div className="grid gap-5 md:grid-cols-2">
+                    <label className="block space-y-2">
+                      <span className="block text-[10px] font-bold uppercase tracking-[0.14em] text-[#58615b]">
+                        Province
+                      </span>
+                      <select
+                        value={addressForm.provinceCode}
+                        onChange={(event) =>
+                          updateAddressField('provinceCode', event.target.value)
+                        }
+                        className="w-full rounded-lg border-0 bg-[#e2eae3] px-4 py-3 text-[#2b352f] outline-none transition-shadow focus:ring-2 focus:ring-[#3f6754]/35"
+                      >
+                        <option value="">Select province</option>
+                        {provinces.map((province) => (
+                          <option key={province.code} value={province.code}>
+                            {province.name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <label className="block space-y-2">
+                      <span className="block text-[10px] font-bold uppercase tracking-[0.14em] text-[#58615b]">
+                        Ward
+                      </span>
+                      <select
+                        value={addressForm.wardCode}
+                        onChange={(event) =>
+                          updateAddressField('wardCode', event.target.value)
+                        }
+                        disabled={!addressForm.provinceCode || loadingWards}
+                        className="w-full rounded-lg border-0 bg-[#e2eae3] px-4 py-3 text-[#2b352f] outline-none transition-shadow focus:ring-2 focus:ring-[#3f6754]/35 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        <option value="">
+                          {loadingWards ? 'Loading wards...' : 'Select ward'}
+                        </option>
+                        {wards.map((ward) => (
+                          <option key={ward.code} value={ward.code}>
+                            {ward.name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <label className="block space-y-2 md:col-span-2">
+                      <span className="block text-[10px] font-bold uppercase tracking-[0.14em] text-[#58615b]">
+                        Street
+                      </span>
+                      <input
+                        value={addressForm.street}
+                        onChange={(event) =>
+                          updateAddressField('street', event.target.value)
+                        }
+                        className="w-full rounded-lg border-0 bg-[#e2eae3] px-4 py-3 text-[#2b352f] outline-none transition-shadow placeholder:text-[#58615b]/50 focus:ring-2 focus:ring-[#3f6754]/35"
+                        placeholder="House number and street"
+                        type="text"
+                      />
+                    </label>
+                  </div>
+
+                  <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                    <button
+                      type="button"
+                      onClick={resetAddressForm}
+                      disabled={addingAddress}
+                      className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-[#3f6754] ring-1 ring-[#3f6754]/20 transition-colors hover:bg-[#f7faf5] disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <RotateCcw size={16} strokeWidth={2.2} />
+                      Reset
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={addingAddress}
+                      className="inline-flex items-center justify-center gap-2 rounded-full bg-[#3f6754] px-6 py-3 text-sm font-bold text-[#e6ffef] shadow-sm transition-colors hover:bg-[#335b48] disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <Plus size={16} strokeWidth={2.2} />
+                      {addingAddress ? 'Adding...' : 'Add Address'}
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           )}

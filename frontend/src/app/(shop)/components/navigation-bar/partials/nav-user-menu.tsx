@@ -69,6 +69,13 @@ export default function NavUserMenu() {
                 >
                   My Account
                 </Link>
+                <Link
+                  href="/account/orders"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  onClick={close}
+                >
+                  My Orders
+                </Link>
                 {auth.roleId === 'admin' && (
                   <Link
                     href="/admin/system-overview"

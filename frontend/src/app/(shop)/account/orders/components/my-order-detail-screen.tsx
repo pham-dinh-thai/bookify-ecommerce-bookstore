@@ -1,12 +1,15 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, RefreshCw, XCircle } from 'lucide-react';
+import { ArrowLeft, CreditCard, XCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useToast } from '@/shared/common/toast/toast';
 import AccountSidebar from '../../components/account-sidebar';
 import { useMyOrderDetail } from '../hooks/use-my-order-detail';
-import { cancelMyOrderService } from '../services/my-orders.service';
+import {
+  cancelMyOrderService,
+  retryVnpayPaymentService,
+} from '../services/my-orders.service';
 import {
   MyOrderDetail,
   OrderStatus,
@@ -76,6 +79,7 @@ const isCancellableOrder = (order: MyOrderDetail) =>
 export default function MyOrderDetailScreen({ id }: MyOrderDetailScreenProps) {
   const { order, loading, error, retry } = useMyOrderDetail(id);
   const [canceling, setCanceling] = useState(false);
+  const [retrying, setRetrying] = useState(false);
   const toast = useToast();
 
   const cancelOrder = async () => {
@@ -94,6 +98,24 @@ export default function MyOrderDetailScreen({ id }: MyOrderDetailScreenProps) {
       );
     } finally {
       setCanceling(false);
+    }
+  };
+
+  const retryPayment = async () => {
+    if (!order) return;
+
+    setRetrying(true);
+
+    try {
+      const payment = await retryVnpayPaymentService(order.id);
+      toast?.addToast('Redirecting to payment...', 'success');
+      window.location.href = payment.payUrl;
+    } catch (err) {
+      toast?.addToast(
+        err instanceof Error ? err.message : 'Failed to retry payment',
+        'error',
+      );
+      setRetrying(false);
     }
   };
 
@@ -123,6 +145,23 @@ export default function MyOrderDetailScreen({ id }: MyOrderDetailScreenProps) {
               </div>
 
               <div className="flex flex-wrap gap-2">
+                {order &&
+                order.paymentMethod === 'e_wallet' &&
+                (order.paymentStatus === 'failed' ||
+                  (order.status === 'pending' &&
+                    (order.paymentStatus === 'unpaid' ||
+                      order.paymentStatus === 'pending'))) ? (
+                  <button
+                    type="button"
+                    onClick={retryPayment}
+                    disabled={retrying}
+                    className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[#3f6754] px-5 text-sm font-bold text-[#e6ffef] transition-colors hover:bg-[#335b48] disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <CreditCard size={16} strokeWidth={2.2} />
+                    {retrying ? 'Redirecting...' : 'Pay Now'}
+                  </button>
+                ) : null}
+
                 {order && isCancellableOrder(order) ? (
                   <button
                     type="button"
@@ -134,20 +173,6 @@ export default function MyOrderDetailScreen({ id }: MyOrderDetailScreenProps) {
                     {canceling ? 'Canceling...' : 'Cancel Order'}
                   </button>
                 ) : null}
-
-                <button
-                  type="button"
-                  onClick={retry}
-                  disabled={loading}
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[#3f6754] px-5 text-sm font-bold text-[#e6ffef] transition-colors hover:bg-[#335b48] disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  <RefreshCw
-                    size={16}
-                    strokeWidth={2.2}
-                    className={loading ? 'animate-spin' : ''}
-                  />
-                  Refresh
-                </button>
               </div>
             </header>
           </div>
