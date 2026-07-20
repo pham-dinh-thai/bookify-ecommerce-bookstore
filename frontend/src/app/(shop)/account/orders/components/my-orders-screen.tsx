@@ -1,22 +1,27 @@
 'use client';
 
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import {
   ExternalLink,
   PackageSearch,
-  RefreshCw,
   ShoppingBag,
   XCircle,
 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useToast } from '@/shared/common/toast/toast';
 import AccountSidebar from '../../components/account-sidebar';
 import { cancelMyOrderService } from '../services/my-orders.service';
 import { useMyOrders } from '../hooks/use-my-orders';
 import { MyOrder, OrderStatus, PaymentStatus } from '../types';
 
-type OrderStatusFilter = 'all' | OrderStatus;
+type OrderStatusFilter =
+  | 'all'
+  | 'pending'
+  | 'confirmed'
+  | 'delivering'
+  | 'delivered'
+  | 'completed';
 
 const statusLabel: Record<OrderStatus, string> = {
   pending: 'Pending',
@@ -29,14 +34,12 @@ const statusLabel: Record<OrderStatus, string> = {
 };
 
 const statusFilterOptions: { value: OrderStatusFilter; label: string }[] = [
-  { value: 'all', label: 'All' },
   { value: 'pending', label: 'Pending' },
   { value: 'confirmed', label: 'Confirmed' },
   { value: 'delivering', label: 'Delivering' },
   { value: 'delivered', label: 'Delivered' },
   { value: 'completed', label: 'Completed' },
-  { value: 'canceled', label: 'Canceled' },
-  { value: 'refunded', label: 'Refunded' },
+  { value: 'all', label: 'All' },
 ];
 
 const statusClassName: Record<OrderStatus, string> = {
@@ -76,15 +79,31 @@ const formatVnd = (value: number) => `${value.toLocaleString('vi-VN')} VNĐ`;
 const isCancellableOrder = (order: MyOrder) =>
   order.status === 'pending' || order.status === 'confirmed';
 
+const TERMINAL_STATUSES: OrderStatus[] = [
+  'completed',
+  'canceled',
+  'refunded',
+];
+
 export default function MyOrdersScreen() {
   const { orders, loading, error, retry } = useMyOrders();
-  const [activeStatus, setActiveStatus] = useState<OrderStatusFilter>('all');
+  const [activeStatus, setActiveStatus] = useState<OrderStatusFilter>('pending');
   const [cancelingId, setCancelingId] = useState<string | null>(null);
   const toast = useToast();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
+  const consumedRef = useRef(false);
 
   useEffect(() => {
+    if (consumedRef.current) return;
+
     const payment = searchParams.get('payment');
+
+    if (!payment) return;
+
+    consumedRef.current = true;
+
+    window.history.replaceState(null, '', pathname);
 
     if (payment === 'fail') {
       toast?.addToast(
@@ -99,10 +118,10 @@ export default function MyOrdersScreen() {
         'error',
       );
     }
-  }, [searchParams, toast]);
+  }, [searchParams, toast, pathname]);
 
   const statusCounts = useMemo(() => {
-    const counts: Record<OrderStatusFilter, number> = {
+    const counts: Record<string, number> = {
       all: orders.length,
       pending: 0,
       confirmed: 0,
@@ -121,9 +140,19 @@ export default function MyOrdersScreen() {
   }, [orders]);
 
   const filteredOrders = useMemo(() => {
-    if (activeStatus === 'all') return orders;
+    const list =
+      activeStatus === 'all'
+        ? orders
+        : orders.filter((order) => order.status === activeStatus);
 
-    return orders.filter((order) => order.status === activeStatus);
+    return [...list].sort((a, b) => {
+      const aTerminal = TERMINAL_STATUSES.includes(a.status) ? 1 : 0;
+      const bTerminal = TERMINAL_STATUSES.includes(b.status) ? 1 : 0;
+
+      if (aTerminal !== bTerminal) return aTerminal - bTerminal;
+
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
   }, [activeStatus, orders]);
 
   const cancelOrder = async (order: MyOrder) => {
@@ -159,20 +188,6 @@ export default function MyOrdersScreen() {
                   Track your recent book orders and fulfillment status.
                 </p>
               </div>
-
-              <button
-                type="button"
-                onClick={retry}
-                disabled={loading}
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[#3f6754] px-5 text-sm font-bold text-[#e6ffef] transition-colors hover:bg-[#335b48] disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                <RefreshCw
-                  size={16}
-                  strokeWidth={2.2}
-                  className={loading ? 'animate-spin' : ''}
-                />
-                Refresh
-              </button>
             </header>
 
             {!loading && !error && orders.length > 0 ? (

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, CreditCard, RefreshCw, XCircle } from 'lucide-react';
+import { ArrowLeft, CreditCard, XCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useToast } from '@/shared/common/toast/toast';
 import AccountSidebar from '../../components/account-sidebar';
@@ -147,7 +147,10 @@ export default function MyOrderDetailScreen({ id }: MyOrderDetailScreenProps) {
               <div className="flex flex-wrap gap-2">
                 {order &&
                 order.paymentMethod === 'e_wallet' &&
-                order.paymentStatus === 'failed' ? (
+                (order.paymentStatus === 'failed' ||
+                  (order.status === 'pending' &&
+                    (order.paymentStatus === 'unpaid' ||
+                      order.paymentStatus === 'pending'))) ? (
                   <button
                     type="button"
                     onClick={retryPayment}
@@ -155,7 +158,7 @@ export default function MyOrderDetailScreen({ id }: MyOrderDetailScreenProps) {
                     className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[#3f6754] px-5 text-sm font-bold text-[#e6ffef] transition-colors hover:bg-[#335b48] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <CreditCard size={16} strokeWidth={2.2} />
-                    {retrying ? 'Redirecting...' : 'Retry Payment'}
+                    {retrying ? 'Redirecting...' : 'Pay Now'}
                   </button>
                 ) : null}
 
@@ -170,20 +173,6 @@ export default function MyOrderDetailScreen({ id }: MyOrderDetailScreenProps) {
                     {canceling ? 'Canceling...' : 'Cancel Order'}
                   </button>
                 ) : null}
-
-                <button
-                  type="button"
-                  onClick={retry}
-                  disabled={loading}
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[#3f6754] px-5 text-sm font-bold text-[#e6ffef] transition-colors hover:bg-[#335b48] disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  <RefreshCw
-                    size={16}
-                    strokeWidth={2.2}
-                    className={loading ? 'animate-spin' : ''}
-                  />
-                  Refresh
-                </button>
               </div>
             </header>
           </div>

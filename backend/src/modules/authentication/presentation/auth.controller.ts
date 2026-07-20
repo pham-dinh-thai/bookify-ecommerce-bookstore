@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Logger,
   Post,
   Req,
   Res,
@@ -17,10 +18,12 @@ import { LogoutUseCase } from '../application/use-cases/logout/logout.use-case';
 import { type Request, type Response } from 'express';
 import { RefreshTokenUseCase } from '../application/use-cases/refresh-token/refresh-token.use-case';
 import { OAuthLoginUseCase } from '../application/use-cases/oauth-login/oauth-login.use-case';
-import { GoogleOAuthCallbackGuard } from './google-oauth-callback.guard';
+import passport from 'passport';
 
 @Controller('auth')
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
   public constructor(
     private readonly loginUseCase: LoginUseCase,
     private readonly registerUseCase: RegisterUseCase,
@@ -92,11 +95,39 @@ export class AuthController {
   public async googleAuth(): Promise<void> {}
 
   @Get('google/callback')
-  @UseGuards(GoogleOAuthCallbackGuard)
   public async googleAuthCallback(
     @Req() request: Request,
     @Res() response: Response,
   ): Promise<any> {
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost';
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        passport.authenticate(
+          'google',
+          { session: false },
+          (err: any, user: any) => {
+            if (err || !user) {
+              reject(err || new Error('OAuth authentication failed'));
+              return;
+            }
+            request.user = user;
+            resolve();
+          },
+        )(request, response, () => resolve());
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Google OAuth callback failed: ${error instanceof Error ? error.message : error}`,
+      );
+
+      if (!response.headersSent) {
+        response.redirect(`${frontendUrl}/`);
+      }
+
+      return;
+    }
+
     const profile = request.user as any;
 
     const result = await this.oAuthLoginUseCase.execute({
@@ -108,7 +139,10 @@ export class AuthController {
     });
 
     if (!result) {
-      return response.status(401).json({ message: 'OAuth login failed' });
+      if (!response.headersSent) {
+        response.redirect(`${frontendUrl}/login`);
+      }
+      return;
     }
 
     const { accessToken, refreshToken, roleId, isNewUser } = result;
@@ -126,8 +160,6 @@ export class AuthController {
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost';
 
     if (isNewUser) {
       return response.redirect(

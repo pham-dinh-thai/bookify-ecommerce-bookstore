@@ -57,8 +57,14 @@ export class RetryPaymentUseCase {
       throw new BadRequestException('Order payment method is not e-wallet');
     }
 
-    if (order.getPaymentStatus() !== PaymentStatus.FAILED) {
-      throw new BadRequestException('Order payment has not failed');
+    const paymentStatus = order.getPaymentStatus();
+
+    if (
+      paymentStatus !== PaymentStatus.FAILED &&
+      paymentStatus !== PaymentStatus.UNPAID &&
+      paymentStatus !== PaymentStatus.PENDING
+    ) {
+      throw new BadRequestException('Order payment is not payable');
     }
 
     order.markAsPending();
