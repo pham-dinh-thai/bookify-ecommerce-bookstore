@@ -72,15 +72,6 @@ export class PaymentController {
     await this.completeMockPaymentUseCase.succeed(transactionId, userId);
   }
 
-  @Post('mock/:transactionId/fail')
-  @UseGuards(JwtAuthGuard)
-  public async failMockPayment(
-    @Param('transactionId') transactionId: string,
-    @CurrentUser('userId') userId: string,
-  ): Promise<void> {
-    await this.completeMockPaymentUseCase.fail(transactionId, userId);
-  }
-
   @Get('mock/:transactionId/scan/succeed')
   public async scanSucceedMockPayment(
     @Param('transactionId') transactionId: string,

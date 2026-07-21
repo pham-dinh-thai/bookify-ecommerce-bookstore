@@ -14,6 +14,7 @@ import { OrderIdEmptyException } from './exceptions/order-id-empty.exception';
 import { OrderItemNotFoundException } from './exceptions/order-item-not-found.exception';
 import { OrderPaymentNeedsToBePaidException } from './exceptions/order-payment-needs-to-be-paid.exception';
 import { OrderStatusCanNotBeUpdatedException } from './exceptions/order-status-can-not-be-updated.exception';
+import { PaymentStatusCanNotBeUpdatedException } from './exceptions/payment-status-can-not-be-updated.exception';
 import { UserIdEmptyException } from './exceptions/user-id-empty.exception';
 import { CreateOrderProps, FromPersistentOrderProps } from './types';
 
@@ -172,6 +173,7 @@ export class Order extends AggregateRoot {
    * Marks the order payment as unpaid.
    */
   public markAsUnpaid(): void {
+    this.ensurePaymentStatusIs(PaymentStatus.PENDING);
     this.paymentStatus = PaymentStatus.UNPAID;
   }
 
@@ -186,20 +188,15 @@ export class Order extends AggregateRoot {
    * Marks the order payment as successfully collected.
    */
   public markAsPaid(): void {
+    this.ensurePaymentStatusIs(PaymentStatus.UNPAID, PaymentStatus.PENDING);
     this.paymentStatus = PaymentStatus.PAID;
-  }
-
-  /**
-   * Marks the order payment as failed.
-   */
-  public markAsFailed(): void {
-    this.paymentStatus = PaymentStatus.FAILED;
   }
 
   /**
    * Marks the order payment as refunded.
    */
   public markAsRefunded(): void {
+    this.ensurePaymentStatusIs(PaymentStatus.PAID);
     this.paymentStatus = PaymentStatus.REFUNDED;
   }
 
@@ -362,6 +359,14 @@ export class Order extends AggregateRoot {
   private ensurePaymentIsPaid(): void {
     if (this.paymentStatus !== PaymentStatus.PAID) {
       throw new OrderPaymentNeedsToBePaidException();
+    }
+  }
+
+  private ensurePaymentStatusIs(
+    ...allowedStatuses: PaymentStatus[]
+  ): void {
+    if (!allowedStatuses.includes(this.paymentStatus)) {
+      throw PaymentStatusCanNotBeUpdatedException.needToBe(...allowedStatuses);
     }
   }
 }

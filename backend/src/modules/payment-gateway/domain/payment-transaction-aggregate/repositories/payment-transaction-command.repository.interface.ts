@@ -25,10 +25,6 @@ export interface IPaymentTransactionCommandRepository {
     props?: CompletePaymentTransactionProps,
   ): Promise<void>;
 
-  markAsFailed(
-    id: string,
-    props?: CompletePaymentTransactionProps,
-  ): Promise<void>;
 }
 
 export const PAYMENT_TRANSACTION_COMMAND_REPOSITORY =

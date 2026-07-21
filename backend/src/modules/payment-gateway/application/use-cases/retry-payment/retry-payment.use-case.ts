@@ -60,7 +60,6 @@ export class RetryPaymentUseCase {
     const paymentStatus = order.getPaymentStatus();
 
     if (
-      paymentStatus !== PaymentStatus.FAILED &&
       paymentStatus !== PaymentStatus.UNPAID &&
       paymentStatus !== PaymentStatus.PENDING
     ) {

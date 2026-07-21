@@ -23,7 +23,7 @@ import {
   type IPaymentTransactionCommandRepository,
 } from '../../../domain/payment-transaction-aggregate/repositories/payment-transaction-command.repository.interface';
 
-type MockPaymentResult = 'succeeded' | 'failed';
+type MockPaymentResult = 'succeeded';
 
 @Injectable()
 export class CompleteMockPaymentUseCase {
@@ -44,10 +44,6 @@ export class CompleteMockPaymentUseCase {
 
   public async scanSucceed(transactionId: string): Promise<void> {
     await this.complete(transactionId, null, 'succeeded');
-  }
-
-  public async fail(transactionId: string, userId: string): Promise<void> {
-    await this.complete(transactionId, userId, 'failed');
   }
 
   private async complete(
@@ -77,20 +73,9 @@ export class CompleteMockPaymentUseCase {
     }
 
     await this.unitOfWork.execute(async () => {
-      if (result === 'succeeded') {
-        order.markAsPaid();
-        await this.ordersCommandRepository.save(order);
-        await this.paymentTransactionRepository.markAsPaid(transaction.id, {
-          providerTransactionId: `MOCK-${Date.now()}`,
-          rawResponse: { result },
-        });
-
-        return;
-      }
-
-      order.markAsFailed();
+      order.markAsPaid();
       await this.ordersCommandRepository.save(order);
-      await this.paymentTransactionRepository.markAsFailed(transaction.id, {
+      await this.paymentTransactionRepository.markAsPaid(transaction.id, {
         providerTransactionId: `MOCK-${Date.now()}`,
         rawResponse: { result },
       });
