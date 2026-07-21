@@ -57,7 +57,7 @@ export class CompleteMockPaymentUseCase {
     );
 
     if (userId && order.getUserId() !== userId) {
-      throw new ForbiddenException('You cannot complete this payment');
+      throw new ForbiddenException('Payment does not belong to this user');
     }
 
     if (transaction.status === PaymentTransactionStatus.PAID) {
@@ -69,7 +69,7 @@ export class CompleteMockPaymentUseCase {
     }
 
     if (order.getPaymentStatus() !== PaymentStatus.PENDING) {
-      throw new BadRequestException('Order is not waiting for payment');
+      throw new BadRequestException('Order is not payable in its current state');
     }
 
     await this.unitOfWork.execute(async () => {

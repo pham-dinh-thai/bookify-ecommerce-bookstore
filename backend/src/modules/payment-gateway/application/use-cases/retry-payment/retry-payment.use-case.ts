@@ -50,11 +50,11 @@ export class RetryPaymentUseCase {
     const order: Order = await this.ordersCommandRepository.findOne(orderId);
 
     if (order.getUserId() !== userId) {
-      throw new ForbiddenException('You cannot retry payment for this order');
+      throw new ForbiddenException('Payment does not belong to this user');
     }
 
     if (order.getPaymentMethod() !== PaymentMethod.E_WALLET) {
-      throw new BadRequestException('Order payment method is not e-wallet');
+      throw new BadRequestException('This order does not accept online payment');
     }
 
     const paymentStatus = order.getPaymentStatus();
@@ -63,7 +63,7 @@ export class RetryPaymentUseCase {
       paymentStatus !== PaymentStatus.UNPAID &&
       paymentStatus !== PaymentStatus.PENDING
     ) {
-      throw new BadRequestException('Order payment is not payable');
+      throw new BadRequestException('Order is not payable in its current state');
     }
 
     order.markAsPending();

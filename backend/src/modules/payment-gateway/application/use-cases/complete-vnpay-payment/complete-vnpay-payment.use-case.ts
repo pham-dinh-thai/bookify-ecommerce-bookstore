@@ -55,7 +55,7 @@ export class CompleteVnpayPaymentUseCase {
     }
 
     if (order.getPaymentStatus() !== PaymentStatus.PENDING) {
-      throw new BadRequestException('Order is not waiting for payment');
+      throw new BadRequestException('Order is not payable in its current state');
     }
 
     await this.unitOfWork.execute(async () => {

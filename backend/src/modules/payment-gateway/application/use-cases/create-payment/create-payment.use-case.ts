@@ -50,15 +50,15 @@ export class CreatePaymentUseCase {
     const order: Order = await this.ordersCommandRepository.findOne(orderId);
 
     if (order.getUserId() !== userId) {
-      throw new ForbiddenException('You cannot create payment for this order');
+      throw new ForbiddenException('Payment does not belong to this user');
     }
 
     if (order.getPaymentMethod() !== PaymentMethod.E_WALLET) {
-      throw new BadRequestException('Order payment method is not e-wallet');
+      throw new BadRequestException('This order does not accept online payment');
     }
 
     if (order.getPaymentStatus() !== PaymentStatus.PENDING) {
-      throw new BadRequestException('Order is not waiting for payment');
+      throw new BadRequestException('Order is not payable in its current state');
     }
 
     const amount = Math.round(order.getTotalPrice());
