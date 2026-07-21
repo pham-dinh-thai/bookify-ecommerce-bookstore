@@ -18,6 +18,7 @@ import { BookPrice } from './value-objects/book-price.value-object';
 import { BookQuantity } from './value-objects/book-quantity.value-object';
 import { CreateBookCoverProps } from './entities/book-cover/types';
 import { BookDiscountPercentage } from './value-objects/book-discount-percentage.value-object';
+import { InsufficientStockException } from '../../../order/domain/order-aggregate/exceptions/insufficient-stock.exception';
 
 /**
  * Book aggregate root.
@@ -250,7 +251,15 @@ export class Book {
     this.quantity = this.quantity.increase(quantity);
   }
 
-  public decreaseQuantity(quantity: number): void {
+  public decreaseQuantityIfAvailable(quantity: number): void {
+    if (this.quantity.getValue() < quantity) {
+      throw new InsufficientStockException(
+        this.id,
+        quantity,
+        this.quantity.getValue(),
+      );
+    }
+
     this.quantity = this.quantity.decrease(quantity);
   }
 
