@@ -12,7 +12,7 @@ services:
     tmpfs:
       - /tmp
     env_file:
-      - ./backend/.env
+      - ./backend/.env.prod
     environment:
       NODE_ENV: production
       CI: "true"

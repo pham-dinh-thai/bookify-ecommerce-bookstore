@@ -8,9 +8,6 @@ export enum PaymentStatus {
   /** The payment has been completed successfully. */
   PAID = 'paid',
 
-  /** The payment attempt failed or was rejected. */
-  FAILED = 'failed',
-
   /** The payment has been returned to the customer. */
   REFUNDED = 'refunded',
 }

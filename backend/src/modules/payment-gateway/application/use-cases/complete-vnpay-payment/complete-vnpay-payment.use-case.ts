@@ -55,7 +55,7 @@ export class CompleteVnpayPaymentUseCase {
     }
 
     if (order.getPaymentStatus() !== PaymentStatus.PENDING) {
-      throw new BadRequestException('Order is not waiting for payment');
+      throw new BadRequestException('Order is not payable in its current state');
     }
 
     await this.unitOfWork.execute(async () => {
@@ -85,13 +85,5 @@ export class CompleteVnpayPaymentUseCase {
     if (order.getPaymentStatus() !== PaymentStatus.PENDING) {
       return;
     }
-
-    await this.unitOfWork.execute(async () => {
-      order.markAsFailed();
-      await this.ordersCommandRepository.save(order);
-      await this.paymentTransactionRepository.markAsFailed(transaction.id, {
-        rawResponse: { provider: PaymentProvider.VNPAY },
-      });
-    });
   }
 }

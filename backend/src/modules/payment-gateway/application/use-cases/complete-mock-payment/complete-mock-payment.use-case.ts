@@ -23,7 +23,7 @@ import {
   type IPaymentTransactionCommandRepository,
 } from '../../../domain/payment-transaction-aggregate/repositories/payment-transaction-command.repository.interface';
 
-type MockPaymentResult = 'succeeded' | 'failed';
+type MockPaymentResult = 'succeeded';
 
 @Injectable()
 export class CompleteMockPaymentUseCase {
@@ -46,10 +46,6 @@ export class CompleteMockPaymentUseCase {
     await this.complete(transactionId, null, 'succeeded');
   }
 
-  public async fail(transactionId: string, userId: string): Promise<void> {
-    await this.complete(transactionId, userId, 'failed');
-  }
-
   private async complete(
     transactionId: string,
     userId: string | null,
@@ -61,7 +57,7 @@ export class CompleteMockPaymentUseCase {
     );
 
     if (userId && order.getUserId() !== userId) {
-      throw new ForbiddenException('You cannot complete this payment');
+      throw new ForbiddenException('Payment does not belong to this user');
     }
 
     if (transaction.status === PaymentTransactionStatus.PAID) {
@@ -73,24 +69,13 @@ export class CompleteMockPaymentUseCase {
     }
 
     if (order.getPaymentStatus() !== PaymentStatus.PENDING) {
-      throw new BadRequestException('Order is not waiting for payment');
+      throw new BadRequestException('Order is not payable in its current state');
     }
 
     await this.unitOfWork.execute(async () => {
-      if (result === 'succeeded') {
-        order.markAsPaid();
-        await this.ordersCommandRepository.save(order);
-        await this.paymentTransactionRepository.markAsPaid(transaction.id, {
-          providerTransactionId: `MOCK-${Date.now()}`,
-          rawResponse: { result },
-        });
-
-        return;
-      }
-
-      order.markAsFailed();
+      order.markAsPaid();
       await this.ordersCommandRepository.save(order);
-      await this.paymentTransactionRepository.markAsFailed(transaction.id, {
+      await this.paymentTransactionRepository.markAsPaid(transaction.id, {
         providerTransactionId: `MOCK-${Date.now()}`,
         rawResponse: { result },
       });

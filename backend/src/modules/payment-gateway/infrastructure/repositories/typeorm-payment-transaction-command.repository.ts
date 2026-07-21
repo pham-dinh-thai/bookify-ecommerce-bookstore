@@ -74,13 +74,6 @@ export class TypeOrmPaymentTransactionCommandRepository implements IPaymentTrans
     await this.updateStatus(id, PaymentTransactionStatus.PAID, props);
   }
 
-  public async markAsFailed(
-    id: string,
-    props: CompletePaymentTransactionProps = {},
-  ): Promise<void> {
-    await this.updateStatus(id, PaymentTransactionStatus.FAILED, props);
-  }
-
   private async updateStatus(
     id: string,
     status: PaymentTransactionStatus,

@@ -125,14 +125,6 @@ export class PlaceOrderUseCase {
           throw new BookNotFoundException();
         }
 
-        if (book.getQuantity() < item.quantity) {
-          throw new InsufficientStockException(
-            item.productId,
-            item.quantity,
-            book.getQuantity(),
-          );
-        }
-
         order.addItem({
           id: this.uuidGenerator.generate(),
           productId: item.productId,
@@ -147,7 +139,7 @@ export class PlaceOrderUseCase {
           lineTotal: book.getCurrentPrice() * item.quantity,
         });
 
-        book.decreaseQuantity(item.quantity);
+        book.decreaseQuantityIfAvailable(item.quantity);
 
         await this.booksCommandRepository.save(book);
       }
@@ -164,11 +156,13 @@ export class PlaceOrderUseCase {
         },
       );
     });
+
     order.recordPlaced({
       customerEmail: customer.email,
       customerName: `${customer.firstName} ${customer.lastName}`.trim(),
       items: orderedItems,
     });
+
     await this.eventDispatcher.dispatch(order.getDomainEvents());
     order.clearDomainEvents();
 

@@ -274,7 +274,7 @@ export class TypeOrmSalesStatisticsQueryRepository implements ISalesStatisticsQu
         excludedStatuses: [OrderStatus.CANCELED, OrderStatus.REFUNDED],
       })
       .andWhere('orderEntity.paymentStatus NOT IN (:...excludedPayments)', {
-        excludedPayments: [PaymentStatus.FAILED, PaymentStatus.REFUNDED],
+        excludedPayments: [PaymentStatus.REFUNDED],
       });
   }
 
