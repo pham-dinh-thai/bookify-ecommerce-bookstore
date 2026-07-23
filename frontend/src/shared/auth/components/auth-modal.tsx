@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff, LoaderCircle, X } from 'lucide-react';
 import { useState } from 'react';
 import { signIn } from '@/shared/auth/lib/token-storage';
-import { loginService } from '@/app/(authentication)/(features)/login/services/login.service';
+import { loginService } from '@/app/[locale]/(authentication)/(features)/login/services/login.service';
 import ErrorMessage from '@/shared/common/components/error-message';
 
 type AuthModalProps = {
