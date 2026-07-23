@@ -15,7 +15,16 @@ export class TypeOrmCartsQueryRepository implements ICartsQueryRepository {
 
   public async findUserCart(userId: string): Promise<CartReadModel | null> {
     const cartTypeOrm = await this.repository.findOne({
-      relations: { cartItems: true },
+      relations: {
+        cartItems: {
+          product: {
+            covers: true,
+            bookAuthors: {
+              author: true,
+            },
+          },
+        },
+      },
       where: { userId },
     });
 

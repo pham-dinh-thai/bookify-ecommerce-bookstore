@@ -64,9 +64,11 @@ export class TypeOrmAuthenticableUserCommandRepository implements IAuthenticable
     provider: string,
     providerId: string,
   ): Promise<AuthenticableUser | null> {
-    const userTypeOrm = await this.unitOfWork.getManager().findOne(UserTypeOrm, {
-      where: { provider, providerId },
-    });
+    const userTypeOrm = await this.unitOfWork
+      .getManager()
+      .findOne(UserTypeOrm, {
+        where: { provider, providerId },
+      });
 
     if (!userTypeOrm) {
       return null;

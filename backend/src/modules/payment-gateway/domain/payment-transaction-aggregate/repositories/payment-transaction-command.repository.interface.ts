@@ -24,7 +24,6 @@ export interface IPaymentTransactionCommandRepository {
     id: string,
     props?: CompletePaymentTransactionProps,
   ): Promise<void>;
-
 }
 
 export const PAYMENT_TRANSACTION_COMMAND_REPOSITORY =

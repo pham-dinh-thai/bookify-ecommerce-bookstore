@@ -6,9 +6,14 @@ import { Check, Info, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
 import { useToast } from '@/shared/common/toast/toast';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import AuthModal from '@/shared/auth/components/auth-modal';
-import { getAccessToken } from '@/shared/auth/lib/token-storage';
+import { getAccessToken, isExplicitLogin } from '@/shared/auth/lib/token-storage';
 import { readCartItems, StoredCartItem, writeCartItems } from './cart-storage';
-import { removeCartItemService } from './cart.service';
+import {
+  addCartItemService,
+  fetchCartService,
+  removeCartItemService,
+  updateCartItemQuantityService,
+} from './cart.service';
 import { writeCheckoutItems } from '../checkout/checkout-storage';
 
 const shippingFee = 25000;
@@ -31,16 +36,66 @@ export default function CartPage() {
   useEffect(() => {
     let isActive = true;
 
-    queueMicrotask(() => {
+    queueMicrotask(async () => {
       if (!isActive) return;
 
-      const storedItems = readCartItems();
-      if (storedItems.length > 0) {
-        setItems(storedItems);
-        setSelectedIds(
-          storedItems.filter((item) => item.isAvailable).map((item) => item.id),
-        );
+      const loggedIn = getAccessToken() && isExplicitLogin();
+
+      if (loggedIn) {
+        try {
+          const backendItems = await fetchCartService();
+          if (!isActive) return;
+
+          const localItems = readCartItems();
+          const backendIds = new Set(backendItems.map((i) => i.id));
+          const toMerge = localItems.filter((i) => !backendIds.has(i.id));
+
+          for (const item of toMerge) {
+            try {
+              await addCartItemService(item);
+            } catch {
+              // best-effort merge
+            }
+          }
+
+          const mergedIds = new Set([
+            ...backendItems.map((i) => i.id),
+            ...toMerge.map((i) => i.id),
+          ]);
+          const mergedBackend = backendItems;
+          const mergedLocal = toMerge.filter((i) => mergedIds.has(i.id));
+          const merged = [...mergedBackend, ...mergedLocal];
+
+          if (merged.length > 0) {
+            setItems(merged);
+            setSelectedIds(
+              merged.filter((item) => item.isAvailable).map((item) => item.id),
+            );
+          }
+          writeCartItems(merged);
+        } catch {
+          const storedItems = readCartItems();
+          if (storedItems.length > 0) {
+            setItems(storedItems);
+            setSelectedIds(
+              storedItems
+                .filter((item) => item.isAvailable)
+                .map((item) => item.id),
+            );
+          }
+        }
+      } else {
+        const storedItems = readCartItems();
+        if (storedItems.length > 0) {
+          setItems(storedItems);
+          setSelectedIds(
+            storedItems
+              .filter((item) => item.isAvailable)
+              .map((item) => item.id),
+          );
+        }
       }
+
       hasHydratedCart.current = true;
     });
 
@@ -97,9 +152,15 @@ export default function CartPage() {
         const nextQuantity =
           direction === 'increase' ? item.quantity + 1 : item.quantity - 1;
 
+        const clamped = Math.min(item.stock, Math.max(1, nextQuantity));
+
+        if (clamped !== item.quantity && getAccessToken() && isExplicitLogin()) {
+          updateCartItemQuantityService(id, clamped).catch(() => {});
+        }
+
         return {
           ...item,
-          quantity: Math.min(item.stock, Math.max(1, nextQuantity)),
+          quantity: clamped,
         };
       }),
     );

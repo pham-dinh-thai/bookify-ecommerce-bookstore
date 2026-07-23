@@ -54,16 +54,21 @@ export class CreatePaymentUseCase {
     }
 
     if (order.getPaymentMethod() !== PaymentMethod.E_WALLET) {
-      throw new BadRequestException('This order does not accept online payment');
+      throw new BadRequestException(
+        'This order does not accept online payment',
+      );
     }
 
     if (order.getPaymentStatus() !== PaymentStatus.PENDING) {
-      throw new BadRequestException('Order is not payable in its current state');
+      throw new BadRequestException(
+        'Order is not payable in its current state',
+      );
     }
 
     const amount = Math.round(order.getTotalPrice());
 
-    const baseUrl = origin ?? process.env.VNPAY_RETURN_URL ?? `http://localhost`;
+    const baseUrl =
+      origin ?? process.env.VNPAY_RETURN_URL ?? `http://localhost`;
 
     const gatewayPayment = await this.paymentGatewayService.createPayment({
       orderId: order.getOrderCode(),

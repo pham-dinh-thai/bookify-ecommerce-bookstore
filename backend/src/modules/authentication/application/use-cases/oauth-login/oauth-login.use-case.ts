@@ -61,9 +61,8 @@ export class OAuthLoginUseCase {
     );
 
     if (!authUser) {
-      const existingUser = await this.authenticableUserQueryRepository.findByEmail(
-        request.email,
-      );
+      const existingUser =
+        await this.authenticableUserQueryRepository.findByEmail(request.email);
 
       if (existingUser) {
         await this.authenticableUserCommandRepository.linkProvider(
