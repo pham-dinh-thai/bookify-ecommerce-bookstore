@@ -37,10 +37,11 @@ export class CompleteVnpayPaymentUseCase {
     providerOrderId: string,
     providerTransactionId: string,
   ): Promise<void> {
-    const transaction = await this.paymentTransactionRepository.findByProviderOrderId(
-      PaymentProvider.VNPAY,
-      providerOrderId,
-    );
+    const transaction =
+      await this.paymentTransactionRepository.findByProviderOrderId(
+        PaymentProvider.VNPAY,
+        providerOrderId,
+      );
 
     if (!transaction) {
       throw new NotFoundException('VNPay transaction not found');
@@ -55,7 +56,9 @@ export class CompleteVnpayPaymentUseCase {
     }
 
     if (order.getPaymentStatus() !== PaymentStatus.PENDING) {
-      throw new BadRequestException('Order is not payable in its current state');
+      throw new BadRequestException(
+        'Order is not payable in its current state',
+      );
     }
 
     await this.unitOfWork.execute(async () => {
@@ -69,10 +72,11 @@ export class CompleteVnpayPaymentUseCase {
   }
 
   public async fail(providerOrderId: string): Promise<void> {
-    const transaction = await this.paymentTransactionRepository.findByProviderOrderId(
-      PaymentProvider.VNPAY,
-      providerOrderId,
-    );
+    const transaction =
+      await this.paymentTransactionRepository.findByProviderOrderId(
+        PaymentProvider.VNPAY,
+        providerOrderId,
+      );
 
     if (!transaction) {
       return;

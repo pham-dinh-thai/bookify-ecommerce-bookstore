@@ -27,10 +27,9 @@ export class GetShopNavigationUseCase {
   ) {}
 
   public async execute(): Promise<GetShopNavigationResponse> {
-    const cached =
-      await this.cacheRepository.get<GetShopNavigationResponse>(
-        SHOP_NAVIGATION_CACHE_KEY,
-      );
+    const cached = await this.cacheRepository.get<GetShopNavigationResponse>(
+      SHOP_NAVIGATION_CACHE_KEY,
+    );
     if (cached) {
       return cached;
     }

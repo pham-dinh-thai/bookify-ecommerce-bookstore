@@ -1,5 +1,9 @@
 import { createHmac } from 'crypto';
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { IPaymentGatewayService } from '../../domain/payment-gateway.service';
 import {
   CreateGatewayPaymentRequest,
@@ -74,13 +78,14 @@ export class VnpayPaymentGatewayService implements IPaymentGatewayService {
     };
   }
 
-  public buildHash(
-    params: Record<string, string>,
-    hashSecret: string,
-  ): string {
+  public buildHash(params: Record<string, string>, hashSecret: string): string {
     const filtered: Record<string, string> = {};
     for (const key of Object.keys(params)) {
-      if (key.startsWith('vnp_') && key !== 'vnp_SecureHash' && key !== 'vnp_SecureHashType') {
+      if (
+        key.startsWith('vnp_') &&
+        key !== 'vnp_SecureHash' &&
+        key !== 'vnp_SecureHashType'
+      ) {
         filtered[key] = params[key];
       }
     }
@@ -106,7 +111,9 @@ export class VnpayPaymentGatewayService implements IPaymentGatewayService {
 
     const expectedHash = this.buildHash(query, hashSecret);
 
-    this.logger.debug(`VNPay return - expected hash: ${expectedHash}, received: ${secureHash}`);
+    this.logger.debug(
+      `VNPay return - expected hash: ${expectedHash}, received: ${secureHash}`,
+    );
 
     return {
       isValid: expectedHash === secureHash,

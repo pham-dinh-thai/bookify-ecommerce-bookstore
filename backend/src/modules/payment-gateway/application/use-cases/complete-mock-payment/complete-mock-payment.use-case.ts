@@ -69,7 +69,9 @@ export class CompleteMockPaymentUseCase {
     }
 
     if (order.getPaymentStatus() !== PaymentStatus.PENDING) {
-      throw new BadRequestException('Order is not payable in its current state');
+      throw new BadRequestException(
+        'Order is not payable in its current state',
+      );
     }
 
     await this.unitOfWork.execute(async () => {

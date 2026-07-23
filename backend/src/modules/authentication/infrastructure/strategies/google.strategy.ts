@@ -17,7 +17,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       proxy: true,
     });
 
-    this.logger.log(`Google OAuth initialized with callbackURL: ${callbackURL}`);
+    this.logger.log(
+      `Google OAuth initialized with callbackURL: ${callbackURL}`,
+    );
   }
 
   async validate(

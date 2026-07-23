@@ -7,9 +7,6 @@ import { TypeOrmUnitOfWork } from './infrastructure/typeorm-unit-of-work';
     TypeOrmUnitOfWork,
     { provide: UNIT_OF_WORK, useExisting: TypeOrmUnitOfWork },
   ],
-  exports: [
-    TypeOrmUnitOfWork,
-    UNIT_OF_WORK,
-  ],
+  exports: [TypeOrmUnitOfWork, UNIT_OF_WORK],
 })
 export class UnitOfWorkModule {}

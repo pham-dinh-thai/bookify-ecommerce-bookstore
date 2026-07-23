@@ -32,16 +32,30 @@ export class CartsMapper {
     return new CartReadModel(
       cartTypeOrm.id,
       cartTypeOrm.userId,
-      cartTypeOrm.cartItems.map(
-        (itemTypeOrm) =>
-          new CartItemReadModel(
-            itemTypeOrm.id,
-            itemTypeOrm.productId,
-            itemTypeOrm.quantity,
-            itemTypeOrm.price,
-            itemTypeOrm.isActive,
-          ),
-      ),
+      cartTypeOrm.cartItems.map((itemTypeOrm) => {
+        const book = itemTypeOrm.product;
+        const covers = book?.covers ?? [];
+        const primaryCover = covers.find((c) => c.isPrimary) ?? covers[0];
+        const authorNames =
+          book?.bookAuthors
+            ?.map((ba) => ba.author?.name)
+            .filter(Boolean)
+            .join(', ') ?? '';
+
+        return new CartItemReadModel(
+          itemTypeOrm.id,
+          itemTypeOrm.productId,
+          itemTypeOrm.quantity,
+          itemTypeOrm.price,
+          itemTypeOrm.isActive,
+          book?.title ?? '',
+          authorNames,
+          '',
+          primaryCover?.url ?? '',
+          book?.quantity ?? 0,
+          (book?.quantity ?? 0) > 0,
+        );
+      }),
     );
   }
 }

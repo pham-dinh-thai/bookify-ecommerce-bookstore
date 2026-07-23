@@ -362,9 +362,7 @@ export class Order extends AggregateRoot {
     }
   }
 
-  private ensurePaymentStatusIs(
-    ...allowedStatuses: PaymentStatus[]
-  ): void {
+  private ensurePaymentStatusIs(...allowedStatuses: PaymentStatus[]): void {
     if (!allowedStatuses.includes(this.paymentStatus)) {
       throw PaymentStatusCanNotBeUpdatedException.needToBe(...allowedStatuses);
     }

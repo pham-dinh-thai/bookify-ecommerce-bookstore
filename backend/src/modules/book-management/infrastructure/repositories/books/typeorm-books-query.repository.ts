@@ -85,7 +85,11 @@ export class TypeormBooksQueryRepository implements IBooksQueryRepository {
     const rows = await this.repository
       .createQueryBuilder('book')
       .innerJoin(OrderItemTypeOrm, 'orderItem', 'orderItem.productId = book.id')
-      .innerJoin(OrderTypeOrm, 'orderEntity', 'orderEntity.id = orderItem.orderId')
+      .innerJoin(
+        OrderTypeOrm,
+        'orderEntity',
+        'orderEntity.id = orderItem.orderId',
+      )
       .select('book.id', 'bookId')
       .addSelect('SUM(orderItem.quantity)', 'unitsSold')
       .where('orderEntity.status != :canceled', {

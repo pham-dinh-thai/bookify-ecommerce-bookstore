@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -16,6 +17,8 @@ import { CartReadModel } from '../../domain/cart-aggregate/read-models/cart.read
 import { AddItemToCartUseCase } from '../../application/cart-use-cases/add-item-to-cart/add-item-to-cart.use-case';
 import { AddItemToCartRequest } from './requests/add-item-to-cart.request';
 import { RemoveItemFromCartUseCase } from '../../application/cart-use-cases/remove-item-from-cart/remove-item-from-cart.use-case';
+import { UpdateItemQuantityUseCase } from '../../application/cart-use-cases/update-item-quantity/update-item-quantity.use-case';
+import { UpdateItemQuantityRequest } from './requests/update-item-quantity.request';
 
 @Controller('carts')
 @UseGuards(JwtAuthGuard)
@@ -24,6 +27,7 @@ export class CartsController {
     private readonly findUserCartUseCase: FindUserCartUseCase,
     private readonly addItemToCartUseCase: AddItemToCartUseCase,
     private readonly removeItemFromCartUseCase: RemoveItemFromCartUseCase,
+    private readonly updateItemQuantityUseCase: UpdateItemQuantityUseCase,
   ) {}
 
   @Get()
@@ -42,6 +46,19 @@ export class CartsController {
     @CurrentUser('userId') userId: string,
   ): Promise<void> {
     await this.addItemToCartUseCase.execute(request, userId);
+  }
+
+  @Patch(':productId')
+  public async updateItemQuantity(
+    @Param('productId') productId: string,
+    @Body() request: UpdateItemQuantityRequest,
+    @CurrentUser('userId') userId: string,
+  ): Promise<void> {
+    await this.updateItemQuantityUseCase.execute(
+      productId,
+      request.quantity,
+      userId,
+    );
   }
 
   @Delete(':productId')

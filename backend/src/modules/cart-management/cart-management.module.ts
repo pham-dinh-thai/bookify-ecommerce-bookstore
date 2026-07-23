@@ -13,12 +13,24 @@ import { CARTS_COMMAND_REPOSITORY } from './domain/cart-aggregate/repositories/c
 import { TypeOrmCartsCommandRepository } from './infrastructure/repositories/carts/typeorm-carts-command.repository';
 import { UuidModule } from '../../shared/modules/uuid/uuid.module';
 import { RemoveItemFromCartUseCase } from './application/cart-use-cases/remove-item-from-cart/remove-item-from-cart.use-case';
+import { UpdateItemQuantityUseCase } from './application/cart-use-cases/update-item-quantity/update-item-quantity.use-case';
+import { BookTypeOrm } from '../book-management/infrastructure/entities/book.entity';
+import { BookCoverTypeOrm } from '../book-management/infrastructure/entities/book-cover.entity';
+import { BookAuthorTypeOrm } from '../book-management/infrastructure/entities/book-author.entity';
+import { AuthorTypeOrm } from '../catalog-management/infrastructure/entities/author.entity';
 
 @Module({
   controllers: [CartsController],
   imports: [
     AuthenticationModule,
-    TypeOrmModule.forFeature([CartTypeOrm, CartItemTypeOrm]),
+    TypeOrmModule.forFeature([
+      CartTypeOrm,
+      CartItemTypeOrm,
+      BookTypeOrm,
+      BookCoverTypeOrm,
+      BookAuthorTypeOrm,
+      AuthorTypeOrm,
+    ]),
     UnitOfWorkModule,
     UuidModule,
   ],
@@ -26,6 +38,7 @@ import { RemoveItemFromCartUseCase } from './application/cart-use-cases/remove-i
     FindUserCartUseCase,
     AddItemToCartUseCase,
     RemoveItemFromCartUseCase,
+    UpdateItemQuantityUseCase,
     {
       provide: CARTS_QUERY_REPOSITORY,
       useClass: TypeOrmCartsQueryRepository,
