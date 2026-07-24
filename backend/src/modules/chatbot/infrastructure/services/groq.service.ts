@@ -9,41 +9,48 @@ import {
 } from '../../domain/exceptions/ai-service.exception';
 
 @Injectable()
-export class OpenAIService implements IAIService {
-  private readonly logger = new Logger(OpenAIService.name);
-  private readonly client: OpenAI;
-  private readonly model: string;
-  private readonly maxTokens: number;
+export class GroqAIService implements IAIService {
+  private readonly logger = new Logger(GroqAIService.name);
+  private client: OpenAI | null = null;
 
-  public constructor(private readonly configService: ConfigService) {
-    this.client = new OpenAI({
-      apiKey: this.configService.get<string>('OPENAI_API_KEY'),
-    });
-    this.model = this.configService.get<string>(
-      'OPENAI_MODEL',
-      'gpt-4o-mini',
-    );
-    this.maxTokens = this.configService.get<number>(
-      'CHATBOT_MAX_TOKENS',
-      1024,
-    );
+  public constructor(private readonly configService: ConfigService) {}
+
+  private getClient(): OpenAI {
+    if (!this.client) {
+      const apiKey = this.configService.get<string>('GROQ_API_KEY');
+      if (!apiKey) {
+        throw new AIServiceException(
+          'GROQ_API_KEY is not configured. AI features are unavailable.',
+        );
+      }
+      this.client = new OpenAI({
+        apiKey,
+        baseURL: 'https://api.groq.com/openai/v1',
+      });
+    }
+    return this.client;
+  }
+
+  private getModel(): string {
+    return this.configService.get<string>('GROQ_MODEL', 'llama-3.3-70b-versatile');
   }
 
   public async generateEmbedding(text: string): Promise<number[]> {
-    try {
-      const response = await this.client.embeddings.create({
-        model: this.configService.get<string>(
-          'OPENAI_EMBEDDING_MODEL',
-          'text-embedding-ada-002',
-        ),
-        input: text,
-      });
+    const vector = new Array(256).fill(0);
+    const lower = text.toLowerCase();
 
-      return response.data[0].embedding;
-    } catch (error) {
-      this.logger.error('Failed to generate embedding', error);
-      throw this.wrapError(error);
+    for (let i = 0; i < lower.length - 1; i++) {
+      const bigram = lower[i] + lower[i + 1];
+      let hash = 0;
+      for (let j = 0; j < bigram.length; j++) {
+        hash = ((hash << 5) - hash + bigram.charCodeAt(j)) | 0;
+      }
+      vector[Math.abs(hash) % 256] += 1;
     }
+
+    const norm = Math.sqrt(vector.reduce((s, v) => s + v * v, 0));
+    if (norm === 0) return vector;
+    return vector.map((v) => v / norm);
   }
 
   public async chat(params: {
@@ -51,9 +58,9 @@ export class OpenAIService implements IAIService {
     messages: { role: 'user' | 'assistant' | 'system'; content: string }[];
   }): Promise<string> {
     try {
-      const response = await this.client.chat.completions.create({
-        model: this.model,
-        max_tokens: this.maxTokens,
+      const response = await this.getClient().chat.completions.create({
+        model: this.getModel(),
+        max_tokens: this.configService.get<number>('CHATBOT_MAX_TOKENS', 1024),
         messages: [
           { role: 'system', content: params.systemPrompt },
           ...params.messages,
@@ -73,9 +80,9 @@ export class OpenAIService implements IAIService {
     onChunk: (chunk: string) => void;
   }): Promise<void> {
     try {
-      const stream = await this.client.chat.completions.create({
-        model: this.model,
-        max_tokens: this.maxTokens,
+      const stream = await this.getClient().chat.completions.create({
+        model: this.getModel(),
+        max_tokens: this.configService.get<number>('CHATBOT_MAX_TOKENS', 1024),
         stream: true,
         messages: [
           { role: 'system', content: params.systemPrompt },
@@ -97,12 +104,14 @@ export class OpenAIService implements IAIService {
   }
 
   private wrapError(error: unknown): Error {
-    if (error instanceof OpenAI.APIError) {
-      if (error.status === 429) {
+    if (error instanceof Error && 'status' in error) {
+      const status = (error as { status: number }).status;
+
+      if (status === 429) {
         return new AIQuotaExceededException();
       }
 
-      if (error.status === 504 || error.code === 'ETIMEDOUT') {
+      if (status === 504) {
         return new AITimeoutException();
       }
     }

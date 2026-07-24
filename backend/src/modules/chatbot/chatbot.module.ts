@@ -12,7 +12,7 @@ import { TypeOrmKnowledgeSourceCommandRepository } from './infrastructure/reposi
 import { TypeOrmKnowledgeSourceQueryRepository } from './infrastructure/repositories/knowledge-source/typeorm-knowledge-source-query.repository';
 import { TypeOrmKnowledgeChunkCommandRepository } from './infrastructure/repositories/knowledge-chunk/typeorm-knowledge-chunk-command.repository';
 import { TypeOrmKnowledgeChunkQueryRepository } from './infrastructure/repositories/knowledge-chunk/typeorm-knowledge-chunk-query.repository';
-import { OpenAIService } from './infrastructure/services/openai.service';
+import { GroqAIService } from './infrastructure/services/groq.service';
 import { DefaultRAGService } from './infrastructure/services/default-rag.service';
 import { BookSearchToolService } from './infrastructure/services/book-search-tool.service';
 import { TextChunkingIngestionService } from './infrastructure/services/text-chunking-ingestion.service';
@@ -43,6 +43,7 @@ import { DeleteKnowledgeSourceUseCase } from './application/chatbot-use-cases/de
 import { UuidModule } from '../../shared/modules/uuid/uuid.module';
 import { UnitOfWorkModule } from '../../shared/modules/unit-of-work/unit-of-work.module';
 import { BookManagementModule } from '../book-management/book-management.module';
+import { BookTypeOrm } from '../book-management/infrastructure/entities/book.entity';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { BookManagementModule } from '../book-management/book-management.module'
       ChatMessageTypeOrm,
       KnowledgeSourceTypeOrm,
       KnowledgeChunkTypeOrm,
+      BookTypeOrm,
     ]),
     UuidModule,
     UnitOfWorkModule,
@@ -86,7 +88,7 @@ import { BookManagementModule } from '../book-management/book-management.module'
       provide: KNOWLEDGE_CHUNK_QUERY_REPOSITORY,
       useClass: TypeOrmKnowledgeChunkQueryRepository,
     },
-    { provide: AI_SERVICE, useClass: OpenAIService },
+    { provide: AI_SERVICE, useClass: GroqAIService },
     { provide: RAG_SERVICE, useClass: DefaultRAGService },
     { provide: TOOL_SERVICE, useClass: BookSearchToolService },
     { provide: KNOWLEDGE_INGESTION_SERVICE, useClass: TextChunkingIngestionService },

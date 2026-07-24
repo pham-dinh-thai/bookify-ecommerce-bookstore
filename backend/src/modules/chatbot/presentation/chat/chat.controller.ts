@@ -6,9 +6,10 @@ import {
   Param,
   Patch,
   Post,
-  Sse,
+  Res,
   UseGuards,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { JwtAuthGuard } from '../../../../shared/http/guards/jwt-auth.guard';
 import { CurrentUser } from '../../../../shared/http/decorators/current-user.decorator';
 import { CreateSessionUseCase } from '../../application/chatbot-use-cases/create-session/create-session.use-case';
@@ -37,8 +38,6 @@ import { UpdateKnowledgeSourceUseCase } from '../../application/chatbot-use-case
 import { UpdateKnowledgeSourceRequest } from './requests/update-knowledge-source.request';
 import { UpdateKnowledgeSourceResponse } from '../../application/chatbot-use-cases/update-knowledge-source/update-knowledge-source.response';
 import { DeleteKnowledgeSourceUseCase } from '../../application/chatbot-use-cases/delete-knowledge-source/delete-knowledge-source.use-case';
-import { Observable, Subject } from 'rxjs';
-
 @Controller('chat')
 @UseGuards(JwtAuthGuard)
 export class ChatController {
@@ -91,28 +90,35 @@ export class ChatController {
     return this.sendMessageUseCase.execute(id, request, userId);
   }
 
-  @Sse('sessions/:id/messages/stream')
-  public sendMessageStream(
+  @Post('sessions/:id/messages/stream')
+  public async sendMessageStream(
     @Param('id') id: string,
     @Body() request: SendMessageRequest,
     @CurrentUser('userId') userId: string,
-  ): Observable<{ data: string }> {
-    const subject = new Subject<{ data: string }>();
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<void> {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
 
-    this.sendMessageStreamUseCase
-      .execute(id, request, userId, (chunk) => {
-        subject.next({ data: chunk });
-      })
-      .then(() => {
-        subject.next({ data: '[DONE]' });
-        subject.complete();
-      })
-      .catch((error) => {
-        subject.next({ data: `Error: ${error.message}` });
-        subject.complete();
-      });
-
-    return subject.asObservable();
+    try {
+      await this.sendMessageStreamUseCase.execute(
+        id,
+        request,
+        userId,
+        (chunk) => {
+          res.write(`data: ${JSON.stringify(chunk)}\n\n`);
+        },
+      );
+      res.write('data: [DONE]\n\n');
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Stream error';
+      res.write(`data: ${JSON.stringify({ error: message })}\n\n`);
+    } finally {
+      res.end();
+    }
   }
 
   @Patch('sessions/:id')
