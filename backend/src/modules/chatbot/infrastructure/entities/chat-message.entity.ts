@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryColumn,
 } from 'typeorm';
-import { MessageRole } from '../../domain/chat-aggregate/enums/message-role.enum';
+import { MessageRole } from '../../domain/chat-session/enums/message-role.enum';
 import { ChatSessionTypeOrm } from './chat-sessions.entity';
 
 @Entity('chat_messages')
@@ -24,7 +24,8 @@ export class ChatMessageTypeOrm {
   content!: string;
 
   @Column({ type: 'json', nullable: true })
-  metadata!: Record<string, unknown> | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  metadata!: any;
 
   @CreateDateColumn()
   createdAt!: Date;

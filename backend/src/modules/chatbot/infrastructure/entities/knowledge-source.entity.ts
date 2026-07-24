@@ -6,7 +6,7 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { KnowledgeSourceType } from '../../domain/chat-aggregate/enums/knowledge-source-type.enum';
+import { KnowledgeSourceType } from '../../domain/knowledge-source/enums/knowledge-source-type.enum';
 import { KnowledgeChunkTypeOrm } from './knowledge-chunk.entity';
 
 @Entity('chatbot_knowledge_sources')
