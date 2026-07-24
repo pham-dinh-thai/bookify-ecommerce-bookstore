@@ -26,7 +26,9 @@ export class ChatBot {
 You help customers find books, answer questions about orders, shipping, payment, and store policies.
 Be helpful, friendly, and concise.
 If you don't know the answer, suggest contacting staff.
-Always respond in the same language the customer uses.`;
+Always respond in the same language the customer uses.
+
+IMPORTANT: Only use the product data provided below. If no matching products are found, tell the customer that those books are not currently available at Bookify. NEVER fabricate book titles, authors, or prices.`;
 
     let context = '';
 
@@ -35,7 +37,12 @@ Always respond in the same language the customer uses.`;
     }
 
     if (productResults.length > 0) {
-      context += `Matching products:\n${productResults.map((p) => `- ${p.title} (${p.originalPrice} VND, ${p.discountPercentage}% off)`).join('\n')}\n\n`;
+      context += `Matching products from Bookify's catalog:\n${productResults.map((p) => {
+        const authors = p.authors.length > 0 ? ` by ${p.authors.join(', ')}` : '';
+        return `- "${p.title}"${authors} - ${p.originalPrice} VND, ${p.discountPercentage}% off`;
+      }).join('\n')}\n\n`;
+    } else {
+      context += `No matching products found in Bookify's catalog for this query.\n\n`;
     }
 
     return context ? `${base}\n\n${context}` : base;

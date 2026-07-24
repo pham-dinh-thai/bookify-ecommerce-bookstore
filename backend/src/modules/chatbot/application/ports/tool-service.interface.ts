@@ -1,6 +1,7 @@
 export interface ProductSearchResult {
   id: string;
   title: string;
+  authors: string[];
   description: string | null;
   originalPrice: number;
   discountPercentage: number;
