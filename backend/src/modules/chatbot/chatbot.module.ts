@@ -15,6 +15,7 @@ import { TypeOrmKnowledgeChunkQueryRepository } from './infrastructure/repositor
 import { OpenAIService } from './infrastructure/services/openai.service';
 import { DefaultRAGService } from './infrastructure/services/default-rag.service';
 import { BookSearchToolService } from './infrastructure/services/book-search-tool.service';
+import { TextChunkingIngestionService } from './infrastructure/services/text-chunking-ingestion.service';
 import { CHAT_SESSION_COMMAND_REPOSITORY } from './domain/chat-session/repositories/chat-session-command.repository.interface';
 import { CHAT_SESSION_QUERY_REPOSITORY } from './domain/chat-session/repositories/chat-session-query.repository.interface';
 import { CHAT_MESSAGE_COMMAND_REPOSITORY } from './domain/chat-session/repositories/chat-message-command.repository.interface';
@@ -25,11 +26,13 @@ import { KNOWLEDGE_CHUNK_QUERY_REPOSITORY } from './domain/knowledge-source/repo
 import { AI_SERVICE } from './application/ports/ai-service.interface';
 import { RAG_SERVICE } from './application/ports/rag-service.interface';
 import { TOOL_SERVICE } from './application/ports/tool-service.interface';
+import { KNOWLEDGE_INGESTION_SERVICE } from './application/ports/knowledge-ingestion-service.interface';
 import { ChatBot } from './domain/chatbot.aggregate';
 import { CreateSessionUseCase } from './application/chatbot-use-cases/create-session/create-session.use-case';
 import { SendMessageUseCase } from './application/chatbot-use-cases/send-message/send-message.use-case';
 import { GetHistoryUseCase } from './application/chatbot-use-cases/get-history/get-history.use-case';
 import { ListSessionsUseCase } from './application/chatbot-use-cases/list-sessions/list-sessions.use-case';
+import { CreateKnowledgeSourceUseCase } from './application/chatbot-use-cases/create-knowledge-source/create-knowledge-source.use-case';
 import { UuidModule } from '../../shared/modules/uuid/uuid.module';
 import { UnitOfWorkModule } from '../../shared/modules/unit-of-work/unit-of-work.module';
 import { BookManagementModule } from '../book-management/book-management.module';
@@ -79,11 +82,13 @@ import { BookManagementModule } from '../book-management/book-management.module'
     { provide: AI_SERVICE, useClass: OpenAIService },
     { provide: RAG_SERVICE, useClass: DefaultRAGService },
     { provide: TOOL_SERVICE, useClass: BookSearchToolService },
+    { provide: KNOWLEDGE_INGESTION_SERVICE, useClass: TextChunkingIngestionService },
     ChatBot,
     CreateSessionUseCase,
     SendMessageUseCase,
     GetHistoryUseCase,
     ListSessionsUseCase,
+    CreateKnowledgeSourceUseCase,
   ],
   exports: [ChatBot],
 })

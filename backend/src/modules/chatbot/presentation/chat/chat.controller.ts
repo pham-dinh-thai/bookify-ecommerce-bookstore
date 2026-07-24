@@ -18,6 +18,9 @@ import { GetHistoryUseCase } from '../../application/chatbot-use-cases/get-histo
 import { GetHistoryResponse } from '../../application/chatbot-use-cases/get-history/get-history.response';
 import { ListSessionsUseCase } from '../../application/chatbot-use-cases/list-sessions/list-sessions.use-case';
 import { ListSessionsResponse } from '../../application/chatbot-use-cases/list-sessions/list-sessions.response';
+import { CreateKnowledgeSourceUseCase } from '../../application/chatbot-use-cases/create-knowledge-source/create-knowledge-source.use-case';
+import { CreateKnowledgeSourceRequest } from './requests/create-knowledge-source.request';
+import { CreateKnowledgeSourceResponse } from '../../application/chatbot-use-cases/create-knowledge-source/create-knowledge-source.response';
 
 @Controller('chat')
 @UseGuards(JwtAuthGuard)
@@ -27,6 +30,7 @@ export class ChatController {
     private readonly sendMessageUseCase: SendMessageUseCase,
     private readonly getHistoryUseCase: GetHistoryUseCase,
     private readonly listSessionsUseCase: ListSessionsUseCase,
+    private readonly createKnowledgeSourceUseCase: CreateKnowledgeSourceUseCase,
   ) {}
 
   @Post('sessions')
@@ -59,5 +63,12 @@ export class ChatController {
     @CurrentUser('userId') userId: string,
   ): Promise<SendMessageResponse> {
     return this.sendMessageUseCase.execute(id, request, userId);
+  }
+
+  @Post('knowledge')
+  public async createKnowledgeSource(
+    @Body() request: CreateKnowledgeSourceRequest,
+  ): Promise<CreateKnowledgeSourceResponse> {
+    return this.createKnowledgeSourceUseCase.execute(request);
   }
 }

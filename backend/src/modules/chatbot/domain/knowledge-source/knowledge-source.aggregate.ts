@@ -62,6 +62,57 @@ export class KnowledgeSource {
     this.chunks = chunks;
   }
 
+  /**
+   * Split content into text chunks. Pure domain logic.
+   * Splits on double newlines (paragraphs), falls back to single newlines,
+   * then hard-cuts at max length.
+   */
+  public chunkContent(maxLength: number = 800): string[] {
+    const text = this.content.trim();
+
+    if (text.length === 0) {
+      return [];
+    }
+
+    const paragraphs = text.split(/\n\s*\n/).filter((p) => p.trim().length > 0);
+
+    const chunks: string[] = [];
+    let buffer = '';
+
+    for (const paragraph of paragraphs) {
+      const trimmed = paragraph.trim();
+
+      if (trimmed.length > maxLength) {
+        if (buffer.length > 0) {
+          chunks.push(buffer.trim());
+          buffer = '';
+        }
+
+        const sentences = trimmed.split(/(?<=[.!?])\s+/);
+
+        for (const sentence of sentences) {
+          if (buffer.length + sentence.length + 1 > maxLength && buffer.length > 0) {
+            chunks.push(buffer.trim());
+            buffer = '';
+          }
+
+          buffer += (buffer.length > 0 ? ' ' : '') + sentence;
+        }
+      } else if (buffer.length + trimmed.length + 2 > maxLength && buffer.length > 0) {
+        chunks.push(buffer.trim());
+        buffer = trimmed;
+      } else {
+        buffer += (buffer.length > 0 ? '\n\n' : '') + trimmed;
+      }
+    }
+
+    if (buffer.trim().length > 0) {
+      chunks.push(buffer.trim());
+    }
+
+    return chunks;
+  }
+
   public findRelevantChunks(
     queryEmbedding: number[],
     topK: number,
