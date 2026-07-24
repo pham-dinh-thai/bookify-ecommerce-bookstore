@@ -30,9 +30,16 @@ import { KNOWLEDGE_INGESTION_SERVICE } from './application/ports/knowledge-inges
 import { ChatBot } from './domain/chatbot.aggregate';
 import { CreateSessionUseCase } from './application/chatbot-use-cases/create-session/create-session.use-case';
 import { SendMessageUseCase } from './application/chatbot-use-cases/send-message/send-message.use-case';
+import { SendMessageStreamUseCase } from './application/chatbot-use-cases/send-message-stream/send-message-stream.use-case';
 import { GetHistoryUseCase } from './application/chatbot-use-cases/get-history/get-history.use-case';
 import { ListSessionsUseCase } from './application/chatbot-use-cases/list-sessions/list-sessions.use-case';
+import { DeleteSessionUseCase } from './application/chatbot-use-cases/delete-session/delete-session.use-case';
+import { UpdateSessionTitleUseCase } from './application/chatbot-use-cases/update-session-title/update-session-title.use-case';
 import { CreateKnowledgeSourceUseCase } from './application/chatbot-use-cases/create-knowledge-source/create-knowledge-source.use-case';
+import { ListKnowledgeSourcesUseCase } from './application/chatbot-use-cases/list-knowledge-sources/list-knowledge-sources.use-case';
+import { GetKnowledgeSourceUseCase } from './application/chatbot-use-cases/get-knowledge-source/get-knowledge-source.use-case';
+import { UpdateKnowledgeSourceUseCase } from './application/chatbot-use-cases/update-knowledge-source/update-knowledge-source.use-case';
+import { DeleteKnowledgeSourceUseCase } from './application/chatbot-use-cases/delete-knowledge-source/delete-knowledge-source.use-case';
 import { UuidModule } from '../../shared/modules/uuid/uuid.module';
 import { UnitOfWorkModule } from '../../shared/modules/unit-of-work/unit-of-work.module';
 import { BookManagementModule } from '../book-management/book-management.module';
@@ -86,9 +93,16 @@ import { BookManagementModule } from '../book-management/book-management.module'
     ChatBot,
     CreateSessionUseCase,
     SendMessageUseCase,
+    SendMessageStreamUseCase,
     GetHistoryUseCase,
     ListSessionsUseCase,
+    DeleteSessionUseCase,
+    UpdateSessionTitleUseCase,
     CreateKnowledgeSourceUseCase,
+    ListKnowledgeSourcesUseCase,
+    GetKnowledgeSourceUseCase,
+    UpdateKnowledgeSourceUseCase,
+    DeleteKnowledgeSourceUseCase,
   ],
   exports: [ChatBot],
 })

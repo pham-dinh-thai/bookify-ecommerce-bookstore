@@ -16,13 +16,16 @@ export class DefaultRAGService implements IRAGService {
     private readonly configService: ConfigService,
   ) {}
 
-  public async retrieveRelevantChunks(query: string): Promise<string[]> {
+  public async retrieveRelevantChunks(
+    query: string,
+    language: string = 'vi',
+  ): Promise<string[]> {
     const topK = this.configService.get<number>('CHATBOT_RAG_TOP_K', 5);
 
     const queryEmbedding = await this.aiService.generateEmbedding(query);
 
     const sources =
-      await this.knowledgeSourceQueryRepo.findActiveByLanguage('vi');
+      await this.knowledgeSourceQueryRepo.findActiveByLanguage(language);
 
     const allChunks: string[] = [];
 

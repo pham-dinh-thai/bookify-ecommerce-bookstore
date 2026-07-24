@@ -1,5 +1,5 @@
 export interface IRAGService {
-  retrieveRelevantChunks(query: string): Promise<string[]>;
+  retrieveRelevantChunks(query: string, language?: string): Promise<string[]>;
 }
 
 export const RAG_SERVICE = 'IRAGService';

@@ -47,4 +47,8 @@ export class TypeOrmChatSessionCommandRepository
       .getManager()
       .save(ChatSessionTypeOrm, entity);
   }
+
+  public async delete(id: string): Promise<void> {
+    await this.unitOfWork.getManager().delete(ChatSessionTypeOrm, { id });
+  }
 }

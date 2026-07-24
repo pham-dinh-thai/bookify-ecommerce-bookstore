@@ -50,6 +50,22 @@ export class KnowledgeSource {
     );
   }
 
+  public updateTitle(title: string): void {
+    this.title = title;
+  }
+
+  public updateContent(content: string): void {
+    this.content = content;
+  }
+
+  public updateLanguage(language: string): void {
+    this.language = language;
+  }
+
+  public updateSourceType(sourceType: KnowledgeSourceType): void {
+    this.sourceType = sourceType;
+  }
+
   public deactivate(): void {
     this.isActive = false;
   }
