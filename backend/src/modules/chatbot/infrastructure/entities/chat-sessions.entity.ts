@@ -2,13 +2,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   OneToMany,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserTypeOrm } from '../../../user-management/infrastructure/entities/user.entity';
 import { ChatMessageTypeOrm } from './chat-message.entity';
 
 @Entity('chat_sessions')
@@ -27,10 +24,6 @@ export class ChatSessionTypeOrm {
 
   @UpdateDateColumn()
   updatedAt!: Date;
-
-  @ManyToOne(() => UserTypeOrm)
-  @JoinColumn({ name: 'userId' })
-  user!: UserTypeOrm;
 
   @OneToMany(() => ChatMessageTypeOrm, (message) => message.session)
   messages!: ChatMessageTypeOrm[];

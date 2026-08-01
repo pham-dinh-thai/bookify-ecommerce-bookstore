@@ -1,11 +1,6 @@
 import { MessageRole } from './enums/message-role.enum';
 import { ChatMessage } from './entities/chat-message.entity';
 
-/**
- * ChatSession aggregate.
- *
- * Pure domain logic only. No repos, no services, no infrastructure.
- */
 export class ChatSession {
   private constructor(
     private readonly id: string,
@@ -30,7 +25,7 @@ export class ChatSession {
     return new ChatSession(
       props.id,
       props.userId,
-      props.title ?? 'Cuộc trò chuyện mới',
+      props.title ?? 'New chat session',
       [],
     );
   }
@@ -41,12 +36,7 @@ export class ChatSession {
     title: string;
     messages: ChatMessage[];
   }): ChatSession {
-    return new ChatSession(
-      props.id,
-      props.userId,
-      props.title,
-      props.messages,
-    );
+    return new ChatSession(props.id, props.userId, props.title, props.messages);
   }
 
   public addMessage(
