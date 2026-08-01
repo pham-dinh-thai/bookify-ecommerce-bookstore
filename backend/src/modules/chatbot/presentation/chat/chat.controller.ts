@@ -11,7 +11,8 @@ import {
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { JwtAuthGuard } from '../../../../shared/http/guards/jwt-auth.guard';
-import { CurrentUser } from '../../../../shared/http/decorators/current-user.decorator';
+import { OptionalJwtAuthGuard } from '../../../../shared/http/guards/optional-jwt-auth.guard';
+import { CurrentUserId } from '../../../../shared/http/decorators/current-user-id.decorator';
 import { CreateSessionUseCase } from '../../application/chatbot-use-cases/create-session/create-session.use-case';
 import { CreateSessionRequest } from './requests/create-session.request';
 import { CreateSessionResponse } from '../../application/chatbot-use-cases/create-session/create-session.response';
@@ -39,7 +40,7 @@ import { UpdateKnowledgeSourceRequest } from './requests/update-knowledge-source
 import { UpdateKnowledgeSourceResponse } from '../../application/chatbot-use-cases/update-knowledge-source/update-knowledge-source.response';
 import { DeleteKnowledgeSourceUseCase } from '../../application/chatbot-use-cases/delete-knowledge-source/delete-knowledge-source.use-case';
 @Controller('chat')
-@UseGuards(JwtAuthGuard)
+@UseGuards(OptionalJwtAuthGuard)
 export class ChatController {
   public constructor(
     private readonly createSessionUseCase: CreateSessionUseCase,
@@ -61,14 +62,14 @@ export class ChatController {
   @Post('sessions')
   public async createSession(
     @Body() request: CreateSessionRequest,
-    @CurrentUser('userId') userId: string,
+    @CurrentUserId() userId: string,
   ): Promise<CreateSessionResponse> {
     return this.createSessionUseCase.execute(request, userId);
   }
 
   @Get('sessions')
   public async listSessions(
-    @CurrentUser('userId') userId: string,
+    @CurrentUserId() userId: string,
   ): Promise<ListSessionsResponse> {
     return this.listSessionsUseCase.execute(userId);
   }
@@ -76,7 +77,7 @@ export class ChatController {
   @Get('sessions/:id/messages')
   public async getHistory(
     @Param('id') id: string,
-    @CurrentUser('userId') userId: string,
+    @CurrentUserId() userId: string,
   ): Promise<GetHistoryResponse> {
     return this.getHistoryUseCase.execute(id, userId);
   }
@@ -85,7 +86,7 @@ export class ChatController {
   public async sendMessage(
     @Param('id') id: string,
     @Body() request: SendMessageRequest,
-    @CurrentUser('userId') userId: string,
+    @CurrentUserId() userId: string,
   ): Promise<SendMessageResponse> {
     return this.sendMessageUseCase.execute(id, request, userId);
   }
@@ -94,7 +95,7 @@ export class ChatController {
   public async sendMessageStream(
     @Param('id') id: string,
     @Body() request: SendMessageRequest,
-    @CurrentUser('userId') userId: string,
+    @CurrentUserId() userId: string,
     @Res({ passthrough: true }) res: Response,
   ): Promise<void> {
     res.setHeader('Content-Type', 'text/event-stream');
@@ -125,7 +126,7 @@ export class ChatController {
   public async updateSessionTitle(
     @Param('id') id: string,
     @Body() request: UpdateSessionTitleRequest,
-    @CurrentUser('userId') userId: string,
+    @CurrentUserId() userId: string,
   ): Promise<UpdateSessionTitleResponse> {
     return this.updateSessionTitleUseCase.execute(id, userId, request);
   }
@@ -133,14 +134,15 @@ export class ChatController {
   @Delete('sessions/:id')
   public async deleteSession(
     @Param('id') id: string,
-    @CurrentUser('userId') userId: string,
+    @CurrentUserId() userId: string,
   ): Promise<void> {
     return this.deleteSessionUseCase.execute(id, userId);
   }
 
-  // ── Knowledge Sources ────────────────────────────────
+  // ── Knowledge Sources (admin only) ───────────────────
 
   @Post('knowledge')
+  @UseGuards(JwtAuthGuard)
   public async createKnowledgeSource(
     @Body() request: CreateKnowledgeSourceRequest,
   ): Promise<CreateKnowledgeSourceResponse> {
@@ -148,11 +150,13 @@ export class ChatController {
   }
 
   @Get('knowledge')
+  @UseGuards(JwtAuthGuard)
   public async listKnowledgeSources(): Promise<ListKnowledgeSourcesResponse> {
     return this.listKnowledgeSourcesUseCase.execute();
   }
 
   @Get('knowledge/:id')
+  @UseGuards(JwtAuthGuard)
   public async getKnowledgeSource(
     @Param('id') id: string,
   ): Promise<GetKnowledgeSourceResponse> {
@@ -160,6 +164,7 @@ export class ChatController {
   }
 
   @Patch('knowledge/:id')
+  @UseGuards(JwtAuthGuard)
   public async updateKnowledgeSource(
     @Param('id') id: string,
     @Body() request: UpdateKnowledgeSourceRequest,
@@ -168,6 +173,7 @@ export class ChatController {
   }
 
   @Delete('knowledge/:id')
+  @UseGuards(JwtAuthGuard)
   public async deleteKnowledgeSource(
     @Param('id') id: string,
   ): Promise<void> {

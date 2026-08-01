@@ -1,5 +1,6 @@
 import { getAccessToken } from '@/shared/auth/lib/token-storage';
 import { refreshAccessToken } from '@/shared/auth/lib/refresh';
+import { getGuestId } from '../lib/guest-id';
 import type {
   ChatSession,
   ChatSessionDetail,
@@ -21,15 +22,15 @@ async function getErrorMessage(response: Response): Promise<string> {
   }
 }
 
-async function authedFetch(
-  url: string,
-  options: RequestInit = {},
-): Promise<Response> {
-  const token = getAccessToken();
-  if (!token) throw new Error('Not authenticated');
-
+function buildHeaders(options: RequestInit = {}): Headers {
   const headers = new Headers(options.headers);
-  headers.set('Authorization', `Bearer ${token}`);
+  const token = getAccessToken();
+
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`);
+  } else {
+    headers.set('x-guest-id', getGuestId());
+  }
 
   if (
     options.body &&
@@ -38,6 +39,15 @@ async function authedFetch(
   ) {
     headers.set('Content-Type', 'application/json');
   }
+
+  return headers;
+}
+
+async function chatFetch(
+  url: string,
+  options: RequestInit = {},
+): Promise<Response> {
+  const headers = buildHeaders(options);
 
   let response = await fetch(url, {
     ...options,
@@ -63,7 +73,7 @@ async function authedFetch(
 export async function createSession(
   title?: string,
 ): Promise<CreateSessionResponse> {
-  const response = await authedFetch(API_BASE + '/sessions', {
+  const response = await chatFetch(API_BASE + '/sessions', {
     method: 'POST',
     body: JSON.stringify({ title }),
   });
@@ -76,7 +86,7 @@ export async function createSession(
 }
 
 export async function listSessions(): Promise<ChatSession[]> {
-  const response = await authedFetch(API_BASE + '/sessions');
+  const response = await chatFetch(API_BASE + '/sessions');
 
   if (!response.ok) {
     throw new Error(await getErrorMessage(response));
@@ -88,7 +98,7 @@ export async function listSessions(): Promise<ChatSession[]> {
 export async function getSessionHistory(
   sessionId: string,
 ): Promise<ChatSessionDetail> {
-  const response = await authedFetch(
+  const response = await chatFetch(
     `${API_BASE}/sessions/${sessionId}/messages`,
   );
 
@@ -103,7 +113,7 @@ export async function sendMessage(
   sessionId: string,
   content: string,
 ): Promise<{ reply: string }> {
-  const response = await authedFetch(
+  const response = await chatFetch(
     `${API_BASE}/sessions/${sessionId}/messages`,
     {
       method: 'POST',
@@ -119,7 +129,7 @@ export async function sendMessage(
 }
 
 export async function deleteSession(sessionId: string): Promise<void> {
-  const response = await authedFetch(`${API_BASE}/sessions/${sessionId}`, {
+  const response = await chatFetch(`${API_BASE}/sessions/${sessionId}`, {
     method: 'DELETE',
   });
 
@@ -132,7 +142,7 @@ export async function updateSessionTitle(
   sessionId: string,
   title: string,
 ): Promise<void> {
-  const response = await authedFetch(`${API_BASE}/sessions/${sessionId}`, {
+  const response = await chatFetch(`${API_BASE}/sessions/${sessionId}`, {
     method: 'PATCH',
     body: JSON.stringify({ title }),
   });
@@ -149,20 +159,15 @@ export function sendMessageStream(
   onDone: () => void,
   onError: (error: Error) => void,
 ): () => void {
-  const token = getAccessToken();
-  if (!token) {
-    onError(new Error('Not authenticated'));
-    return () => {};
-  }
-
   const controller = new AbortController();
+  const headers = buildHeaders({
+    method: 'POST',
+    body: JSON.stringify({ content }),
+  });
 
   fetch(`${API_BASE}/sessions/${sessionId}/messages/stream`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+    headers,
     body: JSON.stringify({ content }),
     signal: controller.signal,
     credentials: 'include',

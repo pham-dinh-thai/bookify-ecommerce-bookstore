@@ -1,19 +1,81 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useChatbot } from '../hooks/use-chatbot';
-import { useAuth } from '@/shared/auth/hooks/use-auth';
-import { useEffect } from 'react';
+import { useEffect, Fragment, type ReactNode } from 'react';
+
+function renderInline(text: string, keyPrefix: string): ReactNode[] {
+  const nodes: ReactNode[] = [];
+  const regex = /(\*\*[^*]+\*\*|\*[^*]+\*)/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let key = 0;
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      nodes.push(text.slice(lastIndex, match.index));
+    }
+
+    const token = match[0];
+    if (token.startsWith('**')) {
+      nodes.push(
+        <strong key={`${keyPrefix}-${key++}`}>{token.slice(2, -2)}</strong>,
+      );
+    } else {
+      nodes.push(
+        <em key={`${keyPrefix}-${key++}`}>{token.slice(1, -1)}</em>,
+      );
+    }
+
+    lastIndex = match.index + token.length;
+  }
+
+  if (lastIndex < text.length) {
+    nodes.push(text.slice(lastIndex));
+  }
+
+  return nodes;
+}
+
+function renderLine(line: string, index: number, keyPrefix: string): ReactNode {
+  const trimmed = line.trim();
+  const trimmedMatch = /^([-*]|\d+\.)\s+(.*)$/.exec(trimmed);
+
+  if (trimmedMatch) {
+    const content = renderInline(trimmedMatch[2], `${keyPrefix}-${index}`);
+    return (
+      <li key={`${keyPrefix}-${index}`} className="ml-4 list-disc">
+        {content}
+      </li>
+    );
+  }
+
+  return <p key={`${keyPrefix}-${index}`}>{renderInline(line, `${keyPrefix}-${index}`)}</p>;
+}
+
+export function MarkdownText({ text }: { text: string }) {
+  if (!text) return null;
+
+  const lines = text.split('\n');
+
+  return (
+    <div className="space-y-1">
+      {lines.map((line, i) => (
+        <Fragment key={`${i}-${line.slice(0, 16)}`}>
+          {renderLine(line, i, `m${i}`)}
+        </Fragment>
+      ))}
+    </div>
+  );
+}
 
 export function ChatWindow() {
-  const { isAuth } = useAuth();
   const { sessions, activeSessionId, selectSession, refreshSessions } =
     useChatbot();
 
   useEffect(() => {
-    if (isAuth) {
-      refreshSessions();
-    }
-  }, [isAuth, refreshSessions]);
+    refreshSessions();
+  }, [refreshSessions]);
 
   return (
     <div className="flex flex-1 overflow-hidden">
@@ -63,14 +125,34 @@ function SessionList() {
 }
 
 function MessageList() {
-  const { messages, isStreaming } = useChatbot();
+  const { messages, isStreaming, sendMessage } = useChatbot();
+  const t = useTranslations('chatbot');
+
+  const suggestedQuestions = [
+    t('suggested.newBooks'),
+    t('suggested.bestSellers'),
+    t('suggested.byAuthor'),
+    t('suggested.shipping'),
+    t('suggested.returns'),
+  ];
 
   if (messages.length === 0) {
     return (
-      <div className="flex flex-1 items-center justify-center p-6 text-center text-sm text-gray-400">
+      <div className="flex flex-1 flex-col items-center justify-center p-6 text-center text-sm text-gray-400">
         <div>
-          <p className="font-medium text-gray-500">Xin chào!</p>
-          <p className="mt-1">Tôi có thể giúp gì cho bạn?</p>
+          <p className="font-medium text-gray-500">{t('welcome')}</p>
+          <p className="mt-1">{t('welcomeHint')}</p>
+        </div>
+        <div className="mt-4 flex w-full flex-col gap-2">
+          {suggestedQuestions.map((question) => (
+            <button
+              key={question}
+              onClick={() => sendMessage(question)}
+              className="rounded-xl border border-[#3f6754]/20 bg-white px-3 py-2 text-xs text-[#3f6754] transition-colors hover:bg-[#3f6754]/10"
+            >
+              {question}
+            </button>
+          ))}
         </div>
       </div>
     );
@@ -90,9 +172,11 @@ function MessageList() {
                 : 'bg-gray-100 text-gray-800'
             }`}
           >
-            {msg.content || (isStreaming && msg.role === 'assistant' ? (
+            {msg.content ? (
+              <MarkdownText text={msg.content} />
+            ) : isStreaming && msg.role === 'assistant' ? (
               <span className="inline-block animate-pulse">...</span>
-            ) : null)}
+            ) : null}
           </div>
         </div>
       ))}
@@ -102,6 +186,7 @@ function MessageList() {
 
 function MessageInput() {
   const { sendMessage, isStreaming } = useChatbot();
+  const t = useTranslations('chatbot');
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -121,7 +206,7 @@ function MessageInput() {
       <div className="flex gap-2">
         <input
           name="message"
-          placeholder="Nhập tin nhắn..."
+          placeholder={t('placeholder')}
           disabled={isStreaming}
           className="flex-1 rounded-xl bg-gray-100 px-3 py-2 text-sm outline-none transition-colors placeholder:text-gray-400 focus:bg-white focus:ring-1 focus:ring-[#3f6754]/30 disabled:opacity-50"
         />
@@ -130,7 +215,7 @@ function MessageInput() {
           disabled={isStreaming}
           className="rounded-xl bg-[#3f6754] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[#335b48] disabled:opacity-50"
         >
-          Gửi
+          {t('send')}
         </button>
       </div>
     </form>

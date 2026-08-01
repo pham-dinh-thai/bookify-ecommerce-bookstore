@@ -293,5 +293,20 @@
       "label": "LOGISTICS & GIAO HÀNG",
       "description": "Tại Bookify, chúng tôi hiểu rằng việc nhận được những kho báu văn học của bạn an toàn và đúng hạn là điều quan trọng nhất. Quy trình vận chuyển của chúng tôi được thiết kế với sự chăm sóc và chính xác để đảm bảo sách của bạn đến trong tình trạng nguyên vẹn, dù bạn ở Hà Nội hay bất kỳ nơi nào khác ở Việt Nam."
     }
+  },
+  "chatbot": {
+    "title": "Bookify Assistant",
+    "subtitle": "Hỗ trợ khách hàng 24/7",
+    "welcome": "Xin chào!",
+    "welcomeHint": "Tôi có thể giúp gì cho bạn?",
+    "placeholder": "Nhập tin nhắn...",
+    "send": "Gửi",
+    "suggested": {
+      "newBooks": "Những cuốn sách mới về",
+      "bestSellers": "Những cuốn sách bán chạy",
+      "byAuthor": "Tìm sách theo tác giả",
+      "shipping": "Chính sách giao hàng",
+      "returns": "Cách đổi trả sách"
+    }
   }
 }

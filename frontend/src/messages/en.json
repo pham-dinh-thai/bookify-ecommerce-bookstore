@@ -293,5 +293,20 @@
       "label": "LOGISTICS & DELIVERY",
       "description": "At Bookify, we understand that receiving your literary treasures safely and promptly is paramount. Our shipping process is designed with care and precision to ensure your books arrive in pristine condition, whether you're in Hanoi or anywhere else in Vietnam."
     }
+  },
+  "chatbot": {
+    "title": "Bookify Assistant",
+    "subtitle": "Customer support 24/7",
+    "welcome": "Hello!",
+    "welcomeHint": "How can I help you today?",
+    "placeholder": "Type a message...",
+    "send": "Send",
+    "suggested": {
+      "newBooks": "New arrivals",
+      "bestSellers": "Best-selling books",
+      "byAuthor": "Find books by author",
+      "shipping": "Shipping policy",
+      "returns": "How to return books"
+    }
   }
 }

@@ -10,7 +10,6 @@ import {
 } from 'react';
 import type { ChatMessage, ChatSession } from '../types';
 import * as chatbotService from '../services/chatbot.service';
-import { useAuth } from '@/shared/auth/hooks/use-auth';
 
 type ChatContextValue = {
   isOpen: boolean;
@@ -36,7 +35,6 @@ export function useChatbot(): ChatContextValue {
 }
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
-  const { isAuth } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
@@ -46,14 +44,13 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const abortRef = useRef<(() => void) | null>(null);
 
   const refreshSessions = useCallback(async () => {
-    if (!isAuth) return;
     try {
       const list = await chatbotService.listSessions();
       setSessions(list);
     } catch {
       // silent
     }
-  }, [isAuth]);
+  }, []);
 
   const createSession = useCallback(
     async (title?: string): Promise<string> => {
