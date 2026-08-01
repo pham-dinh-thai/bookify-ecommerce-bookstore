@@ -6,7 +6,8 @@ Bookify is an ecommerce bookstore application built as a full-stack monorepo. It
 
 ## Highlighted Features
 
-- **Customer storefront:** Browse best sellers, new arrivals, on-sale books, genre collections, product details, cart, checkout, mock payment, and customer order history.
+- **Customer storefront:** Browse best sellers, new arrivals, on-sale books, genre collections, product details, cart, checkout, mock/VNPay payment, and customer order history.
+- **AI customer support chatbot:** A floating chat widget available on every shop page, powered by an LLM (Groq).
 - **Authentication:** Email/password login, JWT refresh sessions, Google OAuth login, and profile completion for newly created OAuth users.
 - **Popularity-aware navigation:** Homepage category cards and navbar genre links prioritize the most popular genres from recent sales, with catalog fallback when sales data is not available.
 - **Staff operations:** Staff can manage books, import stock, handle orders, inspect customer records, and monitor operational dashboard metrics.
@@ -14,6 +15,7 @@ Bookify is an ecommerce bookstore application built as a full-stack monorepo. It
 - **Admin management:** Admin pages cover users, genres, publishers, authors, languages, roles, permissions, and system overview metrics.
 - **Order lifecycle:** Orders support placement, confirmation, delivery progress, completion, cancellation, payment status tracking, audit logging, and transactional email notifications.
 - **Email notifications:** Automated email delivery via Resend for account verification (OTP) and order lifecycle events (confirmation, delivery, completion, cancellation).
+- **Payments:** Mock payment for local development plus real VNPay sandbox integration with retry support and payment status tracking.
 
 ## Tech Stack
 
@@ -21,6 +23,7 @@ Bookify is an ecommerce bookstore application built as a full-stack monorepo. It
 - **Frontend:** Next.js, React, TypeScript, Tailwind CSS
 - **Database:** MySQL 8.0
 - **Cache:** Redis
+- **AI:** Groq (LLM API, OpenAI-compatible), Server-Sent Events streaming
 - **Web server:** Nginx
 - **Containerization:** Docker, Docker Compose
 - **Package manager:** pnpm
@@ -37,10 +40,12 @@ Bookify is an ecommerce bookstore application built as a full-stack monorepo. It
 |   |   |   |-- book-management/
 |   |   |   |-- cart-management/
 |   |   |   |-- catalog-management/
+|   |   |   |-- chatbot/
 |   |   |   |-- customer-management/
 |   |   |   |-- dashboard/
 |   |   |   |-- email/
 |   |   |   |-- file-storage/
+|   |   |   |-- my-account/
 |   |   |   |-- order/
 |   |   |   |-- order-management/
 |   |   |   |-- payment-gateway/
@@ -139,6 +144,9 @@ MOCK_PAYMENT_URL=http://localhost/payment/mock
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 GOOGLE_CALLBACK_URL=http://localhost/api/auth/google/callback
+
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=llama-3.3-70b-versatile
 ```
 
 ```env
@@ -256,10 +264,12 @@ Main modules:
 - `book-management`
 - `cart-management`
 - `catalog-management`
+- `chatbot`
 - `customer-management`
 - `dashboard`
 - `email`
 - `file-storage`
+- `my-account`
 - `order`
 - `order-management`
 - `payment-gateway`
@@ -297,6 +307,27 @@ Order lifecycle emails:
 - `OrderCanceled`: sent when a customer cancels their order.
 
 Order emails are dispatched only after the related order transaction succeeds.
+
+## AI Chatbot
+
+The `chatbot` module powers the floating chat widget available across shop pages. It combines a live catalog search tool with a Retrieval-Augmented Generation (RAG) knowledge base.
+
+AI configuration in `backend/.env`:
+
+```env
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=llama-3.3-70b-versatile
+```
+
+How it works:
+
+- **Guest access:** Unauthenticated visitors get an anonymous `x-guest-id` (persisted in `localStorage`). The backend uses an optional JWT guard — real users are identified by JWT, guests by guest ID. Admin-only knowledge endpoints stay protected.
+- **Catalog grounding:** User queries are classified by intent (bestsellers, new arrivals, normal search), then matched against the real product database (title, author, ISBN). Only matched products are injected into the system prompt as context, so the AI never invents books.
+- **RAG:** Admins manage knowledge sources (store policies, FAQs) which are chunked, embedded, and retrieved as context for customer questions.
+- **Streaming:** `POST /sessions/:id/messages/stream` returns a Server-Sent Events response that Nginx is configured to proxy without buffering.
+- **Safety:** A strict system prompt keeps the assistant on-topic, blocks off-topic requests, and refuses prompt-injection attempts.
+
+Chat sessions are scoped per user/guest: sessions, messages, and history are isolated by identity. The frontend renders markdown (bold, italic, lists) and provides localized suggested questions.
 
 ## Frontend Areas
 
