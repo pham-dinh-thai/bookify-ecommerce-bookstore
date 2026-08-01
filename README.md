@@ -7,14 +7,7 @@ Bookify is an ecommerce bookstore application built as a full-stack monorepo. It
 ## Highlighted Features
 
 - **Customer storefront:** Browse best sellers, new arrivals, on-sale books, genre collections, product details, cart, checkout, mock/VNPay payment, and customer order history.
-- **AI customer support chatbot:** A floating chat widget available on every shop page, powered by an LLM (Groq) with:
-  - **Guest access** — non-logged-in visitors can chat immediately using an anonymous guest ID, while authenticated users get their own persistent chat history.
-  - **Real-time streaming** — answers stream token-by-token over Server-Sent Events through a buffering-disabled Nginx proxy.
-  - **Catalog-grounded answers** — the AI only answers from real products fetched from the database (intent-aware search: bestsellers, new arrivals, title/author/ISBN), preventing hallucinated books.
-  - **RAG knowledge base** — admin-managed knowledge sources are chunked, embedded, and retrieved to answer store-policy questions.
-  - **Anti-abuse hardening** — strict system prompt that refuses off-topic requests and prompt-injection attempts, and never reveals internal rules.
-  - **Markdown responses** — bold, italic, line breaks, and lists rendered client-side.
-  - **Multilingual (i18n)** — widget UI and suggested questions localized in Vietnamese and English.
+- **AI customer support chatbot:** A floating chat widget available on every shop page, powered by an LLM (Groq).
 - **Authentication:** Email/password login, JWT refresh sessions, Google OAuth login, and profile completion for newly created OAuth users.
 - **Popularity-aware navigation:** Homepage category cards and navbar genre links prioritize the most popular genres from recent sales, with catalog fallback when sales data is not available.
 - **Staff operations:** Staff can manage books, import stock, handle orders, inspect customer records, and monitor operational dashboard metrics.
