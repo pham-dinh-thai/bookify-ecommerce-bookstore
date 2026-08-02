@@ -25,6 +25,7 @@ import { EmailModule } from './modules/email/email.module';
 import { PaymentGatewayModule } from './modules/payment-gateway/payment-gateway.module';
 import { SalesStatisticsModule } from './modules/sales-statistics/sales-statistics.module';
 import { ChatbotModule } from './modules/chatbot/chatbot.module';
+import { WishlistModule } from './modules/wishlist/wishlist.module';
 
 @Module({
   imports: [
@@ -80,6 +81,7 @@ import { ChatbotModule } from './modules/chatbot/chatbot.module';
     PaymentGatewayModule,
     SalesStatisticsModule,
     ChatbotModule,
+    WishlistModule,
   ],
   controllers: [AppController],
   providers: [AppService],
