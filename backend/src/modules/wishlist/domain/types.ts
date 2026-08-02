@@ -8,3 +8,13 @@ export type FromPersistentWishlistProps = {
   userId: string;
   items: any;
 };
+
+export type CreateWishlistItemProps = {
+  id: string;
+  itemId: string;
+};
+
+export type FromPersistentWishlistItemProps = {
+  id: string;
+  itemId: string;
+};
