@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { WishlistController } from './presentation/wishlist/wishlist.controller';
+import { WishlistsController } from './presentation/wishlists/wishlists.controller';
 
 @Module({
-  controllers: [WishlistController]
+  controllers: [WishlistsController],
 })
 export class WishlistModule {}
