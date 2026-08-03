@@ -1,3 +1,5 @@
+import type { WishlistItem } from './entities/wishlist-item.entity';
+
 export type CreateWishlistProps = {
   id: string;
   userId: string;
@@ -6,7 +8,7 @@ export type CreateWishlistProps = {
 export type FromPersistentWishlistProps = {
   id: string;
   userId: string;
-  items: any;
+  items: WishlistItem[];
 };
 
 export type CreateWishlistItemProps = {
