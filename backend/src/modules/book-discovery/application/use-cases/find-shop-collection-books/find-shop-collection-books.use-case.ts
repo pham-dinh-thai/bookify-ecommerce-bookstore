@@ -1,19 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common';
 import {
-  BOOKS_QUERY_REPOSITORY,
-  type IBooksQueryRepository,
-} from '../../../domain/book-aggregate/repositories/books-query.repository.interface';
+  DISCOVERY_BOOKS_QUERY_REPOSITORY,
+  type IDiscoveryBooksQueryRepository,
+} from '../../../domain/repositories/books-query.repository.interface';
+import { DiscoveryBookCollectionType } from '../../../domain/types';
+import { BookReadModel } from '../../../domain/read-models/book.read-model';
 import {
   CACHE_REPOSITORY,
   type ICacheRepository,
 } from '../../../../../shared/modules/cache/domain/cache.repository.interface';
-import { BookReadModel } from '../../../domain/book-aggregate/read-models/book.read-model';
-import { FindBooksResponse } from '../find-books/find-books.response';
-
-export type ShopCollectionType = 'best-seller' | 'on-sales' | 'new-arrivals';
+import { ShopCollectionResponse } from './find-shop-collection-books.response';
 
 const SHOP_COLLECTION_CACHE_KEYS = {
-  PAGE: (type: ShopCollectionType, page: number, limit: number) =>
+  PAGE: (type: DiscoveryBookCollectionType, page: number, limit: number) =>
     `shop-collections:${type}:page=${page}:limit=${limit}`,
 } as const;
 
@@ -22,21 +21,22 @@ const SHOP_COLLECTION_CACHE_TTL = 60 * 60 * 1000;
 @Injectable()
 export class FindShopCollectionBooksUseCase {
   public constructor(
-    @Inject(BOOKS_QUERY_REPOSITORY)
-    private readonly booksQueryRepository: IBooksQueryRepository,
+    @Inject(DISCOVERY_BOOKS_QUERY_REPOSITORY)
+    private readonly booksQueryRepository: IDiscoveryBooksQueryRepository,
 
     @Inject(CACHE_REPOSITORY)
     private readonly cacheRepository: ICacheRepository,
   ) {}
 
   public async execute(
-    type: ShopCollectionType,
+    type: DiscoveryBookCollectionType,
     page: number,
     limit: number,
-  ): Promise<FindBooksResponse> {
+  ): Promise<ShopCollectionResponse> {
     const cacheKey = SHOP_COLLECTION_CACHE_KEYS.PAGE(type, page, limit);
 
-    const cached = await this.cacheRepository.get<FindBooksResponse>(cacheKey);
+    const cached =
+      await this.cacheRepository.get<ShopCollectionResponse>(cacheKey);
     if (cached) {
       return cached;
     }
@@ -44,7 +44,7 @@ export class FindShopCollectionBooksUseCase {
     const books = await this.findBooks(type, page, limit);
     const total = books.length;
 
-    const response = new FindBooksResponse(books, total);
+    const response = new ShopCollectionResponse(books, total);
 
     await this.cacheRepository.set(
       cacheKey,
@@ -56,7 +56,7 @@ export class FindShopCollectionBooksUseCase {
   }
 
   private async findBooks(
-    type: ShopCollectionType,
+    type: DiscoveryBookCollectionType,
     page: number,
     limit: number,
   ): Promise<BookReadModel[]> {

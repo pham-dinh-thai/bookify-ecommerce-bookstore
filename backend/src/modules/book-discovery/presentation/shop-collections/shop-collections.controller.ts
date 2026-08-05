@@ -1,9 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import {
-  FindShopCollectionBooksUseCase,
-  type ShopCollectionType,
-} from '../../application/book-use-cases/find-shop-collection-books/find-shop-collection-books.use-case';
-import { FindBooksResponse } from '../../application/book-use-cases/find-books/find-books.response';
+import { FindShopCollectionBooksUseCase } from '../../application/use-cases/find-shop-collection-books/find-shop-collection-books.use-case';
+import type { ShopCollectionResponse } from '../../application/use-cases/find-shop-collection-books/find-shop-collection-books.response';
+import type { DiscoveryBookCollectionType } from '../../domain/types';
 
 @Controller()
 export class ShopCollectionsController {
@@ -15,7 +13,7 @@ export class ShopCollectionsController {
   public async findBestSeller(
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '10',
-  ): Promise<FindBooksResponse> {
+  ): Promise<ShopCollectionResponse> {
     return this.findCollection('best-seller', page, limit);
   }
 
@@ -23,7 +21,7 @@ export class ShopCollectionsController {
   public async findOnSales(
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '20',
-  ): Promise<FindBooksResponse> {
+  ): Promise<ShopCollectionResponse> {
     return this.findCollection('on-sales', page, limit);
   }
 
@@ -31,15 +29,15 @@ export class ShopCollectionsController {
   public async findNewArrivals(
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '20',
-  ): Promise<FindBooksResponse> {
+  ): Promise<ShopCollectionResponse> {
     return this.findCollection('new-arrivals', page, limit);
   }
 
   private async findCollection(
-    type: ShopCollectionType,
+    type: DiscoveryBookCollectionType,
     page: string,
     limit: string,
-  ): Promise<FindBooksResponse> {
+  ): Promise<ShopCollectionResponse> {
     return this.findShopCollectionBooksUseCase.execute(
       type,
       parseInt(page, 10),

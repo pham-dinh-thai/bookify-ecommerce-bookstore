@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BookTypeOrm } from './infrastructure/entities/book.entity';
 import { BookCoverTypeOrm } from './infrastructure/entities/book-cover.entity';
 import { BooksController } from './presentation/books/books.controller';
-import { ShopCollectionsController } from './presentation/shop-collections/shop-collections.controller';
 import { FindBooksUseCase } from './application/book-use-cases/find-books/find-books.use-case';
 import { FindOneBookUseCase } from './application/book-use-cases/find-one-book/find-one-book.use-case';
 import { CreateBookUseCase } from './application/book-use-cases/create-book/create-book.use-case';
@@ -16,7 +15,6 @@ import { UpdateBookDiscountPercentageUseCase } from './application/book-use-case
 import { ImportBookStockUseCase } from './application/book-use-cases/import-book-stock/import-book-stock.use-case';
 import { AdjustBookStockUseCase } from './application/book-use-cases/adjust-book-stock/adjust-book-stock.use-case';
 import { DeleteBookUseCase } from './application/book-use-cases/delete-book/delete-book.use-case';
-import { FindShopCollectionBooksUseCase } from './application/book-use-cases/find-shop-collection-books/find-shop-collection-books.use-case';
 import { BOOKS_QUERY_REPOSITORY } from './domain/book-aggregate/repositories/books-query.repository.interface';
 import { BOOKS_COMMAND_REPOSITORY } from './domain/book-aggregate/repositories/books-command.repository.interface';
 import { BOOK_EXISTS_CHECKER } from './domain/book-aggregate/services/book-exists-checker.service';
@@ -52,7 +50,7 @@ import { FileStorageModule } from '../file-storage/file-storage.module';
     LanguagesModule,
     FileStorageModule,
   ],
-  controllers: [BooksController, ShopCollectionsController],
+  controllers: [BooksController],
   providers: [
     FindBooksUseCase,
     FindOneBookUseCase,
@@ -66,7 +64,6 @@ import { FileStorageModule } from '../file-storage/file-storage.module';
     ImportBookStockUseCase,
     AdjustBookStockUseCase,
     DeleteBookUseCase,
-    FindShopCollectionBooksUseCase,
     {
       provide: BOOKS_QUERY_REPOSITORY,
       useClass: TypeormBooksQueryRepository,

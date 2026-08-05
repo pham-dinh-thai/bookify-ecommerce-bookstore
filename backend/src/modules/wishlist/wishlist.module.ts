@@ -48,5 +48,6 @@ import { RemoveItemFromWishlistUseCase } from './application/use-cases/remove-it
       useClass: TypeOrmWishlistsCommandRepository,
     },
   ],
+  exports: [WISHLISTS_QUERY_REPOSITORY, WISHLISTS_COMMAND_REPOSITORY],
 })
 export class WishlistModule {}

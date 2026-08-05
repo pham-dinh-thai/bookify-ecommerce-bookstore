@@ -24,6 +24,9 @@ export class TypeOrmWishlistsQueryRepository implements IWishlistsQueryRepositor
             bookAuthors: {
               author: true,
             },
+            bookGenres: {
+              genre: true,
+            },
           },
         },
       },
