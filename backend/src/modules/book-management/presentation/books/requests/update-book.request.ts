@@ -5,7 +5,7 @@ import {
   IsNumber,
   IsString,
 } from 'class-validator';
-import { IUpdateBookRequest } from '../../../application/book-use-cases/update-book/update-book.request';
+import { IUpdateBookRequest } from '../../../application/use-cases/update-book/update-book.request';
 
 export class UpdateBookRequest implements IUpdateBookRequest {
   @IsString()

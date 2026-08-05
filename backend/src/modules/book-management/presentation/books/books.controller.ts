@@ -12,30 +12,30 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { FindBooksUseCase } from '../../application/book-use-cases/find-books/find-books.use-case';
-import { FindOneBookUseCase } from '../../application/book-use-cases/find-one-book/find-one-book.use-case';
+import { FindBooksUseCase } from '../../application/use-cases/find-books/find-books.use-case';
+import { FindOneBookUseCase } from '../../application/use-cases/find-one-book/find-one-book.use-case';
 import { JwtAuthGuard } from '../../../../shared/http/guards/jwt-auth.guard';
 import { RoleGuard } from '../../../../shared/http/guards/role.guard';
 import { Roles } from '../../../../shared/http/decorators/roles.decorator';
 import { CreateBookRequest } from './requests/create-book.request';
 import { CurrentUser } from '../../../../shared/http/decorators/current-user.decorator';
-import { CreateBookUseCase } from '../../application/book-use-cases/create-book/create-book.use-case';
-import { UpdateBookUseCase } from '../../application/book-use-cases/update-book/update-book.use-case';
+import { CreateBookUseCase } from '../../application/use-cases/create-book/create-book.use-case';
+import { UpdateBookUseCase } from '../../application/use-cases/update-book/update-book.use-case';
 import { UpdateBookRequest } from './requests/update-book.request';
 import { AddBookCoverRequest } from './requests/add-book-cover.request';
-import { AddBookCoverUseCase } from '../../application/book-use-cases/add-book-cover/add-book-cover.use-case';
-import { RemoveBookCoverUseCase } from '../../application/book-use-cases/remove-book-cover/remove-book-cover.use-case';
+import { AddBookCoverUseCase } from '../../application/use-cases/add-book-cover/add-book-cover.use-case';
+import { RemoveBookCoverUseCase } from '../../application/use-cases/remove-book-cover/remove-book-cover.use-case';
 import { UpdateBookPriceRequest } from './requests/update-book-price.request';
-import { UpdateBookPriceUseCase } from '../../application/book-use-cases/update-book-price/update-book-price.use-case';
+import { UpdateBookPriceUseCase } from '../../application/use-cases/update-book-price/update-book-price.use-case';
 import { ImportBookStockRequest } from './requests/import-book-stock.request';
-import { ImportBookStockUseCase } from '../../application/book-use-cases/import-book-stock/import-book-stock.use-case';
+import { ImportBookStockUseCase } from '../../application/use-cases/import-book-stock/import-book-stock.use-case';
 import { AdjustBookStockRequest } from './requests/adjust-book-stock.request';
-import { AdjustBookStockUseCase } from '../../application/book-use-cases/adjust-book-stock/adjust-book-stock.use-case';
-import { DeleteBookUseCase } from '../../application/book-use-cases/delete-book/delete-book.use-case';
-import { FindBooksResponse } from '../../application/book-use-cases/find-books/find-books.response';
-import { ChangePrimaryBookCoverUseCase } from '../../application/book-use-cases/change-primary-book-cover/change-primary-book-cover.use-case';
+import { AdjustBookStockUseCase } from '../../application/use-cases/adjust-book-stock/adjust-book-stock.use-case';
+import { DeleteBookUseCase } from '../../application/use-cases/delete-book/delete-book.use-case';
+import { FindBooksResponse } from '../../application/use-cases/find-books/find-books.response';
+import { ChangePrimaryBookCoverUseCase } from '../../application/use-cases/change-primary-book-cover/change-primary-book-cover.use-case';
 import { UpdateBookDiscountPercentageRequest } from './requests/update-book-discount-percentage.request';
-import { UpdateBookDiscountPercentageUseCase } from '../../application/book-use-cases/update-book-discount-percentage/update-book-discount-percentage.use-case';
+import { UpdateBookDiscountPercentageUseCase } from '../../application/use-cases/update-book-discount-percentage/update-book-discount-percentage.use-case';
 
 @Controller('books')
 export class BooksController {

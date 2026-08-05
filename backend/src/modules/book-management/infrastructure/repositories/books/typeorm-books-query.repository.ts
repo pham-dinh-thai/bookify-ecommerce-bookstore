@@ -1,18 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { IBooksQueryRepository } from '../../../domain/book-aggregate/repositories/books-query.repository.interface';
+import { IBooksQueryRepository } from '../../../domain/repositories/books-query.repository.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BookTypeOrm } from '../../entities/book.entity';
 import { Repository } from 'typeorm/repository/Repository.js';
-import { In } from 'typeorm';
-import { BookReadModel } from '../../../domain/book-aggregate/read-models/book.read-model';
+import { BookReadModel } from '../../../domain/read-models/book.read-model';
 import { BooksMapper } from '../../mappers/books.mapper';
 import {
   BookStockAlertsReadModel,
   LowStockBookReadModel,
-} from '../../../domain/book-aggregate/read-models/book-stock-alerts.read-model';
-import { OrderItemTypeOrm } from '../../../../order/infrastructure/entities/order-item.entity';
-import { OrderTypeOrm } from '../../../../order/infrastructure/entities/order.entity';
-import { OrderStatus } from '../../../../order/domain/order-aggregate/enums/order-status.enum';
+} from '../../../domain/read-models/book-stock-alerts.read-model';
 
 @Injectable()
 export class TypeormBooksQueryRepository implements IBooksQueryRepository {
@@ -78,61 +74,6 @@ export class TypeormBooksQueryRepository implements IBooksQueryRepository {
     return query.getCount() ?? 0;
   }
 
-  public async findBestSellers(
-    page: number,
-    limit: number,
-  ): Promise<BookReadModel[]> {
-    const rows = await this.repository
-      .createQueryBuilder('book')
-      .innerJoin(OrderItemTypeOrm, 'orderItem', 'orderItem.productId = book.id')
-      .innerJoin(
-        OrderTypeOrm,
-        'orderEntity',
-        'orderEntity.id = orderItem.orderId',
-      )
-      .select('book.id', 'bookId')
-      .addSelect('SUM(orderItem.quantity)', 'unitsSold')
-      .where('orderEntity.status != :canceled', {
-        canceled: OrderStatus.CANCELED,
-      })
-      .groupBy('book.id')
-      .orderBy('unitsSold', 'DESC')
-      .addOrderBy('book.createdAt', 'DESC')
-      .offset((page - 1) * limit)
-      .limit(limit)
-      .getRawMany<{ bookId: string; unitsSold: string | number }>();
-
-    return this.findByIdsInOrder(rows.map((row) => row.bookId));
-  }
-
-  public async findNewArrivals(
-    page: number,
-    limit: number,
-  ): Promise<BookReadModel[]> {
-    const booksTypeOrm = await this.createBookReadQuery()
-      .orderBy('book.createdAt', 'DESC')
-      .skip((page - 1) * limit)
-      .take(limit)
-      .getMany();
-
-    return booksTypeOrm.map((book) => BooksMapper.toReadModel(book));
-  }
-
-  public async findOnSales(
-    page: number,
-    limit: number,
-  ): Promise<BookReadModel[]> {
-    const booksTypeOrm = await this.createBookReadQuery()
-      .where('book.discountPercentage > 0')
-      .orderBy('book.discountPercentage', 'DESC')
-      .addOrderBy('book.createdAt', 'DESC')
-      .skip((page - 1) * limit)
-      .take(limit)
-      .getMany();
-
-    return booksTypeOrm.map((book) => BooksMapper.toReadModel(book));
-  }
-
   public async findStockAlerts(
     lowStockThreshold: number,
     lowStockBookLimit: number,
@@ -183,30 +124,5 @@ export class TypeormBooksQueryRepository implements IBooksQueryRepository {
       .leftJoinAndSelect('book.bookGenres', 'bookGenres')
       .leftJoinAndSelect('bookGenres.genre', 'genre')
       .leftJoinAndSelect('book.covers', 'covers');
-  }
-
-  private async findByIdsInOrder(ids: string[]): Promise<BookReadModel[]> {
-    if (ids.length === 0) {
-      return [];
-    }
-
-    const booksTypeOrm = await this.repository.find({
-      where: { id: In(ids) },
-      relations: [
-        'language',
-        'publisher',
-        'bookAuthors',
-        'bookAuthors.author',
-        'bookGenres',
-        'bookGenres.genre',
-        'covers',
-      ],
-    });
-    const booksById = new Map(booksTypeOrm.map((book) => [book.id, book]));
-
-    return ids
-      .map((id) => booksById.get(id))
-      .filter((book): book is BookTypeOrm => Boolean(book))
-      .map((book) => BooksMapper.toReadModel(book));
   }
 }

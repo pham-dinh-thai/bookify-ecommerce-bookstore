@@ -5,7 +5,7 @@ import { IGenresQueryRepository } from '../../../../catalog-management/domain/ge
 import { IPublishersQueryRepository } from '../../../../catalog-management/domain/publisher-aggregate/repositories/publishers-query.repository.interface';
 import { IAuthorsQueryRepository } from '../../../../catalog-management/domain/author-aggregate/repositories/authors-query.repository.interface';
 import { ILanguagesQueryRepository } from '../../../../catalog-management/domain/language-aggregate/repositories/languages-query.repository.interface';
-import { IBooksQueryRepository } from '../../../../book-management/domain/book-aggregate/repositories/books-query.repository.interface';
+import { IBooksQueryRepository } from '../../../../book-management/domain/repositories/books-query.repository.interface';
 import { IAuditLogQueryRepository } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-query.repositoy.interface';
 import { AuditLogReadModel } from '../../../../audit-log/domain/audit-log-aggregate/read-models/audit-log.read-model';
 import { IOrdersQueryRepository } from '../../../../order/domain/order-aggregate/repositories/orders-query.repository.interface';

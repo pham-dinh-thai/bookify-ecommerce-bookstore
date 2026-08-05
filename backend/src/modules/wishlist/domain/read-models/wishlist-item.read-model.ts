@@ -9,5 +9,6 @@ export class WishlistItemReadModel {
     public readonly currentPrice: number,
     public readonly discountPercentage: number,
     public readonly isAvailable: boolean,
+    public readonly genreIds: string[] = [],
   ) {}
 }

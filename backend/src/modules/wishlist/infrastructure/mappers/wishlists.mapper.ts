@@ -35,6 +35,10 @@ export class WishlistsMapper {
           0,
           originalPrice * (1 - discountPercentage / 100),
         );
+        const genreIds =
+          book?.bookGenres
+            ?.map((bookGenre) => bookGenre.genre?.id)
+            .filter(Boolean) ?? [];
 
         return new WishlistItemReadModel(
           itemTypeOrm.id,
@@ -46,6 +50,7 @@ export class WishlistsMapper {
           currentPrice,
           discountPercentage,
           (book?.quantity ?? 0) > 0,
+          genreIds,
         );
       }),
     );

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IBookIsbnDuplicateChecker } from '../../../domain/book-aggregate/services/book-isbn-duplicate-checker.service';
+import { IBookIsbnDuplicateChecker } from '../../../domain/services/book-isbn-duplicate-checker.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BookTypeOrm } from '../../entities/book.entity';
 import { Repository } from 'typeorm';

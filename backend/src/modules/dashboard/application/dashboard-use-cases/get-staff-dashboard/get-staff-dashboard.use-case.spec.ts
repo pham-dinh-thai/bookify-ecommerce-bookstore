@@ -1,6 +1,6 @@
 import { GetStaffDashboardUseCase } from './get-staff-dashboard.use-case';
-import { BookStockAlertsReadModel } from '../../../../book-management/domain/book-aggregate/read-models/book-stock-alerts.read-model';
-import { IBooksQueryRepository } from '../../../../book-management/domain/book-aggregate/repositories/books-query.repository.interface';
+import { BookStockAlertsReadModel } from '../../../../book-management/domain/read-models/book-stock-alerts.read-model';
+import { IBooksQueryRepository } from '../../../../book-management/domain/repositories/books-query.repository.interface';
 import { IOrdersQueryRepository } from '../../../../order/domain/order-aggregate/repositories/orders-query.repository.interface';
 import { IAuditLogQueryRepository } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-query.repositoy.interface';
 import { OrderReadModel } from '../../../../order/domain/order-aggregate/read-models/order.read-model';
