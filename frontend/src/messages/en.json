@@ -28,7 +28,8 @@
     "logout": "Logout",
     "login": "Login",
     "register": "Register",
-    "language": "Language"
+    "language": "Language",
+    "wishlist": "Wishlist"
   },
   "home": {
     "heroTitle": "Literature without",
@@ -82,7 +83,13 @@
     "buyNow": "Buy Now",
     "inStock": "In Stock",
     "outOfStock": "Out of Stock",
-    "backToBooks": "Back to Books"
+    "backToBooks": "Back to Books",
+    "addToWishlist": "Add to wishlist",
+    "removeFromWishlist": "Remove from wishlist",
+    "inWishlist": "In wishlist",
+    "wishlistAdded": "Added to wishlist",
+    "wishlistRemoved": "Removed from wishlist",
+    "wishlistError": "Unable to update wishlist"
   },
   "cart": {
     "title": "My Cart",
@@ -308,5 +315,20 @@
       "shipping": "Shipping policy",
       "returns": "How to return books"
     }
+  },
+  "wishlist": {
+    "title": "My Wishlist",
+    "books": "books",
+    "empty": "Your wishlist is empty",
+    "emptyDescription": "Browse the collection and save your favorite books here.",
+    "browseBooks": "Browse books",
+    "remove": "Remove",
+    "removing": "Removing",
+    "unavailable": "Out of stock",
+    "notLoggedIn": "Please log in to view your wishlist.",
+    "notLoggedInDescription": "Sign in to see the books you saved.",
+    "itemRemoved": "Item removed from wishlist",
+    "removeFailed": "Unable to remove item from wishlist",
+    "loadFailed": "Unable to load your wishlist."
   }
 }

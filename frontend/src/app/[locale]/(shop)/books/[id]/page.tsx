@@ -5,6 +5,7 @@ import {
   PriceAndQuantity,
   PurchaseButtons,
 } from './book-purchase-actions';
+import BookWishlistButton from './book-wishlist-button';
 import { BookSection } from '../../(features)/(homepage)/components/book-section';
 
 type ApiBookDetail = {
@@ -265,10 +266,15 @@ export default async function BookDetailPage({
             {/* Right column: title + price/qty + specs + description */}
             <div className="space-y-6 lg:col-span-7">
               <header className="space-y-4">
-                <div className="space-y-1.5">
-                  <h1 className="text-2xl md:text-4xl font-extrabold leading-snug tracking-tight text-[#2b352f] md:text-[2.75rem]">
-                    {book.title}
-                  </h1>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="space-y-1.5 min-w-0">
+                    <h1 className="text-2xl md:text-4xl font-extrabold leading-snug tracking-tight text-[#2b352f] md:text-[2.75rem]">
+                      {book.title}
+                    </h1>
+                  </div>
+                  <div className="shrink-0 pt-1">
+                    <BookWishlistButton bookId={book.id} />
+                  </div>
                 </div>
               </header>
 
