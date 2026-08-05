@@ -10,6 +10,7 @@ import { TypeOrmWishlistsCommandRepository } from './infrastructure/repositories
 import { FindUserWishlistUseCase } from './application/use-cases/find-user-wishlist/find-user-wishlist.use-case';
 import { UnitOfWorkModule } from '../../shared/modules/unit-of-work/unit-of-work.module';
 import { UuidModule } from '../../shared/modules/uuid/uuid.module';
+import { SharedCacheModule } from '../../shared/modules/cache/cache.module';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { BookTypeOrm } from '../book-management/infrastructure/entities/book.entity';
 import { BookCoverTypeOrm } from '../book-management/infrastructure/entities/book-cover.entity';
@@ -31,6 +32,7 @@ import { RemoveItemFromWishlistUseCase } from './application/use-cases/remove-it
     ]),
     UnitOfWorkModule,
     UuidModule,
+    SharedCacheModule,
   ],
   controllers: [WishlistsController],
   providers: [

@@ -1,10 +1,13 @@
 import { WishlistItem } from './entities/wishlist-item.entity';
 import { WishlistItemNotFoundException } from './exceptions/wishlist-item-not-found.exception';
+import { WishlistMaxItemsReachedException } from './exceptions/wishlist-max-items-reached.exception';
 import {
   CreateWishlistItemProps,
   CreateWishlistProps,
   FromPersistentWishlistProps,
 } from './types';
+
+export const WISHLIST_MAX_ITEMS = 50;
 
 export class Wishlist {
   public constructor(
@@ -28,6 +31,10 @@ export class Wishlist {
 
     if (existingItem) {
       return existingItem;
+    }
+
+    if (this.items.length >= WISHLIST_MAX_ITEMS) {
+      throw new WishlistMaxItemsReachedException();
     }
 
     const item = WishlistItem.create(props);
