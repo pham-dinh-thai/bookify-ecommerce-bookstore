@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { EntityManager, In } from 'typeorm';
 import { TypeOrmUnitOfWork } from '../../../../../shared/modules/unit-of-work/infrastructure/typeorm-unit-of-work';
-import { Book } from '../../../domain/book-aggregate/book.aggregate';
-import { IBooksCommandRepository } from '../../../domain/book-aggregate/repositories/books-command.repository.interface';
+import { Book } from '../../../domain/book.aggregate';
+import { IBooksCommandRepository } from '../../../domain/repositories/books-command.repository.interface';
 import { BookTypeOrm } from '../../entities/book.entity';
 import { BookCoverTypeOrm } from '../../entities/book-cover.entity';
 import { BooksMapper } from '../../mappers/books.mapper';
 import { BookAuthorTypeOrm } from '../../entities/book-author.entity';
 import { BookGenreTypeOrm } from '../../entities/book-genre.entity';
-import { BookNotFoundException } from '../../../domain/book-aggregate/exceptions/book-not-found.exception';
-import { BookCover } from '../../../domain/book-aggregate/entities/book-cover/book-cover.entity';
+import { BookNotFoundException } from '../../../domain/exceptions/book-not-found.exception';
+import { BookCover } from '../../../domain/entities/book-cover/book-cover.entity';
 
 @Injectable()
 export class TypeormBooksCommandRepository implements IBooksCommandRepository {

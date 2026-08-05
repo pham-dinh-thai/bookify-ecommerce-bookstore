@@ -1,5 +1,5 @@
 import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { IAddBookCoverRequest } from '../../../application/book-use-cases/add-book-cover/add-book-cover.request';
+import { IAddBookCoverRequest } from '../../../application/use-cases/add-book-cover/add-book-cover.request';
 
 export class AddBookCoverRequest implements IAddBookCoverRequest {
   @IsString()

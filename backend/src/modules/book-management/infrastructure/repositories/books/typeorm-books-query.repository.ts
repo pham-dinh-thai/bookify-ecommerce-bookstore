@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { IBooksQueryRepository } from '../../../domain/book-aggregate/repositories/books-query.repository.interface';
+import { IBooksQueryRepository } from '../../../domain/repositories/books-query.repository.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BookTypeOrm } from '../../entities/book.entity';
 import { Repository } from 'typeorm/repository/Repository.js';
-import { BookReadModel } from '../../../domain/book-aggregate/read-models/book.read-model';
+import { BookReadModel } from '../../../domain/read-models/book.read-model';
 import { BooksMapper } from '../../mappers/books.mapper';
 import {
   BookStockAlertsReadModel,
   LowStockBookReadModel,
-} from '../../../domain/book-aggregate/read-models/book-stock-alerts.read-model';
+} from '../../../domain/read-models/book-stock-alerts.read-model';
 
 @Injectable()
 export class TypeormBooksQueryRepository implements IBooksQueryRepository {

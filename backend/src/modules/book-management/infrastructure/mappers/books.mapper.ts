@@ -1,5 +1,5 @@
-import { Book } from '../../domain/book-aggregate/book.aggregate';
-import { BookReadModel } from '../../domain/book-aggregate/read-models/book.read-model';
+import { Book } from '../../domain/book.aggregate';
+import { BookReadModel } from '../../domain/read-models/book.read-model';
 import { BookTypeOrm } from '../entities/book.entity';
 import { BookCoverTypeOrm } from '../entities/book-cover.entity';
 import { BookAuthorTypeOrm } from '../entities/book-author.entity';

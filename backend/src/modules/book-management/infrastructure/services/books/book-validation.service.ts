@@ -15,7 +15,7 @@ import {
   type ILanguageExistsChecker,
   LANGUAGE_EXISTS_CHECKER,
 } from '../../../../catalog-management/domain/language-aggregate/services/language-exists-checker.service';
-import { IBookValidation } from '../../../domain/book-aggregate/services/book-validation.service';
+import { IBookValidation } from '../../../domain/services/book-validation.service';
 
 @Injectable()
 export class BookValidation implements IBookValidation {

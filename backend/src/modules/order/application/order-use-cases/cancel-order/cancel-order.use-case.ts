@@ -17,11 +17,11 @@ import {
   type IAuditLogCommandRepository,
 } from '../../../../audit-log/domain/audit-log-aggregate/repositories/audit-log-command.repository.interface';
 import { OrderNotFoundException } from '../../../domain/order-aggregate/exceptions/order-not-found.exception';
-import { Book } from '../../../../book-management/domain/book-aggregate/book.aggregate';
+import { Book } from '../../../../book-management/domain/book.aggregate';
 import {
   BOOKS_COMMAND_REPOSITORY,
   type IBooksCommandRepository,
-} from '../../../../book-management/domain/book-aggregate/repositories/books-command.repository.interface';
+} from '../../../../book-management/domain/repositories/books-command.repository.interface';
 import {
   CUSTOMERS_QUERY_REPOSITORY,
   type ICustomersQueryRepository,

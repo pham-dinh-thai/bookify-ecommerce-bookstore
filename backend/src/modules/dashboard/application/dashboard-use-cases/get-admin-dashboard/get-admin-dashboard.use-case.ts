@@ -26,7 +26,7 @@ import {
 import {
   BOOKS_QUERY_REPOSITORY,
   type IBooksQueryRepository,
-} from '../../../../book-management/domain/book-aggregate/repositories/books-query.repository.interface';
+} from '../../../../book-management/domain/repositories/books-query.repository.interface';
 import {
   AUDIT_LOG_QUERY_REPOSITORY,
   type IAuditLogQueryRepository,

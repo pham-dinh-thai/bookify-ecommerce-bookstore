@@ -29,12 +29,12 @@ import {
   type IOrdersCommandRepository,
   ORDERS_COMMAND_REPOSITORY,
 } from '../../../domain/order-aggregate/repositories/orders-command.repository.interface';
-import { BookNotFoundException } from '../../../../book-management/domain/book-aggregate/exceptions/book-not-found.exception';
+import { BookNotFoundException } from '../../../../book-management/domain/exceptions/book-not-found.exception';
 import {
   BOOKS_COMMAND_REPOSITORY,
   type IBooksCommandRepository,
-} from '../../../../book-management/domain/book-aggregate/repositories/books-command.repository.interface';
-import { Book } from '../../../../book-management/domain/book-aggregate/book.aggregate';
+} from '../../../../book-management/domain/repositories/books-command.repository.interface';
+import { Book } from '../../../../book-management/domain/book.aggregate';
 import { InsufficientStockException } from '../../../domain/order-aggregate/exceptions/insufficient-stock.exception';
 import { PlaceOrderResponse } from './place-order.response';
 import { OrderPlacedItem } from '../../../domain/order-aggregate/events/order-placed.event';
