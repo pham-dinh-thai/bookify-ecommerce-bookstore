@@ -3,7 +3,7 @@ import { WishlistItemTypeOrm } from '../entities/wishlist-item.entity';
 
 export class WishlistItemsMapper {
   public static toTypeOrm(
-    wishlistId,
+    wishlistId: string,
     wishlistItem: WishlistItem,
   ): WishlistItemTypeOrm {
     const wishlistItemTypeOrm = new WishlistItemTypeOrm();

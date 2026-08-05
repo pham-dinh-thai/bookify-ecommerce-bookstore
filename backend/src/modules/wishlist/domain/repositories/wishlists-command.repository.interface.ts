@@ -6,7 +6,10 @@ export interface IWishlistsCommandRepository {
 
   create(wishlist: Wishlist): Promise<void>;
 
-  addItemToWishlist(wishlistId, wishlistItem: WishlistItem): Promise<void>;
+  addItemToWishlist(
+    wishlistId: string,
+    wishlistItem: WishlistItem,
+  ): Promise<void>;
 }
 
 export const WISHLISTS_COMMAND_REPOSITORY = 'IWishlistsCommandRepository';

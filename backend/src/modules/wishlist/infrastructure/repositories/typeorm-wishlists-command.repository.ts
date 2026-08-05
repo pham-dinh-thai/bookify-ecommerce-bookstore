@@ -41,7 +41,7 @@ export class TypeOrmWishlistsCommandRepository implements IWishlistsCommandRepos
   }
 
   public async addItemToWishlist(
-    wishlistId,
+    wishlistId: string,
     wishlistItem: WishlistItem,
   ): Promise<void> {
     await this.unitOfWork

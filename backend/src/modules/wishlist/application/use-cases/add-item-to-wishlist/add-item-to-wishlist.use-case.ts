@@ -34,7 +34,7 @@ export class AddItemToWishlistUseCase {
     let wishlist =
       await this.wishlistsCommandRepository.findUserWishlist(userId);
 
-    this.unitOfWork.execute(async () => {
+    await this.unitOfWork.execute(async () => {
       if (!wishlist) {
         wishlist = Wishlist.create({
           id: this.uuidGenerator.generate(),
@@ -42,6 +42,10 @@ export class AddItemToWishlistUseCase {
         });
 
         await this.wishlistsCommandRepository.create(wishlist);
+      }
+
+      if (wishlist.hasItem(request.itemId)) {
+        return;
       }
 
       const addedItem = wishlist.addItem({

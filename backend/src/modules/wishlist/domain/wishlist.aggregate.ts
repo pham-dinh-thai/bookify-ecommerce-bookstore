@@ -21,11 +21,23 @@ export class Wishlist {
   }
 
   public addItem(props: CreateWishlistItemProps): WishlistItem {
+    const existingItem = this.items.find(
+      (item) => item.getItemId() === props.itemId,
+    );
+
+    if (existingItem) {
+      return existingItem;
+    }
+
     const item = WishlistItem.create(props);
 
     this.items.push(item);
 
     return item;
+  }
+
+  public hasItem(itemId: string): boolean {
+    return this.items.some((item) => item.getItemId() === itemId);
   }
 
   public getId(): string {
