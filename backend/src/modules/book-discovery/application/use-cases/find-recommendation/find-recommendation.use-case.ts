@@ -14,6 +14,15 @@ export class RecommendationResponse {
   ) {}
 }
 
+/**
+ * Picks which recommendation source answers the request.
+ *
+ * Users arrive in very different states — signed out, signed in with an empty
+ * wishlist, or signed in with rich wishlist data — so no single algorithm fits
+ * everyone. Each source is a strategy tried in order, falling through until one
+ * produces results. That way every user still gets a meaningful answer, and a new
+ * recommendation source can be added without rewriting this use case.
+ */
 @Injectable()
 export class FindRecommendationUseCase {
   private readonly strategies: IRecommendationStrategy[];

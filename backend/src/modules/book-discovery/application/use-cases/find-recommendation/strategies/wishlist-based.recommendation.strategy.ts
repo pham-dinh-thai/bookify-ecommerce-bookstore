@@ -13,6 +13,12 @@ import {
 } from './recommendation.strategy.interface';
 import { BookReadModel } from '../../../../domain/read-models/book.read-model';
 
+/**
+ * Recommends books matching the genres a user already wants (from their wishlist),
+ * excluding the books they already saved. Only meaningful for signed-in users with
+ * a non-empty wishlist, so it returns an empty list otherwise and lets the chain
+ * fall through to the next strategy.
+ */
 @Injectable()
 export class WishlistBasedRecommendationStrategy implements IRecommendationStrategy {
   public constructor(

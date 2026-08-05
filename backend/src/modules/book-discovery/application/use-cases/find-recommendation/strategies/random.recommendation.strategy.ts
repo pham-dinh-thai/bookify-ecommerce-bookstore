@@ -9,6 +9,11 @@ import {
 } from '../../../../domain/repositories/books-query.repository.interface';
 import { BookReadModel } from '../../../../domain/read-models/book.read-model';
 
+/**
+ * Returns a random selection of books. This is the safety net of the chain: it
+ * needs no user data at all, so it always succeeds and guarantees signed-out users
+ * (or users whose wishlist yields nothing) still get recommendations.
+ */
 @Injectable()
 export class RandomRecommendationStrategy implements IRecommendationStrategy {
   public constructor(
