@@ -13,6 +13,11 @@ import {
   type IUnitOfWork,
   UNIT_OF_WORK,
 } from '../../../../../shared/modules/unit-of-work/application/unit-of-work';
+import {
+  CACHE_REPOSITORY,
+  type ICacheRepository,
+} from '../../../../../shared/modules/cache/domain/cache.repository.interface';
+import { WISHLIST_CACHE_KEYS } from '../../wishlist-cache.constants';
 
 @Injectable()
 export class AddItemToWishlistUseCase {
@@ -25,6 +30,9 @@ export class AddItemToWishlistUseCase {
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
+
+    @Inject(CACHE_REPOSITORY)
+    private readonly cacheRepository: ICacheRepository,
   ) {}
 
   public async execute(
@@ -33,6 +41,8 @@ export class AddItemToWishlistUseCase {
   ): Promise<void> {
     let wishlist =
       await this.wishlistsCommandRepository.findUserWishlist(userId);
+
+    let itemAdded = true;
 
     await this.unitOfWork.execute(async () => {
       if (!wishlist) {
@@ -45,6 +55,7 @@ export class AddItemToWishlistUseCase {
       }
 
       if (wishlist.hasItem(request.itemId)) {
+        itemAdded = false;
         return;
       }
 
@@ -58,5 +69,9 @@ export class AddItemToWishlistUseCase {
         addedItem,
       );
     });
+
+    if (itemAdded) {
+      await this.cacheRepository.del(WISHLIST_CACHE_KEYS.USER(userId));
+    }
   }
 }
