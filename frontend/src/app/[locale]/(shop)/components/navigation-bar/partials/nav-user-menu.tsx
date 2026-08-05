@@ -6,7 +6,7 @@ import {
   clearAccessToken,
   getAccessToken,
 } from '@/shared/auth/lib/token-storage';
-import { ShoppingCart, User } from 'lucide-react';
+import { Heart, ShoppingCart, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -45,6 +45,14 @@ export default function NavUserMenu() {
 
   return (
     <div className="flex items-center gap-3.5 shrink-0">
+      <Link
+        href="/wishlist"
+        className="text-[#047857B3] hover:text-[#2b352f] transition-colors"
+        aria-label="Open wishlist"
+      >
+        <Heart size={17} strokeWidth={1.7} />
+      </Link>
+
       <Link
         href="/cart"
         className="text-[#047857B3] hover:text-[#2b352f] transition-colors"

@@ -28,7 +28,8 @@
     "logout": "Đăng xuất",
     "login": "Đăng nhập",
     "register": "Đăng ký",
-    "language": "Ngôn ngữ"
+    "language": "Ngôn ngữ",
+    "wishlist": "Yêu thích"
   },
   "home": {
     "heroTitle": "Văn học không",
@@ -82,7 +83,13 @@
     "buyNow": "Mua ngay",
     "inStock": "Còn hàng",
     "outOfStock": "Hết hàng",
-    "backToBooks": "Quay lại danh sách"
+    "backToBooks": "Quay lại danh sách",
+    "addToWishlist": "Thêm vào yêu thích",
+    "removeFromWishlist": "Xóa khỏi yêu thích",
+    "inWishlist": "Trong yêu thích",
+    "wishlistAdded": "Đã thêm vào yêu thích",
+    "wishlistRemoved": "Đã xóa khỏi yêu thích",
+    "wishlistError": "Không thể cập nhật yêu thích"
   },
   "cart": {
     "title": "Giỏ hàng",
@@ -308,5 +315,20 @@
       "shipping": "Chính sách giao hàng",
       "returns": "Cách đổi trả sách"
     }
+  },
+  "wishlist": {
+    "title": "Danh sách yêu thích",
+    "books": "sách",
+    "empty": "Danh sách yêu thích của bạn đang trống",
+    "emptyDescription": "Khám phá bộ sưu tập và lưu những cuốn sách yêu thích của bạn tại đây.",
+    "browseBooks": "Xem sách",
+    "remove": "Xóa",
+    "removing": "Đang xóa",
+    "unavailable": "Hết hàng",
+    "notLoggedIn": "Vui lòng đăng nhập để xem danh sách yêu thích.",
+    "notLoggedInDescription": "Đăng nhập để xem những cuốn sách bạn đã lưu.",
+    "itemRemoved": "Đã xóa sách khỏi danh sách yêu thích",
+    "removeFailed": "Không thể xóa sách khỏi danh sách yêu thích",
+    "loadFailed": "Không thể tải danh sách yêu thích của bạn."
   }
 }
