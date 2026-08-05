@@ -1,4 +1,5 @@
 import { WishlistItem } from './entities/wishlist-item.entity';
+import { WishlistItemNotFoundException } from './exceptions/wishlist-item-not-found.exception';
 import {
   CreateWishlistItemProps,
   CreateWishlistProps,
@@ -34,6 +35,16 @@ export class Wishlist {
     this.items.push(item);
 
     return item;
+  }
+
+  public remove(itemId: string): string {
+    if (!this.hasItem(itemId)) {
+      throw new WishlistItemNotFoundException();
+    }
+
+    this.items = this.items.filter((item) => item.getItemId() !== itemId);
+
+    return itemId;
   }
 
   public hasItem(itemId: string): boolean {

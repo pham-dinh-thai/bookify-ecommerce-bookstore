@@ -7,6 +7,7 @@ import { WishlistItem } from '../../domain/entities/wishlist-item.entity';
 import { WishlistsMapper } from '../mappers/wishlists.mapper';
 import { WishlistItemTypeOrm } from '../entities/wishlist-item.entity';
 import { WishlistItemsMapper } from '../mappers/wishlist-items.mapper';
+import { WishlistNotFoundException } from '../../domain/exceptions/wishlist-not-found.exception';
 
 @Injectable()
 export class TypeOrmWishlistsCommandRepository implements IWishlistsCommandRepository {
@@ -34,6 +35,30 @@ export class TypeOrmWishlistsCommandRepository implements IWishlistsCommandRepos
       : null;
   }
 
+  public async findUserWishlistOrThrows(userId: string): Promise<Wishlist> {
+    const wishlist = await this.unitOfWork
+      .getManager()
+      .findOne(WishlistTypeOrm, {
+        where: { userId },
+        relations: { wishlistItems: true },
+      });
+
+    if (!wishlist) {
+      throw new WishlistNotFoundException();
+    }
+
+    return Wishlist.fromPersistent({
+      id: wishlist.id,
+      userId: wishlist.userId,
+      items: wishlist.wishlistItems.map((item) => {
+        return WishlistItem.fromPersistent({
+          id: item.id,
+          itemId: item.itemId,
+        });
+      }),
+    });
+  }
+
   public async create(wishlist: Wishlist): Promise<void> {
     await this.unitOfWork
       .getManager()
@@ -50,5 +75,14 @@ export class TypeOrmWishlistsCommandRepository implements IWishlistsCommandRepos
         WishlistItemTypeOrm,
         WishlistItemsMapper.toTypeOrm(wishlistId, wishlistItem),
       );
+  }
+
+  public async removeItemFromWishlist(
+    wishlistId: string,
+    itemId: string,
+  ): Promise<void> {
+    await this.unitOfWork
+      .getManager()
+      .delete(WishlistItemTypeOrm, { wishlistId, itemId });
   }
 }

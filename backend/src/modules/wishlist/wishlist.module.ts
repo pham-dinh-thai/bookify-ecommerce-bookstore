@@ -16,6 +16,7 @@ import { BookCoverTypeOrm } from '../book-management/infrastructure/entities/boo
 import { BookAuthorTypeOrm } from '../book-management/infrastructure/entities/book-author.entity';
 import { AuthorTypeOrm } from '../catalog-management/infrastructure/entities/author.entity';
 import { AddItemToWishlistUseCase } from './application/use-cases/add-item-to-wishlist/add-item-to-wishlist.use-case';
+import { RemoveItemFromWishlistUseCase } from './application/use-cases/remove-item-from-wishlist/remove-item-from-wishlist.use-case';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { AddItemToWishlistUseCase } from './application/use-cases/add-item-to-wi
   providers: [
     FindUserWishlistUseCase,
     AddItemToWishlistUseCase,
+    RemoveItemFromWishlistUseCase,
     {
       provide: WISHLISTS_QUERY_REPOSITORY,
       useClass: TypeOrmWishlistsQueryRepository,
