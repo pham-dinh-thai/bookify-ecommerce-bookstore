@@ -35,7 +35,7 @@ export class TypeOrmWishlistsCommandRepository implements IWishlistsCommandRepos
   }
 
   public async create(wishlist: Wishlist): Promise<void> {
-    this.unitOfWork
+    await this.unitOfWork
       .getManager()
       .insert(WishlistTypeOrm, WishlistsMapper.toTypeOrm(wishlist));
   }
@@ -44,7 +44,7 @@ export class TypeOrmWishlistsCommandRepository implements IWishlistsCommandRepos
     wishlistId,
     wishlistItem: WishlistItem,
   ): Promise<void> {
-    this.unitOfWork
+    await this.unitOfWork
       .getManager()
       .insert(
         WishlistItemTypeOrm,
