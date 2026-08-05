@@ -1,13 +1,12 @@
+import { WishlistItem } from '../entities/wishlist-item.entity';
 import { Wishlist } from '../wishlist.aggregate';
 
 export interface IWishlistsCommandRepository {
-  findUserWishlistOrThrows(userId: string): Promise<Wishlist>;
+  findUserWishlist(userId: string): Promise<Wishlist | null>;
 
-  create(): Promise<any>;
+  create(wishlist: Wishlist): Promise<void>;
 
-  remove(): Promise<any>;
-
-  addItemToWishlist(): Promise<any>;
+  addItemToWishlist(wishlistId, wishlistItem: WishlistItem): Promise<void>;
 }
 
 export const WISHLISTS_COMMAND_REPOSITORY = 'IWishlistsCommandRepository';

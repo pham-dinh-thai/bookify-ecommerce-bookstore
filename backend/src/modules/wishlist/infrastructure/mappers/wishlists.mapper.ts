@@ -1,8 +1,18 @@
 import { WishlistItemReadModel } from '../../domain/read-models/wishlist-item.read-model';
 import { WishlistReadModel } from '../../domain/read-models/wishlist.read-model';
+import { Wishlist } from '../../domain/wishlist.aggregate';
 import { WishlistTypeOrm } from '../entities/wishlist.entity';
 
 export class WishlistsMapper {
+  public static toTypeOrm(wishlist: Wishlist): WishlistTypeOrm {
+    const wishlistTypeOrm = new WishlistTypeOrm();
+
+    wishlistTypeOrm.id = wishlist.getId();
+    wishlistTypeOrm.userId = wishlist.getUserId();
+
+    return wishlistTypeOrm;
+  }
+
   public static toReadModel(
     wishlistTypeOrm: WishlistTypeOrm,
   ): WishlistReadModel {

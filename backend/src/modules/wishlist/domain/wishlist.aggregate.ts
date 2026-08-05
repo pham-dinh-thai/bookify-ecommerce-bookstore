@@ -1,5 +1,9 @@
 import { WishlistItem } from './entities/wishlist-item.entity';
-import { CreateWishlistProps, FromPersistentWishlistProps } from './types';
+import {
+  CreateWishlistItemProps,
+  CreateWishlistProps,
+  FromPersistentWishlistProps,
+} from './types';
 
 export class Wishlist {
   public constructor(
@@ -14,6 +18,14 @@ export class Wishlist {
 
   public static fromPersistent(props: FromPersistentWishlistProps): Wishlist {
     return new Wishlist(props.id, props.userId, props.items);
+  }
+
+  public addItem(props: CreateWishlistItemProps): WishlistItem {
+    const item = WishlistItem.create(props);
+
+    this.items.push(item);
+
+    return item;
   }
 
   public getId(): string {
