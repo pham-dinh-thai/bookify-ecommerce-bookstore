@@ -2,16 +2,16 @@ import { Inject, Injectable } from '@nestjs/common';
 import {
   DISCOVERY_BOOKS_QUERY_REPOSITORY,
   type IDiscoveryBooksQueryRepository,
-} from '../../domain/repositories/books-query.repository.interface';
+} from '../../../../domain/repositories/books-query.repository.interface';
 import {
-  WISHLISTS_QUERY_REPOSITORY,
   type IWishlistsQueryRepository,
-} from '../../../wishlist/domain/repositories/wishlists-query.repository.interface';
-import { BookReadModel } from '../../domain/read-models/book.read-model';
+  WISHLISTS_QUERY_REPOSITORY,
+} from '../../../../../wishlist/domain/repositories/wishlists-query.repository.interface';
 import {
   IRecommendationStrategy,
   RecommendationContext,
 } from './recommendation.strategy.interface';
+import { BookReadModel } from '../../../../domain/read-models/book.read-model';
 
 @Injectable()
 export class WishlistBasedRecommendationStrategy implements IRecommendationStrategy {

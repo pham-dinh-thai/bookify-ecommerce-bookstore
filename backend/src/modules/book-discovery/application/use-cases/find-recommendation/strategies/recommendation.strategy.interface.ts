@@ -1,4 +1,4 @@
-import { BookReadModel } from '../../domain/read-models/book.read-model';
+import { BookReadModel } from '../../../../domain/read-models/book.read-model';
 
 export type RecommendationContext = {
   userId: string | undefined;

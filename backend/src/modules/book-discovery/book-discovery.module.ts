@@ -8,8 +8,8 @@ import { ShopCollectionsController } from './presentation/shop-collections/shop-
 import { RecommendationsController } from './presentation/recommendations/recommendations.controller';
 import { FindShopCollectionBooksUseCase } from './application/use-cases/find-shop-collection-books/find-shop-collection-books.use-case';
 import { FindRecommendationUseCase } from './application/use-cases/find-recommendation/find-recommendation.use-case';
-import { WishlistBasedRecommendationStrategy } from './application/strategies/wishlist-based.recommendation.strategy';
-import { RandomRecommendationStrategy } from './application/strategies/random.recommendation.strategy';
+import { WishlistBasedRecommendationStrategy } from './application/use-cases/find-recommendation/strategies/wishlist-based.recommendation.strategy';
+import { RandomRecommendationStrategy } from './application/use-cases/find-recommendation/strategies/random.recommendation.strategy';
 import { DISCOVERY_BOOKS_QUERY_REPOSITORY } from './domain/repositories/books-query.repository.interface';
 import { TypeOrmDiscoveryBooksQueryRepository } from './infrastructure/repositories/typeorm-discovery-books-query.repository';
 

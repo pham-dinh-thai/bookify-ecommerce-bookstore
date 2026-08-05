@@ -3,9 +3,9 @@ import { BookReadModel } from '../../../domain/read-models/book.read-model';
 import {
   IRecommendationStrategy,
   RecommendationContext,
-} from '../../strategies/recommendation.strategy.interface';
-import { RandomRecommendationStrategy } from '../../strategies/random.recommendation.strategy';
-import { WishlistBasedRecommendationStrategy } from '../../strategies/wishlist-based.recommendation.strategy';
+} from './strategies/recommendation.strategy.interface';
+import { WishlistBasedRecommendationStrategy } from './strategies/wishlist-based.recommendation.strategy';
+import { RandomRecommendationStrategy } from './strategies/random.recommendation.strategy';
 
 export class RecommendationResponse {
   public constructor(
