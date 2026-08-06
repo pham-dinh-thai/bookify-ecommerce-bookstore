@@ -17,6 +17,10 @@ import {
   type IUnitOfWork,
   UNIT_OF_WORK,
 } from '../../../../../shared/modules/unit-of-work/application/unit-of-work';
+import {
+  EVENT_DISPATCHER,
+  type IEventDispatcher,
+} from '../../../../../shared/domain/event-dispatcher.interface';
 
 @Injectable()
 export class UpdateBookDiscountPercentageUseCase {
@@ -32,6 +36,9 @@ export class UpdateBookDiscountPercentageUseCase {
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
+
+    @Inject(EVENT_DISPATCHER)
+    private readonly eventDispatcher: IEventDispatcher,
   ) {}
 
   public async execute(
@@ -59,6 +66,9 @@ export class UpdateBookDiscountPercentageUseCase {
         },
       );
     });
+
+    await this.eventDispatcher.dispatch(book.getDomainEvents());
+    book.clearDomainEvents();
 
     await this.cacheRepository.delByPattern('books:*');
     await this.cacheRepository.delByPattern('shop-collections:*');

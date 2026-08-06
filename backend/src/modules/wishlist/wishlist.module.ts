@@ -16,6 +16,7 @@ import { BookTypeOrm } from '../book-management/infrastructure/entities/book.ent
 import { BookCoverTypeOrm } from '../book-management/infrastructure/entities/book-cover.entity';
 import { BookAuthorTypeOrm } from '../book-management/infrastructure/entities/book-author.entity';
 import { AuthorTypeOrm } from '../catalog-management/infrastructure/entities/author.entity';
+import { UserTypeOrm } from '../user-management/infrastructure/entities/user.entity';
 import { AddItemToWishlistUseCase } from './application/use-cases/add-item-to-wishlist/add-item-to-wishlist.use-case';
 import { RemoveItemFromWishlistUseCase } from './application/use-cases/remove-item-from-wishlist/remove-item-from-wishlist.use-case';
 
@@ -29,6 +30,7 @@ import { RemoveItemFromWishlistUseCase } from './application/use-cases/remove-it
       BookCoverTypeOrm,
       BookAuthorTypeOrm,
       AuthorTypeOrm,
+      UserTypeOrm,
     ]),
     UnitOfWorkModule,
     UuidModule,

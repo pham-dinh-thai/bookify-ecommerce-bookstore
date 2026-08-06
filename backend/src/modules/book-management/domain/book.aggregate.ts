@@ -22,6 +22,7 @@ import { InsufficientStockException } from '../../order/domain/order-aggregate/e
 import { AggregateRoot } from '../../../shared/domain/aggregate-root';
 import { BookRestocked } from './events/book-restocked.event';
 import { BookPriceDecreased } from './events/book-price-decreased.event';
+import { BookDiscountUpdated } from './events/book-discount-updated.event';
 
 /**
  * Book aggregate root.
@@ -264,11 +265,12 @@ export class Book extends AggregateRoot {
 
     if (this.getCurrentPrice() < oldPrice) {
       this.addDomainEvent(
-        new BookPriceDecreased(
+        new BookDiscountUpdated(
           this.id,
           this.title,
           oldPrice,
           this.getCurrentPrice(),
+          this.discountPercentage.getValue(),
         ),
       );
     }

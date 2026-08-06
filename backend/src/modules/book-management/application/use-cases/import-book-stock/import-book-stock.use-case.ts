@@ -16,6 +16,10 @@ import {
   CACHE_REPOSITORY,
   type ICacheRepository,
 } from '../../../../../shared/modules/cache/domain/cache.repository.interface';
+import {
+  EVENT_DISPATCHER,
+  type IEventDispatcher,
+} from '../../../../../shared/domain/event-dispatcher.interface';
 
 /**
  * Increases book inventory when new stock arrives.
@@ -41,6 +45,9 @@ export class ImportBookStockUseCase {
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
+
+    @Inject(EVENT_DISPATCHER)
+    private readonly eventDispatcher: IEventDispatcher,
   ) {}
 
   public async execute(
@@ -69,6 +76,9 @@ export class ImportBookStockUseCase {
         },
       );
     });
+
+    await this.eventDispatcher.dispatch(book.getDomainEvents());
+    book.clearDomainEvents();
 
     await this.cacheRepository.delByPattern('books:*');
     await this.cacheRepository.delByPattern('shop-collections:*');

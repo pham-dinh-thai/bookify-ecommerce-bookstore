@@ -35,6 +35,7 @@ import { GenresModule } from '../catalog-management/genres.module';
 import { PublishersModule } from '../catalog-management/publishers.module';
 import { LanguagesModule } from '../catalog-management/languages.module';
 import { FileStorageModule } from '../file-storage/file-storage.module';
+import { EventDispatcherModule } from '../../shared/modules/event-dispatcher/event-dispatcher.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { FileStorageModule } from '../file-storage/file-storage.module';
     PublishersModule,
     LanguagesModule,
     FileStorageModule,
+    EventDispatcherModule,
   ],
   controllers: [BooksController],
   providers: [
