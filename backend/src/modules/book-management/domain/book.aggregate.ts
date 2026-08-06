@@ -19,6 +19,9 @@ import { BookQuantity } from './value-objects/book-quantity.value-object';
 import { CreateBookCoverProps } from './entities/book-cover/types';
 import { BookDiscountPercentage } from './value-objects/book-discount-percentage.value-object';
 import { InsufficientStockException } from '../../order/domain/order-aggregate/exceptions/insufficient-stock.exception';
+import { AggregateRoot } from '../../../shared/domain/aggregate-root';
+import { BookRestocked } from './events/book-restocked.event';
+import { BookPriceDecreased } from './events/book-price-decreased.event';
 
 /**
  * Book aggregate root.
@@ -34,7 +37,7 @@ import { InsufficientStockException } from '../../order/domain/order-aggregate/e
  * - Discount percentage must be between 0 and 100
  * - Price, discount, and stock changes are managed through dedicated methods
  */
-export class Book {
+export class Book extends AggregateRoot {
   private constructor(
     private readonly id: string,
     private isbn: string,
@@ -50,6 +53,8 @@ export class Book {
     private languageId: string,
     private pageCount: number,
   ) {
+    super();
+
     if (!id) {
       throw new BookIdEmptyException();
     }
@@ -234,21 +239,63 @@ export class Book {
   }
 
   public updatePrice(newPrice: number): void {
+    const oldPrice = this.getCurrentPrice();
+
     this.originalPrice = this.originalPrice.updatePrice(newPrice);
+
+    if (this.getCurrentPrice() < oldPrice) {
+      this.addDomainEvent(
+        new BookPriceDecreased(
+          this.id,
+          this.title,
+          oldPrice,
+          this.getCurrentPrice(),
+        ),
+      );
+    }
   }
 
   public updateDiscountPercentage(newDiscountPercentage: number): void {
+    const oldPrice = this.getCurrentPrice();
+
     this.discountPercentage = this.discountPercentage.update(
       newDiscountPercentage,
     );
+
+    if (this.getCurrentPrice() < oldPrice) {
+      this.addDomainEvent(
+        new BookPriceDecreased(
+          this.id,
+          this.title,
+          oldPrice,
+          this.getCurrentPrice(),
+        ),
+      );
+    }
   }
 
   public adjustQuantity(quantity: number): void {
+    const oldQuantity = this.quantity;
+
     this.quantity = this.quantity.update(quantity);
+
+    if (oldQuantity.getValue() === 0 && this.quantity.getValue() > 0) {
+      this.addDomainEvent(
+        new BookRestocked(this.id, this.title, this.quantity.getValue()),
+      );
+    }
   }
 
   public increaseQuantity(quantity: number): void {
+    const oldQuantity = this.quantity;
+
     this.quantity = this.quantity.increase(quantity);
+
+    if (oldQuantity.getValue() === 0 && this.quantity.getValue() > 0) {
+      this.addDomainEvent(
+        new BookRestocked(this.id, this.title, this.quantity.getValue()),
+      );
+    }
   }
 
   public decreaseQuantityIfAvailable(quantity: number): void {
