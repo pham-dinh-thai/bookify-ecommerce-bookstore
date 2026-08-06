@@ -16,6 +16,10 @@ import {
   CACHE_REPOSITORY,
   type ICacheRepository,
 } from '../../../../../shared/modules/cache/domain/cache.repository.interface';
+import {
+  EVENT_DISPATCHER,
+  type IEventDispatcher,
+} from '../../../../../shared/domain/event-dispatcher.interface';
 
 /**
  * Updates the price of an existing book.
@@ -41,6 +45,9 @@ export class UpdateBookPriceUseCase {
 
     @Inject(UNIT_OF_WORK)
     private readonly unitOfWork: IUnitOfWork,
+
+    @Inject(EVENT_DISPATCHER)
+    private readonly eventDispatcher: IEventDispatcher,
   ) {}
 
   public async execute(
@@ -68,6 +75,9 @@ export class UpdateBookPriceUseCase {
         },
       );
     });
+
+    await this.eventDispatcher.dispatch(book.getDomainEvents());
+    book.clearDomainEvents();
 
     await this.cacheRepository.delByPattern('books:*');
     await this.cacheRepository.delByPattern('shop-collections:*');
