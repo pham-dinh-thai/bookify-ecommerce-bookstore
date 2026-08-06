@@ -38,6 +38,11 @@ services:
     read_only: true
     tmpfs:
       - /tmp
+    volumes:
+      - type: tmpfs
+        target: /app/.next/cache
+        tmpfs:
+          mode: 1777
     env_file:
       - ./frontend/.env
     environment:
