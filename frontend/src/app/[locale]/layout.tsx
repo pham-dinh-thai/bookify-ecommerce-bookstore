@@ -1,23 +1,8 @@
-import { Manrope } from 'next/font/google';
 import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { Metadata } from 'next';
 import { routing } from '@/i18n/routing';
-import '../globals.css';
-
-const manrope = Manrope({
-  subsets: ['latin'],
-  weight: ['400', '500', '700'],
-});
-
-export const metadata: Metadata = {
-  title: {
-    default: 'Bookify',
-    template: '%s | Bookify',
-  },
-  description: 'Bookify storefront',
-};
+import SetHtmlLang from './set-html-lang';
 
 export default async function LocaleLayout({
   children,
@@ -35,12 +20,9 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
-      <body className={manrope.className}>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      <SetHtmlLang />
+      {children}
+    </NextIntlClientProvider>
   );
 }

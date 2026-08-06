@@ -1,5 +1,6 @@
 import { Book } from './book.aggregate';
 import { BookPriceDecreased } from './events/book-price-decreased.event';
+import { BookDiscountUpdated } from './events/book-discount-updated.event';
 import { BookRestocked } from './events/book-restocked.event';
 import { FromPersistentBookProps } from './types';
 
@@ -73,19 +74,20 @@ describe('Book aggregate', () => {
   });
 
   describe('updateDiscountPercentage', () => {
-    it('records a BookPriceDecreased event when the discount increases', () => {
+    it('records a BookDiscountUpdated event when the discount increases', () => {
       const book = baseBook();
 
       book.updateDiscountPercentage(20);
 
       const events = book.getDomainEvents();
       expect(events).toHaveLength(1);
-      expect(events[0]).toBeInstanceOf(BookPriceDecreased);
+      expect(events[0]).toBeInstanceOf(BookDiscountUpdated);
       expect(events[0]).toEqual(
         expect.objectContaining({
           bookId: 'book-1',
           oldPrice: 500000,
           newPrice: 400000,
+          discountPercentage: 20,
         }),
       );
     });
