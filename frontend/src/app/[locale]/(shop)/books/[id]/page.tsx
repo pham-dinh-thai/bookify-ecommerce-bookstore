@@ -6,6 +6,7 @@ import {
   PurchaseButtons,
 } from './book-purchase-actions';
 import BookWishlistButton from './book-wishlist-button';
+import ReviewsSection from './reviews/components/reviews-section';
 import { BookSection } from '../../(features)/(homepage)/components/book-section';
 
 type ApiBookDetail = {
@@ -360,6 +361,9 @@ export default async function BookDetailPage({
           </div>
         </div>
       </section>
+
+      {/* Reviews section */}
+      <ReviewsSection bookId={book.id} />
 
       {/* Related books section */}
       {relatedBooks.length > 0 && (
