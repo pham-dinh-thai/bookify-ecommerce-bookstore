@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, CreditCard, XCircle } from 'lucide-react';
+import { ArrowLeft, CreditCard, PenLine, XCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { useToast } from '@/shared/common/toast/toast';
@@ -53,6 +53,8 @@ const formatVnd = (value: number) => `${value.toLocaleString('vi-VN')} VNĐ`;
 
 const isCancellableOrder = (order: MyOrderDetail) =>
   order.status === 'pending' || order.status === 'confirmed';
+
+const canReviewOrder = (order: MyOrderDetail) => order.status === 'completed';
 
 export default function MyOrderDetailScreen({ id }: MyOrderDetailScreenProps) {
   const t = useTranslations('orders');
@@ -257,7 +259,11 @@ function OrderDetailContent({ order }: { order: MyOrderDetail }) {
             order.items.map((item) => (
               <div
                 key={item.id}
-                className="grid gap-4 rounded-lg bg-white p-4 md:grid-cols-[72px_minmax(0,1fr)_110px_140px_140px] md:items-center"
+                className={`grid gap-4 rounded-lg bg-white p-4 md:items-center ${
+                  canReviewOrder(order)
+                    ? 'md:grid-cols-[72px_minmax(0,1fr)_110px_140px_140px_150px]'
+                    : 'md:grid-cols-[72px_minmax(0,1fr)_110px_140px_140px]'
+                }`}
               >
                 {item.imageUrl ? (
                   <>
@@ -275,7 +281,12 @@ function OrderDetailContent({ order }: { order: MyOrderDetail }) {
                 )}
 
                 <div className="min-w-0">
-                  <p className="font-bold text-[#2b352f]">{item.title}</p>
+                  <Link
+                    href={`/books/${item.productId}`}
+                    className="font-bold text-[#2b352f] transition-colors hover:text-[#2d6a4f]"
+                  >
+                    {item.title}
+                  </Link>
                   <p className="mt-1 break-all text-xs font-medium text-[#58615b]">
                     {t('bookId', { id: item.productId })}
                   </p>
@@ -290,6 +301,18 @@ function OrderDetailContent({ order }: { order: MyOrderDetail }) {
                   label={t('lineTotal')}
                   value={formatVnd(item.lineTotal)}
                 />
+
+                {canReviewOrder(order) && (
+                  <div className="flex items-center md:justify-end">
+                    <Link
+                      href={`/books/${item.productId}#reviews`}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-[#2d6a4f] px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-[#1a3d2b]"
+                    >
+                      <PenLine size={13} />
+                      {t('detail.writeReview')}
+                    </Link>
+                  </div>
+                )}
               </div>
             ))
           )}

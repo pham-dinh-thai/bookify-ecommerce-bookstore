@@ -246,7 +246,8 @@
       "unavailable": "Order detail unavailable",
       "backToOrdersLink": "Back to orders",
       "cashOnDelivery": "Cash On Delivery",
-      "redirecting": "Redirecting..."
+      "redirecting": "Redirecting...",
+      "writeReview": "Write review"
     },
     "toast": {
       "paymentFailed": "Payment failed. You can retry payment from the order detail page.",
@@ -330,5 +331,30 @@
     "itemRemoved": "Item removed from wishlist",
     "removeFailed": "Unable to remove item from wishlist",
     "loadFailed": "Unable to load your wishlist."
+  },
+  "reviews": {
+    "title": "Customer Reviews",
+    "reviewCount": "{count, plural, one {# review} other {# reviews}}",
+    "averageRating": "Average Rating",
+    "empty": "No reviews yet. Be the first to write one!",
+    "loading": "Loading reviews...",
+    "writeReview": "Write a review",
+    "editReview": "Edit your review",
+    "loginRequired": "Sign in to write a review.",
+    "purchaseRequired": "You must purchase this book before you can review it.",
+    "ratingLabel": "Rating",
+    "placeholder": "Share your thoughts about this book...",
+    "submit": "Submit",
+    "update": "Update",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this review?",
+    "added": "Review submitted",
+    "updated": "Review updated",
+    "deleted": "Review deleted",
+    "error": "Unable to update reviews",
+    "verifiedPurchase": "Verified purchase",
+    "signIn": "Sign in"
   }
 }

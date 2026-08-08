@@ -246,7 +246,8 @@
       "unavailable": "Không thể tải chi tiết đơn hàng",
       "backToOrdersLink": "Quay lại danh sách",
       "cashOnDelivery": "Thanh toán khi nhận hàng",
-      "redirecting": "Đang chuyển hướng..."
+      "redirecting": "Đang chuyển hướng...",
+      "writeReview": "Viết đánh giá"
     },
     "toast": {
       "paymentFailed": "Thanh toán thất bại. Bạn có thể thử lại từ trang chi tiết đơn hàng.",
@@ -330,5 +331,30 @@
     "itemRemoved": "Đã xóa sách khỏi danh sách yêu thích",
     "removeFailed": "Không thể xóa sách khỏi danh sách yêu thích",
     "loadFailed": "Không thể tải danh sách yêu thích của bạn."
+  },
+  "reviews": {
+    "title": "Đánh giá khách hàng",
+    "reviewCount": "{count, plural, one {# đánh giá} other {# đánh giá}}",
+    "averageRating": "Điểm trung bình",
+    "empty": "Chưa có đánh giá nào. Hãy là người đầu tiên viết đánh giá!",
+    "loading": "Đang tải đánh giá...",
+    "writeReview": "Viết đánh giá",
+    "editReview": "Sửa đánh giá của bạn",
+    "loginRequired": "Đăng nhập để viết đánh giá.",
+    "purchaseRequired": "Bạn cần mua cuốn sách này trước khi có thể đánh giá.",
+    "ratingLabel": "Đánh giá",
+    "placeholder": "Chia sẻ cảm nhận của bạn về cuốn sách này...",
+    "submit": "Gửi",
+    "update": "Cập nhật",
+    "cancel": "Hủy",
+    "edit": "Sửa",
+    "delete": "Xóa",
+    "deleteConfirm": "Xóa đánh giá này?",
+    "added": "Đã gửi đánh giá",
+    "updated": "Đã cập nhật đánh giá",
+    "deleted": "Đã xóa đánh giá",
+    "error": "Không thể cập nhật đánh giá",
+    "verifiedPurchase": "Đã mua hàng",
+    "signIn": "Đăng nhập"
   }
 }
