@@ -27,6 +27,7 @@ import { SalesStatisticsModule } from './modules/sales-statistics/sales-statisti
 import { ChatbotModule } from './modules/chatbot/chatbot.module';
 import { WishlistModule } from './modules/wishlist/wishlist.module';
 import { BookDiscoveryModule } from './modules/book-discovery/book-discovery.module';
+import { ReviewModule } from './modules/review/review.module';
 
 @Module({
   imports: [
@@ -84,6 +85,7 @@ import { BookDiscoveryModule } from './modules/book-discovery/book-discovery.mod
     ChatbotModule,
     WishlistModule,
     BookDiscoveryModule,
+    ReviewModule,
   ],
   controllers: [AppController],
   providers: [AppService],
