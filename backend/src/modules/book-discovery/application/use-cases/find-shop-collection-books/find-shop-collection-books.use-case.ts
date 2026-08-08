@@ -42,7 +42,7 @@ export class FindShopCollectionBooksUseCase {
     }
 
     const books = await this.findBooks(type, page, limit);
-    const total = books.length;
+    const total = await this.countBooks(type);
 
     const response = new ShopCollectionResponse(books, total);
 
@@ -69,5 +69,19 @@ export class FindShopCollectionBooksUseCase {
     }
 
     return this.booksQueryRepository.findNewArrivals(page, limit);
+  }
+
+  private async countBooks(
+    type: DiscoveryBookCollectionType,
+  ): Promise<number> {
+    if (type === 'best-seller') {
+      return this.booksQueryRepository.countBestSellers();
+    }
+
+    if (type === 'on-sales') {
+      return this.booksQueryRepository.countOnSales();
+    }
+
+    return this.booksQueryRepository.countNewArrivals();
   }
 }

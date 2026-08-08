@@ -125,6 +125,39 @@ export class TypeOrmDiscoveryBooksQueryRepository implements IDiscoveryBooksQuer
     return this.findByIdsInOrder(rows.map((row) => row.bookId));
   }
 
+  public async countNewArrivals(): Promise<number> {
+    return this.repository.createQueryBuilder('book').getCount();
+  }
+
+  public async countOnSales(): Promise<number> {
+    return this.repository
+      .createQueryBuilder('book')
+      .where('book.discountPercentage > 0')
+      .getCount();
+  }
+
+  public async countBestSellers(): Promise<number> {
+    const subQuery = this.repository
+      .createQueryBuilder('book')
+      .select('book.id', 'bookId')
+      .innerJoin(OrderItemTypeOrm, 'orderItem', 'orderItem.productId = book.id')
+      .innerJoin(
+        OrderTypeOrm,
+        'orderEntity',
+        'orderEntity.id = orderItem.orderId',
+      )
+      .where('orderEntity.status != :canceled', {
+        canceled: OrderStatus.CANCELED,
+      })
+      .distinct(true);
+
+    return this.repository
+      .createQueryBuilder('book')
+      .where(`book.id IN (${subQuery.getQuery()})`)
+      .setParameters(subQuery.getParameters())
+      .getCount();
+  }
+
   private async findByIdsInOrder(ids: string[]): Promise<BookReadModel[]> {
     if (ids.length === 0) {
       return [];

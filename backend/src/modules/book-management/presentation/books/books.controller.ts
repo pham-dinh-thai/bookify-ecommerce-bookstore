@@ -59,11 +59,13 @@ export class BooksController {
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '10',
     @Query('search') search?: string,
+    @Query('genre') genre?: string,
   ): Promise<FindBooksResponse> {
     const response = await this.findBooksUseCase.execute(
       parseInt(page, 10),
       parseInt(limit, 10),
       search,
+      genre,
     );
 
     return response;
