@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronDown } from 'lucide-react';
 import Paginate from '@/shared/common/components/pagination/paginate';
@@ -28,62 +28,24 @@ function getDiscountedPrice(originalPrice: number, discountPercentage: number) {
   return Math.max(0, originalPrice * (1 - discountPercentage / 100));
 }
 
-const MD_BREAKPOINT = 768;
-const MOBILE_PAGE_SIZE = 12;
-
 export default function CollectionPageContent({
   books,
-  pageSize = 20,
+  total,
+  page,
+  pageSize,
+  pageHrefPrefix,
 }: {
   books: ApiBook[];
-  pageSize?: number;
+  total: number;
+  page: number;
+  pageSize: number;
+  pageHrefPrefix: string;
 }) {
-  const [page, setPage] = useState(1);
-  const [displayCount, setDisplayCount] = useState(MOBILE_PAGE_SIZE);
-  const [isMobile, setIsMobile] = useState(false);
-  const sentinelRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < MD_BREAKPOINT);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const hasMore = displayCount < books.length;
-
-  useEffect(() => {
-    if (!isMobile || !hasMore) return;
-    const id = setTimeout(() => {
-      if (document.body.scrollHeight <= window.innerHeight + 50) {
-        setDisplayCount((prev) => Math.min(prev + MOBILE_PAGE_SIZE, books.length));
-      }
-    }, 0);
-    return () => clearTimeout(id);
-  }, [isMobile, displayCount, books.length, hasMore]);
-
-  useEffect(() => {
-    if (!isMobile || !hasMore) return;
-
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setDisplayCount((prev) => Math.min(prev + MOBILE_PAGE_SIZE, books.length));
-        }
-      },
-      { threshold: 0 },
-    );
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [isMobile, hasMore, books.length]);
-
-  const displayBooks = isMobile
-    ? books.slice(0, displayCount)
-    : books.slice((page - 1) * pageSize, page * pageSize);
+  const handlePageChange = (nextPage: number) => {
+    router.push(`${pageHrefPrefix}${nextPage}`);
+  };
 
   return (
     <div className="flex-1">
@@ -91,11 +53,11 @@ export default function CollectionPageContent({
         <p className="text-sm font-medium text-on-surface-variant">
           Showing{' '}
           <span className="text-on-surface font-bold">
-            {displayBooks.length}
+            {books.length}
           </span>{' '}
           of{' '}
           <span className="text-on-surface font-bold">
-            {books.length}
+            {total}
           </span>{' '}
           volumes
         </p>
@@ -116,7 +78,7 @@ export default function CollectionPageContent({
         </div>
       </div>
 
-      {displayBooks.length === 0 ? (
+      {books.length === 0 ? (
         <div className="rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-6 md:p-10 text-center">
           <p className="text-on-surface-variant">
             No books found for this collection.
@@ -125,7 +87,7 @@ export default function CollectionPageContent({
       ) : (
         <>
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 md:gap-x-8 gap-y-8 md:gap-y-12">
-            {displayBooks.map((book) => {
+            {books.map((book) => {
               const primaryCover = book.covers?.find(
                 (cover) => cover.isPrimary,
               )?.url;
@@ -201,23 +163,15 @@ export default function CollectionPageContent({
             })}
           </div>
 
-          {isMobile ? (
-            hasMore ? (
-              <div ref={sentinelRef} className="flex justify-center py-8">
-                <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-              </div>
-            ) : null
-          ) : (
-            <div className="mt-12 md:mt-20 flex justify-center items-center gap-4">
-              <Paginate
-                page={page}
-                pageSize={pageSize}
-                total={books.length}
-                onPageChange={setPage}
-                showTotal={false}
-              />
-            </div>
-          )}
+          <div className="mt-12 md:mt-20 flex justify-center items-center gap-4">
+            <Paginate
+              page={page}
+              pageSize={pageSize}
+              total={total}
+              onPageChange={handlePageChange}
+              showTotal={false}
+            />
+          </div>
         </>
       )}
     </div>

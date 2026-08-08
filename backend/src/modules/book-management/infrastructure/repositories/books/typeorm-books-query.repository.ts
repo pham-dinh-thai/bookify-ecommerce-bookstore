@@ -21,6 +21,7 @@ export class TypeormBooksQueryRepository implements IBooksQueryRepository {
     page: number,
     limit: number,
     search?: string,
+    genre?: string,
   ): Promise<BookReadModel[]> {
     const query = this.repository
       .createQueryBuilder('book')
@@ -36,6 +37,10 @@ export class TypeormBooksQueryRepository implements IBooksQueryRepository {
       query.where('book.title LIKE :search OR author.name LIKE :search', {
         search: `%${search}%`,
       });
+    }
+
+    if (genre) {
+      query.andWhere('genre.name = :genre', { genre });
     }
 
     const booksTypeOrm = await query
@@ -64,11 +69,18 @@ export class TypeormBooksQueryRepository implements IBooksQueryRepository {
     return bookTypeOrm ? BooksMapper.toReadModel(bookTypeOrm) : null;
   }
 
-  public async count(search?: string): Promise<number> {
+  public async count(search?: string, genre?: string): Promise<number> {
     const query = this.repository.createQueryBuilder('book');
 
     if (search) {
       query.where('book.title LIKE :search', { search: `%${search}%` });
+    }
+
+    if (genre) {
+      query
+        .innerJoin('book.bookGenres', 'countBookGenres')
+        .innerJoin('countBookGenres.genre', 'countGenre')
+        .andWhere('countGenre.name = :genre', { genre });
     }
 
     return query.getCount() ?? 0;

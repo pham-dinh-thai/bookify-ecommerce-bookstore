@@ -43,7 +43,10 @@ type CollectionPageProps = {
   description: string;
   genreSlug?: string;
   searchQuery?: string;
+  page?: number;
 };
+
+const PAGE_SIZE = 20;
 
 function getApiBaseUrl(): string {
   const internalUrl = process.env.API_INTERNAL_URL;
@@ -64,60 +67,86 @@ function normalize(text: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-async function getBooks(
-  type: CollectionType,
-  genreSlug?: string,
-  searchQuery?: string,
-): Promise<ApiBook[]> {
+async function resolveGenreName(genreSlug: string): Promise<string | undefined> {
   try {
     const apiBase = getApiBaseUrl();
-    const endpoint =
-      type === 'on-sales'
-        ? 'on-sales'
-        : type === 'new-arrivals'
-          ? 'new-arrivals'
-          : 'books';
-    const response = await fetch(`${apiBase}/${endpoint}?page=1&limit=50`, {
+    const response = await fetch(`${apiBase}/genres?limit=10000`, {
       cache: 'no-store',
     });
 
-    if (!response.ok) return [];
+    if (!response.ok) return undefined;
 
     const data = await response.json();
-    const books: ApiBook[] = Array.isArray(data?.books) ? data.books : [];
+    const genres: { id: string; name: string }[] = Array.isArray(data?.genres)
+      ? data.genres
+      : [];
 
-    let filteredBooks = books;
-
-    const normalizedGenreSlug = genreSlug ? normalize(genreSlug) : undefined;
-
-    if (normalizedGenreSlug) {
-      filteredBooks = books.filter((book) =>
-        (book.genres || []).some(
-          (genre) => normalize(genre) === normalizedGenreSlug,
-        ),
-      );
-    }
-
-    const normalizedSearchQuery = searchQuery?.trim().toLowerCase();
-
-    if (!normalizedSearchQuery) {
-      return filteredBooks;
-    }
-
-    return filteredBooks.filter((book) => {
-      const title = book.title?.toLowerCase() || '';
-      const authors = (book.authors || []).join(' ').toLowerCase();
-      const genres = (book.genres || []).join(' ').toLowerCase();
-
-      return (
-        title.includes(normalizedSearchQuery) ||
-        authors.includes(normalizedSearchQuery) ||
-        genres.includes(normalizedSearchQuery)
-      );
-    });
+    return genres.find(
+      (genre) => normalize(genre.name) === normalize(genreSlug),
+    )?.name;
   } catch {
-    return [];
+    return undefined;
   }
+}
+
+async function fetchBooks(
+  type: CollectionType,
+  page: number,
+  genreSlug?: string,
+  searchQuery?: string,
+): Promise<{ books: ApiBook[]; total: number }> {
+  const apiBase = getApiBaseUrl();
+  const endpoint =
+    type === 'on-sales'
+      ? 'on-sales'
+      : type === 'new-arrivals'
+        ? 'new-arrivals'
+        : 'books';
+
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: String(PAGE_SIZE),
+  });
+
+  if (type === 'genre' && searchQuery) {
+    params.set('search', searchQuery);
+  }
+
+  if (type === 'genre' && genreSlug) {
+    const genreName = await resolveGenreName(genreSlug);
+    params.set('genre', genreName ?? genreSlug);
+  }
+
+  try {
+    const response = await fetch(`${apiBase}/${endpoint}?${params.toString()}`, {
+      cache: 'no-store',
+    });
+
+    if (!response.ok) return { books: [], total: 0 };
+
+    const data = await response.json();
+
+    return {
+      books: Array.isArray(data?.books) ? data.books : [],
+      total: Number(data?.total) || 0,
+    };
+  } catch {
+    return { books: [], total: 0 };
+  }
+}
+
+function buildPageHrefPrefix(
+  type: CollectionType,
+  genreSlug?: string,
+  searchQuery?: string,
+): string {
+  if (type === 'on-sales') return '/on-sales?page=';
+  if (type === 'new-arrivals') return '/new-arrivals?page=';
+
+  if (genreSlug) return `/genres/${genreSlug}?page=`;
+
+  const query = searchQuery ? `?q=${encodeURIComponent(searchQuery)}&` : '?';
+  return `/books${query}page=`;
 }
 
 async function getShopNavigation(): Promise<ShopNavigation> {
@@ -148,12 +177,13 @@ export default async function CollectionPage({
   description,
   genreSlug,
   searchQuery,
+  page = 1,
 }: CollectionPageProps) {
-  const [books, shopNavigation] = await Promise.all([
-    getBooks(type, genreSlug, searchQuery),
+  const safePage = Math.max(1, page);
+  const [{ books, total }, shopNavigation] = await Promise.all([
+    fetchBooks(type, safePage, genreSlug, searchQuery),
     getShopNavigation(),
   ]);
-  const pageSize = 20;
   const fallbackGenres = Array.from(
     new Set(books.flatMap((book) => book.genres || [])),
   )
@@ -178,6 +208,7 @@ export default async function CollectionPage({
     { label: 'New Arrivals', href: '/new-arrivals' },
     { label: 'On Sales', href: '/on-sales' },
   ];
+  const pageHrefPrefix = buildPageHrefPrefix(type, genreSlug, searchQuery);
 
   return (
     <section className="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container">
@@ -290,7 +321,14 @@ export default async function CollectionPage({
             </section>
           </aside>
 
-          <CollectionPageContent key={`${type}-${genreSlug || ''}-${searchQuery || ''}`} books={books} pageSize={pageSize} />
+          <CollectionPageContent
+            key={`${type}-${genreSlug || ''}-${searchQuery || ''}-${page}`}
+            books={books}
+            total={total}
+            page={safePage}
+            pageSize={PAGE_SIZE}
+            pageHrefPrefix={pageHrefPrefix}
+          />
         </div>
       </div>
     </section>

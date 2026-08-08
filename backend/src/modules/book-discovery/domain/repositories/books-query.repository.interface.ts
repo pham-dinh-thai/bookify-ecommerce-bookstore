@@ -15,6 +15,12 @@ export interface IDiscoveryBooksQueryRepository {
   ): Promise<BookReadModel[]>;
 
   findRandom(page: number, limit: number): Promise<BookReadModel[]>;
+
+  countNewArrivals(): Promise<number>;
+
+  countOnSales(): Promise<number>;
+
+  countBestSellers(): Promise<number>;
 }
 
 export const DISCOVERY_BOOKS_QUERY_REPOSITORY =

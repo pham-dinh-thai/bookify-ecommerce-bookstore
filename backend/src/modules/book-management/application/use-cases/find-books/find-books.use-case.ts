@@ -30,16 +30,22 @@ export class FindBooksUseCase {
     page: number,
     limit: number,
     search?: string,
+    genre?: string,
   ): Promise<FindBooksResponse> {
-    const cacheKey = BOOK_CACHE_KEYS.PAGE(page, limit, search);
+    const cacheKey = BOOK_CACHE_KEYS.PAGE(page, limit, search, genre);
 
     const cached = await this.cacheRepository.get<FindBooksResponse>(cacheKey);
     if (cached) {
       return cached;
     }
 
-    const books = await this.booksQueryRepository.findAll(page, limit, search);
-    const total = await this.booksQueryRepository.count(search);
+    const books = await this.booksQueryRepository.findAll(
+      page,
+      limit,
+      search,
+      genre,
+    );
+    const total = await this.booksQueryRepository.count(search, genre);
 
     const response = new FindBooksResponse(books, total);
 

@@ -6,11 +6,12 @@ export interface IBooksQueryRepository {
     page: number,
     limit: number,
     search?: string,
+    genre?: string,
   ): Promise<BookReadModel[]>;
 
   findOne(id: string): Promise<BookReadModel | null>;
 
-  count(search?: string): Promise<number>;
+  count(search?: string, genre?: string): Promise<number>;
 
   findStockAlerts(
     lowStockThreshold: number,

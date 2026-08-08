@@ -57,8 +57,6 @@ export class ChatController {
     private readonly deleteKnowledgeSourceUseCase: DeleteKnowledgeSourceUseCase,
   ) {}
 
-  // ── Sessions ─────────────────────────────────────────
-
   @Post('sessions')
   public async createSession(
     @Body() request: CreateSessionRequest,
@@ -114,8 +112,7 @@ export class ChatController {
       );
       res.write('data: [DONE]\n\n');
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Stream error';
+      const message = error instanceof Error ? error.message : 'Stream error';
       res.write(`data: ${JSON.stringify({ error: message })}\n\n`);
     } finally {
       res.end();
@@ -138,8 +135,6 @@ export class ChatController {
   ): Promise<void> {
     return this.deleteSessionUseCase.execute(id, userId);
   }
-
-  // ── Knowledge Sources (admin only) ───────────────────
 
   @Post('knowledge')
   @UseGuards(JwtAuthGuard)
@@ -174,9 +169,7 @@ export class ChatController {
 
   @Delete('knowledge/:id')
   @UseGuards(JwtAuthGuard)
-  public async deleteKnowledgeSource(
-    @Param('id') id: string,
-  ): Promise<void> {
+  public async deleteKnowledgeSource(@Param('id') id: string): Promise<void> {
     return this.deleteKnowledgeSourceUseCase.execute(id);
   }
 }
