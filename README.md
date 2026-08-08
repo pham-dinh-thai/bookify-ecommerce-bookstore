@@ -30,6 +30,9 @@ Bookify is an ecommerce bookstore application built as a full-stack monorepo. It
 - **Popularity-aware navigation:** Homepage category cards and navbar genre links prioritize the most popular genres from recent sales, with catalog fallback when sales data is not available.
 - **Staff operations:** Staff can manage books, import stock, handle orders, inspect customer records, and monitor operational dashboard metrics.
 - **Sales statistics:** Staff reporting supports monthly, quarterly, and yearly filters from the reporting start period, using real order and order item aggregates for revenue, orders, books sold, average order value, payment channels, category revenue, and top-selling books.
+- **Wishlist:** Logged-in customers can save books to their wishlist and receive automatic email alerts when a wishlisted book drops in price, comes back in stock, or gets a discount — handled through domain events with a 7-day Redis cooldown to prevent duplicates.
+- **Book reviews:** Customers who purchased a book can rate it with half-star precision (1.0–5.0) and leave a comment. Reviews are one per user per book, with per-book average rating/count, and the author can edit or delete their own review.
+- **Recommendations:** The `book-discovery` module serves wishlist-based book recommendations and shop collection listings.
 - **Admin management:** Admin pages cover users, genres, publishers, authors, languages, roles, permissions, and system overview metrics.
 - **Order lifecycle:** Orders support placement, confirmation, delivery progress, completion, cancellation, payment status tracking, audit logging, and transactional email notifications.
 - **Email notifications:** Automated email delivery via Resend for account verification (OTP) and order lifecycle events (confirmation, delivery, completion, cancellation).
@@ -53,8 +56,10 @@ Bookify is an ecommerce bookstore application built as a full-stack monorepo. It
 |-- backend/                 # NestJS API
 |   |-- src/
 |   |   |-- modules/         # Business modules
+|   |   |   |-- audit-log/
 |   |   |   |-- authentication/
 |   |   |   |-- authorization/
+|   |   |   |-- book-discovery/
 |   |   |   |-- book-management/
 |   |   |   |-- cart-management/
 |   |   |   |-- catalog-management/
@@ -67,9 +72,10 @@ Bookify is an ecommerce bookstore application built as a full-stack monorepo. It
 |   |   |   |-- order/
 |   |   |   |-- order-management/
 |   |   |   |-- payment-gateway/
+|   |   |   |-- review/
 |   |   |   |-- sales-statistics/
 |   |   |   |-- user-management/
-|   |   |   `-- audit-log/
+|   |   |   `-- wishlist/
 |   |   `-- shared/          # Shared domain, HTTP, infrastructure, and modules
 |   |-- Dockerfile
 |   `-- package.json
@@ -277,8 +283,10 @@ The backend follows a modular structure. Each business module is organized aroun
 
 Main modules:
 
+- `audit-log`
 - `authentication`
 - `authorization`
+- `book-discovery`
 - `book-management`
 - `cart-management`
 - `catalog-management`
@@ -291,9 +299,10 @@ Main modules:
 - `order`
 - `order-management`
 - `payment-gateway`
+- `review`
 - `sales-statistics`
 - `user-management`
-- `audit-log`
+- `wishlist`
 
 ### Email Notifications
 
@@ -325,6 +334,14 @@ Order lifecycle emails:
 - `OrderCanceled`: sent when a customer cancels their order.
 
 Order emails are dispatched only after the related order transaction succeeds.
+
+Wishlist alert emails:
+
+- `BookPriceDecreased`: sent when a wishlisted book's price drops.
+- `BookRestocked`: sent when a wishlisted book is back in stock.
+- `BookDiscountUpdated`: sent when a wishlisted book gets a discount.
+
+Wishlist alerts are fired from domain events and deduplicated per `(bookId, userId)` with a Redis cooldown of 7 days.
 
 ### AI Chatbot
 
@@ -398,6 +415,9 @@ Bookify là ứng dụng thương mại điện tử bán sách được xây d�
 - **Điều hướng theo độ phổ biến:** Các thẻ thể loại trên trang chủ và liên kết thể loại trên navbar ưu tiên thể loại bán chạy gần đây, dự phòng bằng catalog khi không có dữ liệu bán hàng.
 - **Thao tác cho nhân viên:** Nhân viên quản lý sách, nhập kho, xử lý đơn hàng, xem hồ sơ khách hàng và theo dõi các chỉ số dashboard vận hành.
 - **Thống kê doanh thu:** Báo cáo cho nhân viên hỗ trợ lọc theo tháng, quý, năm từ kỳ báo cáo đầu tiên, dùng tổng hợp thực tế từ đơn hàng và chi tiết đơn để tính doanh thu, số đơn, số sách bán ra, giá trị đơn trung bình, kênh thanh toán, doanh thu theo thể loại và sách bán chạy nhất.
+- **Wishlist:** Khách đã đăng nhập có thể lưu sách vào danh sách yêu thích và nhận email cảnh báo tự động khi sách trong wishlist giảm giá, có hàng trở lại hoặc được giảm giá — xử lý qua domain event kèm cooldown Redis 7 ngày để chống gửi trùng.
+- **Đánh giá sách:** Khách đã mua sách mới được đánh giá với độ chính xác nửa sao (1.0–5.0) kèm bình luận. Mỗi user chỉ đánh giá một lần mỗi sách, có rating trung bình/số review theo sách, và người viết có thể sửa hoặc xóa đánh giá của mình.
+- **Gợi ý sách:** Module `book-discovery` cung cấp gợi ý sách dựa trên wishlist và danh sách bộ sưu tập shop.
 - **Quản trị admin:** Các trang quản trị gồm người dùng, thể loại, nhà xuất bản, tác giả, ngôn ngữ, vai trò, quyền hạn và các chỉ số tổng quan hệ thống.
 - **Vòng đời đơn hàng:** Đơn hàng hỗ trợ đặt, xác nhận, tiến trình giao, hoàn tất, hủy, theo dõi trạng thái thanh toán, audit log và email thông báo theo sự kiện.
 - **Email thông báo:** Gửi email tự động qua Resend cho xác minh tài khoản (OTP) và các sự kiện vòng đời đơn hàng (xác nhận, giao hàng, hoàn tất, hủy).
@@ -421,8 +441,10 @@ Bookify là ứng dụng thương mại điện tử bán sách được xây d�
 |-- backend/                 # API NestJS
 |   |-- src/
 |   |   |-- modules/         # Các module nghiệp vụ
+|   |   |   |-- audit-log/
 |   |   |   |-- authentication/
 |   |   |   |-- authorization/
+|   |   |   |-- book-discovery/
 |   |   |   |-- book-management/
 |   |   |   |-- cart-management/
 |   |   |   |-- catalog-management/
@@ -435,9 +457,10 @@ Bookify là ứng dụng thương mại điện tử bán sách được xây d�
 |   |   |   |-- order/
 |   |   |   |-- order-management/
 |   |   |   |-- payment-gateway/
+|   |   |   |-- review/
 |   |   |   |-- sales-statistics/
 |   |   |   |-- user-management/
-|   |   |   `-- audit-log/
+|   |   |   `-- wishlist/
 |   |   `-- shared/          # Domain, HTTP, infrastructure và module dùng chung
 |   |-- Dockerfile
 |   `-- package.json
@@ -645,8 +668,10 @@ Backend được tổ chức theo cấu trúc module. Mỗi module nghiệp vụ
 
 Các module chính:
 
+- `audit-log`
 - `authentication`
 - `authorization`
+- `book-discovery`
 - `book-management`
 - `cart-management`
 - `catalog-management`
@@ -659,9 +684,10 @@ Các module chính:
 - `order`
 - `order-management`
 - `payment-gateway`
+- `review`
 - `sales-statistics`
 - `user-management`
-- `audit-log`
+- `wishlist`
 
 ### Email thông báo
 
@@ -693,6 +719,14 @@ Email vòng đời đơn hàng:
 - `OrderCanceled`: gửi khi khách hủy đơn.
 
 Email đơn hàng chỉ được gửi sau khi giao dịch đơn hàng liên quan thành công.
+
+Email cảnh báo wishlist:
+
+- `BookPriceDecreased`: gửi khi sách trong wishlist giảm giá.
+- `BookRestocked`: gửi khi sách trong wishlist có hàng trở lại.
+- `BookDiscountUpdated`: gửi khi sách trong wishlist được giảm giá.
+
+Cảnh báo wishlist được kích hoạt từ domain event và chống gửi trùng theo từng `(bookId, userId)` bằng cooldown Redis 7 ngày.
 
 ### Chatbot AI
 
