@@ -25,6 +25,15 @@ export class TypeormReviewsQueryRepository implements IReviewsQueryRepository {
     );
   }
 
+  public async findById(reviewId: string): Promise<ReviewReadModel | null> {
+    const reviewTypeOrm = await this.repository.findOne({
+      where: { id: reviewId },
+      relations: { user: true },
+    });
+
+    return reviewTypeOrm ? ReviewsMapper.toReadModel(reviewTypeOrm) : null;
+  }
+
   public async findByBookAndUser(
     bookId: string,
     userId: string,

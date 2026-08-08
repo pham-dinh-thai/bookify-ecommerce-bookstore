@@ -14,4 +14,8 @@ export class TypeormReviewsCommandRepository implements IReviewsCommandRepositor
       .getManager()
       .insert(ReviewTypeOrm, ReviewsMapper.toTypeOrm(review));
   }
+
+  public async delete(reviewId: string): Promise<void> {
+    await this.unitOfWork.getManager().delete(ReviewTypeOrm, { id: reviewId });
+  }
 }
