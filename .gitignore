@@ -36,3 +36,6 @@
 docs/planning/
 
 storage/uploads/*
+
+# Generated bulk data seed (regenerate with database/generate-books-seed.js)
+database/seed-books-large.sql
