@@ -12,7 +12,7 @@ export class TypeormReviewsCommandRepository implements IReviewsCommandRepositor
   public async save(review: Review): Promise<void> {
     await this.unitOfWork
       .getManager()
-      .insert(ReviewTypeOrm, ReviewsMapper.toTypeOrm(review));
+      .upsert(ReviewTypeOrm, ReviewsMapper.toTypeOrm(review), ['id']);
   }
 
   public async delete(reviewId: string): Promise<void> {
